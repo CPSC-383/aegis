@@ -1,0 +1,127 @@
+{
+  "settings": {
+    "world_info": {
+      "size": {
+        "width": 2,
+        "height": 5
+      },
+      "seed": 0,
+      "world_file_levels": {
+        "high": 0,
+        "mid": 0,
+        "low": 0
+      },
+      "agent_energy": 500
+    }
+  },
+  "spawn_locs": [
+    {
+      "x": 0,
+      "y": 1
+    },
+    {
+      "x": 1,
+      "y": 2
+    },
+    {
+      "x": 0,
+      "y": 2
+    },
+    {
+      "x": 1,
+      "y": 3
+    }
+  ],
+  "grid_types": {
+    "fire_grids": [],
+    "killer_grids": [
+      {
+        "x": 0,
+        "y": 2
+      }
+    ],
+    "charging_grids": []
+  },
+  "stacks": [
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 0
+      },
+      "move_cost": 4,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 1
+      },
+      "move_cost": 5,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 2
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 3
+      },
+      "move_cost": 5,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 4
+      },
+      "move_cost": 3,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 0
+      },
+      "move_cost": 5,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 1
+      },
+      "move_cost": 5,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 2
+      },
+      "move_cost": 3,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 3
+      },
+      "move_cost": 4,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 4
+      },
+      "move_cost": 5,
+      "contents": []
+    }
+  ]
+}

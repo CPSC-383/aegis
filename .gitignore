@@ -1,0 +1,41 @@
+*__pycache__*
+replay.txt
+
+# Python venv
+venv
+.venv
+
+
+# Client Stuff
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+out
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+packed-client
+WorldInfoFile.out
+src/agent/training_data/x_train.npy
+src/agent/training_data/y_train.npy
+src/ares/testing_data/x_test.npy
+src/ares/testing_data/y_test.npy
+aegis-documentation/

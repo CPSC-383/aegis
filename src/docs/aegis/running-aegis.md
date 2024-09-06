@@ -1,0 +1,45 @@
+This section will cover how to run AEGIS.
+
+## How to run AEGIS
+
+There are two ways to run AEGIS: using the provided script or via the Client.
+
+### Using the provided script
+
+To run AEGIS in the command line, use the `run_headless_aegis_with_agents.py` script.
+
+The usage of the python script is shown below:
+
+```bash
+python3 run_headless_aegis_with_agents.py <agent amount> <num of rounds> <agent directory> <world file>
+```
+
+Example:
+
+```bash
+python3 run_headless_aegis_with_agents.py 2 50 example_agent ExampleWorld
+```
+
+This will start up AEGIS with the ExampleWorld.world, using 2 example agents, and will run for 50 rounds.
+
+On Windows, replace `python3` with `python` to run the script.
+
+### Via the Client 
+
+To run AEGIS in the client, go to the Aegis tab, select a world, set the number of agents and rounds and the `Start Up Game` button should
+be enabled. It should look like the following:
+
+![Run Aegis Example](../assets/run_aegis.png)
+
+Once you see that AEGIS has started up in the console, or the button changes to `Kill Game`, you can then connect the agents.
+
+Go to the Agents tab, select the agent you want to use, set the group name (cannot contain spaces) and the number of agents you want to connect for that group.
+It should look like the following with 1 group:
+
+![Run Agents Example](../assets/run_agents.png)
+
+and the following with multiple groups:
+
+![Connect 3 Agents](../assets/connect_3.png)
+
+![Connect 2 Agents](../assets/connect_2.png)

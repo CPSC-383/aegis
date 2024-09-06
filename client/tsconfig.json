@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "paths": {
+        "@/*": ["./src/*"],
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "packed-client"
+  ]
+}

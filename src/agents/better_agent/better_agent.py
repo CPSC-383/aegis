@@ -1,0 +1,227 @@
+import os
+from typing import override
+
+import numpy as np
+import tensorflow as tf  # pyright: ignore[reportMissingTypeStubs]
+from agent.base_agent import BaseAgent
+from agent.brain import Brain
+from agent.log_levels import LogLevels
+from agents.better_agent.pathfinder import Pathfinder
+from aegis.common import Direction, Location
+from aegis.common.commands.agent_command import AgentCommand
+from aegis.common.commands.agent_commands import (
+    END_TURN,
+    MOVE,
+    OBSERVE,
+    PREDICT,
+    SAVE_SURV,
+    TEAM_DIG,
+)
+from aegis.common.commands.aegis_commands import (
+    CONNECT_OK,
+    FWD_MESSAGE,
+    MOVE_RESULT,
+    OBSERVE_RESULT,
+    PREDICT_RESULT,
+    SAVE_SURV_RESULT,
+    SLEEP_RESULT,
+    TEAM_DIG_RESULT,
+)
+from aegis.common.world.grid import Grid
+from aegis.common.world.info import (
+    NoLayersInfo,
+    RubbleInfo,
+    SurroundInfo,
+    SurvivorGroupInfo,
+    SurvivorInfo,
+    WorldObjectInfo,
+)
+from aegis.common.world.objects import NoLayers, Rubble, Survivor, SurvivorGroup
+from aegis.common.world.world import World
+from numpy.typing import NDArray
+
+
+class BetterAgent(Brain):
+    def __init__(self) -> None:
+        super().__init__()
+        self._round = 1
+        self._agent = BaseAgent.get_base_agent()
+        self._model = self._load_model()  # pyright: ignore[reportUnknownMemberType]
+
+    def _load_model(self):  # pyright: ignore[reportUnknownParameterType]
+        model_path = os.path.join(os.path.dirname(__file__), "model.keras")
+        if os.path.isfile(model_path):
+            model = tf.keras.models.load_model(model_path)  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType, reportAttributeAccessIssue]
+            return model  # pyright: ignore[reportUnknownVariableType]
+        else:
+            raise FileNotFoundError(f"Model file {model_path} not found.")
+
+    @override
+    def handle_connect_ok(self, connect_ok: CONNECT_OK) -> None:
+        BaseAgent.log(LogLevels.Always, "CONNECT_OK")
+
+    @override
+    def handle_disconnect(self) -> None:
+        BaseAgent.log(LogLevels.Always, "DISCONNECT")
+
+    @override
+    def handle_dead(self) -> None:
+        BaseAgent.log(LogLevels.Always, "DEAD")
+
+    @override
+    def handle_fwd_message(self, msg: FWD_MESSAGE) -> None:
+        BaseAgent.log(LogLevels.Always, f"FWD MESSAGE: {msg}")
+        BaseAgent.log(LogLevels.Test, f"{msg}")
+
+    @override
+    def handle_move_result(self, mr: MOVE_RESULT) -> None:
+        self.update_surround(mr.surround_info)
+
+    @override
+    def handle_observe_result(self, ovr: OBSERVE_RESULT) -> None:
+        world = self.get_world()
+        if world is None:
+            return
+
+        loc = ovr.grid_info.location
+        grid = world.get_grid_at(loc)
+        if grid is None:
+            return
+
+        self.update_top_layer(grid, ovr.grid_info.top_layer_info)
+
+    @override
+    def handle_save_surv_result(self, ssr: SAVE_SURV_RESULT) -> None:
+        self.update_surround(ssr.surround_info)
+
+    @override
+    def handle_predict_result(self, prd: PREDICT_RESULT) -> None:
+        BaseAgent.log(LogLevels.Always, f"PREDICTION_RESULT: {prd}")
+        BaseAgent.log(LogLevels.Test, f"{prd}")
+
+    @override
+    def handle_sleep_result(self, sr: SLEEP_RESULT) -> None:
+        BaseAgent.log(LogLevels.Always, f"SLEEP_RESULT: {sr}")
+        BaseAgent.log(LogLevels.Test, f"{sr}")
+
+    @override
+    def handle_team_dig_result(self, tdr: TEAM_DIG_RESULT) -> None:
+        self.update_surround(tdr.surround_info)
+
+    @override
+    def think(self) -> None:
+        BaseAgent.log(LogLevels.Always, "Thinking")
+
+        # Send a Direction.CENTER to get surrounding info to start pathfinding.
+        if self._round == 1:
+            self.send_and_end_turn(MOVE(Direction.CENTER))
+            return
+
+        world = self.get_world()
+        if world is None:
+            return
+
+        if self._agent.get_prediction_info_size() > 0:
+            surv_id, image, _ = self._agent.get_prediction_info()
+            if image is not None:
+                predicted_label = self._predict(image)
+                self.send_and_end_turn(PREDICT(surv_id, predicted_label))
+                return
+
+        loc = self.get_best_location(world)
+        if loc == self._agent.get_location():
+            grid = world.get_grid_at(loc)
+            if grid is None:
+                return
+
+            top_layer = grid.get_top_layer()
+            if top_layer is None:
+                self.send_and_end_turn(OBSERVE(loc))
+                return
+
+            if isinstance(top_layer, NoLayers):
+                grid.percent_chance = 0
+                self.send_and_end_turn(self.move(world, loc))
+                return
+
+            if isinstance(top_layer, Survivor) or isinstance(top_layer, SurvivorGroup):
+                self.send_and_end_turn(SAVE_SURV())
+            else:
+                self.send_and_end_turn(TEAM_DIG())
+            return
+
+        self.send_and_end_turn(self.move(world, loc))
+
+    def send_and_end_turn(self, command: AgentCommand):
+        BaseAgent.log(LogLevels.Always, f"SENDING {command}")
+        self._agent.send(command)
+        self._agent.send(END_TURN())
+        self._round += 1
+
+    def move(self, world: World, loc: Location) -> MOVE:
+        path = Pathfinder().a_star(world, self._agent, self._agent.get_location(), loc)
+        if not path:
+            return MOVE(Direction.CENTER)
+        return MOVE(path[0])
+
+    def get_best_location(self, world: World) -> Location:
+        best_grid = world.get_world_grid()[0][0]
+        for x in range(world.width):
+            for y in range(world.height):
+                grid = world.get_grid_at(Location(x, y))
+                if grid is None:
+                    continue
+
+                if grid.percent_chance > best_grid.percent_chance:
+                    best_grid = grid
+
+        return best_grid.location
+
+    def update_surround(self, surround_info: SurroundInfo):
+        world = self.get_world()
+        if world is None:
+            return
+
+        for dir in Direction:
+            grid_info = surround_info.get_surround_info(dir)
+            if grid_info is None:
+                continue
+
+            grid = world.get_grid_at(grid_info.location)
+            if grid is None:
+                continue
+
+            grid.move_cost = grid_info.move_cost
+            self.update_top_layer(grid, grid_info.top_layer_info)
+
+    def update_top_layer(self, grid: Grid, top_layer: WorldObjectInfo | NoLayersInfo):
+        if isinstance(top_layer, SurvivorInfo):
+            layer = Survivor(
+                top_layer.id,
+                top_layer.energy_level,
+                top_layer.damage_factor,
+                top_layer.body_mass,
+                top_layer.mental_state,
+            )
+            grid.set_top_layer(layer)
+        elif isinstance(top_layer, SurvivorGroupInfo):
+            layer = SurvivorGroup(
+                top_layer.id, top_layer.energy_level, top_layer.number_of_survivors
+            )
+            grid.set_top_layer(layer)
+        elif isinstance(top_layer, RubbleInfo):
+            layer = Rubble(
+                top_layer.id, top_layer.remove_energy, top_layer.remove_agents
+            )
+            grid.set_top_layer(layer)
+        else:
+            grid.set_top_layer(NoLayers())
+
+    def _predict(self, image: NDArray[np.float32]) -> np.int64:
+        expected_shape = (28, 28)
+        if image.shape != expected_shape:
+            image = np.reshape(image, expected_shape)
+        image = np.expand_dims(image, axis=0)
+
+        prediction = self._model.predict(image, verbose=0)  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+        return np.argmax(prediction)  # pyright: ignore[reportUnknownArgumentType]

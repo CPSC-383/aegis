@@ -1,0 +1,103 @@
+site_name: AEGIS Docs
+docs_dir: docs
+site_dir: ../aegis-documentation
+
+plugins:
+  - mkdocstrings
+
+theme:
+  name: "material"
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+      primary: teal
+      accent: light blue
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+      primary: teal
+      accent: light blue
+  font:
+    text: Varela Round
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  features:
+    - header.autohide
+
+extra:
+  generator: false
+
+nav:
+  - Home: index.md
+  - Aegis:
+      - Installation Guide: aegis/installation-guide.md
+      - Aegis System: aegis/aegis-system.md
+      - Agents: aegis/agents.md
+      - Client: aegis/client.md
+      - Running Aegis: aegis/running-aegis.md
+  - Documentation:
+      - Common:
+          - AgentID: common/agent-id.md
+          - AgentIDList: common/agent-id-list.md
+          - Direction: common/direction.md
+          - Location: common/location.md
+          - LifeSignals: common/life-signals.md
+          - Constants: common/constants.md
+          - Utility: common/utility.md
+      - World:
+          - World: world/world.md
+          - Grid: world/grid.md
+          - WorldObjects:
+              - WorldObject: world/objects/world-object.md
+              - Survivor: world/objects/survivor.md
+              - SurvivorGroup: world/objects/survivor-group.md
+              - Rubble: world/objects/rubble.md
+              - NoLayers: world/objects/no-layers.md
+          - WorldObjectsInfo:
+              - WorldObjectInfo: world/info/world-object-info.md
+              - SurvivorInfo: world/info/survivor-info.md
+              - SurvivorGroupInfo: world/info/survivor-group-info.md
+              - RubbleInfo: world/info/rubble-info.md
+              - NoLayersInfo: world/info/no-layers-info.md
+              - GridInfo: world/info/grid-info.md
+              - SurroundInfo: world/info/surround-info.md
+      - Commands:
+          - Agent Commands:
+              - AgentCommand: agent_commands/agent-command.md
+              - AgentUnknown: agent_commands/agent-unknown.md
+              - Connect: agent_commands/connect.md
+              - EndTurn: agent_commands/end-turn.md
+              - Move: agent_commands/move.md
+              - Observe: agent_commands/observe.md
+              - Predict: agent_commands/predict.md
+              - SaveSurv: agent_commands/save-surv.md
+              - SendMessage: agent_commands/send-message.md
+              - Sleep: agent_commands/sleep.md
+              - TeamDig: agent_commands/team-dig.md
+          - Aegis Commands:
+              - AegisUnknown: aegis_commands/aegis-unknown.md
+              - CmdResultStart: aegis_commands/cmd-result-start.md
+              - CmdResultEnd: aegis_commands/cmd-result-end.md
+              - ConnectOK: aegis_commands/connect-ok.md
+              - DeathCard: aegis_commands/death-card.md
+              - Disconnect: aegis_commands/disconnect.md
+              - FwdMessage: aegis_commands/fwd-message.md
+              - MessagesStart: aegis_commands/messages-start.md
+              - MessagesEnd: aegis_commands/messages-end.md
+              - MoveResult: aegis_commands/move-result.md
+              - ObserveResult: aegis_commands/observe-result.md
+              - PredictResult: aegis_commands/predict-result.md
+              - RoundStart: aegis_commands/round-start.md
+              - RoundEnd: aegis_commands/round-end.md
+              - SaveSurvResult: aegis_commands/save-surv-result.md
+              - SleepResult: aegis_commands/sleep-result.md
+              - TeamDigResult: aegis_commands/team-dig-result.md
+      - Agent:
+          - BaseAgent: agent/base-agent.md
+          - Brain: agent/brain.md
+          - AgentStates: agent/agent-states.md
+          - LogLevels: agent/log-levels.md

@@ -1,0 +1,153 @@
+{
+  "settings": {
+    "world_info": {
+      "size": {
+        "width": 3,
+        "height": 3
+      },
+      "seed": 0,
+      "world_file_levels": {
+        "high": 0,
+        "mid": 0,
+        "low": 0
+      },
+      "agent_energy": 500
+    }
+  },
+  "spawn_locs": [
+    {
+      "x": 0,
+      "y": 0
+    },
+    {
+      "x": 2,
+      "y": 1
+    }
+  ],
+  "grid_types": {
+    "fire_grids": [
+      {
+        "x": 0,
+        "y": 2
+      }
+    ],
+    "killer_grids": [
+      {
+        "x": 2,
+        "y": 0
+      }
+    ],
+    "charging_grids": [
+      {
+        "x": 1,
+        "y": 1
+      }
+    ]
+  },
+  "stacks": [
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 0
+      },
+      "move_cost": 3,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 2
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 0
+      },
+      "move_cost": 5,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 1
+      },
+      "move_cost": 5,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 2
+      },
+      "move_cost": 4,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 0
+      },
+      "move_cost": 5,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 1
+      },
+      "move_cost": 5,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 2
+      },
+      "move_cost": 5,
+      "contents": [
+        {
+          "type": "svg",
+          "arguments": {
+            "energy_level": 1,
+            "number_of_survivors": 100
+          }
+        },
+        {
+          "type": "rb",
+          "arguments": {
+            "remove_energy": 0,
+            "remove_agents": 0
+          }
+        },
+        {
+          "type": "rb",
+          "arguments": {
+            "remove_energy": 1,
+            "remove_agents": 1
+          }
+        },
+        {
+          "type": "sv",
+          "arguments": {
+            "energy_level": 0,
+            "damage_factor": 0,
+            "body_mass": 0,
+            "mental_state": 0
+          }
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,142 @@
+import { Simulation } from '@/simulation/simulation'
+import { drawAgent } from '@/utils/renderUtils'
+import { AgentInfoDict, GridCellDict } from '@/utils/types'
+import { useCallback, useEffect, useRef } from 'react'
+
+type Props = {
+    selectedCell: { x: number; y: number }
+    setSelectedAgent: (value: AgentInfoDict) => void
+    gridInfo: GridCellDict | undefined
+    agents: AgentInfoDict[]
+    simulation: Simulation
+}
+
+function GridPanel({ selectedCell, setSelectedAgent, gridInfo, agents, simulation }: Props) {
+    const canvasRefs = useRef<{ [key: number]: HTMLCanvasElement | null }>({})
+    const containerRef = useRef<HTMLDivElement | null>(null)
+
+    const groupedAgents = agents.reduce(
+        (acc, agent) => {
+            const { gid } = agent
+            acc[gid] = [...(acc[gid] || []), agent]
+            return acc
+        },
+        {} as { [key: number]: AgentInfoDict[] }
+    )
+
+    const renderAgentCanvas = useCallback((canvas: HTMLCanvasElement | null, gid: number, agents: AgentInfoDict[]) => {
+        if (!canvas) return
+
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        const agentSize = 32
+        const agentsPerRow = Math.floor(canvas.width / agentSize)
+
+        agents.forEach((_, i) => {
+            const col = i % agentsPerRow
+            const row = Math.floor(i / agentsPerRow)
+
+            const drawX = col * agentSize
+            const drawY = row * agentSize
+
+            drawAgent(ctx, gid, drawX, drawY, agentSize)
+        })
+    }, [])
+
+    const updateCanvasSize = useCallback(() => {
+        Object.keys(groupedAgents).forEach((gidStr) => {
+            const gid = parseInt(gidStr)
+            const canvas = canvasRefs.current[gid]
+            const agentList = groupedAgents[gid]
+
+            if (canvas && containerRef.current) {
+                const agentSize = 32
+                const containerWidth = containerRef.current.offsetWidth - 35
+                const agentsPerRow = Math.floor(containerWidth / agentSize)
+                const rows = Math.ceil(agentList.length / agentsPerRow)
+
+                canvas.width = containerWidth
+                canvas.height = rows * agentSize
+
+                renderAgentCanvas(canvas, gid, agentList)
+            }
+        })
+    }, [agents, renderAgentCanvas])
+
+    useEffect(() => {
+        updateCanvasSize()
+        window.addEventListener('resize', updateCanvasSize)
+        return () => window.removeEventListener('resize', updateCanvasSize)
+    }, [agents, selectedCell, simulation, updateCanvasSize, renderAgentCanvas])
+
+    const handleAgentCanvasClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+        const container = containerRef.current
+        if (!container || !simulation) return
+
+        const agentSize = 32
+        Object.values(canvasRefs.current).forEach((canvas, i) => {
+            if (canvas === e.currentTarget) {
+                const rect = canvas.getBoundingClientRect()
+
+                const x = Math.floor((e.clientX - rect.left) / agentSize)
+                const y = Math.floor((e.clientY - rect.top) / agentSize)
+
+                const agents = groupedAgents[i + 1]
+                const id = x + y
+
+                if (id >= agents.length) return
+
+                const selectedAgent = agents[id]
+                setSelectedAgent(selectedAgent)
+                return
+            }
+        })
+    }
+    return (
+        <div>
+            <h2 className="text-xl font-bold text-center mb-4">
+                Location: ({selectedCell.x}, {selectedCell.y})
+            </h2>
+
+            <section className="m-2">
+                <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Grid Info</h3>
+                <div className="py-2">
+                    {gridInfo ? (
+                        <div className="space-y-2">
+                            <div>Grid Type: {gridInfo.grid_type.replace(/\w*\./, '')}</div>
+                            <div>Move Cost: {gridInfo.stack.move_cost}</div>
+                        </div>
+                    ) : (
+                        <p className="text-gray-500">No grid information available.</p>
+                    )}
+                </div>
+            </section>
+
+            <section className="m-2">
+                <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Agents</h3>
+                <div className="py-2">
+                    {agents.length === 0 ? (
+                        <p className="text-gray-500">No agents in this cell.</p>
+                    ) : (
+                        <div ref={containerRef} className="space-y-2">
+                            {Object.keys(groupedAgents).map((gid) => (
+                                <div key={gid} className="flex items-center">
+                                    <span className="mr-2">{gid}:</span>
+                                    <canvas
+                                        ref={(el) => (canvasRefs.current[parseInt(gid)] = el)}
+                                        onClick={handleAgentCanvasClick}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+        </div>
+    )
+}
+
+export default GridPanel
