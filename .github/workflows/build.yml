@@ -63,7 +63,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Clean client
+        run: rm -rf client/*
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./client/packed-client
+          path: ./client/
+
+      - name: Zip repo
+        run: zip -r aegis.zip ./*
+
+      - name: Create release
+        uses: actions/create-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: aegis.zip
