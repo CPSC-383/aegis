@@ -32,6 +32,7 @@ jobs:
       - name: Zip Linux
         if: startsWith(matrix.os, 'ubuntu')
         run: zip -j packed-client/linux-client.zip packed-client/*.AppImage
+        working-directory: ./client
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
