@@ -11,7 +11,8 @@
         "build:pack": "npm run build && electron-builder build --publish never",
         "build:pack:win": "npm run build && electron-builder build --win --publish never",
         "build:pack:mac": "npm run build && electron-builder build --mac --publish never",
-        "build:pack:linux": "npm run build && electron-builder build --linux --publish never"
+        "build:pack:linux": "npm run build && electron-builder build --linux --publish never && npm run zip-appimage",
+        "zip-appimage": "zip -j ./client/dist/linux-client.zip ./client/dist/*.AppImage"
     },
     "build": {
         "appId": "com.electron.app",
