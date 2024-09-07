@@ -9,8 +9,13 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        platform: [mac, win, linux]
+        include:
+          - os: "macos-latest"
+            platform: "mac"
+          - os: "ubuntu-latest"
+            platform: "linux"
+          - os: "windows-latest"
+            platform: "win"
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out code
