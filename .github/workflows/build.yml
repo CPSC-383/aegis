@@ -26,8 +26,12 @@ jobs:
         working-directory: ./client
 
       - name: Build app
-        run: npm run build:pack:${{ matrix.platform }}
+        run: npm run build:pack
         working-directory: ./client
+
+      - name: Zip Linux
+        if: startsWith(matrix.os, "ubuntu")
+        run: zip -j packed-client/linux-client.zip packed-client/*.AppImage
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
