@@ -1,0 +1,37 @@
+name: Build Electron App
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        platform: [mac, win, linux]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./client
+
+      - name: Build app
+        run: npm run build:pack:${{ matrix.platform }}
+        working-directory: ./client
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.platform }}-client
+          path: |
+            ./client/packed-client/*.zip
