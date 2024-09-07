@@ -43,7 +43,7 @@
             "category": "public.app-category.games",
             "target": [
                 {
-                    "target": "zip",
+                    "target": "dir",
                     "arch": [
                         "universal"
                     ]

@@ -1,4 +1,4 @@
-name: Build Electron App
+name: Build Client
 
 on:
   push:
@@ -36,7 +36,17 @@ jobs:
 
       - name: Zip Linux
         if: startsWith(matrix.os, 'ubuntu')
-        run: zip -j packed-client/linux-client.zip packed-client/*.AppImage
+        run: 7z a packed-client/linux-client.zip packed-client/*.AppImage
+        working-directory: ./client
+
+      - name: Zip Mac
+        if: startsWith(matrix.os, 'macos')
+        run: 7z a packed-client/mac-client.zip packed-client/mac-universal/*.app
+        working-directory: ./client
+
+      - name: Zip Windows
+        if: startsWith(matrix.os, 'windows')
+        run: 7z a packed-client/win-client.zip packed-client/*.exe
         working-directory: ./client
 
       - name: Upload Artifact
