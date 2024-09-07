@@ -18,7 +18,7 @@ jobs:
             platform: "win"
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -55,3 +55,15 @@ jobs:
           name: ${{ matrix.platform }}-client
           path: |
             ./client/packed-client/*.zip
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./client/packed-client
