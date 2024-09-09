@@ -43,7 +43,10 @@ def run_aegis(curr_dir: str, agent_amount: int, rounds: int, world_file: str) ->
 
 def main(agent_amount: int, rounds: int, world_file: str, agentt: str) -> None:
     curr_dir = os.path.dirname(os.path.realpath(__file__))
+    # # print(curr_dir)
     os.environ["PYTHONPATH"] = os.path.join(curr_dir, "src")
+    os.environ["PYTHONPATH"] += os.pathsep + os.path.join(curr_dir, ".venv", "Lib", "site-packages")
+    
 
     with ThreadPoolExecutor(max_workers=agent_amount + 1) as exec:
         _ = exec.submit(run_aegis, curr_dir, agent_amount, rounds, world_file)
