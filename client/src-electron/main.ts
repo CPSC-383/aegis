@@ -60,18 +60,19 @@ function kill() {
 //
 // Also check if someone is using venv (not the best way but it works)
 const venvPath = process.env.VIRTUAL_ENV
-const isUsingVenv = venvPath ? true : false
+const isUsingVenv = !!venvPath
 
-let PYTHON_EXEC =
-    process.platform === 'win32'
-        ? 'python'
-        : process.platform === 'darwin' && !isUsingVenv
-          ? '/usr/local/bin/python3'
-          : 'python3'
+let pythonExec = 'python3'
+let pythonFolder = 'bin'
 
-let PYTHON_FOLDER = process.platform === 'win32' ? 'Scripts' : 'bin'
+if (process.platform === 'win32') {
+    pythonExec = 'python'
+    pythonFolder = 'Scripts'
+} else if (process.platform === 'darwin' && !isUsingVenv) {
+    pythonExec = '/usr/local/bin/python3'
+}
 
-if (isUsingVenv) PYTHON_EXEC = `${venvPath}/${PYTHON_FOLDER}/${PYTHON_EXEC}`
+const PYTHON_EXEC = isUsingVenv ? path.join(venvPath, pythonFolder, pythonExec) : pythonExec
 
 ipcMain.handle('electronAPI', async (event, command, ...args) => {
     switch (command) {
