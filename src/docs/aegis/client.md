@@ -6,6 +6,22 @@ features and functionality to help you get started.
 The client is built with Electron, so it works just like any other 
 desktop application on your computer.
 
+**MAKE SURE TO START THE CLIENT FROM THE TERMINAL.**
+
+Inside the `client` directory:
+
+On mac:
+
+`open client.app`
+
+On windows:
+
+`.\aegis-client.exe`
+
+On linux:
+
+`./aegis-client.AppImage`
+
 Once you start up the client, your client will look something like this:
 
 ![Setup Path](../assets/setup_path.png)

@@ -38,9 +38,12 @@ Before you begin, ensure you have the following:
 
                 `.venv\Scripts\activate`
 
-        - Install the required packages:
+        - Run the setup script:
             
-            `pip install -r requirements.txt`
+            `python setup.py`
+
+            If the script ran properly, the required packages should have been installed and the client for your platform
+            should be in the `client` folder.
        
         When you're done working in the virtual environment, you can deactivate it by running the following:
 
@@ -49,10 +52,7 @@ Before you begin, ensure you have the following:
     Using a virtual environment is recommended to avoid conflicts with other Python projects and system-wide packages.
     You must activate the virtual environment everytime you start working on the code.
 
-4. **Installing the client**
-    - Navigate to the `client` folder and unzip the client for your specific platform.
-    
-5. **You have now completed the installation process.**
+4. **You have now completed the installation process.**
 
 ## File Structure
 - Place new worlds in the `worlds` directory. The client will not be able to find them if they are stored elsewhere.
