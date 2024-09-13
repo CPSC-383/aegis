@@ -1,0 +1,55 @@
+name: Build Documentation
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install mkdocs mkdocs-material "mkdocstrings[python]"
+
+      - name: Build Documentations
+        run: mkdocs build
+        working-directory: ./src
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: |
+            ./aegis-documentation/
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with: ./aegis-documentation/
+
+      - name: Zip repo
+        run: zip -r docs.zip ./aegis-documentation/
+
+      - name: Create release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: docs.zip
+          tag: ${{ github.ref_name }}
