@@ -6,7 +6,6 @@ import queue
 import random
 from typing import TypedDict, cast
 
-from aegis.a1_config import MOVE_COST_TOGGLE
 from aegis.assist.state import State
 from aegis.common import AgentID, AgentIDList, Constants, Direction, Location, Utility
 from aegis.common.world.agent import Agent
@@ -65,6 +64,11 @@ class WorldDict(TypedDict):
     number_of_survivors_dead: int
     number_of_survivors_saved_alive: int
     number_of_survivors_saved_dead: int
+
+
+MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
+    "Enable_Move_Cost"
+]
 
 
 class AegisWorld:
