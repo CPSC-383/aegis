@@ -42,7 +42,8 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        with: ./aegis-documentation/
+        with:
+          path: ./aegis-documentation/
 
       - name: Zip repo
         run: zip -r docs.zip ./aegis-documentation/
