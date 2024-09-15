@@ -12,6 +12,7 @@ const createWindow = () => {
         height: 800,
         // resizable: false,
         autoHideMenuBar: true,
+        title: 'AEGIS',
         webPreferences: {
             devTools: is.dev,
             preload: path.join(__dirname, '../preload/index.js')

@@ -14,8 +14,8 @@
         "build:pack:linux": "npm run build && electron-builder build --linux --publish never"
     },
     "build": {
-        "appId": "com.electron.app",
-        "productName": "client",
+        "appId": "com.aegis.app",
+        "productName": "AEGIS",
         "compression": "store",
         "directories": {
             "output": "packed-client"
@@ -29,6 +29,7 @@
         ],
         "win": {
             "executableName": "client",
+            "icon": "./src/assets/goobs/goob.png",
             "target": [
                 {
                     "target": "portable",
@@ -41,6 +42,7 @@
         "mac": {
             "mergeASARs": false,
             "category": "public.app-category.games",
+            "icon": "./src/assets/goobs/goob.png",
             "target": [
                 {
                     "target": "dir",
@@ -51,6 +53,7 @@
             ]
         },
         "linux": {
+            "icon": "./src/assets/goobs/goob.png",
             "target": [
                 {
                     "target": "appImage",
