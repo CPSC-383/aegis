@@ -26,6 +26,50 @@ On Windows, replace `python3` with `python` to run the script.
 
 ### Via the Client 
 
+Make sure you open the client from the command line.
+
+```bash
+cd client
+```
+
+Windows:
+
+```bash
+.\aegis-client.exe
+```
+
+Mac:
+
+```bash
+open client.app
+```
+
+You might get the following error.
+
+![Mac Error](../assets/mac_error.png)
+
+To fix it you can do the following:
+
+```bash
+open .
+```
+
+![Mac Open](../assets/mac_open.png)
+
+![Mac Open Error](../assets/mac_open_error.png)
+
+Once the client opens, close it, and open it from terminal.
+
+```bash
+open client.app
+```
+
+Linux:
+
+```bash
+./aegis-client.AppImage
+```
+
 To run AEGIS in the client, go to the Aegis tab, select a world, set the number of agents and rounds and the `Start Up Game` button should
 be enabled. It should look like the following:
 
