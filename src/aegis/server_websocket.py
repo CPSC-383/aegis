@@ -86,22 +86,27 @@ class WebSocketServer:
 
     def start(self) -> None:
         """Run the server."""
+        if not self._wait_for_client:
+            return
+        
         self._server = WebsocketServer(self._host, self._port)
         self._server.set_fn_new_client(self._on_open)  # pyright: ignore[reportUnknownMemberType]
 
         self._queue_thread.start()
         self._server.run_forever(threaded=True)
 
-        if self._wait_for_client:
-            print("Waiting for connection from client...")
-            while not self._connected:
-                time.sleep(0.3)
+        print("Waiting for connection from client...")
+        while not self._connected:
+            time.sleep(0.3)
 
-            print("Connection received!")
+        print("Connection received!")
 
     def finish(self) -> None:
         """Send all queued events and shutdown the server."""
+        if not self._wait_for_client:
+            return
         self._done = True
+        print("shutting down server...")
         try:
             self._queue_thread.join()
             if self._server is not None:
