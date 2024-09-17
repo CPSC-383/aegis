@@ -20,6 +20,9 @@ Example:
 python3 run_headless_aegis_with_agents.py 2 50 example_agent ExampleWorld
 ```
 
+- The program will automatically append `.world` to the world file passed in.
+- Pass in the directory name of your agent.
+
 This will start up AEGIS with the ExampleWorld.world, using 2 example agents, and will run for 50 rounds.
 
 On Windows, replace `python3` with `python` to run the script.
@@ -69,6 +72,8 @@ Linux:
 ```bash
 ./aegis-client.AppImage
 ```
+
+Before you try running a game, head over to [Client](./client.md) to learn about the client features.
 
 To run AEGIS in the client, go to the Aegis tab, select a world, set the number of agents and rounds and the `Start Up Game` button should
 be enabled. It should look like the following:

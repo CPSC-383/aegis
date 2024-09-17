@@ -101,3 +101,4 @@ nav:
           - Brain: agent/brain.md
           - AgentStates: agent/agent-states.md
           - LogLevels: agent/log-levels.md
+  - Assignment 1 Config: a1_config.md

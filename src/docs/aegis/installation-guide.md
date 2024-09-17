@@ -73,6 +73,15 @@ src
 
 The client will not be able to locate the agents if they are stored elsewhere or if the `main.py` file is missing.
 
+### World Structure
+
+```bash
+worlds
+└── ExampleWorld.world
+```
+- Place new worlds in the `worlds` directory.
+- All world files must end with `.world`.
+
 Before you start using AEGIS, you need to understand how AEGIS and its agents function.
 
 Visit the [AEGIS System](aegis-system.md) to learn more.
