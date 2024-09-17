@@ -8,5 +8,6 @@
     "strategy": "ALL",
     "tie_strategy": "C_ALL"
   },
-  "Predictions": true
+  "Predictions": true,
+  "Enable_Move_Cost": true
 }

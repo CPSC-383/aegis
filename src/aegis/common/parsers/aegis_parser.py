@@ -1,10 +1,10 @@
+import json
 import os
 import re
 from collections.abc import Iterator
 from typing import TextIO
 
 import numpy as np
-from aegis.a1_config import MOVE_COST_TOGGLE
 from aegis.common import (
     AgentID,
     AgentIDList,
@@ -12,19 +12,6 @@ from aegis.common import (
     GridType,
     LifeSignals,
     Location,
-)
-from aegis.common.commands.agent_command import AgentCommand
-from aegis.common.commands.agent_commands import (
-    AGENT_UNKNOWN,
-    CONNECT,
-    END_TURN,
-    MOVE,
-    OBSERVE,
-    PREDICT,
-    SAVE_SURV,
-    SEND_MESSAGE,
-    SLEEP,
-    TEAM_DIG,
 )
 from aegis.common.commands.aegis_command import AegisCommand
 from aegis.common.commands.aegis_commands import (
@@ -46,6 +33,19 @@ from aegis.common.commands.aegis_commands import (
     SLEEP_RESULT,
     TEAM_DIG_RESULT,
 )
+from aegis.common.commands.agent_command import AgentCommand
+from aegis.common.commands.agent_commands import (
+    AGENT_UNKNOWN,
+    CONNECT,
+    END_TURN,
+    MOVE,
+    OBSERVE,
+    PREDICT,
+    SAVE_SURV,
+    SEND_MESSAGE,
+    SLEEP,
+    TEAM_DIG,
+)
 from aegis.common.commands.command import Command
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
 from aegis.common.world.grid import Grid
@@ -59,6 +59,10 @@ from aegis.common.world.info import (
     WorldObjectInfo,
 )
 from numpy.typing import NDArray
+
+MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
+    "Enable_Move_Cost"
+]
 
 
 class AegisParser:

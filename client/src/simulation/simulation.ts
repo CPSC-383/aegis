@@ -3,7 +3,7 @@ import { WorldMap } from './world-map'
 import { World, RoundData, AgentInfoDict, GridCellDict, StackContent } from '@/utils/types'
 
 export class Simulation {
-    private rounds: [World[], World[]] = [[], []]
+    private rounds: World[] = []
     // The maxRounds can be smaller than the amount of rounds set by the user.
     // (Sim ended early because all survivors were saved or agents all died) ((round sim ended))
     public maxRounds: number = 0
@@ -20,8 +20,7 @@ export class Simulation {
     addEvent(event: RoundData) {
         if (!event.event_type.startsWith('Round')) return
 
-        this.rounds[0].push(event.before_world)
-        this.rounds[1].push(event.after_world)
+        this.rounds.push(event.before_world)
         this.maxRounds++
 
         // This is to update the max rounds in the control bar
@@ -60,30 +59,21 @@ export class Simulation {
     renderNextRound() {
         if (this.simPaused || this.isGameOver()) return
 
-        const roundsIndex = this.renderingBefore ? 0 : 1
-
         if (this.currentRound < this.maxRounds) {
-            this.currentRoundData = this.rounds[roundsIndex][this.currentRound]
+            this.currentRoundData = this.rounds[this.currentRound]
         }
 
         const top_layer_rem_data = this.currentRoundData?.top_layer_rem_data
         if (top_layer_rem_data) dispatchEvent(EventType.RENDER_STACK, {})
 
         dispatchEvent(EventType.RENDER, {})
-
-        // Only go to next round when the before
-        // and end state of each round have been processed
-        if (roundsIndex === 1) this.currentRound++
-
-        this.renderingBefore = !this.renderingBefore
     }
 
     jumpToRound(round: number) {
         if (round === this.currentRound) return
 
         this.currentRound = Math.max(0, Math.min(round, this.maxRounds))
-        this.renderingBefore = true
-        this.currentRoundData = this.currentRoundData = this.rounds[0][this.currentRound]
+        this.currentRoundData = this.rounds[this.currentRound]
 
         // Rerender so timeline and game update if sim is paused
         dispatchEvent(EventType.RENDER, {})

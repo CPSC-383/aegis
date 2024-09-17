@@ -54,6 +54,9 @@ Before you begin, ensure you have the following:
 
 4. **You have now completed the installation process.**
 
+Make sure you can run AEGIS by following the steps [here](./running-aegis.md).
+
+
 ## File Structure
 - Place new worlds in the `worlds` directory. The client will not be able to find them if they are stored elsewhere.
 

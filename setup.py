@@ -31,8 +31,12 @@ def install_client():
     zip_path = f"./client/{name}-client/{name}-client.zip"
     extract_path = "./client/"
 
-    with zipfile.ZipFile(zip_path, "r") as z_file:
-        z_file.extractall(extract_path)
+    if name == "win":
+        with zipfile.ZipFile(zip_path, "r") as z_file:
+            z_file.extractall(extract_path)
+    else:
+        command = ["unzip", "-o", zip_path, "-d", extract_path]
+        _ = subprocess.run(command, check=True)
 
     delete_clients()
 
