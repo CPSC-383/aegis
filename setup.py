@@ -21,6 +21,13 @@ def delete_clients():
             shutil.rmtree(item_path)
 
 
+def client_is_installed(client_dir: str) -> bool:
+    for file in os.listdir(client_dir):
+        if file.endswith((".app", ".exe", ".AppImage")):
+            return True
+    return False
+
+
 def install_client():
     name = "win"
     if platform.system() == "Darwin":
@@ -30,6 +37,10 @@ def install_client():
 
     zip_path = f"./client/{name}-client/{name}-client.zip"
     extract_path = "./client/"
+
+    if client_is_installed(extract_path):
+        print("You're already setup.")
+        return
 
     if name == "win":
         with zipfile.ZipFile(zip_path, "r") as z_file:
