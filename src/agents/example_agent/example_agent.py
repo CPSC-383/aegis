@@ -30,9 +30,6 @@ from aegis.common.commands.aegis_commands import (
 class ExampleAgent(Brain):
     def __init__(self) -> None:
         super().__init__()
-        random.seed(12345)
-        self._random = random
-        self._round = 1
         self._agent = BaseAgent.get_base_agent()
         self._list: list[AgentCommand] = []
         self._list.append(SLEEP())
@@ -100,23 +97,61 @@ class ExampleAgent(Brain):
             if not (command.agent_id_list):
                 command.agent_id_list.add(AgentID(0, self._agent.get_agent_id().gid))
 
-        if isinstance(command, OBSERVE):
-            world = self.get_world()
-            if world is not None:
-                width = len(world.get_world_grid()[0])
-                x = self._random.randint(0, width - 1)
-                height = len(world.get_world_grid())
-                y = self._random.randint(0, height - 1)
-                command = OBSERVE(Location(x, y))
-        elif isinstance(command, MOVE):
-            world = self.get_world()
-            if world is not None:
-                width = len(world.get_world_grid()[0])
-                x = self._random.randint(0, width - 1)
-                height = len(world.get_world_grid())
-                y = self._random.randint(0, height - 1)
-                command = MOVE(Direction.get_random_direction())
-        BaseAgent.log(LogLevels.Always, f"Sending {command}")
+        # Send a Direction.CENTER to get surrounding info to start pathfinding.
+        if self._agent.get_round_number() == 1:
+            self.send_and_end_turn(MOVE(Direction.CENTER))
+            return
+
+        world = self.get_world()
+        if world is None:
+            self.send_and_end_turn(MOVE(Direction.CENTER))
+            return
+
+        grid = world.get_grid_at(self._agent.get_location())
+        if grid is None:
+            self.send_and_end_turn(MOVE(Direction.CENTER))
+            return
+
+        top_layer = grid.get_top_layer()
+        if top_layer:
+            self.send_and_end_turn(SAVE_SURV())
+            return
+
+        # Move north by default.
+        self.send_and_end_turn(MOVE(Direction.NORTH))
+
+    def send_and_end_turn(self, command):
+        """Send a command and end your turn."""
+        BaseAgent.log(LogLevels.Always, f"SENDING {command}")
         self._agent.send(command)
         self._agent.send(END_TURN())
-        self._round += 1
+
+    def update_surround(self, surround_info):
+        """Updates the current and surrounding grid cells of the agent."""
+        world = self.get_world()
+        if world is None:
+            return
+
+        for dir in Direction:
+            grid_info = surround_info.get_surround_info(dir)
+            if grid_info is None:
+                continue
+
+            grid = world.get_grid_at(grid_info.location)
+            if grid is None:
+                continue
+
+            grid.move_cost = grid_info.move_cost
+            self.update_top_layer(grid, grid_info.top_layer_info)
+
+    def update_top_layer(self, grid, top_layer):
+        """Updates the top layer of the grid. Converting WorldObjectInfo to WorldObject"""
+        if isinstance(top_layer, SurvivorInfo):
+            layer = Survivor(
+                top_layer.id,
+                top_layer.energy_level,
+                top_layer.damage_factor,
+                top_layer.body_mass,
+                top_layer.mental_state,
+            )
+            grid.set_top_layer(layer)

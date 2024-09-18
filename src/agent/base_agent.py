@@ -31,6 +31,7 @@ class BaseAgent:
 
     def __init__(self) -> None:
         """Initializes a BaseAgent instance."""
+        self._round = 0
         self._agent_state = AgentStates.CONNECTING
         self._id = AgentID(-1, -1)
         self._location = Location(-1, -1)
@@ -55,12 +56,16 @@ class BaseAgent:
         Args:
             agent_state: The new state for the agent.
         """
-        self.log(LogLevels.State_Changes, agent_state.name)
         self._agent_state = agent_state
+        self.log(LogLevels.Nothing, f"New State: {self._agent_state}")
 
     def get_agent_state(self) -> AgentStates:
         """Returns the state of the base agent."""
         return self._agent_state
+
+    def get_round_number(self) -> int:
+        """Returns the current round number of the simulation."""
+        return self._round
 
     def get_agent_id(self) -> AgentID:
         """Returns the ID of the base agent."""
@@ -184,9 +189,7 @@ class BaseAgent:
             else:
                 self.log(LogLevels.Error, "Failed to connect to AEGIS.")
         else:
-            self.log(
-                LogLevels.Error, "Multiple calls made to start method, ( call ignored )"
-            )
+            self.log(LogLevels.Error, "Multiple calls made to start method, ( call ignored )")
 
     def _connect_to_aegis(self, host: str, group_name: str) -> bool:
         """
@@ -205,9 +208,7 @@ class BaseAgent:
                 self._aegis_socket.send_message(str(CONNECT(group_name)))
                 message = self._aegis_socket.read_message()
                 if message is not None and self._brain is not None:
-                    self._brain.handle_aegis_command(
-                        AegisParser.parse_aegis_command(message)
-                    )
+                    self._brain.handle_aegis_command(AegisParser.parse_aegis_command(message))
                 if self.get_agent_state() == AgentStates.CONNECTED:
                     result = True
             except AegisParserException as e:
@@ -240,6 +241,7 @@ class BaseAgent:
                                 self._brain.handle_aegis_command(aegis_command)
                                 agent_state = self._agent_state
                                 if agent_state == AgentStates.THINK:
+                                    self._round += 1
                                     self._brain.think()
                                 elif agent_state == AgentStates.SHUTTING_DOWN:
                                     end = True
@@ -249,9 +251,7 @@ class BaseAgent:
                             f"Got AegisParserException '{e}'",
                         )
             except AegisSocketException as e:
-                self.log(
-                    LogLevels.Always, f"Got AegisSocketException '{e}', shutting down."
-                )
+                self.log(LogLevels.Always, f"Got AegisSocketException '{e}', shutting down.")
                 end = True
 
         if self._aegis_socket is not None:
@@ -310,7 +310,8 @@ class BaseAgent:
             message: The message to log.
         """
         agent_id = cls.get_base_agent()._id
-        id_str = f"[Agent#({agent_id.id}:{agent_id.gid})]"
+        id_str = f"[Agent#({agent_id.id}:{agent_id.gid})]@{cls.get_base_agent()._round}"
+
         if lev == LogLevels.Test and BaseAgent._log_test:
             print(f"{id_str}: {lev} : {message}")
         elif lev == LogLevels.Always:
