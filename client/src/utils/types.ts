@@ -107,7 +107,6 @@ export type World = {
 export type RoundData = {
     event_type: string
     round: number
-    before_world: World
     after_world: World
 }
 

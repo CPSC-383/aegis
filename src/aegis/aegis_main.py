@@ -367,7 +367,6 @@ class Aegis:
             ReplayFileWriter.write_string(agent_commands_message)
 
             self._process_commands()
-            before_json_world = self.get_aegis_world().convert_to_json()
             self._create_results()
             self._run_simulators()
             self._grim_reaper()
@@ -378,7 +377,6 @@ class Aegis:
             round_data = {
                 "event_type": "Round",
                 "round": round,
-                "before_world": before_json_world,
                 "after_world": after_json_world,
             }
             event = json.dumps(round_data).encode()

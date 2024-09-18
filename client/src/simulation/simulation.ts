@@ -8,7 +8,6 @@ export class Simulation {
     // (Sim ended early because all survivors were saved or agents all died) ((round sim ended))
     public maxRounds: number = 0
     public currentRound: number = 0
-    private renderingBefore: boolean = true
     public currentRoundData?: World
     public worldMap: WorldMap
     private simPaused: boolean = false
@@ -20,7 +19,7 @@ export class Simulation {
     addEvent(event: RoundData) {
         if (!event.event_type.startsWith('Round')) return
 
-        this.rounds.push(event.before_world)
+        this.rounds.push(event.after_world)
         this.maxRounds++
 
         // This is to update the max rounds in the control bar
@@ -61,6 +60,7 @@ export class Simulation {
 
         if (this.currentRound < this.maxRounds) {
             this.currentRoundData = this.rounds[this.currentRound]
+            this.currentRoundData
         }
 
         const top_layer_rem_data = this.currentRoundData?.top_layer_rem_data
@@ -73,7 +73,7 @@ export class Simulation {
         if (round === this.currentRound) return
 
         this.currentRound = Math.max(0, Math.min(round, this.maxRounds))
-        this.currentRoundData = this.rounds[this.currentRound]
+        this.currentRoundData = this.currentRoundData = this.rounds[this.currentRound]
 
         // Rerender so timeline and game update if sim is paused
         dispatchEvent(EventType.RENDER, {})
