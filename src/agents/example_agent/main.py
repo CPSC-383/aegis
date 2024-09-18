@@ -7,10 +7,10 @@ from agents.example_agent.example_agent import ExampleAgent
 
 def main() -> None:
     if len(sys.argv) == 1:
-        BaseAgent.set_log_level(LogLevels.All)
+        BaseAgent.set_log_level(LogLevels.Error)
         BaseAgent.get_base_agent().start_test(ExampleAgent())
     elif len(sys.argv) == 2:
-        BaseAgent.set_log_level(LogLevels.All)
+        BaseAgent.set_log_level(LogLevels.Error)
         BaseAgent.get_base_agent().start_with_group_name(sys.argv[1], ExampleAgent())
     elif len(sys.argv) == 3:
         BaseAgent.set_log_level(LogLevels.All)
