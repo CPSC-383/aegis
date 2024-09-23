@@ -109,17 +109,17 @@ class AegisParser:
         charging = tokens[4]
         percent_chance = int(tokens[5])
         grid = Grid(x, y)
+
+        grid.set_normal_grid()
         grid.set_on_fire(fire[0] == "+")
 
         if killer[0] == "+":
             grid.set_killer()
-        else:
-            grid.set_stable()
+            grid.set_killer_grid()
 
         if charging[0] == "+":
             grid.set_charging_grid()
-        else:
-            grid.set_normal_grid()
+
         grid.percent_chance = percent_chance
 
         if MOVE_COST_TOGGLE:

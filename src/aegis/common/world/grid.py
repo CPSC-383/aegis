@@ -120,6 +120,10 @@ class Grid:
         """Sets the grid type to CHARGING_GRID."""
         self._type = GridType.CHARGING_GRID
 
+    def set_killer_grid(self) -> None:
+        """Sets the grid type to KILLER_GRID."""
+        self._type = GridType.KILLER_GRID
+
     def is_stable(self) -> bool:
         """
         Checks if the grid state is STABLE_GRID.
@@ -214,9 +218,11 @@ class Grid:
         if on_fire:
             self._on_fire = on_fire
             self._state = _State.KILLER_GRID
+            self._type = GridType.FIRE_GRID
         else:
             self._on_fire = on_fire
             self._state = _State.STABLE_GRID
+            self._type = GridType.NORMAL_GRID
 
     def get_grid_info(self) -> GridInfo:
         """Returns a GridInfo instance representing the current state of the grid."""
