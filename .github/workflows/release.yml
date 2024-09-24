@@ -79,11 +79,13 @@ jobs:
           path: ./client/
 
       - name: Zip repo
-        run: zip -r aegis.zip ./*
+        run: |
+          cd ..
+          zip -r aegis.zip $(basename $GITHUB_WORKSPACE)
 
       - name: Create release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: aegis.zip
+          file: ../aegis.zip
           tag: ${{ github.ref_name }}

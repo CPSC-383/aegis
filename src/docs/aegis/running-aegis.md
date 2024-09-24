@@ -11,13 +11,13 @@ To run AEGIS in the command line, use the `run_headless_aegis_with_agents.py` sc
 The usage of the python script is shown below:
 
 ```bash
-python3 run_headless_aegis_with_agents.py <agent amount> <num of rounds> <agent directory> <world file>
+python run_headless_aegis_with_agents.py <agent amount> <num of rounds> <agent directory> <world file>
 ```
 
 Example:
 
 ```bash
-python3 run_headless_aegis_with_agents.py 2 50 example_agent ExampleWorld
+python run_headless_aegis_with_agents.py 2 50 example_agent ExampleWorld
 ```
 
 - The program will automatically append `.world` to the world file passed in.
@@ -25,7 +25,7 @@ python3 run_headless_aegis_with_agents.py 2 50 example_agent ExampleWorld
 
 This will start up AEGIS with the ExampleWorld.world, using 2 example agents, and will run for 50 rounds.
 
-On Windows, replace `python3` with `python` to run the script.
+If you installed packages globally on Mac or Linux, you might have to use `python3` instead of `python`.
 
 ### Via the Client 
 

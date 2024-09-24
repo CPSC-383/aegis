@@ -326,7 +326,6 @@ class Aegis:
                 break
 
             self._aegis_world.round = round
-            print(f"Aegis  : Round: {round}")
 
             if self._state == State.SHUT_DOWN:
                 print("Aegis  : AEGIS has shutdown.")
