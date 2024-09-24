@@ -233,23 +233,25 @@ class AegisWorld:
                         choice = Utility.next_boolean()
                         percent = 0
 
+
                         if grid.number_of_survivors() <= 0:
                             percent = 0
-                        elif grid.number_of_survivors() <= self._low_survivor_level:
-                            if choice:
-                                percent = Utility.random_in_range(0, 5)
-                            else:
-                                percent = 5 + Utility.random_in_range(0, 5)
-                        elif grid.number_of_survivors() <= self._mid_survivor_level:
-                            if choice:
-                                percent = 15 + Utility.random_in_range(0, 10)
-                            else:
-                                percent = 25 + Utility.random_in_range(0, 15)
                         else:
-                            if choice:
-                                percent = 15 + Utility.random_in_range(0, 35)
+                            if grid.number_of_survivors() <= self._low_survivor_level:
+                                if choice:
+                                    percent = Utility.random_in_range(0, 5)
+                                else:
+                                    percent = 5 + Utility.random_in_range(0, 5)
+                            elif grid.number_of_survivors() <= self._mid_survivor_level:
+                                if choice:
+                                    percent = 15 + Utility.random_in_range(0, 10)
+                                else:
+                                    percent = 25 + Utility.random_in_range(0, 15)
                             else:
-                                percent = 50 + Utility.random_in_range(0, 40)
+                                if choice:
+                                    percent = 15 + Utility.random_in_range(0, 35)
+                                else:
+                                    percent = 50 + Utility.random_in_range(0, 40)
 
                         fire = "+F" if grid.is_on_fire() else "-F"
                         killer = "+K" if grid.is_killer() else "-K"
