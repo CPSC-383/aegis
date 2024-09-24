@@ -4,24 +4,24 @@ This section will cover the basic information about downloading and installing A
 
 Before you begin, ensure you have the following:
 
-- Python 3.10 or greater
+- Python 3.12 or greater
     - Once installed, verify that you have the correct python version by running the following in your terminal:
 
         `python --version`
 
-        Ensure it returns Python 3.10 or greater.
+        Ensure it returns Python 3.12 or greater.
 
 ## Installation
 
 1. **Download the project**
     - Download the ZIP file and unzip it with your preferred method.
 
-    If successful, a new directory called AEGIS should have been created.
+    If successful, a new directory called `aegis` should have been created.
 
 2. **Navigate to the project directory**
     - Move into the newly created directory:
 
-        `cd AEGIS`
+        `cd aegis`
 
 3. **Installing required Python packages**
     - **Installing the required Python Packages into a virtual environment**:

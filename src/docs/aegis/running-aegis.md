@@ -44,7 +44,7 @@ Windows:
 Mac:
 
 ```bash
-open client.app
+open AEGIS.app
 ```
 
 You might get the following error.
@@ -64,7 +64,7 @@ open .
 Once the client opens, close it, and open it from terminal.
 
 ```bash
-open client.app
+open AEGIS.app
 ```
 
 Linux:
