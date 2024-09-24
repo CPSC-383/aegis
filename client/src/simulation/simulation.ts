@@ -60,12 +60,11 @@ export class Simulation {
 
         if (this.currentRound < this.maxRounds) {
             this.currentRoundData = this.rounds[this.currentRound]
-            this.currentRoundData
+            this.currentRound++
         }
 
         const top_layer_rem_data = this.currentRoundData?.top_layer_rem_data
         if (top_layer_rem_data) dispatchEvent(EventType.RENDER_STACK, {})
-
         dispatchEvent(EventType.RENDER, {})
     }
 
