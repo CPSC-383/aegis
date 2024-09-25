@@ -1,15 +1,6 @@
 import { useAppContext } from '@/context'
 import { EventType, listenEvent, dispatchEvent } from '@/events'
-import {
-    BrushType,
-    Location,
-    RubbleInfo,
-    SpecialGridBrushTypes,
-    Stack,
-    StackContentBrushTypes,
-    SurvivorGroupInfo,
-    SurvivorInfo
-} from '@/utils/types'
+import { BrushType, Location, SpecialGridBrushTypes, Stack, StackContentBrushTypes, SurvivorInfo } from '@/utils/types'
 import { useState } from 'react'
 import NumberInput from '../inputs/NumberInput'
 
@@ -22,11 +13,6 @@ function MapBrushes() {
     const [moveCost, setMoveCost] = useState<number>(2)
     const [gid, setGid] = useState<number>(0)
     const [stackType, setStackType] = useState<StackContentBrushTypes>(StackContentBrushTypes.Survivor)
-    const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({ remove_energy: 0, remove_agents: 0 })
-    const [survivorGroupInfo, setSurvivorGroupInfo] = useState<SurvivorGroupInfo>({
-        energy_level: 0,
-        number_of_survivors: 1
-    })
     const [survivorInfo, setSurvivorInfo] = useState<SurvivorInfo>({
         energy_level: 0,
         body_mass: 0,
@@ -49,6 +35,19 @@ function MapBrushes() {
         const grid = stacks.find((g) => g.grid_loc.x === tile.x && g.grid_loc.y === tile.y)
         const isGridOccupied = isOccupied(killerGrids) || isOccupied(fireGrids) || isOccupied(chargingGrids)
 
+        // Only allow one agent on the world
+        const hasOneAgent = () => {
+            let agentCount = 0
+
+            for (const grid of stacks) {
+                if (grid.contents) {
+                    const agents = grid.contents.filter((item) => item.type === 'sv')
+                    agentCount += agents.length
+                }
+            }
+            return agentCount === 1
+        }
+
         switch (brushType) {
             case BrushType.SpecialGrids:
                 if (grid && grid.contents.length > 0) break
@@ -58,6 +57,7 @@ function MapBrushes() {
                 handleMoveCost(grid, rightClicked)
                 break
             case BrushType.StackContents:
+                if (hasOneAgent() && !rightClicked) return
                 handleStackContentBrush(isGridOccupied, rightClicked, grid)
                 break
             case BrushType.Empty:
@@ -151,18 +151,6 @@ function MapBrushes() {
 
     const addStackcontent = (grid: Stack) => {
         switch (stackType) {
-            case StackContentBrushTypes.Rubble:
-                grid.contents.push({
-                    type: 'rb',
-                    arguments: rubbleInfo
-                })
-                break
-            case StackContentBrushTypes.SurvivorGroup:
-                grid.contents.push({
-                    type: 'svg',
-                    arguments: survivorGroupInfo
-                })
-                break
             case StackContentBrushTypes.Survivor:
                 grid.contents.push({
                     type: 'sv',
@@ -235,60 +223,7 @@ function MapBrushes() {
                         className="bg-white p-2 w-full border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
                     >
                         <option value={StackContentBrushTypes.Survivor}>Survivor Brush</option>
-                        <option value={StackContentBrushTypes.SurvivorGroup}>Survivor Group Brush</option>
-                        <option value={StackContentBrushTypes.Rubble}>Rubble Brush</option>
                     </select>
-                    {stackType === StackContentBrushTypes.Rubble && (
-                        <div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Remove Energy:</p>
-                                <NumberInput
-                                    value={rubbleInfo.remove_energy}
-                                    onChange={(newEnergy) => setRubbleInfo({ ...rubbleInfo, remove_energy: newEnergy })}
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Remove Agents:</p>
-                                <NumberInput
-                                    value={rubbleInfo.remove_agents}
-                                    onChange={(newAgents) => setRubbleInfo({ ...rubbleInfo, remove_agents: newAgents })}
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                        </div>
-                    )}
-                    {stackType === StackContentBrushTypes.SurvivorGroup && (
-                        <div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Energy Level:</p>
-                                <NumberInput
-                                    value={survivorGroupInfo.energy_level}
-                                    onChange={(newEnergy) =>
-                                        setSurvivorGroupInfo({ ...survivorGroupInfo, energy_level: newEnergy })
-                                    }
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Number of Survivors:</p>
-                                <NumberInput
-                                    value={survivorGroupInfo.number_of_survivors}
-                                    onChange={(newSurvivors) =>
-                                        setSurvivorGroupInfo({
-                                            ...survivorGroupInfo,
-                                            number_of_survivors: newSurvivors
-                                        })
-                                    }
-                                    min={1}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                        </div>
-                    )}
                     {stackType === StackContentBrushTypes.Survivor && (
                         <div>
                             <div className="flex mt-4 items-center justify-center">
