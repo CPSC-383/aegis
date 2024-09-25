@@ -47,15 +47,18 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length == 0) return
         const file = e.target.files[0]
-        importWorld(file).then((sim) => {
-            simulation.current = sim
-            setWorldParams({
-                width: sim.worldMap.width,
-                height: sim.worldMap.height,
-                initialEnergy: sim.worldMap.initialAgentEnergy,
-                isInitialized: true
+        importWorld(file)
+            .then((sim) => {
+                simulation.current = sim
+                setWorldParams({
+                    width: sim.worldMap.width,
+                    height: sim.worldMap.height,
+                    initialEnergy: sim.worldMap.initialAgentEnergy,
+                    isInitialized: true
+                })
+                setErrMsg('')
             })
-        })
+            .catch((error) => setErrMsg(error))
     }
 
     useEffect(() => {
