@@ -7,6 +7,10 @@ export class WorldMap {
     constructor(
         public readonly width: number,
         public readonly height: number,
+        public readonly seed: number,
+        public readonly low: number,
+        public readonly mid: number,
+        public readonly high: number,
         public readonly fireGrids: Location[],
         public readonly killerGrids: Location[],
         public readonly chargingGrids: Location[],
@@ -20,10 +24,16 @@ export class WorldMap {
     static fromData(data: any) {
         const width: number = data.settings.world_info.size.width
         const height: number = data.settings.world_info.size.height
+
+        const initialAgentEnergy: number = data.settings.world_info.agent_energy
+        const seed: number = data.settings.world_info.seed
+        const low: number = data.settings.world_info.world_file_levels.low
+        const mid: number = data.settings.world_info.world_file_levels.mid
+        const high: number = data.settings.world_info.world_file_levels.high
+
         const fireGrids: Location[] = data.grid_types.fire_grids
         const killerGrids: Location[] = data.grid_types.killer_grids
         const chargingGrids: Location[] = data.grid_types.charging_grids
-
         const spawnGrids: Map<string, number[]> = new Map()
         data.spawn_locs.forEach((spawn: Spawn) => {
             const key = JSON.stringify({ x: spawn.x, y: spawn.y })
@@ -32,13 +42,16 @@ export class WorldMap {
         })
 
         const stacks: Stack[] = data.stacks
-        const initialAgentEnergy: number = data.settings.world_info.agent_energy
         const minMoveCost: number = Math.min(...stacks.map((stack) => stack.move_cost))
         const maxMoveCost: number = Math.max(...stacks.map((stack) => stack.move_cost))
 
         return new WorldMap(
             width,
             height,
+            seed,
+            low,
+            mid,
+            high,
             fireGrids,
             killerGrids,
             chargingGrids,
@@ -65,7 +78,22 @@ export class WorldMap {
         const minMoveCost = Math.min(...stacks.map((stack) => stack.move_cost))
         const maxMoveCost = Math.max(...stacks.map((stack) => stack.move_cost))
 
-        return new WorldMap(width, height, [], [], [], new Map(), stacks, initialEnergy, minMoveCost, maxMoveCost)
+        return new WorldMap(
+            width,
+            height,
+            0,
+            0,
+            0,
+            0,
+            [],
+            [],
+            [],
+            new Map(),
+            stacks,
+            initialEnergy,
+            minMoveCost,
+            maxMoveCost
+        )
     }
 
     getGridType(x: number, y: number): string {

@@ -64,11 +64,11 @@ const createWorld = (world: WorldMap) => {
                     width: world.size.width,
                     height: world.size.height
                 },
-                seed: Math.floor(Math.random() * 10000),
+                seed: world.seed !== 0 ? world.seed : Math.floor(Math.random() * 10000),
                 world_file_levels: {
-                    high: 11 + Math.floor(Math.random() * 5),
-                    mid: 6 + Math.floor(Math.random() * 5),
-                    low: 1 + Math.floor(Math.random() * 5)
+                    high: world.high !== 0 ? world.high : 11 + Math.floor(Math.random() * 5),
+                    mid: world.mid !== 0 ? world.mid : 6 + Math.floor(Math.random() * 5),
+                    low: world.low !== 0 ? world.low : 1 + Math.floor(Math.random() * 5)
                 },
                 agent_energy: world.initialAgentEnergy
             }
