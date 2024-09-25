@@ -59,6 +59,8 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
                 setErrMsg('')
             })
             .catch((error) => setErrMsg(error))
+
+        if (fileInputRef.current) fileInputRef.current.value = ''
     }
 
     useEffect(() => {
