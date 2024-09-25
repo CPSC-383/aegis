@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import NumberInput from '../inputs/NumberInput'
 import Button from '../Button'
 import Input from '../inputs/Input'
-import { exportWorld } from './MapGenerator'
+import { exportWorld, importWorld } from './MapGenerator'
 import MapBrushes from './Map-brushes'
 
 function MapEditor({ isOpen }: { isOpen: boolean }) {
@@ -23,6 +23,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     })
     const [errMsg, setErrMsg] = useState<string>('')
     const simulation = useRef<Simulation | undefined>(undefined)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const isWorldEmpty = !appState.simulation || appState.simulation.worldMap.isEmpty()
 
@@ -41,6 +42,20 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     const handleExport = async () => {
         const err = await exportWorld(appState.simulation!.worldMap, worldName)
         setErrMsg(err || '')
+    }
+
+    const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length == 0) return
+        const file = e.target.files[0]
+        importWorld(file).then((sim) => {
+            simulation.current = sim
+            setWorldParams({
+                width: sim.worldMap.width,
+                height: sim.worldMap.height,
+                initialEnergy: sim.worldMap.initialAgentEnergy,
+                isInitialized: true
+            })
+        })
     }
 
     useEffect(() => {
@@ -108,7 +123,9 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
             <div className="h-[4px] w-[90%] mx-auto border-[2px] border-black rounded-full my-3"></div>
             <div className="flex flex-col mt-4 justify-center items-center">
                 <Input placeholder="World Name" value={worldName} onChange={setWorldName} />
-                <Button onClick={handleExport} label="Export Map" styles="bg-primary mt-2" disabled={!worldName} />
+                <Button onClick={handleExport} label="Export World" styles="bg-primary mt-2" disabled={!worldName} />
+                <Button onClick={() => fileInputRef.current?.click()} label="Import World" styles="bg-primary mt-2" />
+                <input hidden type="file" accept=".world" ref={fileInputRef} onChange={handleImport} />
                 <div className="mt-2 text-red-600">{errMsg}</div>
             </div>
         </div>

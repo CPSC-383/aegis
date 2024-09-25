@@ -1,5 +1,29 @@
 import { aegisAPI } from '@/aegis-api'
+import { Simulation } from '@/simulation/simulation'
 import { WorldMap } from '@/simulation/world-map'
+
+export async function importWorld(file: File): Promise<Simulation> {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+            try {
+                const content = e.target?.result as string
+                const data = JSON.parse(content)
+                const world = WorldMap.fromData(data)
+                const sim = new Simulation(world)
+                resolve(sim)
+            } catch (error) {
+                reject('Error parsing world! Make sure it is valid JSON.')
+            }
+        }
+
+        reader.onerror = () => {
+            reject('Error reading the file.')
+        }
+
+        reader.readAsText(file)
+    })
+}
 
 export async function exportWorld(worldMap: WorldMap, worldName: string) {
     const errMsg = validateMap(worldMap)
