@@ -44,7 +44,7 @@ function RightSidebar() {
                         <Button onClick={setupAegisPath} label="Setup Aegis Path" styles="bg-primary" />
                     ) : (
                         <>
-                            <div>
+                            <div className="flex flex-col h-screen">
                                 <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
                                 <Aegis
                                     isOpen={selectedTab === TabNames.Aegis}
