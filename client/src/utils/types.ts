@@ -31,6 +31,12 @@ export type Stack = {
     contents: StackContent[]
 }
 
+export type Spawn = {
+    x: number
+    y: number
+    gid?: number
+}
+
 // ----- Map Editor Types ----- //
 export type WorldParams = {
     width: number

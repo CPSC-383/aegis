@@ -1,4 +1,4 @@
-import { Location, Stack, Size } from '@/utils/types'
+import { Location, Stack, Size, Spawn } from '@/utils/types'
 import { whatBucket } from '@/utils/util'
 import { shadesOfBrown, shadesOfBlue } from '@/utils/types'
 import { renderCoords } from '@/utils/renderUtils'
@@ -23,7 +23,14 @@ export class WorldMap {
         const fireGrids: Location[] = data.grid_types.fire_grids
         const killerGrids: Location[] = data.grid_types.killer_grids
         const chargingGrids: Location[] = data.grid_types.charging_grids
+
         const spawnGrids: Map<string, number[]> = new Map()
+        data.spawn_locs.forEach((spawn: Spawn) => {
+            const key = JSON.stringify({ x: spawn.x, y: spawn.y })
+            if (!spawnGrids.has(key)) spawnGrids.set(key, [])
+            if (spawn.gid) spawnGrids.get(key)?.push(spawn.gid)
+        })
+
         const stacks: Stack[] = data.stacks
         const initialAgentEnergy: number = data.settings.world_info.agent_energy
         const minMoveCost: number = Math.min(...stacks.map((stack) => stack.move_cost))
