@@ -121,6 +121,7 @@ function MapBrushes() {
 
     const handleSpawnGrids = (tile: Location) => {
         const { spawnGrids } = appState.simulation!.worldMap
+        if (spawnGrids.size === 1) return
         const key = JSON.stringify(tile) // Consistent key format
         const existingGids = spawnGrids.get(key) || []
 
