@@ -278,7 +278,6 @@ class Aegis:
 
         self._state = State.SHUT_DOWN
         self._end = True
-        self._ws_server.set_wait_for_client(False)
         self._ws_server.finish()
 
     def run_state(self) -> None:
