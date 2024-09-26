@@ -88,7 +88,7 @@ class WebSocketServer:
         """Run the server."""
         if not self._wait_for_client:
             return
-        
+
         self._server = WebsocketServer(self._host, self._port)
         self._server.set_fn_new_client(self._on_open)  # pyright: ignore[reportUnknownMemberType]
 
@@ -105,9 +105,12 @@ class WebSocketServer:
         """
         Send a CLOSE handshake to all connected clients before terminating server
         """
+
+        if self._server is None:
+            return
         self._server.keep_alive = False
-        self._server._disconnect_clients_gracefully(1000, bytes('', encoding='utf-8'))
-        #These bottom two are flipped from regular order in websocket_server
+        self._server._disconnect_clients_gracefully(1000, bytes("", encoding="utf-8"))
+        # These bottom two are flipped from regular order in websocket_server
         self._server.shutdown()
         self._server.server_close()
 
@@ -119,8 +122,7 @@ class WebSocketServer:
         print("shutting down server...")
         try:
             self._queue_thread.join()
-            if self._server is not None:
-                self.shutdown_gracefully()
+            self.shutdown_gracefully()
         except Exception as e:
             print(f"Error shutting down server: {e}")
 
