@@ -6,10 +6,16 @@ import os
 import shutil
 import importlib.util
 
+RED = "\033[31m"
+GREEN = "\033[92m"
+RESET = "\033[0m"
+
 
 def check_version() -> None:
     if sys.version_info < (3, 12):
-        print("Wrong python version installed! Install python 3.12 or greater.")
+        print(
+            f"{RED}Wrong python version installed! Install python 3.12 or greater.{RESET}"
+        )
         exit(1)
 
 
@@ -30,16 +36,17 @@ def install_requirements(req_file: str = "requirements.txt") -> None:
     if missing_packages:
         for package in missing_packages:
             print(f"Installing {package}...")
-        try:
-            with open(os.devnull, "w") as devnull:
-                _ = subprocess.check_call(
-                    ["pip", "install"] + missing_packages,
-                    stdout=devnull,
-                    stderr=devnull,
-                )
-            print(f"Requirements from {req_file} have been successfully installed.")
-        except Exception as e:
-            print(f"Error installing requirements: {e}")
+            try:
+                with open(os.devnull, "w") as devnull:
+                    _ = subprocess.check_call(
+                        ["pip", "install", package],
+                        stdout=devnull,
+                        stderr=devnull,
+                    )
+                print(f"{GREEN}Successfully installed {package}.{RESET}")
+            except Exception as e:
+                print(f"{RED}Error installing {package}: {e}{RESET}")
+        print(f"{GREEN}Successfully installed all packages.{RESET}")
     else:
         print("All requirements are already installed.")
 
