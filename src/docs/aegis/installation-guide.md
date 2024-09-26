@@ -25,29 +25,31 @@ Before you begin, ensure you have the following:
 
 3. **Installing required Python packages**
     - **Installing the required Python Packages into a virtual environment**:
+
         - Create and activate the virtual environment:
-            - Mac/Linux:
+
+            === "Mac/Linux"
                 
                 `python3 -m venv .venv`
-
+                
                 `source .venv/bin/activate`
 
-            - Windows:
-
+            === "Windows"
+                
                 `python -m venv .venv`
-
+                
                 `.venv\Scripts\activate`
 
         - Run the setup script:
-            
+        
             `python setup.py`
 
-            If the script ran properly, the required packages should have been installed and the client for your platform
-            should be in the `client` folder.
-       
-        When you're done working in the virtual environment, you can deactivate it by running the following:
+        If the script ran properly, the required packages should have been installed and the client for your platform
+        should be in the `client` folder.
+   
+    When you're done working in the virtual environment, you can deactivate it by running the following:
 
-        `deactivate`
+    `deactivate`
 
     Using a virtual environment is recommended to avoid conflicts with other Python projects and system-wide packages.
     You must activate the virtual environment everytime you start working on the code.

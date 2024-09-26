@@ -35,43 +35,43 @@ Make sure you open the client from the command line.
 cd client
 ```
 
-Windows:
+=== "Windows"
 
-```bash
-.\aegis-client.exe
-```
+    ```
+    .\aegis-client.exe
+    ```
 
-Mac:
+=== "Mac"
 
-```bash
-open AEGIS.app
-```
+    ```
+    open AEGIS.app
+    ```
 
-You might get the following error.
+    You might get the following error.
 
-![Mac Error](../assets/mac_error.png)
+    ![Mac Error](../assets/mac_error.png)
 
-To fix it you can do the following:
+    To fix it you can do the following:
 
-```bash
-open .
-```
+    ```
+    open .
+    ```
 
-![Mac Open](../assets/mac_open.png)
+    ![Mac Open](../assets/mac_open.png)
 
-![Mac Open Error](../assets/mac_open_error.png)
+    ![Mac Open Error](../assets/mac_open_error.png)
 
-Once the client opens, close it, and open it from terminal.
+    Once the client opens, close it, and open it from terminal.
 
-```bash
-open AEGIS.app
-```
+    ```
+    open AEGIS.app
+    ```
 
-Linux:
+=== "Linux"
 
-```bash
-./aegis-client.AppImage
-```
+    ```
+    ./aegis-client.AppImage
+    ```
 
 Before you try running a game, head over to [Client](./client.md) to learn about the client features.
 
