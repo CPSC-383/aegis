@@ -320,6 +320,8 @@ class Aegis:
             f"Simulation Start: Number of Rounds {self._parameters.number_of_rounds};\n"
         )
         print(f"Running for {self._parameters.number_of_rounds} rounds")
+        print("\n=============================================\n")
+        sys.stdout.flush()
 
         for round in range(1, self._parameters.number_of_rounds + 1):
             if self._end:
