@@ -58,14 +58,7 @@ export class Simulation {
     renderNextRound() {
         if (this.simPaused || this.isGameOver()) return
 
-        if (this.currentRound < this.maxRounds) {
-            this.currentRoundData = this.rounds[this.currentRound]
-            this.currentRound++
-        }
-
-        const top_layer_rem_data = this.currentRoundData?.top_layer_rem_data
-        if (top_layer_rem_data) dispatchEvent(EventType.RENDER_STACK, {})
-        dispatchEvent(EventType.RENDER, {})
+        this.jumpToRound(this.currentRound + 1)
     }
 
     jumpToRound(round: number) {
@@ -76,7 +69,7 @@ export class Simulation {
 
         // Rerender so timeline and game update if sim is paused
         dispatchEvent(EventType.RENDER, {})
-        if (this.currentRoundData) dispatchEvent(EventType.RENDER_STACK, {})
+        if (this.currentRoundData.top_layer_rem_data) dispatchEvent(EventType.RENDER_STACK, {})
     }
 
     isGameOver(): boolean {
