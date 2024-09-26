@@ -38,7 +38,7 @@ app.whenReady().then(() => {
     })
 
     app.on('before-quit', () => {
-        kill()
+        killProcs()
     })
 
     app.on('window-all-closed', () => {
@@ -49,13 +49,15 @@ app.whenReady().then(() => {
 })
 
 const processes = new Map()
-function kill() {
+function killProcs() {
     while (processes.size > 0) {
+        console.log() // This fixes the closing error for some reason
         const pid = processes.keys().next().value
         processes.get(pid).kill()
         processes.delete(pid)
     }
 }
+
 // Need to check mac since the built in version in /usr/bin is using python 3.9
 // So we need to use the one in /usr/local/bin installed from the python website.
 //
@@ -127,11 +129,11 @@ ipcMain.handle('electronAPI', async (event, command, ...args) => {
             const options = { cwd: rootPath, env: { PYTHONPATH: srcPath } }
 
             const childAegis = child_process.spawn((command = PYTHON_EXEC), [proc, ...procArgs], options)
-            processes.set(childAegis.pid?.toString(), childAegis)
 
-            return new Promise(async (resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 childAegis.on('error', reject)
                 childAegis.on('spawn', () => {
+                    processes.set(childAegis.pid?.toString(), childAegis)
                     childAegis.stdout.on('data', (data) => {
                         event.sender.send('aegis_child_process.stdout', data.toString())
                     })
@@ -140,7 +142,7 @@ ipcMain.handle('electronAPI', async (event, command, ...args) => {
                         event.sender.send('aegis_child_process.stderr', data.toString())
                     })
 
-                    childAegis.on('close', () => {
+                    childAegis.on('exit', () => {
                         processes.delete(childAegis.pid?.toString())
                         event.sender.send('aegis_child_process.exit')
                     })
@@ -164,11 +166,11 @@ ipcMain.handle('electronAPI', async (event, command, ...args) => {
                     [procAgent, ...procArgsAgent],
                     optionsAgent
                 )
-                processes.set(childAgent.pid?.toString(), childAgent)
 
-                const spawnPromise = new Promise<{ code: number | null }>(async (resolve, reject) => {
+                const spawnPromise = new Promise<{ code: number | null }>((resolve, reject) => {
                     childAgent.on('error', reject)
                     childAgent.on('spawn', () => {
+                        processes.set(childAgent.pid?.toString(), childAgent)
                         childAgent.stdout.on('data', (data) => {
                             event.sender.send('agent_child_process.stdout', data.toString())
                         })
