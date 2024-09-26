@@ -418,6 +418,7 @@ class Aegis:
             except AgentCrashedException:
                 crashed_agent_id = self._agent_handler.get_current_agent().agent_id
                 self._crashed_agents.add(crashed_agent_id)
+            sys.stdout.flush()
 
     def _get_agent_command_of_current(self) -> AgentCommand | None:
         timeout: int = self._parameters.milliseconds_to_wait_for_agent_command

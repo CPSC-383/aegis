@@ -253,6 +253,7 @@ class BaseAgent:
             except AegisSocketException as e:
                 self.log(LogLevels.Always, f"Got AegisSocketException '{e}', shutting down.")
                 end = True
+            sys.stdout.flush()
 
         if self._aegis_socket is not None:
             self._aegis_socket.disconnect()
