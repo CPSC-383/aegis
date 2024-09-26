@@ -4,20 +4,44 @@ import platform
 import zipfile
 import os
 import shutil
+import importlib.util
 
 
 def check_version() -> None:
-    if not sys.version_info >= (3, 12):
+    if sys.version_info < (3, 12):
         print("Wrong python version installed! Install python 3.12 or greater.")
         exit(1)
 
 
+def is_package_installed(package_name: str) -> bool:
+    return importlib.util.find_spec(package_name) is not None
+
+
 def install_requirements(req_file: str = "requirements.txt") -> None:
-    try:
-        _ = subprocess.check_call(["pip", "install", "-r", req_file])
-        print(f"Requirements from {req_file} have been successfully installed.")
-    except Exception as e:
-        print(f"Error installing requirements: {e}")
+    with open(req_file, "r") as file:
+        requirements = file.readlines()
+
+    missing_packages = []
+    for req in requirements:
+        req = req.strip()
+        if req and not is_package_installed(req.split("==")[0]):
+            missing_packages.append(req)
+
+    if missing_packages:
+        for package in missing_packages:
+            print(f"Installing {package}...")
+        try:
+            with open(os.devnull, "w") as devnull:
+                _ = subprocess.check_call(
+                    ["pip", "install"] + missing_packages,
+                    stdout=devnull,
+                    stderr=devnull,
+                )
+            print(f"Requirements from {req_file} have been successfully installed.")
+        except Exception as e:
+            print(f"Error installing requirements: {e}")
+    else:
+        print("All requirements are already installed.")
 
 
 def delete_clients():
@@ -62,5 +86,6 @@ def install_client():
 
 
 if __name__ == "__main__":
+    check_version()
     install_requirements()
     install_client()
