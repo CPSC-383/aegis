@@ -101,6 +101,16 @@ class WebSocketServer:
 
         print("Connection received!")
 
+    def shutdown_gracefully(self):
+        """
+        Send a CLOSE handshake to all connected clients before terminating server
+        """
+        self._server.keep_alive = False
+        self._server._disconnect_clients_gracefully(1000, bytes('', encoding='utf-8'))
+        #These bottom two are flipped from regular order in websocket_server
+        self._server.shutdown()
+        self._server.server_close()
+
     def finish(self) -> None:
         """Send all queued events and shutdown the server."""
         if not self._wait_for_client:
@@ -110,7 +120,7 @@ class WebSocketServer:
         try:
             self._queue_thread.join()
             if self._server is not None:
-                self._server.shutdown_gracefully()
+                self.shutdown_gracefully()
         except Exception as e:
             print(f"Error shutting down server: {e}")
 
