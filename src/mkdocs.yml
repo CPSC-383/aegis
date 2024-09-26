@@ -5,6 +5,11 @@ site_dir: ../aegis-documentation
 plugins:
   - mkdocstrings
 
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
 theme:
   name: "material"
   language: en

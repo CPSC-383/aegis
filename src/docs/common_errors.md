@@ -2,12 +2,11 @@
 
 If you can't solve your problem after reading through this page, please contact any of the Instructors or TAs and they will be able to help.
 
-Notes:  
-
-- Your *path* to the folder you unzipped that has everything inside of it, *CANNOT HAVE SPACES* in it. For example,
-if a parent folder is called "CPSC 383", the space will create some undefined behaviour when running the system. To be safe,
-rename each parent folder to have no spaces, such as "CPSC_383" or "CPSC-383".  
-- Only python versions >= 3.12 are supported!  
+!!! warning "Important"
+    - Your **path to the folder** you unzipped that has everything inside of it, **CANNOT HAVE SPACES** in it. For example,
+    if a parent folder is called "CPSC 383", the space will create some undefined behaviour when running the system. To be safe,
+    rename each parent folder to have no spaces, such as "CPSC_383" or "CPSC-383".  
+    - Only python versions >= 3.12 are supported!  
 
 ## Problems trying to setup system/running a game
 
