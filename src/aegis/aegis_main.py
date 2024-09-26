@@ -31,6 +31,7 @@ from aegis.common.commands.agent_commands import (
     SEND_MESSAGE,
     SLEEP,
     TEAM_DIG,
+    AGENT_UNKNOWN,
 )
 from aegis.common.commands.aegis_commands import (
     CONNECT_OK,
@@ -319,8 +320,8 @@ class Aegis:
         ReplayFileWriter.write_string(
             f"Simulation Start: Number of Rounds {self._parameters.number_of_rounds};\n"
         )
-        print(f"Running for {self._parameters.number_of_rounds} rounds")
-        print("\n=============================================\n")
+        print(f"Running for {self._parameters.number_of_rounds} rounds\n")
+        print("================================================")
         sys.stdout.flush()
 
         for round in range(1, self._parameters.number_of_rounds + 1):
@@ -448,7 +449,7 @@ class Aegis:
             if temp_command is None:
                 continue
 
-            if isinstance(temp_command, END_TURN):
+            if isinstance(temp_command, END_TURN) or isinstance(temp_command, AGENT_UNKNOWN):
                 break
 
             if isinstance(temp_command, SEND_MESSAGE):

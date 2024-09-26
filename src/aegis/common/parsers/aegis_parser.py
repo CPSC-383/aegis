@@ -396,9 +396,14 @@ class AegisParser:
                 AegisParser.text(tokens, Command.STR_TEAM_DIG)
                 AegisParser.done(tokens)
                 return TEAM_DIG()
-            raise AegisParserException(
-                f"Cannot parse Agent to Kernel Command from {string}"
-            )
+            
+            # raise AegisParserException(
+            #     f"Cannot parse Agent to Kernel Command from {string}"
+            # )
+            
+            else:
+                print(f"Cannot parse Agent to Kernel Command from {string} | Did your agent throw an exception?")
+                return AGENT_UNKNOWN()
         except Exception as e:
             print(e)
             return AGENT_UNKNOWN()
