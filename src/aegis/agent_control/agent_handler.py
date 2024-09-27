@@ -202,7 +202,7 @@ class AgentHandler:
                 return None
 
             s = agent.agent_socket.read_message(timeout=timeout)
-            if s is None:
+            if not s:
                 return None
             command = AegisParser.parse_agent_command(s)
         except AgentSocketException:

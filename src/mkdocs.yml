@@ -4,6 +4,20 @@ site_dir: ../aegis-documentation
 
 plugins:
   - mkdocstrings
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
 
 theme:
   name: "material"
@@ -102,3 +116,4 @@ nav:
           - AgentStates: agent/agent-states.md
           - LogLevels: agent/log-levels.md
   - Assignment 1 Config: a1_config.md
+  - Common Errors: common_errors.md

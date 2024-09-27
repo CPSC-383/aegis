@@ -35,6 +35,7 @@ function Aegis({ isOpen, numAgentsAegis, setNumAgentsAegis, scaffold }: Props) {
                         ))}
                 </select>
                 <div>
+                    <p className="text-xs font-semibold">Number of Agents:</p>
                     <NumberInput
                         value={numAgentsAegis}
                         onChange={(value) => setNumAgentsAegis(value)}
@@ -42,6 +43,7 @@ function Aegis({ isOpen, numAgentsAegis, setNumAgentsAegis, scaffold }: Props) {
                         placeholder="Number of Agents"
                         extraStyles="w-full"
                     />
+                    <p className="text-xs font-semibold mt-2">Number of Rounds:</p>
                     <NumberInput
                         value={numRounds}
                         onChange={(value) => setNumRounds(value)}

@@ -31,6 +31,7 @@ from aegis.common.commands.agent_commands import (
     SEND_MESSAGE,
     SLEEP,
     TEAM_DIG,
+    AGENT_UNKNOWN,
 )
 from aegis.common.commands.aegis_commands import (
     CONNECT_OK,
@@ -319,9 +320,19 @@ class Aegis:
         ReplayFileWriter.write_string(
             f"Simulation Start: Number of Rounds {self._parameters.number_of_rounds};\n"
         )
-        print(f"Running for {self._parameters.number_of_rounds} rounds")
-        print("\n=============================================\n")
-        sys.stdout.flush()
+        print(f"Running for {self._parameters.number_of_rounds} rounds\n")
+        print("================================================")
+        _ = sys.stdout.flush()
+
+        after_json_world = self.get_aegis_world().convert_to_json()
+
+        round_data = {
+            "event_type": "Round",
+            "round": 0,
+            "after_world": after_json_world,
+        }
+        event = json.dumps(round_data).encode()
+        self._compress_and_send(event)
 
         for round in range(1, self._parameters.number_of_rounds + 1):
             if self._end:
@@ -419,7 +430,7 @@ class Aegis:
             except AgentCrashedException:
                 crashed_agent_id = self._agent_handler.get_current_agent().agent_id
                 self._crashed_agents.add(crashed_agent_id)
-            sys.stdout.flush()
+            _ = sys.stdout.flush()
 
     def _get_agent_command_of_current(self) -> AgentCommand | None:
         timeout: int = self._parameters.milliseconds_to_wait_for_agent_command
@@ -448,7 +459,9 @@ class Aegis:
             if temp_command is None:
                 continue
 
-            if isinstance(temp_command, END_TURN):
+            if isinstance(temp_command, END_TURN) or isinstance(
+                temp_command, AGENT_UNKNOWN
+            ):
                 break
 
             if isinstance(temp_command, SEND_MESSAGE):

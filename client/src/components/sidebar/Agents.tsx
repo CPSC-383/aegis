@@ -58,7 +58,9 @@ function Agents({ isOpen, aegisPath, numAgentsAegis, agents }: AgentsProps) {
                     ))}
                 </select>
                 <div>
+                    <p className="text-xs font-semibold">Group Name:</p>
                     <Input value={groupName} onChange={(value) => handleGroupName(value)} placeholder="Group Name" />
+                    <p className="text-xs font-semibold mt-2">Number of Agents to Connect:</p>
                     <NumberInput
                         value={numAgents}
                         onChange={(value) => setNumAgents(value)}

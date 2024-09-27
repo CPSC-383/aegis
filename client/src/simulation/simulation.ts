@@ -4,13 +4,12 @@ import { World, RoundData, AgentInfoDict, GridCellDict, StackContent } from '@/u
 
 export class Simulation {
     private rounds: World[] = []
-    // The maxRounds can be smaller than the amount of rounds set by the user.
-    // (Sim ended early because all survivors were saved or agents all died) ((round sim ended))
-    public maxRounds: number = 0
+    public maxRounds: number = -1 // Start this at -1 because arrays are 0-indexed
     public currentRound: number = 0
     public currentRoundData?: World
     public worldMap: WorldMap
     private simPaused: boolean = false
+    private renderRoundZero: boolean = true
 
     constructor(public readonly world: WorldMap) {
         this.worldMap = world
@@ -58,25 +57,23 @@ export class Simulation {
     renderNextRound() {
         if (this.simPaused || this.isGameOver()) return
 
-        if (this.currentRound < this.maxRounds) {
-            this.currentRoundData = this.rounds[this.currentRound]
-            this.currentRound++
+        if (this.renderRoundZero) {
+            this.renderRoundZero = false
+            this.jumpToRound(0)
+            return
         }
-
-        const top_layer_rem_data = this.currentRoundData?.top_layer_rem_data
-        if (top_layer_rem_data) dispatchEvent(EventType.RENDER_STACK, {})
-        dispatchEvent(EventType.RENDER, {})
+        this.jumpToRound(this.currentRound + 1)
     }
 
     jumpToRound(round: number) {
-        if (round === this.currentRound) return
+        const newRound = Math.max(0, Math.min(round, this.maxRounds))
+        if (newRound === this.currentRound && newRound !== 0) return
+        this.currentRound = newRound
 
-        this.currentRound = Math.max(0, Math.min(round, this.maxRounds))
-        this.currentRoundData = this.currentRoundData = this.rounds[this.currentRound]
+        this.currentRoundData = this.rounds[this.currentRound]
 
-        // Rerender so timeline and game update if sim is paused
         dispatchEvent(EventType.RENDER, {})
-        if (this.currentRoundData) dispatchEvent(EventType.RENDER_STACK, {})
+        if (this.currentRoundData.top_layer_rem_data) dispatchEvent(EventType.RENDER_STACK, {})
     }
 
     isGameOver(): boolean {
