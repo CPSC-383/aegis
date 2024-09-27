@@ -252,6 +252,7 @@ class AegisWorld:
                                     percent = 15 + Utility.random_in_range(0, 35)
                                 else:
                                     percent = 50 + Utility.random_in_range(0, 40)
+                            percent = max(1, percent)
 
                         fire = "+F" if grid.is_on_fire() else "-F"
                         killer = "+K" if grid.is_killer() else "-K"
