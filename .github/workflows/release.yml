@@ -78,6 +78,12 @@ jobs:
         with:
           path: ./client/
 
+      - name: Remove extra files and folders
+        run: |
+          rm -rf .git
+          rm -rf .github
+          rm .gitignore
+
       - name: Zip repo
         run: |
           cd ..
