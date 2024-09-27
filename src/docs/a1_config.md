@@ -1,6 +1,6 @@
 The following is the AEGIS config, located in `sys_files`.
 
-```json
+```json title="aegis_config.json" linenums="1" hl_lines="12"
 {
   "Send_Message": {
     "enabled": false,
