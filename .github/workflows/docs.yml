@@ -26,7 +26,7 @@ jobs:
         run: mkdocs build
         working-directory: ./src
 
-      - name: Deploy to Gihub Pages
+      - name: Deploy to Github Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
