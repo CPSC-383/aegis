@@ -96,6 +96,8 @@ ipcMain.handle('electronAPI', async (event, command, ...args) => {
             return fs.existsSync(args[0])
         case 'fs.readdirSync':
             return fs.readdirSync(args[0])
+        case 'fs.isDirectory':
+            return fs.statSync(args[0]).isDirectory()
         case 'fs.readFileSync':
             return fs.readFileSync(args[0], 'utf8')
         case 'exportWorld':

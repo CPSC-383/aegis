@@ -158,7 +158,9 @@ const getAgents = async (aegisPath: string) => {
     // Only take the agents that have 'main.py' in their folders
     const agents: string[] = []
     for (const agent of agentsDirs) {
-        const agentFiles = await fs.readdirSync(await path.join(agentsPath, agent))
+        const agentPath = await path.join(agentsPath, agent)
+        if (!(await fs.isDirectory(agentPath))) continue
+        const agentFiles = await fs.readdirSync(agentPath)
         if (!agentFiles.includes('main.py')) continue
         agents.push(agent)
     }

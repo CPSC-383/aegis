@@ -10,6 +10,7 @@ type AegisAPI = {
         existsSync: (arg: string) => Promise<boolean>
         readdirSync: (arg: string) => Promise<string[]>
         readFileSync: (arg: string) => Promise<string>
+        isDirectory: (arg: string) => Promise<boolean>
     }
     aegis_child_process: {
         spawn: (aegisPath: string, numOfRounds: string, numOfAgents: string, worldFile: string) => Promise<string>

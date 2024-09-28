@@ -22,7 +22,8 @@ const electronAPI = {
     fs: {
         existsSync: (...args: any[]) => invoke('fs.existsSync', ...args),
         readdirSync: (...args: any[]) => invoke('fs.readdirSync', ...args),
-        readFileSync: (...args: any[]) => invoke('fs.readFileSync', ...args)
+        readFileSync: (...args: any[]) => invoke('fs.readFileSync', ...args),
+        isDirectory: (...args: any[]) => invoke('fs.isDirectory', ...args)
     },
     aegis_child_process: {
         spawn: (...args: any[]) => invoke('aegis_child_process.spawn', ...args),
