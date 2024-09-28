@@ -4,8 +4,6 @@
 
 To build the documentation, follow these steps:
 
-### For Assignment 1
-
 1. Ensure you are in the appropriate branch.
 
 - For assignment 1:
@@ -41,8 +39,6 @@ git push origin <tag name>
 ## Release Build for the Aegis Client
 
 To build and release the Aegis Client, follows these steps:
-
-### For Assignment 1
 
 1. Ensure you are in the appropriate branch.
 
