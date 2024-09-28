@@ -69,9 +69,7 @@ jobs:
         run: rm -rf client/*
 
       - name: Remove Docs
-        run: |
-          rm -rf ./src/docs
-          rm ./src/mkdocs.yml
+        run: rm -rf ./docs
 
       - name: Download artifacts
         uses: actions/download-artifact@v4

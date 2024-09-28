@@ -1,9 +1,11 @@
 site_name: AEGIS Docs
-docs_dir: docs
 site_dir: ../aegis-documentation
 
 plugins:
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [../src/]
   - search
 
 markdown_extensions:
@@ -18,6 +20,11 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 theme:
   name: "material"
