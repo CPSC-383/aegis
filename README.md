@@ -2,6 +2,9 @@
 
 ## Building the Documentation
 
+> [!WARNING]
+> DO NOT TOUCH THE DOCS BRANCH. THE WORKFLOW WILL AUTOMATICALLY UPDATE THE FILES FOR THE WEBSITE.
+
 To build the documentation, follow these steps:
 
 1. Ensure you are in the appropriate branch.
