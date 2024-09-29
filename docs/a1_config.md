@@ -21,8 +21,8 @@ The following is the AEGIS config, located in `sys_files`.
   "Enable_Move_Cost": true
 }
 ```
-
-You shouldn't touch any of the above settings except for `Enable_Move_Cost`.
+!!! warning "Important"
+    **Only modify the highlighted line.** Do not change any of the other settings.
 
 When enabled, each grid in the starting world will display its respective move_cost. When disabled,
 the move_cost will only update after executing a `MOVE` command and receiving the corresponding `MOVE_RESULT`.
