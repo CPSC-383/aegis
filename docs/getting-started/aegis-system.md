@@ -50,18 +50,12 @@ the world’s state during the simulation. Additionally, it allows users to crea
 AEGIS uses the following commands to interact with the agents. Click on each command for more information.
 
 - **[AEGIS UNKNOWN](../api/aegis_commands/aegis-unknown.md)**: Represents an unknown command from the agent.
-- **[CMD_RESULT_START](../api/aegis_commands/cmd-result-start.md)**: Start of the phase where results from the agent's last command are returned.
-- **[CMD_RESULT_END](../api/aegis_commands/cmd-result-end.md)**: End of the phase where results from the agent's last command are returned.
 - **[CONNECT_OK](../api/aegis_commands/connect-ok.md)**: Result of the agent successfully connecting to AEGIS.
 - **[DEATH_CARD](../api/aegis_commands/death-card.md)**: If the agent has died.
 - **[DISCONNECT](../api/aegis_commands/disconnect.md)**: AEGIS is shutting down, allowing the agent to shutdown as well.
 - **[FWD_MESSAGE](../api/aegis_commands/fwd-message.md)**: A message received from one agent that is to be forwarded to another agent.
-- **[MESSAGES_START](../api/aegis_commands/messages-start.md)**: Start of the phase where the agent will start receiving messages from other agents.
-- **[MESSAGES_END](../api/aegis_commands/messages-end.md)**: End of the phase where the agent will start receiving messages from other agents.
 - **[MOVE_RESULT](../api/aegis_commands/move-result.md)**: Result of the agent moving in a certain direction.
 - **[OBSERVE_RESULT](../api/aegis_commands/observe-result.md)**: Result of observing a grid.
-- **[ROUND_START](../api/aegis_commands/round-start.md)**: Start of a new round and allows the agent to begin its computations.
-- **[ROUND_END](../api/aegis_commands/round-end.md)**: End of the current round, signaling the agent to stop computations.
 - **[SAVE_SURV_RESULT](../api/aegis_commands/save-surv-result.md)**: Result of saving a survivor.
 - **[SLEEP_RESULT](../api/aegis_commands/sleep-result.md)**: Result of the agent sleeping.
 - **[TEAM_DIG_RESULT](../api/aegis_commands/team-dig-result.md)**: Result of digging rubble.
