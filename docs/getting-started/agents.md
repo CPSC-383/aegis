@@ -24,7 +24,6 @@ a Survivor/Survivor Group.
 
 Agents can use the following commands to interact with AEGIS. Click on each command for more information.
 
-- **[CONNECT](../api/agent_commands/connect.md)**: Sent by an agent that wants to connect to AEGIS.
 - **[SEND_MESSAGE](../api/agent_commands/send-message.md)**: Sends a message to other agents. Note that messages are sent at the start of
 the next round.
 - **[MOVE](../api/agent_commands/move.md)**: Moves the agent in a specified direction.
