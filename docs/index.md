@@ -13,7 +13,7 @@ Here, you'll find all the information you need to get started, understand AEGIS'
 
 <div class="grid cards" markdown>
 
-- :material-run-fast:{ .lg .middle } **Getting started**
+- :material-rocket-launch:{ .lg } **Getting started**
 
     ---
 
@@ -21,7 +21,7 @@ Here, you'll find all the information you need to get started, understand AEGIS'
 
     [:octicons-download-16: Installation](getting-started/installation.md){ .md-button .md-button--primary } [:material-book-open-variant: Aegis System](getting-started/aegis-system.md){ .md-button .md-button--primary }
 
-- :material-diving-scuba:{ .lg .middle } **Deep dive**
+- :material-information:{ .lg } **API**
 
     ---
 
