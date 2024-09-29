@@ -53,6 +53,7 @@ Commands available for the agents interacting with AEGIS.
 - [`aegis.END_TURN`][]: Represents a command that allows an agent to tell the server it is done with its turn.
 - [`aegis.MOVE`][]: Represents a command for an agent to move in a specified direction.
 - [`aegis.OBSERVE`][]: Represents a command for an agent to observe a grid in the world.
+- [`aegis.PREDICT`][]: Represents the prediction of an agent.
 - [`aegis.SAVE_SURV`][]: Represents a command for an agent to save a survivor or survivor group.
 - [`aegis.SEND_MESSAGE`][]: Represents a command for an agent to send a message to other agents.
 - [`aegis.SLEEP`][]: Represents a command for an agent to sleep and recharge energy.
@@ -70,6 +71,7 @@ Commands AEGIS uses to interact with the agents.
 - [`aegis.FWD_MESSAGE`][]: Represents a message that came from another agent.
 - [`aegis.MOVE_RESULT`][]: Represents the result of the agent moving.
 - [`aegis.OBSERVE_RESULT`][]: Represents the result of observing a grid.
+- [`aegis.PREDICT_RESULT`][]: Represents the result of an agent's prediction.
 - [`aegis.SAVE_SURV_RESULT`][]: Represents the result of saving a survivor.
 - [`aegis.SLEEP_RESULT`][]: Represents the result of the agent sleeping.
 - [`aegis.TEAM_DIG_RESULT`][]: Represents the result of digging rubble.

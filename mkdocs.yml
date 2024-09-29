@@ -43,6 +43,7 @@ nav:
               - EndTurn: api/agent_commands/end-turn.md
               - Move: api/agent_commands/move.md
               - Observe: api/agent_commands/observe.md
+              - Predict: api/agent_commands/predict.md
               - SaveSurv: api/agent_commands/save-surv.md
               - SendMessage: api/agent_commands/send-message.md
               - Sleep: api/agent_commands/sleep.md
@@ -56,6 +57,7 @@ nav:
               - FwdMessage: api/aegis_commands/fwd-message.md
               - MoveResult: api/aegis_commands/move-result.md
               - ObserveResult: api/aegis_commands/observe-result.md
+              - PredictResult: api/aegis_commands/predict-result.md
               - SaveSurvResult: api/aegis_commands/save-surv-result.md
               - SleepResult: api/aegis_commands/sleep-result.md
               - TeamDigResult: api/aegis_commands/team-dig-result.md
