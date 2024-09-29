@@ -3,41 +3,41 @@ from typing import override
 
 import numpy as np
 import tensorflow as tf  # pyright: ignore[reportMissingTypeStubs]
+from aegis import (
+    CONNECT_OK,
+    END_TURN,
+    FWD_MESSAGE,
+    MOVE,
+    MOVE_RESULT,
+    OBSERVE,
+    OBSERVE_RESULT,
+    PREDICT,
+    PREDICT_RESULT,
+    SAVE_SURV,
+    SAVE_SURV_RESULT,
+    SLEEP_RESULT,
+    TEAM_DIG,
+    TEAM_DIG_RESULT,
+    AgentCommand,
+    Direction,
+    Grid,
+    Location,
+    NoLayers,
+    NoLayersInfo,
+    Rubble,
+    RubbleInfo,
+    SurroundInfo,
+    Survivor,
+    SurvivorGroup,
+    SurvivorGroupInfo,
+    SurvivorInfo,
+    World,
+    WorldObjectInfo,
+)
 from agent.base_agent import BaseAgent
 from agent.brain import Brain
 from agent.log_levels import LogLevels
 from agents.better_agent.pathfinder import Pathfinder
-from aegis.common import Direction, Location
-from aegis.common.commands.agent_command import AgentCommand
-from aegis.common.commands.agent_commands import (
-    END_TURN,
-    MOVE,
-    OBSERVE,
-    PREDICT,
-    SAVE_SURV,
-    TEAM_DIG,
-)
-from aegis.common.commands.aegis_commands import (
-    CONNECT_OK,
-    FWD_MESSAGE,
-    MOVE_RESULT,
-    OBSERVE_RESULT,
-    PREDICT_RESULT,
-    SAVE_SURV_RESULT,
-    SLEEP_RESULT,
-    TEAM_DIG_RESULT,
-)
-from aegis.common.world.grid import Grid
-from aegis.common.world.info import (
-    NoLayersInfo,
-    RubbleInfo,
-    SurroundInfo,
-    SurvivorGroupInfo,
-    SurvivorInfo,
-    WorldObjectInfo,
-)
-from aegis.common.world.objects import NoLayers, Rubble, Survivor, SurvivorGroup
-from aegis.common.world.world import World
 from numpy.typing import NDArray
 
 
