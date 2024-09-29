@@ -24,7 +24,6 @@ jobs:
 
       - name: Build Documentations
         run: mkdocs build
-        working-directory: ./docs
 
       - name: Deploy to Github Pages
         uses: peaceiris/actions-gh-pages@v4

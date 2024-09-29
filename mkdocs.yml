@@ -1,5 +1,6 @@
 site_name: AEGIS Docs
-site_dir: ../aegis-documentation
+docs_dir: docs
+site_dir: aegis-documentation
 
 nav:
   - Home: index.md
@@ -104,7 +105,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: [../src/]
+          paths: [src/]
           options:
             docstring_options:
               ignore_init_summary: true

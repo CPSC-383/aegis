@@ -81,6 +81,7 @@ jobs:
           rm -rf .git
           rm -rf .github
           rm .gitignore
+          rm mkdocs.yml
 
       - name: Zip repo
         run: |
