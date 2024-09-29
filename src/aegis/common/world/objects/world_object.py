@@ -11,7 +11,7 @@ from aegis.parsers.helper.world_file_type import StackContent
 
 class WorldObject(ABC):
     """
-    Reprents a object in the world.
+    Represents an object in the world.
 
     Attributes:
         id (int): The id of the world object.

@@ -40,7 +40,6 @@ nav:
           - Agent Commands:
               - AgentCommand: api/agent_commands/agent-command.md
               - AgentUnknown: api/agent_commands/agent-unknown.md
-              - Connect: api/agent_commands/connect.md
               - EndTurn: api/agent_commands/end-turn.md
               - Move: api/agent_commands/move.md
               - Observe: api/agent_commands/observe.md
@@ -49,19 +48,14 @@ nav:
               - Sleep: api/agent_commands/sleep.md
               - TeamDig: api/agent_commands/team-dig.md
           - Aegis Commands:
+              - AegisCommand: api/aegis_commands/aegis-command.md
               - AegisUnknown: api/aegis_commands/aegis-unknown.md
-              - CmdResultStart: api/aegis_commands/cmd-result-start.md
-              - CmdResultEnd: api/aegis_commands/cmd-result-end.md
               - ConnectOK: api/aegis_commands/connect-ok.md
               - DeathCard: api/aegis_commands/death-card.md
               - Disconnect: api/aegis_commands/disconnect.md
               - FwdMessage: api/aegis_commands/fwd-message.md
-              - MessagesStart: api/aegis_commands/messages-start.md
-              - MessagesEnd: api/aegis_commands/messages-end.md
               - MoveResult: api/aegis_commands/move-result.md
               - ObserveResult: api/aegis_commands/observe-result.md
-              - RoundStart: api/aegis_commands/round-start.md
-              - RoundEnd: api/aegis_commands/round-end.md
               - SaveSurvResult: api/aegis_commands/save-surv-result.md
               - SleepResult: api/aegis_commands/sleep-result.md
               - TeamDigResult: api/aegis_commands/team-dig-result.md
@@ -83,17 +77,17 @@ theme:
   language: en
   palette:
     - scheme: default
+      primary: teal
+      accent: light blue
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
-      primary: teal
-      accent: light blue
     - scheme: slate
+      primary: black
+      accent: light blue
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
-      primary: teal
-      accent: light blue
   font:
     text: Varela Round
   logo: assets/logo.png

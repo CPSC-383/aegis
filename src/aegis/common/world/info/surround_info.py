@@ -6,7 +6,7 @@ from aegis.common.world.info.grid_info import GridInfo
 
 class SurroundInfo:
     """
-    Represents the information about the surrounding grid cells in the world.
+    Represents the information about the surrounding grid cells of the agent.
 
     Attributes:
         life_signals (LifeSignals): The life signals in each surrounding grid.

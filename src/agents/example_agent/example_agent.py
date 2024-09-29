@@ -1,30 +1,21 @@
 import random
 from typing import override
 
-from agent.base_agent import BaseAgent
-from agent.brain import Brain
-from agent.log_levels import LogLevels
-from aegis.common import AgentID, AgentIDList, Direction, Location
-from aegis.common.commands.agent_command import AgentCommand
-from aegis.common.commands.agent_commands import (
+from aegis import (
     END_TURN,
     MOVE,
-    OBSERVE,
-    SAVE_SURV,
-    SEND_MESSAGE,
-    SLEEP,
-    TEAM_DIG,
-)
-from aegis.common.commands.aegis_commands import (
-    CONNECT_OK,
-    FWD_MESSAGE,
     MOVE_RESULT,
-    OBSERVE_RESULT,
-    PREDICT_RESULT,
+    SAVE_SURV,
     SAVE_SURV_RESULT,
-    SLEEP_RESULT,
-    TEAM_DIG_RESULT,
+    AgentCommand,
+    Direction,
+    Grid,
+    SurroundInfo,
+    Survivor,
+    SurvivorInfo,
+    WorldObjectInfo,
 )
+from agent import BaseAgent, Brain, LogLevels
 
 
 class ExampleAgent(Brain):

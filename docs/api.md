@@ -1,1 +1,7 @@
-This is where you will find all the API functions you can use for your assignments.
+::: aegis
+    options:
+        members: false
+
+::: agent
+    options:
+        members: false
