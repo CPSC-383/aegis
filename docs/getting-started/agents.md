@@ -24,16 +24,17 @@ a Survivor/Survivor Group.
 
 Agents can use the following commands to interact with AEGIS. Click on each command for more information.
 
-- **[SEND_MESSAGE](../api/agent_commands/send-message.md)**: Sends a message to other agents. Note that messages are sent at the start of
-the next round.
+- **[END_TURN](../api/agent_commands/end-turn.md)**: Indicates the agent is done with its turn.
 - **[MOVE](../api/agent_commands/move.md)**: Moves the agent in a specified direction.
-- **[TEAM_DIG](../api/agent_commands/team-dig.md)**: Removes a piece of Rubble. If multiple agents are required, all agents must send the 
-`TEAM_DIG` command in the same round.
-- **[SAVE_SURV](../api/agent_commands/save-surv.md)**: Save a survivor.
-- **[SLEEP](../api/agent_commands/sleep.md)**: Recharges the agent.
 - **[OBSERVE](../api/agent_commands/observe.md)**: Gathers information about a grid. Information becomes more distorted the further away the grid
 is from the agent. The distortion only affects the life signals list and the top layer of the grid.
-- **[END_TURN](../api/agent_commands/end-turn.md)**: Indicates the agent is done with its turn.
+- **[PREDICT](../api/agent_commands/predict.md)**: Represents the prediction of an agent.
+- **[SAVE_SURV](../api/agent_commands/save-surv.md)**: Save a survivor.
+- **[SEND_MESSAGE](../api/agent_commands/send-message.md)**: Sends a message to other agents. Note that messages are sent at the start of
+the next round.
+- **[SLEEP](../api/agent_commands/sleep.md)**: Recharges the agent.
+- **[TEAM_DIG](../api/agent_commands/team-dig.md)**: Removes a piece of Rubble. If multiple agents are required, all agents must send the 
+`TEAM_DIG` command in the same round.
 
 ## Agent States
 
