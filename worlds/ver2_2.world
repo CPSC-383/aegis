@@ -1,0 +1,240 @@
+{
+  "settings": {
+    "world_info": {
+      "size": {
+        "width": 5,
+        "height": 5
+      },
+      "seed": 4589,
+      "world_file_levels": {
+        "high": 15,
+        "mid": 7,
+        "low": 5
+      },
+      "agent_energy": 500
+    }
+  },
+  "spawn_locs": [
+    {
+      "x": 2,
+      "y": 0
+    }
+  ],
+  "grid_types": {
+    "fire_grids": [],
+    "killer_grids": [],
+    "charging_grids": []
+  },
+  "stacks": [
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": [
+        {
+          "type": "sv",
+          "arguments": {
+            "energy_level": 10,
+            "body_mass": 10,
+            "mental_state": 10,
+            "damage_factor": 10
+          }
+        }
+      ]
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 1
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 2
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 3
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 4
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 0
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 1
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 2
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 3
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 4
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 1
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 2
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 3
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 4
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 0
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 1
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 2
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 3
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 4
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 0
+      },
+      "move_cost": 50,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 1
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 2
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 3
+      },
+      "move_cost": 2,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 4
+      },
+      "move_cost": 2,
+      "contents": []
+    }
+  ]
+}
