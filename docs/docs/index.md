@@ -1,41 +1,32 @@
+---
+hide:
+  - navigation
+  - toc
+---
+
 # Welcome to the AEGIS documentation!
 
-Here, you'll find all the information you need to get started, understand
-AEGIS's components, and how to use its features.
+> Aegis, pronounced "ee-jis," originates from ancient Greek, meaning "shield", "protection" or "support."
+> In the context of your assignment, Aegis symbolizes the protective role of agents as they save survivors. 
 
-## Overview
-
-Documentation covers the following:
+Here, you'll find all the information you need to get started, understand AEGIS's components, and how to use its features.
 
 <div class="grid cards" markdown>
 
--   :material-cog:{ .lg .middle } __Set up AEGIS__ 
+- :material-run-fast:{ .lg .middle } **Getting started**
 
     ---
 
-    Instructions on how to download and install AEGIS.
+    Learn how to quickly install AEGIS and learn about the system.
 
--   :octicons-book-16:{ .lg .middle } __Understanding AEGIS and Agents__
+    [:octicons-download-16: Installation](getting-started/installation.md){ .md-button .md-button--primary } [:material-book-open-variant: Aegis System](getting-started/aegis-system.md){ .md-button .md-button--primary }
 
-    ---
-
-    Learn about the core functionality of AEGIS and discover how Agents interface with it.
-
--   :material-information:{ .lg .middle } __How to Use the Client__
+- :material-diving-scuba:{ .lg .middle } **Deep dive**
 
     ---
 
-    Learn how to use the Client application effectively.
+    Learn about the AEGIS API and the functions you can use.
 
--   :material-package-variant-closed:{ .lg .middle } __Functions and Classes__
-
-    ---
-
-    Find information on the functions and classes available in AEGIS.
+    [:material-code-parentheses: API Documentation](api.md){ .md-button .md-button--primary }
 
 </div>
-
-## Get Started
-
-To get started, head over to the [Installation Guide](aegis/installation-guide.md).
-This guide provides step-by-step instructions to set up AEGIS on your system.

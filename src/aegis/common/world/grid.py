@@ -60,12 +60,6 @@ class Grid:
             self.location = Location(-1, -1)
 
     def setup_grid(self, grid_state_type: str) -> None:
-        """
-        Configures the grid based on the provided state type.
-
-        Args:
-            grid_state_type: The state type of the grid.
-        """
         grid_state_type = grid_state_type.upper().strip()
 
         if grid_state_type == "NORMAL_GRIDS":
@@ -113,15 +107,12 @@ class Grid:
         return self._type == GridType.KILLER_GRID
 
     def set_normal_grid(self) -> None:
-        """Sets the grid type to NORMAL_GRID."""
         self._type = GridType.NORMAL_GRID
 
     def set_charging_grid(self) -> None:
-        """Sets the grid type to CHARGING_GRID."""
         self._type = GridType.CHARGING_GRID
 
     def set_killer_grid(self) -> None:
-        """Sets the grid type to KILLER_GRID."""
         self._type = GridType.KILLER_GRID
 
     def is_stable(self) -> bool:
@@ -143,11 +134,9 @@ class Grid:
         return self._state == _State.KILLER_GRID
 
     def set_stable(self) -> None:
-        """Sets the grid state to STABLE_GRID."""
         self._state = _State.STABLE_GRID
 
     def set_killer(self) -> None:
-        """Sets the grid state to KILLER_GRID."""
         self._state = _State.KILLER_GRID
 
     def get_grid_layers(self) -> list[WorldObject]:
@@ -209,12 +198,6 @@ class Grid:
         return self._on_fire
 
     def set_on_fire(self, on_fire: bool) -> None:
-        """
-        Sets the fire status of the grid.
-
-        Args:
-            on_fire: If True, sets the grid on fire; otherwise, extinguishes the fire.
-        """
         if on_fire:
             self._on_fire = on_fire
             self._state = _State.KILLER_GRID

@@ -70,12 +70,6 @@ class World:
         return self._world
 
     def set_world_grid(self, world: list[list[Grid]]) -> None:
-        """
-        Sets the world to a new 2D grid.
-
-        Args:
-            world: The new 2D grid.
-        """
         self.height = len(world[0])
         self.width = len(world)
         self._world = world
@@ -98,13 +92,6 @@ class World:
         )
 
     def set_grid_at(self, location: Location, grid: Grid) -> None:
-        """
-        Sets the grid at a given location.
-
-        Args:
-            location: The location to set the grid.
-            grid: The grid to set at the given location.
-        """
         if self.on_map(location):
             self._world[location.x][location.y] = grid
 

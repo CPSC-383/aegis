@@ -1,3 +1,9 @@
+---
+hide:
+  - navigation
+  - toc
+---
+
 The following is the AEGIS config, located in `sys_files`.
 
 ```json title="aegis_config.json" linenums="1" hl_lines="12"

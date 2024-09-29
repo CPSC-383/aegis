@@ -1,3 +1,8 @@
+---
+hide:
+  - navigation
+---
+
 # Common Errors and Solutions
 
 If you can't solve your problem after reading through this page, please contact any of the Instructors or TAs and they will be able to help.

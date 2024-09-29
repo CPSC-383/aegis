@@ -24,29 +24,28 @@ a Survivor/Survivor Group.
 
 Agents can use the following commands to interact with AEGIS. Click on each command for more information.
 
-- **[CONNECT](../agent_commands/connect.md)**: Sent by an agent that wants to connect to AEGIS.
-- **[SEND_MESSAGE](../agent_commands/send-message.md)**: Sends a message to other agents. Note that messages are sent at the start of
+- **[CONNECT](../api/agent_commands/connect.md)**: Sent by an agent that wants to connect to AEGIS.
+- **[SEND_MESSAGE](../api/agent_commands/send-message.md)**: Sends a message to other agents. Note that messages are sent at the start of
 the next round.
-- **[MOVE](../agent_commands/move.md)**: Moves the agent in a specified direction.
-- **[TEAM_DIG](../agent_commands/team-dig.md)**: Removes a piece of Rubble. If multiple agents are required, all agents must send the 
+- **[MOVE](../api/agent_commands/move.md)**: Moves the agent in a specified direction.
+- **[TEAM_DIG](../api/agent_commands/team-dig.md)**: Removes a piece of Rubble. If multiple agents are required, all agents must send the 
 `TEAM_DIG` command in the same round.
-- **[SAVE_SURV](../agent_commands/save-surv.md)**: Save a survivor.
-- **[PREDICT](../agent_commands/predict.md)**: Allows an agent to predict an image with their model.
-- **[SLEEP](../agent_commands/sleep.md)**: Recharges the agent.
-- **[OBSERVE](../agent_commands/observe.md)**: Gathers information about a grid. Information becomes more distorted the further away the grid
+- **[SAVE_SURV](../api/agent_commands/save-surv.md)**: Save a survivor.
+- **[SLEEP](../api/agent_commands/sleep.md)**: Recharges the agent.
+- **[OBSERVE](../api/agent_commands/observe.md)**: Gathers information about a grid. Information becomes more distorted the further away the grid
 is from the agent. The distortion only affects the life signals list and the top layer of the grid.
-- **[END_TURN](../agent_commands/end-turn.md)**: Indicates the agent is done with its turn.
+- **[END_TURN](../api/agent_commands/end-turn.md)**: Indicates the agent is done with its turn.
 
 ## Agent States
 
 Each round involves four main states for an agent: Click on each state for more information.
     
-1. **[IDLE](../agent/agent-states.md)**: The agent is waiting for instructions from AEGIS.
-2. **[READ_MAIL](../agent/agent-states.md)**: The agent has received the `MESSAGES_START` command and will start processing messages
+1. **[IDLE](../api/agent/agent-states.md)**: The agent is waiting for instructions from AEGIS.
+2. **[READ_MAIL](../api/agent/agent-states.md)**: The agent has received the `MESSAGES_START` command and will start processing messages
 from the other agents. The agent returns to the IDLE state when it receives the `MESSAGES_END` command.
-3. **[GET_CMD_RESULT](../agent/agent-states.md)**: The agent has received the `CMD_RESULT_START` command, indicating that AEGIS is sending the results
+3. **[GET_CMD_RESULT](../api/agent/agent-states.md)**: The agent has received the `CMD_RESULT_START` command, indicating that AEGIS is sending the results
 for the last command. The agent returns to the IDLE state when it receives the `CMD_RESULT_END` command.
-4. **[THINK](../agent/agent-states.md)**: The agent has received the `ROUND_START` command, allowing it to begin computing its actions for the
+4. **[THINK](../api/agent/agent-states.md)**: The agent has received the `ROUND_START` command, allowing it to begin computing its actions for the
 current round. The agent returns to the IDLE state when it receives the `ROUND_END` command.
 
 

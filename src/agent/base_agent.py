@@ -50,12 +50,6 @@ class BaseAgent:
         return BaseAgent._agent
 
     def set_agent_state(self, agent_state: AgentStates) -> None:
-        """
-        Sets the state of the base agent.
-
-        Args:
-            agent_state: The new state for the agent.
-        """
         self._agent_state = agent_state
         self.log(LogLevels.Nothing, f"New State: {self._agent_state}")
 
@@ -72,12 +66,6 @@ class BaseAgent:
         return self._id
 
     def set_agent_id(self, id: AgentID) -> None:
-        """
-        Sets the id of the base agent.
-
-        Args:
-            id: The new ID for the base agent.
-        """
         self._id = id
         self.log(LogLevels.Always, f"New ID: {self._id}")
 
@@ -86,12 +74,6 @@ class BaseAgent:
         return self._location
 
     def set_location(self, location: Location) -> None:
-        """
-        Sets the location of the base agent.
-
-        Args:
-            location: The new location for the base agent.
-        """
         self._location = location
         self.log(LogLevels.Always, f"New Location: {self._location}")
 
@@ -100,12 +82,6 @@ class BaseAgent:
         return self._energy_level
 
     def set_energy_level(self, energy_level: int) -> None:
-        """
-        Sets the energy level of the base agent.
-
-        Args:
-            energy_level: The new energy level for the base agent.
-        """
         self._energy_level = energy_level
         self.log(LogLevels.Always, f"New Energy: {self._energy_level}")
 
@@ -141,16 +117,9 @@ class BaseAgent:
         self.log(LogLevels.Always, "Cleared Prediction Info")
 
     def get_brain(self) -> agent.brain.Brain | None:
-        """Returns the Brain instance of the base agent."""
         return self._brain
 
     def set_brain(self, brain: agent.brain.Brain) -> None:
-        """
-        Sets the Brain instance of the base agent.
-
-        Args:
-            brain: The new brain for the base agent.
-        """
         self._brain = brain
         self.log(LogLevels.Always, "New Brain")
 
@@ -189,7 +158,9 @@ class BaseAgent:
             else:
                 self.log(LogLevels.Error, "Failed to connect to AEGIS.")
         else:
-            self.log(LogLevels.Error, "Multiple calls made to start method, ( call ignored )")
+            self.log(
+                LogLevels.Error, "Multiple calls made to start method, ( call ignored )"
+            )
 
     def _connect_to_aegis(self, host: str, group_name: str) -> bool:
         """
@@ -208,7 +179,9 @@ class BaseAgent:
                 self._aegis_socket.send_message(str(CONNECT(group_name)))
                 message = self._aegis_socket.read_message()
                 if message is not None and self._brain is not None:
-                    self._brain.handle_aegis_command(AegisParser.parse_aegis_command(message))
+                    self._brain.handle_aegis_command(
+                        AegisParser.parse_aegis_command(message)
+                    )
                 if self.get_agent_state() == AgentStates.CONNECTED:
                     result = True
             except AegisParserException as e:
@@ -251,7 +224,9 @@ class BaseAgent:
                             f"Got AegisParserException '{e}'",
                         )
             except AegisSocketException as e:
-                self.log(LogLevels.Always, f"Got AegisSocketException '{e}', shutting down.")
+                self.log(
+                    LogLevels.Always, f"Got AegisSocketException '{e}', shutting down."
+                )
                 end = True
             sys.stdout.flush()
 
