@@ -6,12 +6,12 @@ This section will cover the basic information about downloading and installing A
     - **Python 3.12** or greater  
       To check if you have the correct Python version installed, run the following command in your terminal:
       
-        === "Mac/Linux"
+        === ":fontawesome-brands-apple: / :fontawesome-brands-linux: Mac/Linux"
             
             ```bash
             python3 --version
             ```
-        === "Windows"
+        === ":fontawesome-brands-windows: Windows"
             
             ```bash
             python --version
@@ -39,13 +39,13 @@ This section will cover the basic information about downloading and installing A
 
     - Create and activate the virtual environment:
 
-        === "Mac/Linux"
+        === ":fontawesome-brands-apple: / :fontawesome-brands-linux: Mac/Linux"
             
             ```
             python3 -m venv .venv
             source .venv/bin/activate
             ```
-        === "Windows"
+        === ":fontawesome-brands-windows: Windows"
             
             ```
             python -m venv .venv
@@ -80,12 +80,14 @@ The AEGIS client uses a specific structure for agents and worlds. Be sure to fol
 guidelines so the client can find and run the necessary files correctly.
 
 ### Agent Structure
+
 ```bash
-src
-└── agents
-    └── example_agent
-        ├── example_agent.py
-        └── main.py
+./
+└── src/
+    └── agents/
+        └── example_agent/
+            ├── example_agent.py
+            └── main.py
 ```
 
 - Place new agents in the `src/agents` directory.
@@ -94,8 +96,9 @@ src
 ### World Structure
 
 ```bash
-worlds
-└── ExampleWorld.world
+./
+└── worlds/
+    └── ExampleWorld.world
 ```
 
 - Place new worlds in the `worlds` directory.

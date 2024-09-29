@@ -35,13 +35,13 @@ Make sure you open the client from the command line.
 cd client
 ```
 
-=== "Windows"
+=== ":fontawesome-brands-windows: Windows"
 
     ```
     .\aegis-client.exe
     ```
 
-=== "Mac"
+=== ":fontawesome-brands-apple: Mac"
 
     ```
     open AEGIS.app
@@ -67,7 +67,7 @@ cd client
     open AEGIS.app
     ```
 
-=== "Linux"
+=== ":fontawesome-brands-linux: Linux"
 
     ```
     ./aegis-client.AppImage
