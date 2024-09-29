@@ -100,5 +100,3 @@ worlds
 
 - Place new worlds in the `worlds` directory.
 - All world files must end with `.world`.
-
-For more information on how agents and AEGIS work together, see the [AEGIS System](./aegis-system.md) page.

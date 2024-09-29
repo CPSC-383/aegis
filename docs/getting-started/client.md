@@ -188,5 +188,3 @@ Clicking on an agent in the grid panel will show the below information:
 #### Full Client Example
 
 ![Client Example](../assets/client_example.png)
-
-Now it's time to finally [run a simulation](running-aegis.md)!

@@ -56,5 +56,3 @@ each agent is given one second to decide what action to take. AEGIS processes ea
 and waits for their command. 
 
 **The last command received from an agent is the one that will be executed for that round.**
-
-Time to learn how the use the [Client](client.md)!

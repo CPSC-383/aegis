@@ -60,5 +60,3 @@ AEGIS uses the following commands to interact with the agents. Click on each com
 - **[SAVE_SURV_RESULT](../api/aegis_commands/save-surv-result.md)**: Result of saving a survivor.
 - **[SLEEP_RESULT](../api/aegis_commands/sleep-result.md)**: Result of the agent sleeping.
 - **[TEAM_DIG_RESULT](../api/aegis_commands/team-dig-result.md)**: Result of digging rubble.
-
-Now to learn about [Agents](agents.md)!
