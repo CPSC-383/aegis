@@ -1,9 +1,13 @@
 # CPSC 383 Aegis
 
+> [!NOTE]
+> You can use reuse existing tags found in the "Releases" section.
+
 ## Building the Documentation
 
 > [!WARNING]
 > DO NOT TOUCH THE DOCS BRANCH. THE WORKFLOW WILL AUTOMATICALLY UPDATE THE FILES FOR THE WEBSITE.
+
 
 To build the documentation, follow these steps:
 
