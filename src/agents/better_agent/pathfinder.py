@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import heapq
-import math
 
 from agent.base_agent import BaseAgent
 from aegis.common import Location, Direction
@@ -22,10 +21,10 @@ class _Node:
 
 class Pathfinder:
     def _heuristic(self, curr: Location, end: Location) -> float:
-        # Use Euclidean Distance
+        # Use Chebyshev Distance
         dx = curr.x - end.x
         dy = curr.y - end.y
-        return math.sqrt(dx**2 + dy**2)
+        return max(abs(dx), abs(dy))
 
     def _convert_path_to_directions(self, path: list[Location]) -> list[Direction]:
         directions: list[Direction] = []
