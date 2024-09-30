@@ -1,17 +1,17 @@
 # CPSC 383 Aegis
 
 > [!NOTE]
-> You can use reuse existing tags found in the "Releases" section.
+> You can use reuse existing tags found in the "Releases" section for building.
 
 ## Building the Documentation
 
 > [!WARNING]
-> DO NOT TOUCH THE DOCS BRANCH. THE WORKFLOW WILL AUTOMATICALLY UPDATE THE FILES FOR THE WEBSITE.
+> Do not touch the `docs` branch. The workflow will automatically update the files for the website.
 
 
 To build the documentation, follow these steps:
 
-1. Ensure you are in the appropriate branch.
+1. Ensure you are on the appropriate branch.
 
 - For assignment 1:
 
@@ -47,7 +47,7 @@ git push origin <tag name>
 
 To build and release the Aegis Client, follows these steps:
 
-1. Ensure you are in the appropriate branch.
+1. Ensure you are on the appropriate branch.
 
 - For assignment 1:
 
@@ -79,6 +79,6 @@ git tag -a v2.1.3 -m "Fix bug in map editor"
 git push origin <tag name>
 ```
 
-### Finding the Release for the Client
+### Finding the Latest Release for the Aegis Client
 
 The zipped client will be in the "Releases" section. Check there for the most recent build.
