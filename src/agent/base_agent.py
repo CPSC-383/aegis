@@ -7,18 +7,16 @@ import sys
 from collections import deque
 
 import numpy as np
-from numpy.typing import NDArray
-
-import agent.brain
-from agent.agent_states import AgentStates
-from agent.log_levels import LogLevels
-from aegis.common import AgentID, Location
+from aegis import END_TURN, AgentCommand, AgentID, Location
 from aegis.common.commands.agent_commands import CONNECT
-from aegis.common.commands.command import Command
 from aegis.common.network.aegis_socket import AegisSocket
 from aegis.common.network.aegis_socket_exception import AegisSocketException
 from aegis.common.parsers.aegis_parser import AegisParser
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
+from numpy.typing import NDArray
+
+import agent.brain
+from agent import AgentStates, LogLevels
 
 
 class BaseAgent:
@@ -41,6 +39,7 @@ class BaseAgent:
         self._prediction_info: deque[
             tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]
         ] = deque()
+        self._did_end_turn = False
 
     @staticmethod
     def get_base_agent() -> BaseAgent:
@@ -216,6 +215,7 @@ class BaseAgent:
                                 if agent_state == AgentStates.THINK:
                                     self._round += 1
                                     self._brain.think()
+                                    self._did_end_turn = False
                                 elif agent_state == AgentStates.SHUTTING_DOWN:
                                     end = True
                     except AegisParserException as e:
@@ -228,21 +228,23 @@ class BaseAgent:
                     LogLevels.Always, f"Got AegisSocketException '{e}', shutting down."
                 )
                 end = True
-            sys.stdout.flush()
+            _ = sys.stdout.flush()
 
         if self._aegis_socket is not None:
             self._aegis_socket.disconnect()
 
-    def send(self, agent_action: Command) -> None:
+    def send(self, agent_action: AgentCommand) -> None:
         """
         Sends an action command to the AEGIS system.
 
         Args:
             agent_action: The action command to send.
         """
-        if self._aegis_socket is not None:
+        if self._aegis_socket is not None and not self._did_end_turn:
             try:
                 self._aegis_socket.send_message(str(agent_action))
+                if isinstance(agent_action, END_TURN):
+                    self._did_end_turn = True
             except AegisSocketException:
                 self.log(LogLevels.Always, f"Failed to send {agent_action}")
 
