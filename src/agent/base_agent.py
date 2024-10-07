@@ -16,7 +16,8 @@ from aegis.common.parsers.aegis_parser_exception import AegisParserException
 from numpy.typing import NDArray
 
 import agent.brain
-from agent import AgentStates, LogLevels
+from agent.agent_states import AgentStates
+from agent.log_levels import LogLevels
 
 
 class BaseAgent:
