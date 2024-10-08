@@ -20,10 +20,6 @@ class Pathfinder:
         if world is None:
             return Direction.CENTER
 
-        grid = world.get_grid_at(start)
-        if grid is None:
-            return Direction.CENTER
-
         frontier: list[tuple[int, Location]] = []
         heapq.heappush(frontier, (0, start))
         came_from: dict[Location, Location] = {start: start}
