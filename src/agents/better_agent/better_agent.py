@@ -159,10 +159,8 @@ class BetterAgent(Brain):
         self._round += 1
 
     def move(self, world: World, loc: Location) -> MOVE:
-        path = Pathfinder().a_star(world, self._agent, self._agent.get_location(), loc)
-        if not path:
-            return MOVE(Direction.CENTER)
-        return MOVE(path[0])
+        dir = Pathfinder().a_star(world, self._agent, self._agent.get_location(), loc)
+        return MOVE(dir)
 
     def get_best_location(self, world: World) -> Location:
         best_grid = world.get_world_grid()[0][0]

@@ -7,77 +7,44 @@ from aegis.common import Location, Direction
 from aegis.common.world.world import World
 
 
-class _Node:
-    def __init__(self, location: Location, parent: _Node | None = None) -> None:
-        self.parent = parent
-        self.location = location
-        self.f = float("inf")  # Total cost
-        self.g = float("inf")  # Distance between start and end
-        self.h = float("inf")  # Heuristic; estimated distance between start and end
-
-    def __lt__(self, other: _Node) -> bool:
-        return self.f < other.f
-
-
 class Pathfinder:
-    def _heuristic(self, curr: Location, end: Location) -> float:
+    def _heuristic(self, curr: Location, end: Location) -> int:
         # Use Chebyshev Distance
         dx = curr.x - end.x
         dy = curr.y - end.y
         return max(abs(dx), abs(dy))
 
-    def _convert_path_to_directions(self, path: list[Location]) -> list[Direction]:
-        directions: list[Direction] = []
-        for i in range(len(path) - 1):
-            start_loc = path[i]
-            end_loc = path[i + 1]
-            dx = end_loc.x - start_loc.x
-            dy = end_loc.y - start_loc.y
-
-            for direction in Direction:
-                if direction.dx == dx and direction.dy == dy:
-                    directions.append(direction)
-                    break
-        return directions
-
-    def _path(self, node: _Node | None) -> list[Location]:
-        path: list[Location] = []
-        while node:
-            path.append(node.location)
-            node = node.parent
-        return path[::-1]
-
     def a_star(
         self, world: World | None, agent: BaseAgent, start: Location, end: Location
-    ) -> list[Direction]:
+    ) -> Direction:
         if world is None:
-            return []
+            return Direction.CENTER
 
-        open: list[_Node] = []  # Nodes to be evaluated
-        closed: set[Location] = set()  # Nodes already evaluated
+        grid = world.get_grid_at(start)
+        if grid is None:
+            return Direction.CENTER
 
-        start_node = _Node(start)
-        end_node = _Node(end)
+        frontier: list[tuple[int, Location]] = []
+        heapq.heappush(frontier, (0, start))
+        came_from: dict[Location, Location] = {start: start}
+        cost_so_far: dict[Location, int] = {start: 0}
 
-        start_node.g = 0
-        start_node.h = self._heuristic(start_node.location, end_node.location)
-        start_node.f = start_node.h
+        while frontier:
+            _, current = heapq.heappop(frontier)
 
-        heapq.heappush(open, start_node)
+            if current == end:
+                path = self.remake_path(came_from, start, end)
+                path.append(end)
 
-        while open:
-            curr_node = heapq.heappop(open)
-
-            if curr_node.location == end_node.location:
-                path = self._path(curr_node)
-                return self._convert_path_to_directions(path)
-
-            closed.add(curr_node.location)
+                next_loc = path[1]
+                dx = next_loc.x - start.x
+                dy = next_loc.y - start.y
+                return Direction(dx, dy)
 
             for dir in Direction:
-                loc = curr_node.location.add(dir)
-
+                loc = current.add(dir)
                 grid = world.get_grid_at(loc)
+
                 if (
                     grid is None
                     or grid.move_cost >= agent.get_energy_level()
@@ -85,20 +52,23 @@ class Pathfinder:
                 ):
                     continue
 
-                loc_node = _Node(loc, curr_node)
-                loc_node.g = curr_node.g + grid.move_cost
-                loc_node.h = self._heuristic(loc_node.location, end_node.location)
-                loc_node.f = loc_node.g + loc_node.h
+                new_cost = cost_so_far[current] + grid.move_cost
+                if loc not in cost_so_far or new_cost < cost_so_far[loc]:
+                    cost_so_far[loc] = new_cost
+                    prio = new_cost + self._heuristic(loc, end)
+                    heapq.heappush(frontier, (prio, loc))
+                    came_from[loc] = current
 
-                if loc_node.location in closed:
-                    continue
+        return Direction.CENTER
 
-                if loc_node in open:
-                    i = open.index(loc_node)
-                    if loc_node.g < open[i].g:
-                        open[i] = loc_node
-                        heapq.heapify(open)
-                else:
-                    heapq.heappush(open, loc_node)
-
-        return []
+    def remake_path(
+        self, came_from: dict[Location, Location], start: Location, end: Location
+    ) -> list[Location]:
+        current = end
+        path: list[Location] = []
+        while current != start:
+            previous = came_from[current]
+            path.append(previous)
+            current = previous
+        path.reverse()  # Reverse to get the path from start to end
+        return path
