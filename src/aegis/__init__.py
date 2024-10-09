@@ -34,11 +34,6 @@ The various possible layers in a grid.
 
 Contains information about world objects.
 
-- [`aegis.WorldObjectInfo`][]: Represents information about a world object.
-- [`aegis.SurvivorInfo`][]: Represents the information of a survivor in the world.
-- [`aegis.SurvivorGroupInfo`][]: Represents the information of a survivor group in the world.
-- [`aegis.RubbleInfo`][]: Represents the information of rubble in the world.
-- [`aegis.NoLayersInfo`][]: Represents the no layer info.
 - [`aegis.GridInfo`][]: Represents the information of a grid in the world.
 - [`aegis.SurroundInfo`][]: Represents the information about the surrounding grid cells of the agent.
 
@@ -107,12 +102,7 @@ from aegis.common.commands.agent_commands import (
 from aegis.common.world.grid import Grid
 from aegis.common.world.info import (
     GridInfo,
-    NoLayersInfo,
-    RubbleInfo,
     SurroundInfo,
-    SurvivorGroupInfo,
-    SurvivorInfo,
-    WorldObjectInfo,
 )
 from aegis.common.world.objects import (
     NoLayers,
@@ -143,13 +133,11 @@ __all__ = [
     "MOVE",
     "MOVE_RESULT",
     "NoLayers",
-    "NoLayersInfo",
     "OBSERVE",
     "OBSERVE_RESULT",
     "PREDICT",
     "PREDICT_RESULT",
     "Rubble",
-    "RubbleInfo",
     "SAVE_SURV",
     "SAVE_SURV_RESULT",
     "SEND_MESSAGE",
@@ -158,11 +146,8 @@ __all__ = [
     "SurroundInfo",
     "Survivor",
     "SurvivorGroup",
-    "SurvivorGroupInfo",
-    "SurvivorInfo",
     "TEAM_DIG",
     "TEAM_DIG_RESULT",
     "World",
     "WorldObject",
-    "WorldObjectInfo",
 ]

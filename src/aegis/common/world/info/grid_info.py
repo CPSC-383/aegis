@@ -1,8 +1,7 @@
 from typing import override
 
 from aegis.common import AgentIDList, GridType, Location
-from aegis.common.world.info.no_layers_info import NoLayersInfo
-from aegis.common.world.info.world_object_info import WorldObjectInfo
+from aegis.common.world.objects import WorldObject, NoLayers
 
 
 class GridInfo:
@@ -25,7 +24,7 @@ class GridInfo:
         on_fire: bool = False,
         move_cost: int = 0,
         agent_id_list: AgentIDList | None = None,
-        top_layer_info: WorldObjectInfo | None = None,
+        top_layer: WorldObject | None = None,
     ) -> None:
         """
         Initializes a GridInfo instance.
@@ -36,7 +35,7 @@ class GridInfo:
             on_fire: Indicates if the grid is on fire.
             move_cost: The cost to move through the grid.
             agent_id_list: List of agent IDs on the grid.
-            top_layer_info: Information about the top layer object.
+            top_layer: Information about the top layer object.
         """
         self.grid_type = grid_type
         self.location = location if location is not None else Location(-1, -1)
@@ -45,12 +44,10 @@ class GridInfo:
         self.agent_id_list = (
             agent_id_list if agent_id_list is not None else AgentIDList()
         )
-        self.top_layer_info = (
-            top_layer_info if top_layer_info is not None else NoLayersInfo()
-        )
+        self.top_layer = top_layer if top_layer is not None else NoLayers()
 
-    def distort_info(self, factor: int) -> None:
-        self.top_layer_info.distort_info(factor)
+    # def distort_info(self, factor: int) -> None:
+    #     self.top_layer.distort_info(factor)
 
     @override
     def __str__(self) -> str:
@@ -60,5 +57,5 @@ class GridInfo:
             f"{self.grid_type.name} ( X {self.location.x} , Y {self.location.y} , "
             f"ON_FIRE {str(self.on_fire).upper()} , MV_COST {self.move_cost} , "
             f"NUM_AGT {self.agent_id_list.size()} , ID_LIST {str(self.agent_id_list)} , "
-            f"TOP_LAYER ( {self.top_layer_info} ) )"
+            f"TOP_LAYER ( {self.top_layer} ) )"
         )

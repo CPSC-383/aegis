@@ -10,8 +10,8 @@ from aegis.common import (
     Location,
     Utility,
 )
-from aegis.common.world.info import NoLayersInfo, GridInfo, WorldObjectInfo
-from aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject
+from aegis.common.world.info import GridInfo
+from aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject, NoLayers
 
 
 class _State(Enum):
@@ -224,16 +224,15 @@ class Grid:
             self._on_fire,
             self.move_cost,
             self.agent_id_list.clone(),
-            self.top_layer_info(),
+            self.top_layer(),
         )
 
-    def top_layer_info(self) -> WorldObjectInfo:
+    def top_layer(self) -> WorldObject:
         """Returns information about the top layer of the grid."""
-        if self._grid_layer_list:
-            top_layer = self.get_top_layer()
-            if top_layer is not None:
-                return top_layer.get_object_info()
-        return NoLayersInfo()
+        if not self._grid_layer_list:
+            return NoLayers()
+
+        return self.get_top_layer() or NoLayers()
 
     def number_of_survivors(self) -> int:
         """Returns the number of survivors in the grid."""

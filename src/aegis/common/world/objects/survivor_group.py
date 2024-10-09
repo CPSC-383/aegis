@@ -1,6 +1,5 @@
 from typing import cast, override
 
-from aegis.common.world.info import SurvivorGroupInfo, WorldObjectInfo
 from aegis.common.world.objects.world_object import WorldObject
 from aegis.parsers.helper.world_file_type import StackContent
 
@@ -69,10 +68,6 @@ class SurvivorGroup(WorldObject):
     @override
     def get_life_signal(self) -> int:
         return self._energy_level
-
-    @override
-    def get_object_info(self) -> WorldObjectInfo:
-        return SurvivorGroupInfo(self.id, self._energy_level, self.number_of_survivors)
 
     @override
     def file_output_string(self) -> str:

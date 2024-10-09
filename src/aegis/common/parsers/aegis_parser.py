@@ -51,12 +51,14 @@ from aegis.common.parsers.aegis_parser_exception import AegisParserException
 from aegis.common.world.grid import Grid
 from aegis.common.world.info import (
     GridInfo,
-    NoLayersInfo,
-    RubbleInfo,
     SurroundInfo,
-    SurvivorGroupInfo,
-    SurvivorInfo,
-    WorldObjectInfo,
+)
+from aegis.common.world.objects import (
+    NoLayers,
+    Rubble,
+    Survivor,
+    SurvivorGroup,
+    WorldObject,
 )
 from numpy.typing import NDArray
 
@@ -396,13 +398,10 @@ class AegisParser:
                 AegisParser.text(tokens, Command.STR_TEAM_DIG)
                 AegisParser.done(tokens)
                 return TEAM_DIG()
-            
-            # raise AegisParserException(
-            #     f"Cannot parse Agent to Kernel Command from {string}"
-            # )
-            
             else:
-                print(f"Cannot parse Agent to Kernel Command from {string} | Did your agent throw an exception?")
+                print(
+                    f"Cannot parse Agent to Kernel Command from {string} | Did your agent throw an exception?"
+                )
                 return AGENT_UNKNOWN()
         except Exception as e:
             print(e)
@@ -571,30 +570,30 @@ class AegisParser:
         AegisParser.comma(tokens)
         AegisParser.text(tokens, "TOP_LAYER")
         AegisParser.open_round_bracket(tokens)
-        top_layer_info = AegisParser.object_info(tokens)
+        top_layer = AegisParser.object(tokens)
         AegisParser.close_round_bracket(tokens)
         AegisParser.close_round_bracket(tokens)
         grid_type = GridType.NORMAL_GRID if normal_grid else GridType.CHARGING_GRID
         return GridInfo(
-            grid_type, Location(x, y), on_fire, move_cost, agent_id_list, top_layer_info
+            grid_type, Location(x, y), on_fire, move_cost, agent_id_list, top_layer
         )
 
     @staticmethod
-    def object_info(tokens: Iterator[str]) -> WorldObjectInfo:
+    def object(tokens: Iterator[str]) -> WorldObject:
         object_type = next(tokens)
         if object_type == "RUBBLE":
-            return AegisParser.rubble_info(tokens)
+            return AegisParser.rubble(tokens)
         elif object_type == "SURVIVOR":
-            return AegisParser.survivor_info(tokens)
+            return AegisParser.survivor(tokens)
         elif object_type == "SURVIVOR_GROUP":
-            return AegisParser.survivor_group_info(tokens)
+            return AegisParser.survivor_group(tokens)
         elif object_type == "NO_LAYERS":
-            return NoLayersInfo()
+            return NoLayers()
         else:
             raise AegisParserException(f"Expected <object>, found {object_type}")
 
     @staticmethod
-    def rubble_info(tokens: Iterator[str]) -> RubbleInfo:
+    def rubble(tokens: Iterator[str]) -> Rubble:
         AegisParser.open_round_bracket(tokens)
         AegisParser.text(tokens, "ID")
         id = AegisParser.integer(tokens)
@@ -605,10 +604,10 @@ class AegisParser:
         AegisParser.text(tokens, "RM_ENG")
         remove_energy = AegisParser.integer(tokens)
         AegisParser.close_round_bracket(tokens)
-        return RubbleInfo(id, remove_energy, remove_agents)
+        return Rubble(id, remove_energy, remove_agents)
 
     @staticmethod
-    def survivor_info(tokens: Iterator[str]) -> SurvivorInfo:
+    def survivor(tokens: Iterator[str]) -> Survivor:
         AegisParser.open_round_bracket(tokens)
         AegisParser.text(tokens, "ID")
         id = AegisParser.integer(tokens)
@@ -625,10 +624,10 @@ class AegisParser:
         AegisParser.text(tokens, "MS")
         mental_state = AegisParser.integer(tokens)
         AegisParser.close_round_bracket(tokens)
-        return SurvivorInfo(id, energy_level, damage_factor, body_mass, mental_state)
+        return Survivor(id, energy_level, damage_factor, body_mass, mental_state)
 
     @staticmethod
-    def survivor_group_info(tokens: Iterator[str]) -> SurvivorGroupInfo:
+    def survivor_group(tokens: Iterator[str]) -> SurvivorGroup:
         AegisParser.open_round_bracket(tokens)
         AegisParser.text(tokens, "ID")
         id = AegisParser.integer(tokens)
@@ -639,7 +638,7 @@ class AegisParser:
         AegisParser.text(tokens, "ENG_LV")
         energy_level = AegisParser.integer(tokens)
         AegisParser.close_round_bracket(tokens)
-        return SurvivorGroupInfo(id, energy_level, number_of_survivors)
+        return SurvivorGroup(id, energy_level, number_of_survivors)
 
     @staticmethod
     def open_round_bracket(tokens: Iterator[str]) -> None:

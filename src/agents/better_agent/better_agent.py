@@ -20,19 +20,12 @@ from aegis import (
     TEAM_DIG_RESULT,
     AgentCommand,
     Direction,
-    Grid,
     Location,
     NoLayers,
-    NoLayersInfo,
-    Rubble,
-    RubbleInfo,
     SurroundInfo,
     Survivor,
     SurvivorGroup,
-    SurvivorGroupInfo,
-    SurvivorInfo,
     World,
-    WorldObjectInfo,
 )
 from agent.base_agent import BaseAgent
 from agent.brain import Brain
@@ -88,7 +81,7 @@ class BetterAgent(Brain):
         if grid is None:
             return
 
-        self.update_top_layer(grid, ovr.grid_info.top_layer_info)
+        grid.set_top_layer(ovr.grid_info.top_layer)
 
     @override
     def handle_save_surv_result(self, ssr: SAVE_SURV_RESULT) -> None:
@@ -190,30 +183,7 @@ class BetterAgent(Brain):
                 continue
 
             grid.move_cost = grid_info.move_cost
-            self.update_top_layer(grid, grid_info.top_layer_info)
-
-    def update_top_layer(self, grid: Grid, top_layer: WorldObjectInfo | NoLayersInfo):
-        if isinstance(top_layer, SurvivorInfo):
-            layer = Survivor(
-                top_layer.id,
-                top_layer.energy_level,
-                top_layer.damage_factor,
-                top_layer.body_mass,
-                top_layer.mental_state,
-            )
-            grid.set_top_layer(layer)
-        elif isinstance(top_layer, SurvivorGroupInfo):
-            layer = SurvivorGroup(
-                top_layer.id, top_layer.energy_level, top_layer.number_of_survivors
-            )
-            grid.set_top_layer(layer)
-        elif isinstance(top_layer, RubbleInfo):
-            layer = Rubble(
-                top_layer.id, top_layer.remove_energy, top_layer.remove_agents
-            )
-            grid.set_top_layer(layer)
-        else:
-            grid.set_top_layer(NoLayers())
+            grid.set_top_layer(grid_info.top_layer)
 
     def _predict(self, image: NDArray[np.float32]) -> np.int64:
         expected_shape = (28, 28)

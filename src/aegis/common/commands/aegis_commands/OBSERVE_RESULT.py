@@ -38,4 +38,4 @@ class OBSERVE_RESULT(AegisCommand):
         if factor <= 0:
             return
         self.life_signals.distort(int(factor))
-        self.grid_info.distort_info(int(factor))
+        # self.grid_info.distort_info(int(factor))

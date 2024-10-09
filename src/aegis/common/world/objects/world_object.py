@@ -5,7 +5,6 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import override
 
-from aegis.common.world.info.world_object_info import WorldObjectInfo
 from aegis.parsers.helper.world_file_type import StackContent
 
 
@@ -84,11 +83,6 @@ class WorldObject(ABC):
     @abstractmethod
     def get_life_signal(self) -> int:
         """Returns the life signal associated with the world object."""
-        pass
-
-    @abstractmethod
-    def get_object_info(self) -> WorldObjectInfo:
-        """Returns detailed information about the world object."""
         pass
 
     @abstractmethod

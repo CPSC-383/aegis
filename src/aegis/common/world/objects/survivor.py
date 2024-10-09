@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import cast, override
 
-from aegis.common.world.info import SurvivorInfo, WorldObjectInfo
 from aegis.common.world.objects.world_object import WorldObject
 from aegis.parsers.helper.world_file_type import StackContent
 
@@ -93,16 +92,6 @@ class Survivor(WorldObject):
             life_signal -= self.mental_state
 
         return life_signal
-
-    @override
-    def get_object_info(self) -> WorldObjectInfo:
-        return SurvivorInfo(
-            self.id,
-            self._energy_level,
-            self.damage_factor,
-            self.body_mass,
-            self.mental_state,
-        )
 
     @override
     def file_output_string(self) -> str:
