@@ -37,10 +37,6 @@ class LifeSignals:
     def __str__(self) -> str:
         return f"( {' , '.join(str(signal) for signal in self.life_signals)} )"
 
-    def distort(self, factor: int) -> None:
-        for i in range(len(self.life_signals)):
-            value = Utility.random_in_range(0, factor)
-            if value > self.life_signals[i]:
-                self.life_signals[i] = 0
-            else:
-                self.life_signals[i] -= value
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

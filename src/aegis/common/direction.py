@@ -56,3 +56,7 @@ class Direction(Enum):
     @override
     def __str__(self) -> str:
         return self.name
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

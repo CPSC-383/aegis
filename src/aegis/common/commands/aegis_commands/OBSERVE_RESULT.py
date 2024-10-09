@@ -33,9 +33,3 @@ class OBSERVE_RESULT(AegisCommand):
     @override
     def __str__(self) -> str:
         return f"{self.STR_OBSERVE_RESULT} ( ENG_LEV {self.energy_level} , GRID_INFO ( {self.grid_info} ) , NUM_SIG {self.life_signals.size()} , LIFE_SIG {self.life_signals} )"
-
-    def distort(self, factor: float) -> None:
-        if factor <= 0:
-            return
-        self.life_signals.distort(int(factor))
-        # self.grid_info.distort_info(int(factor))

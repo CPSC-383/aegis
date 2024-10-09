@@ -46,9 +46,6 @@ class GridInfo:
         )
         self.top_layer = top_layer if top_layer is not None else NoLayers()
 
-    # def distort_info(self, factor: int) -> None:
-    #     self.top_layer.distort_info(factor)
-
     @override
     def __str__(self) -> str:
         if self.grid_type == GridType.NO_GRID:
