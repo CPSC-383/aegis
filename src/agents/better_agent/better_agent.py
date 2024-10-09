@@ -134,6 +134,7 @@ class BetterAgent(Brain):
 
             if isinstance(top_layer, NoLayers):
                 grid.percent_chance = 0
+                loc = self.get_best_location(world)
                 self.send_and_end_turn(self.move(world, loc))
                 return
 
