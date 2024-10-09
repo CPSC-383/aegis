@@ -14,7 +14,7 @@ class GridInfo:
         on_fire (bool): A boolean indicating if the grid is on fire.
         move_cost (int): The cost to move through the grid.
         agent_id_list (AgentIDList): A list of agent IDs on the grid.
-        top_layer_info (WorldObjectInfo): Information about the top layer object.
+        top_layer (WorldObject): Information about the top layer object.
     """
 
     def __init__(
