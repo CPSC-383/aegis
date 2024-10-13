@@ -79,6 +79,40 @@ class Location:
         dy = self.y - location.y
         return dx * dx + dy * dy
 
+    def direction_to(self, location: Location) -> Direction:
+        """
+        Returns the direction from the this location to the target location.
+
+        Args:
+            location: The target location.
+
+        Returns:
+            The direction to the target location.
+        """
+
+        dx = location.x - self.x
+        dy = location.y - self.y
+
+        if dx > 0 and dy > 0:
+            return Direction.NORTH_EAST
+        elif dx > 0 and dy < 0:
+            return Direction.SOUTH_EAST
+        elif dx < 0 and dy > 0:
+            return Direction.NORTH_WEST
+        elif dx < 0 and dy < 0:
+            return Direction.SOUTH_WEST
+
+        if dx > 0:
+            return Direction.EAST
+        elif dx < 0:
+            return Direction.WEST
+        elif dy > 0:
+            return Direction.NORTH
+        elif dy < 0:
+            return Direction.SOUTH
+
+        return Direction.CENTER
+
     @override
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Location):
