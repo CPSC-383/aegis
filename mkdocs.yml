@@ -70,6 +70,8 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.indexes
+    - navigation.sections
+    - navigation.expand
     - toc.follow
   language: en
   palette:
