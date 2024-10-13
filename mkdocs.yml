@@ -58,9 +58,6 @@ nav:
               - TeamDigResult: api/aegis_commands/team-dig-result.md
       - Agent:
           - BaseAgent: api/agent/base-agent.md
-          - AgentStates: api/agent/agent-states.md
-          - LogLevels: api/agent/log-levels.md
-  - Assignment 1 Config: a1_config.md
   - Common Errors: common_errors.md
 
 theme:

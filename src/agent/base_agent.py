@@ -54,7 +54,6 @@ class BaseAgent:
         self.log(LogLevels.Nothing, f"New State: {self._agent_state}")
 
     def get_agent_state(self) -> AgentStates:
-        """Returns the state of the base agent."""
         return self._agent_state
 
     def get_round_number(self) -> int:
@@ -103,12 +102,6 @@ class BaseAgent:
             int, NDArray[np.float32] | None, NDArray[np.int64] | None
         ],
     ) -> None:
-        """
-        Add a prediction info to the queue.
-
-        Args:
-            prediction_info (tuple[NDArray[np.float32] | None, NDArray[np.int64]]): The prediction info.
-        """
         self._prediction_info.append(prediction_info)
         self.log(LogLevels.Always, "New Prediction Info!")
 
@@ -163,13 +156,6 @@ class BaseAgent:
             )
 
     def _connect_to_aegis(self, host: str, group_name: str) -> bool:
-        """
-        Attempts to connect to AEGIS.
-
-        Args:
-            host: The hostname or IP address of the AEGIS system.
-            group_name: The group name to use when connecting to AEGIS.
-        """
         result: bool = False
         for _ in range(5):
             self.log(LogLevels.Always, "Trying to connect to AEGIS...")
@@ -200,7 +186,6 @@ class BaseAgent:
         return result
 
     def _run_base_agent_states(self) -> None:
-        """Continuously processes messages from the AEGIS system and handles agent states."""
         end: bool = False
         while not end:
             try:
@@ -251,7 +236,6 @@ class BaseAgent:
 
     @staticmethod
     def get_log_level() -> LogLevels:
-        """Returns the current log level."""
         return BaseAgent._log_level
 
     @staticmethod
@@ -266,7 +250,6 @@ class BaseAgent:
 
     @staticmethod
     def get_log_test_info() -> bool:
-        """Returns whether test logging is enabled."""
         return BaseAgent._log_test
 
     @staticmethod

@@ -40,12 +40,12 @@ the next round.
 
 Each round involves four main states for an agent: Click on each state for more information.
     
-1. **[IDLE](../api/agent/agent-states.md)**: The agent is waiting for instructions from AEGIS.
-2. **[READ_MAIL](../api/agent/agent-states.md)**: The agent has received the `MESSAGES_START` command and will start processing messages
+1. **IDLE**: The agent is waiting for instructions from AEGIS.
+2. **READ_MAIL**: The agent has received the `MESSAGES_START` command and will start processing messages
 from the other agents. The agent returns to the IDLE state when it receives the `MESSAGES_END` command.
-3. **[GET_CMD_RESULT](../api/agent/agent-states.md)**: The agent has received the `CMD_RESULT_START` command, indicating that AEGIS is sending the results
+3. **GET_CMD_RESULT**: The agent has received the `CMD_RESULT_START` command, indicating that AEGIS is sending the results
 for the last command. The agent returns to the IDLE state when it receives the `CMD_RESULT_END` command.
-4. **[THINK](../api/agent/agent-states.md)**: The agent has received the `ROUND_START` command, allowing it to begin computing its actions for the
+4. **THINK**: The agent has received the `ROUND_START` command, allowing it to begin computing its actions for the
 current round. The agent returns to the IDLE state when it receives the `ROUND_END` command.
 
 
