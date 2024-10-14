@@ -3,14 +3,14 @@ import sys
 from enum import Enum
 
 
-class GridType(Enum):
-    """Enum representing different types of grids."""
+class CellType(Enum):
+    """Enum representing different types of cells."""
 
-    NO_GRID = 1
-    NORMAL_GRID = 2
-    CHARGING_GRID = 3
-    FIRE_GRID = 4
-    KILLER_GRID = 5
+    NO_CELL = 1
+    NORMAL_CELL = 2
+    CHARGING_CELL = 3
+    FIRE_CELL = 4
+    KILLER_CELL = 5
 
 
 class Utility:

@@ -1,10 +1,10 @@
 from aegis.common import Constants, Location
-from aegis.common.world.grid import Grid
+from aegis.common.world.cell import Cell
 
 
 class World:
     """
-    Represents a 2D grid world.
+    Represents a 2D grid of cells.
 
     Attributes:
         width (int): The width of the world.
@@ -15,7 +15,7 @@ class World:
     """
 
     def __init__(
-        self, world: list[list[Grid]] | None = None, width: int = 0, height: int = 0
+        self, world: list[list[Cell]] | None = None, width: int = 0, height: int = 0
     ) -> None:
         """
         Initializes a World instance.
@@ -38,7 +38,7 @@ class World:
         elif width > 0 and height > 0 and world is None:
             self.height = height
             self.width = width
-            self._world = [[Grid(x, y) for y in range(height)] for x in range(width)]
+            self._world = [[Cell(x, y) for y in range(height)] for x in range(width)]
         else:
             raise ValueError(
                 "Either 'world' OR 'width and height' must be passed into the class"
@@ -65,11 +65,11 @@ class World:
         if self.height > Constants.WORLD_MAX:
             raise ValueError(f"World height must be beneath {Constants.WORLD_MAX}")
 
-    def get_world_grid(self) -> list[list[Grid]]:
+    def get_world_grid(self) -> list[list[Cell]]:
         """Returns the 2D grid representing the world."""
         return self._world
 
-    def set_world_grid(self, world: list[list[Grid]]) -> None:
+    def set_world_grid(self, world: list[list[Cell]]) -> None:
         self.height = len(world[0])
         self.width = len(world)
         self._world = world
@@ -91,16 +91,16 @@ class World:
             and location.y < self.height
         )
 
-    def set_grid_at(self, location: Location, grid: Grid) -> None:
+    def set_cell_at(self, location: Location, cell: Cell) -> None:
         if self.on_map(location):
-            self._world[location.x][location.y] = grid
+            self._world[location.x][location.y] = cell
 
-    def get_grid_at(self, location: Location) -> Grid | None:
+    def get_cell_at(self, location: Location) -> Cell | None:
         """
-        Returns the grid at the given location if it exists.
+        Returns the cell at the given location if it exists.
 
         Args:
-            location: The location of the grid.
+            location: The location of the cell.
         """
         if not self.on_map(location):
             return None

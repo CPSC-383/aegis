@@ -9,7 +9,7 @@ from aegis.common import (
     AgentID,
     AgentIDList,
     Direction,
-    GridType,
+    CellType,
     LifeSignals,
     Location,
 )
@@ -48,9 +48,9 @@ from aegis.common.commands.agent_commands import (
 )
 from aegis.common.commands.command import Command
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
-from aegis.common.world.grid import Grid
+from aegis.common.world.cell import Cell
 from aegis.common.world.info import (
-    GridInfo,
+    CellInfo,
     SurroundInfo,
 )
 from aegis.common.world.objects import (
@@ -69,14 +69,14 @@ MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
 
 class AegisParser:
     @staticmethod
-    def build_world(file_location: str) -> list[list[Grid]] | None:
-        world: list[list[Grid]] | None = None
+    def build_world(file_location: str) -> list[list[Cell]] | None:
+        world: list[list[Cell]] | None = None
         try:
             with open(file_location) as file:
                 world = AegisParser.read_world_size(file)
                 for line in file:
-                    grid = AegisParser.read_and_build_grid(line)
-                    world[grid.location.x][grid.location.y] = grid
+                    cell = AegisParser.read_and_build_cell(line)
+                    world[cell.location.x][cell.location.y] = cell
         except FileNotFoundError:
             if not file_location.startswith(os.getcwd()):
                 raise AegisParserException(
@@ -93,14 +93,14 @@ class AegisParser:
         return world
 
     @staticmethod
-    def read_world_size(file: TextIO) -> list[list[Grid]]:
+    def read_world_size(file: TextIO) -> list[list[Cell]]:
         tokens = file.readline().split()
         width = int(tokens[3])
         height = int(tokens[6])
         return [[None] * height for _ in range(width)]  # pyright: ignore[reportReturnType]
 
     @staticmethod
-    def read_and_build_grid(line: str) -> Grid:
+    def read_and_build_cell(line: str) -> Cell:
         pattern = r"[\[\]\(\),% ]"
         tokens = re.split(pattern, line.strip())
         tokens = [token for token in tokens if token]
@@ -110,23 +110,23 @@ class AegisParser:
         killer = tokens[3]
         charging = tokens[4]
         percent_chance = int(tokens[5])
-        grid = Grid(x, y)
+        cell = Cell(x, y)
 
-        grid.set_normal_grid()
-        grid.set_on_fire(fire[0] == "+")
+        cell.set_normal_cell()
+        cell.set_on_fire(fire[0] == "+")
 
         if killer[0] == "+":
-            grid.set_killer()
-            grid.set_killer_grid()
+            cell.set_killer()
+            cell.set_killer_cell()
 
         if charging[0] == "+":
-            grid.set_charging_grid()
+            cell.set_charging_cell()
 
-        grid.percent_chance = percent_chance
+        cell.percent_chance = percent_chance
 
         if MOVE_COST_TOGGLE:
-            grid.move_cost = int(tokens[6])
-        return grid
+            cell.move_cost = int(tokens[6])
+        return cell
 
     @staticmethod
     def parse_aegis_command(string: str) -> AegisCommand:
@@ -239,9 +239,9 @@ class AegisParser:
                 AegisParser.text(tokens, "ENG_LEV")
                 energy_level = AegisParser.integer(tokens)
                 AegisParser.comma(tokens)
-                AegisParser.text(tokens, "GRID_INFO")
+                AegisParser.text(tokens, "CELL_INFO")
                 AegisParser.open_round_bracket(tokens)
-                grid_info = AegisParser.grid_info(tokens)
+                cell_info = AegisParser.cell_info(tokens)
                 AegisParser.close_round_bracket(tokens)
                 AegisParser.comma(tokens)
                 AegisParser.text(tokens, "NUM_SIG")
@@ -253,7 +253,7 @@ class AegisParser:
                 AegisParser.close_round_bracket(tokens)
                 AegisParser.close_round_bracket(tokens)
                 AegisParser.done(tokens)
-                return OBSERVE_RESULT(energy_level, grid_info, signals)
+                return OBSERVE_RESULT(energy_level, cell_info, signals)
             elif string.startswith(Command.STR_ROUND_END):
                 AegisParser.text(tokens, Command.STR_ROUND_END)
                 AegisParser.done(tokens)
@@ -475,9 +475,9 @@ class AegisParser:
     @staticmethod
     def surround_info(tokens: Iterator[str]) -> SurroundInfo:
         info = SurroundInfo()
-        AegisParser.text(tokens, "CURR_GRID")
+        AegisParser.text(tokens, "CURR_CELL")
         AegisParser.open_round_bracket(tokens)
-        info.set_current_info(AegisParser.grid_info(tokens))
+        info.set_current_info(AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, "NUM_SIG")
@@ -490,62 +490,62 @@ class AegisParser:
         AegisParser.comma(tokens)
         AegisParser.text(tokens, str(Direction.NORTH_WEST))
         AegisParser.open_round_bracket(tokens)
-        info.set_surround_info(Direction.NORTH_WEST, AegisParser.grid_info(tokens))
+        info.set_surround_info(Direction.NORTH_WEST, AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, str(Direction.NORTH))
         AegisParser.open_round_bracket(tokens)
-        info.set_surround_info(Direction.NORTH, AegisParser.grid_info(tokens))
+        info.set_surround_info(Direction.NORTH, AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, str(Direction.NORTH_EAST))
         AegisParser.open_round_bracket(tokens)
-        info.set_surround_info(Direction.NORTH_EAST, AegisParser.grid_info(tokens))
+        info.set_surround_info(Direction.NORTH_EAST, AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, str(Direction.EAST))
         AegisParser.open_round_bracket(tokens)
-        info.set_surround_info(Direction.EAST, AegisParser.grid_info(tokens))
+        info.set_surround_info(Direction.EAST, AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, str(Direction.SOUTH_EAST))
         AegisParser.open_round_bracket(tokens)
-        info.set_surround_info(Direction.SOUTH_EAST, AegisParser.grid_info(tokens))
+        info.set_surround_info(Direction.SOUTH_EAST, AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, str(Direction.SOUTH))
         AegisParser.open_round_bracket(tokens)
-        info.set_surround_info(Direction.SOUTH, AegisParser.grid_info(tokens))
+        info.set_surround_info(Direction.SOUTH, AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, str(Direction.SOUTH_WEST))
         AegisParser.open_round_bracket(tokens)
-        info.set_surround_info(Direction.SOUTH_WEST, AegisParser.grid_info(tokens))
+        info.set_surround_info(Direction.SOUTH_WEST, AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, str(Direction.WEST))
         AegisParser.open_round_bracket(tokens)
-        info.set_surround_info(Direction.WEST, AegisParser.grid_info(tokens))
+        info.set_surround_info(Direction.WEST, AegisParser.cell_info(tokens))
         AegisParser.close_round_bracket(tokens)
         return info
 
     @staticmethod
-    def grid_info(tokens: Iterator[str]) -> GridInfo:
-        grid_type = next(tokens)
+    def cell_info(tokens: Iterator[str]) -> CellInfo:
+        cell_type = next(tokens)
 
-        if grid_type not in [
-            "CHARGING_GRID",
-            "FIRE_GRID",
-            "KILLER_GRID",
-            "NO_GRID",
-            "NORMAL_GRID",
+        if cell_type not in [
+            "CHARGING_CELL",
+            "FIRE_CELL",
+            "KILLER_CELL",
+            "NO_CELL",
+            "NORMAL_CELL",
         ]:
-            raise AegisParserException(f"Expected <grid_type>, found {grid_type}")
+            raise AegisParserException(f"Expected <cell_type>, found {cell_type}")
 
-        if grid_type == "NO_GRID":
-            return GridInfo()
+        if cell_type == "NO_CELL":
+            return CellInfo()
 
-        normal_grid = grid_type == "NORMAL_GRID"
+        normal_cell = cell_type == "NORMAL_CELL"
 
         AegisParser.open_round_bracket(tokens)
         AegisParser.text(tokens, "X")
@@ -573,9 +573,9 @@ class AegisParser:
         top_layer = AegisParser.object(tokens)
         AegisParser.close_round_bracket(tokens)
         AegisParser.close_round_bracket(tokens)
-        grid_type = GridType.NORMAL_GRID if normal_grid else GridType.CHARGING_GRID
-        return GridInfo(
-            grid_type, Location(x, y), on_fire, move_cost, agent_id_list, top_layer
+        cell_type = CellType.NORMAL_CELL if normal_cell else CellType.CHARGING_CELL
+        return CellInfo(
+            cell_type, Location(x, y), on_fire, move_cost, agent_id_list, top_layer
         )
 
     @staticmethod

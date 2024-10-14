@@ -6,7 +6,7 @@ from aegis.common.commands.agent_command import AgentCommand
 
 class OBSERVE(AgentCommand):
     """
-    Represents a command for an agent to observe a grid in the world.
+    Represents a command for an agent to observe a cell in the world.
 
     Attributes:
         location (Location): The location to observe.

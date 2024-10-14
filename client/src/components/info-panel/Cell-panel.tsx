@@ -1,17 +1,17 @@
 import { Simulation } from '@/simulation/simulation'
 import { drawAgent } from '@/utils/renderUtils'
-import { AgentInfoDict, GridCellDict } from '@/utils/types'
+import { AgentInfoDict, CellDict } from '@/utils/types'
 import { useCallback, useEffect, useRef } from 'react'
 
 type Props = {
     selectedCell: { x: number; y: number }
     setSelectedAgent: (value: AgentInfoDict) => void
-    gridInfo: GridCellDict | undefined
+    cellInfo: cellDict | undefined
     agents: AgentInfoDict[]
     simulation: Simulation
 }
 
-function GridPanel({ selectedCell, setSelectedAgent, gridInfo, agents, simulation }: Props) {
+function CellPanel({ selectedCell, setSelectedAgent, cellInfo, agents, simulation }: Props) {
     const canvasRefs = useRef<{ [key: number]: HTMLCanvasElement | null }>({})
     const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -102,15 +102,15 @@ function GridPanel({ selectedCell, setSelectedAgent, gridInfo, agents, simulatio
             </h2>
 
             <section className="m-2">
-                <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Grid Info</h3>
+                <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Cell Info</h3>
                 <div className="py-2">
-                    {gridInfo ? (
+                    {cellInfo ? (
                         <div className="space-y-2">
-                            <div>Grid Type: {gridInfo.grid_type.replace(/\w*\./, '')}</div>
-                            <div>Move Cost: {gridInfo.stack.move_cost}</div>
+                            <div>Cell Type: {cellInfo.cell_type.replace(/\w*\./, '')}</div>
+                            <div>Move Cost: {cellInfo.stack.move_cost}</div>
                         </div>
                     ) : (
-                        <p className="text-gray-500">No grid information available.</p>
+                        <p className="text-gray-500">No cell information available.</p>
                     )}
                 </div>
             </section>
@@ -139,4 +139,4 @@ function GridPanel({ selectedCell, setSelectedAgent, gridInfo, agents, simulatio
     )
 }
 
-export default GridPanel
+export default CellPanel

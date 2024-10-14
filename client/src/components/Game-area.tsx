@@ -32,19 +32,19 @@ function GameArea() {
 
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
-        const gridMap = new Map<string, AgentInfoDict[]>()
+        const cellMap = new Map<string, AgentInfoDict[]>()
         const size = simulation.worldMap.size
 
         for (let x = 0; x < size.width; x++) {
             for (let y = 0; y < size.height; y++) {
-                const agentsInCell = simulation.getAgentsAtGridCell(x, y)
+                const agentsInCell = simulation.getAgentsAtCell(x, y)
                 if (agentsInCell.length > 0) {
-                    gridMap.set(`${x},${y}`, agentsInCell)
+                    cellMap.set(`${x},${y}`, agentsInCell)
                 }
             }
         }
 
-        gridMap.forEach((agentsInCell, key) => {
+        cellMap.forEach((agentsInCell, key) => {
             let [x, y] = key.split(',').map(Number)
             const coords = renderCoords(x, y, size)
             const agentsPerRow = 5
@@ -77,13 +77,11 @@ function GameArea() {
         for (let x = 0; x < width; x++) {
             for (let y = 0; y < height; y++) {
                 const coords = renderCoords(x, y, size)
-                // Clear stack on grid before rendering it again, so
-                // it doesn't render over the previous content
                 ctx.clearRect(coords.x, coords.y, 1, 1)
 
-                const gridLayers = simulation.getGridLayersAtGridCell(x, y)
-                if (!gridLayers.length) continue
-                const layer = gridLayers[gridLayers.length - 1]
+                const cellLayers = simulation.getLayersAtCell(x, y)
+                if (!cellLayers.length) continue
+                const layer = cellLayers[cellLayers.length - 1]
 
                 let rowInSheet = 0
                 let colInSheet = 0
@@ -91,7 +89,7 @@ function GameArea() {
                 if (layer.type.startsWith('rb')) {
                     const minMoveCost = simulation.worldMap.minMoveCost
                     const maxMoveCost = simulation.worldMap.maxMoveCost
-                    const moveCost = simulation.getGridInfoAtGridCell(x, y).stack.move_cost
+                    const moveCost = simulation.getInfoAtCell(x, y).stack.move_cost
                     // whichShade should be between 0 and shadesOfBrown.length i hope
                     const whichShade = whatBucket(minMoveCost, maxMoveCost, moveCost, shadesOfBrown.length)
                     rowInSheet = 1
@@ -116,15 +114,15 @@ function GameArea() {
                     1 - thickness
                 )
 
-                // draw survivor and survivor group sprites on edge of grid cell if there are any in the layer
-                const numOfSurvivorsInGridLayers = Math.min(gridLayers.filter((layer) => layer.type === 'sv').length, 5)
-                const numOfSurvivorGroupsInGridLayers = Math.min(
-                    gridLayers.filter((layer) => layer.type === 'svg').length,
+                // draw survivor and survivor group sprites on edge of cell if there are any in the layer
+                const numOfSurvivorsInCellLayers = Math.min(cellLayers.filter((layer) => layer.type === 'sv').length, 5)
+                const numOfSurvivorGroupsInCellLayers = Math.min(
+                    cellLayers.filter((layer) => layer.type === 'svg').length,
                     5
                 )
 
-                // draw survivor sprite onto grid cell
-                const survivorColumn = numOfSurvivorsInGridLayers - 1
+                // draw survivor sprite onto cell
+                const survivorColumn = numOfSurvivorsInCellLayers - 1
                 const survivorRow = 2 // light blue squares are row 3 on spritesheet
                 ctx.drawImage(
                     layerSpriteSheet,
@@ -137,7 +135,7 @@ function GameArea() {
                     1 - thickness,
                     1 - thickness
                 )
-                const survivorGroupColumn = numOfSurvivorGroupsInGridLayers - 1
+                const survivorGroupColumn = numOfSurvivorGroupsInCellLayers - 1
                 const survivorGroupRow = 3 // dark blue squares are row 4 on spritesheet
                 ctx.drawImage(
                     layerSpriteSheet,

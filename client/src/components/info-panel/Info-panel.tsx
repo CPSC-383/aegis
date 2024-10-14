@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useAppContext } from '@/context'
 import { EventType, listenEvent } from '@/events'
-import { AgentInfoDict, GridCellDict, StackContent } from '@/utils/types'
+import { AgentInfoDict, CellDict, StackContent } from '@/utils/types'
 import AgentPanel from './Agent-panel'
-import GridPanel from './Grid-panel'
+import CellPanel from './Cell-panel'
 
 function InfoPanel() {
     const { appState } = useAppContext()
     const { simulation, selectedCell } = appState
-    const [gridInfo, setGridInfo] = useState<GridCellDict | undefined>()
-    const [gridLayers, setGridLayers] = useState<StackContent[]>([])
+    const [cellInfo, setCellInfo] = useState<CellDict | undefined>()
+    const [cellLayers, setCellLayers] = useState<StackContent[]>([])
     const [agents, setAgents] = useState<AgentInfoDict[]>([])
     const [selectedAgent, setSelectedAgent] = useState<AgentInfoDict | undefined>()
 
@@ -18,9 +18,9 @@ function InfoPanel() {
 
         const { x, y } = selectedCell
 
-        setGridInfo(simulation.getGridInfoAtGridCell(x, y))
-        setGridLayers(simulation.getGridLayersAtGridCell(x, y))
-        setAgents(simulation.getAgentsAtGridCell(x, y))
+        setCellInfo(simulation.getInfoAtCell(x, y))
+        setCellLayers(simulation.getLayersAtCell(x, y))
+        setAgents(simulation.getAgentsAtCell(x, y))
     }
 
     // This is to get the info for a new
@@ -44,27 +44,27 @@ function InfoPanel() {
                     <AgentPanel
                         selectedAgent={selectedAgent}
                         setSelectedAgent={setSelectedAgent}
-                        setGridLayers={setGridLayers}
+                        setCellLayers={setCellLayers}
                         simulation={simulation}
                     />
                 )}
                 {!selectedAgent && (
-                    <GridPanel
+                    <CellPanel
                         selectedCell={selectedCell}
                         setSelectedAgent={setSelectedAgent}
-                        gridInfo={gridInfo}
+                        cellInfo={cellInfo}
                         agents={agents}
                         simulation={simulation}
                     />
                 )}
                 <div className="m-2">
                     <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Layers</h3>
-                    <div className={`${gridLayers.length === 0 ? 'py-2' : 'p-4'}`}>
-                        {gridLayers.length === 0 ? (
+                    <div className={`${cellLayers.length === 0 ? 'py-2' : 'p-4'}`}>
+                        {cellLayers.length === 0 ? (
                             <p className="text-gray-500">Nothing at this location.</p>
                         ) : (
                             <div className="relative border-s border-accent">
-                                {gridLayers
+                                {cellLayers
                                     .slice()
                                     .reverse()
                                     .map((layer, index) => (

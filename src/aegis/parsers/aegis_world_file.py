@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 from aegis.common.location import Location
-from aegis.parsers.helper.grid_info_settings import GridInfoSettings
-from aegis.parsers.helper.grid_type_info import GridTypeInfo
+from aegis.parsers.helper.cell_info_settings import CellInfoSettings
+from aegis.parsers.helper.cell_type_info import CellTypeInfo
 
 
 @dataclass
@@ -14,6 +14,6 @@ class AegisWorldFile:
     high_survivor_level: int
     mid_survivor_level: int
     low_survivor_level: int
-    grid_stack_info: list[GridInfoSettings]
-    grid_settings: list[GridTypeInfo]
+    cell_stack_info: list[CellInfoSettings]
+    cell_settings: list[CellTypeInfo]
     agent_spawn_locations: dict[tuple[Location, int | None], int]

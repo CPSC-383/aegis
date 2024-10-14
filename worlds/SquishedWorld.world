@@ -37,8 +37,8 @@
       "gid": 1
     }
   ],
-  "grid_types": {
-    "fire_grids": [
+  "cell_types": {
+    "fire_cells": [
       {
         "x": 2,
         "y": 2
@@ -52,17 +52,17 @@
         "y": 3
       }
     ],
-    "killer_grids": [
+    "killer_cells": [
       {
         "x": 29,
         "y": 1
       }
     ],
-    "charging_grids": []
+    "charging_cells": []
   },
   "stacks": [
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 0
       },
@@ -70,7 +70,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 1
       },
@@ -78,7 +78,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 2
       },
@@ -86,7 +86,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 3
       },
@@ -94,7 +94,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 4
       },
@@ -102,7 +102,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 0
       },
@@ -110,7 +110,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 1
       },
@@ -118,7 +118,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 2
       },
@@ -126,7 +126,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 3
       },
@@ -134,7 +134,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 4
       },
@@ -142,7 +142,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 0
       },
@@ -150,7 +150,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 1
       },
@@ -158,7 +158,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 2
       },
@@ -166,7 +166,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 3
       },
@@ -174,7 +174,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 4
       },
@@ -182,7 +182,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 3,
         "y": 0
       },
@@ -190,7 +190,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 3,
         "y": 1
       },
@@ -198,7 +198,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 3,
         "y": 2
       },
@@ -206,7 +206,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 3,
         "y": 3
       },
@@ -214,7 +214,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 3,
         "y": 4
       },
@@ -222,7 +222,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 4,
         "y": 0
       },
@@ -230,7 +230,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 4,
         "y": 1
       },
@@ -238,7 +238,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 4,
         "y": 2
       },
@@ -246,7 +246,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 4,
         "y": 3
       },
@@ -254,7 +254,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 4,
         "y": 4
       },
@@ -262,7 +262,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 5,
         "y": 0
       },
@@ -270,7 +270,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 5,
         "y": 1
       },
@@ -278,7 +278,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 5,
         "y": 2
       },
@@ -286,7 +286,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 5,
         "y": 3
       },
@@ -294,7 +294,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 5,
         "y": 4
       },
@@ -302,7 +302,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 6,
         "y": 0
       },
@@ -310,7 +310,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 6,
         "y": 1
       },
@@ -318,7 +318,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 6,
         "y": 2
       },
@@ -326,7 +326,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 6,
         "y": 3
       },
@@ -334,7 +334,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 6,
         "y": 4
       },
@@ -342,7 +342,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 7,
         "y": 0
       },
@@ -350,7 +350,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 7,
         "y": 1
       },
@@ -358,7 +358,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 7,
         "y": 2
       },
@@ -366,7 +366,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 7,
         "y": 3
       },
@@ -374,7 +374,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 7,
         "y": 4
       },
@@ -382,7 +382,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 8,
         "y": 0
       },
@@ -390,7 +390,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 8,
         "y": 1
       },
@@ -398,7 +398,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 8,
         "y": 2
       },
@@ -406,7 +406,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 8,
         "y": 3
       },
@@ -414,7 +414,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 8,
         "y": 4
       },
@@ -422,7 +422,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 9,
         "y": 0
       },
@@ -430,7 +430,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 9,
         "y": 1
       },
@@ -438,7 +438,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 9,
         "y": 2
       },
@@ -446,7 +446,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 9,
         "y": 3
       },
@@ -454,7 +454,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 9,
         "y": 4
       },
@@ -470,7 +470,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 10,
         "y": 0
       },
@@ -478,7 +478,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 10,
         "y": 1
       },
@@ -486,7 +486,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 10,
         "y": 2
       },
@@ -494,7 +494,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 10,
         "y": 3
       },
@@ -502,7 +502,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 10,
         "y": 4
       },
@@ -510,7 +510,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 11,
         "y": 0
       },
@@ -518,7 +518,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 11,
         "y": 1
       },
@@ -526,7 +526,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 11,
         "y": 2
       },
@@ -534,7 +534,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 11,
         "y": 3
       },
@@ -542,7 +542,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 11,
         "y": 4
       },
@@ -550,7 +550,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 12,
         "y": 0
       },
@@ -558,7 +558,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 12,
         "y": 1
       },
@@ -566,7 +566,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 12,
         "y": 2
       },
@@ -574,7 +574,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 12,
         "y": 3
       },
@@ -606,7 +606,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 12,
         "y": 4
       },
@@ -614,7 +614,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 13,
         "y": 0
       },
@@ -622,7 +622,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 13,
         "y": 1
       },
@@ -630,7 +630,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 13,
         "y": 2
       },
@@ -638,7 +638,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 13,
         "y": 3
       },
@@ -646,7 +646,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 13,
         "y": 4
       },
@@ -654,7 +654,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 14,
         "y": 0
       },
@@ -662,7 +662,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 14,
         "y": 1
       },
@@ -670,7 +670,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 14,
         "y": 2
       },
@@ -678,7 +678,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 14,
         "y": 3
       },
@@ -710,7 +710,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 14,
         "y": 4
       },
@@ -718,7 +718,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 15,
         "y": 0
       },
@@ -726,7 +726,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 15,
         "y": 1
       },
@@ -734,7 +734,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 15,
         "y": 2
       },
@@ -742,7 +742,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 15,
         "y": 3
       },
@@ -750,7 +750,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 15,
         "y": 4
       },
@@ -758,7 +758,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 16,
         "y": 0
       },
@@ -766,7 +766,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 16,
         "y": 1
       },
@@ -805,7 +805,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 16,
         "y": 2
       },
@@ -813,7 +813,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 16,
         "y": 3
       },
@@ -821,7 +821,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 16,
         "y": 4
       },
@@ -829,7 +829,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 17,
         "y": 0
       },
@@ -837,7 +837,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 17,
         "y": 1
       },
@@ -845,7 +845,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 17,
         "y": 2
       },
@@ -853,7 +853,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 17,
         "y": 3
       },
@@ -861,7 +861,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 17,
         "y": 4
       },
@@ -869,7 +869,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 18,
         "y": 0
       },
@@ -877,7 +877,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 18,
         "y": 1
       },
@@ -885,7 +885,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 18,
         "y": 2
       },
@@ -893,7 +893,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 18,
         "y": 3
       },
@@ -901,7 +901,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 18,
         "y": 4
       },
@@ -909,7 +909,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 19,
         "y": 0
       },
@@ -917,7 +917,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 19,
         "y": 1
       },
@@ -925,7 +925,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 19,
         "y": 2
       },
@@ -933,7 +933,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 19,
         "y": 3
       },
@@ -941,7 +941,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 19,
         "y": 4
       },
@@ -949,7 +949,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 20,
         "y": 0
       },
@@ -957,7 +957,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 20,
         "y": 1
       },
@@ -965,7 +965,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 20,
         "y": 2
       },
@@ -973,7 +973,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 20,
         "y": 3
       },
@@ -981,7 +981,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 20,
         "y": 4
       },
@@ -989,7 +989,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 21,
         "y": 0
       },
@@ -997,7 +997,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 21,
         "y": 1
       },
@@ -1005,7 +1005,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 21,
         "y": 2
       },
@@ -1013,7 +1013,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 21,
         "y": 3
       },
@@ -1021,7 +1021,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 21,
         "y": 4
       },
@@ -1029,7 +1029,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 22,
         "y": 0
       },
@@ -1037,7 +1037,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 22,
         "y": 1
       },
@@ -1045,7 +1045,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 22,
         "y": 2
       },
@@ -1053,7 +1053,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 22,
         "y": 3
       },
@@ -1061,7 +1061,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 22,
         "y": 4
       },
@@ -1069,7 +1069,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 23,
         "y": 0
       },
@@ -1077,7 +1077,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 23,
         "y": 1
       },
@@ -1085,7 +1085,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 23,
         "y": 2
       },
@@ -1093,7 +1093,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 23,
         "y": 3
       },
@@ -1101,7 +1101,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 23,
         "y": 4
       },
@@ -1109,7 +1109,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 24,
         "y": 0
       },
@@ -1117,7 +1117,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 24,
         "y": 1
       },
@@ -1125,7 +1125,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 24,
         "y": 2
       },
@@ -1133,7 +1133,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 24,
         "y": 3
       },
@@ -1149,7 +1149,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 24,
         "y": 4
       },
@@ -1157,7 +1157,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 25,
         "y": 0
       },
@@ -1165,7 +1165,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 25,
         "y": 1
       },
@@ -1173,7 +1173,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 25,
         "y": 2
       },
@@ -1181,7 +1181,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 25,
         "y": 3
       },
@@ -1189,7 +1189,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 25,
         "y": 4
       },
@@ -1197,7 +1197,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 26,
         "y": 0
       },
@@ -1205,7 +1205,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 26,
         "y": 1
       },
@@ -1213,7 +1213,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 26,
         "y": 2
       },
@@ -1221,7 +1221,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 26,
         "y": 3
       },
@@ -1229,7 +1229,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 26,
         "y": 4
       },
@@ -1237,7 +1237,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 27,
         "y": 0
       },
@@ -1245,7 +1245,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 27,
         "y": 1
       },
@@ -1253,7 +1253,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 27,
         "y": 2
       },
@@ -1261,7 +1261,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 27,
         "y": 3
       },
@@ -1269,7 +1269,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 27,
         "y": 4
       },
@@ -1277,7 +1277,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 28,
         "y": 0
       },
@@ -1285,7 +1285,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 28,
         "y": 1
       },
@@ -1293,7 +1293,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 28,
         "y": 2
       },
@@ -1301,7 +1301,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 28,
         "y": 3
       },
@@ -1309,7 +1309,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 28,
         "y": 4
       },
@@ -1317,7 +1317,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 29,
         "y": 0
       },
@@ -1325,7 +1325,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 29,
         "y": 1
       },
@@ -1333,7 +1333,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 29,
         "y": 2
       },
@@ -1341,7 +1341,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 29,
         "y": 3
       },
@@ -1349,7 +1349,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 29,
         "y": 4
       },

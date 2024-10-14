@@ -1,0 +1,299 @@
+from __future__ import annotations
+
+from enum import Enum
+
+from aegis.common import (
+    AgentIDList,
+    Constants,
+    CellType,
+    LifeSignals,
+    Location,
+    Utility,
+)
+from aegis.common.world.info import CellInfo
+from aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject, NoLayers
+
+
+class _State(Enum):
+    """Enum for the state of the cell."""
+
+    STABLE_CELL = 1
+    KILLER_CELL = 2
+
+
+class Cell:
+    """
+    Represents a cell in the world.
+
+    Attributes:
+        move_cost (int): The movement cost associated with the cell.
+        agent_id_list (AgentIDList): List of agent IDs present in the cell.
+        percent_chance (int): The percentage chance that there are survivors in the cell.
+        stored_life_signals (LifeSignals): The life signals stored in the cell.
+        location (Location): The location of the cell on the map.
+    """
+
+    def __init__(
+        self,
+        x: int | None = None,
+        y: int | None = None,
+    ) -> None:
+        """
+        Initializes a Cell instance.
+
+        Args:
+            x: The x-coordinate of the cell.
+            y: The y-coordinate of the cell.
+        """
+        self._type = CellType.NO_CELL
+        self._state = _State.STABLE_CELL
+        self._on_fire = False
+        self.move_cost = 1
+        self.agent_id_list = AgentIDList()
+        self._cell_layer_list: list[WorldObject] = []
+        self.percent_chance = -1
+        self.stored_life_signals = LifeSignals()
+
+        if x is not None and y is not None:
+            self.location = Location(x, y)
+        else:
+            self.location = Location(-1, -1)
+
+    def setup_cell(self, cell_state_type: str) -> None:
+        cell_state_type = cell_state_type.upper().strip()
+
+        if cell_state_type == "NORMAL_CELLS":
+            self._type = CellType.NORMAL_CELL
+            self._on_fire = False
+            self._state = _State.STABLE_CELL
+        elif cell_state_type == "CHARGING_CELLS":
+            self._type = CellType.CHARGING_CELL
+            self._on_fire = False
+            self._state = _State.STABLE_CELL
+        elif cell_state_type == "FIRE_CELLS":
+            self._type = CellType.FIRE_CELL
+            self._on_fire = True
+            self._state = _State.KILLER_CELL
+        elif cell_state_type == "KILLER_CELLS":
+            self._type = CellType.KILLER_CELL
+            self._on_fire = False
+            self._state = _State.KILLER_CELL
+
+    def is_charging_cell(self) -> bool:
+        """
+        Checks if the cell is of type CHARGING_CELL.
+
+        Returns:
+            True if the cell type is CHARGING_CELL, False otherwise.
+        """
+        return self._type == CellType.CHARGING_CELL
+
+    def is_fire_cell(self) -> bool:
+        """
+        Checks if the cell is of type FIRE_CELL.
+
+        Returns:
+            True if the cell type is FIRE_CELL, False otherwise.
+        """
+        return self._type == CellType.FIRE_CELL
+
+    def is_killer_cell(self) -> bool:
+        """
+        Checks if the cell is of type KILLER_CELL.
+
+        Returns:
+            True if the cell type is KILLER_CELL, False otherwise.
+        """
+        return self._type == CellType.KILLER_CELL
+
+    def set_normal_cell(self) -> None:
+        self._type = CellType.NORMAL_CELL
+
+    def set_charging_cell(self) -> None:
+        self._type = CellType.CHARGING_CELL
+
+    def set_killer_cell(self) -> None:
+        self._type = CellType.KILLER_CELL
+
+    def is_stable(self) -> bool:
+        """
+        Checks if the cell state is STABLE_CELL.
+
+        Returns:
+            True if the cell state is STABLE_CELL, False otherwise.
+        """
+        return self._state == _State.STABLE_CELL
+
+    def is_killer(self) -> bool:
+        """
+        Checks if the cell state is KILLER_CELL.
+
+        Returns:
+            True if the cell state is KILLER_CELL, False otherwise.
+        """
+        return self._state == _State.KILLER_CELL
+
+    def set_stable(self) -> None:
+        self._state = _State.STABLE_CELL
+
+    def set_killer(self) -> None:
+        self._state = _State.KILLER_CELL
+
+    def get_cell_layers(self) -> list[WorldObject]:
+        """Returns the list of cell layers."""
+        return self._cell_layer_list
+
+    def add_layer(self, layer: WorldObject) -> None:
+        """
+        Adds a layer to the cell.
+
+        Args:
+            layer: The layer to add to the cell.
+        """
+        self._cell_layer_list.append(layer)
+
+    def remove_top_layer(self) -> WorldObject | None:
+        """
+        Removes and returns the top layer from the cell.
+
+        Returns:
+            The removed top layer, or None if the cell has no layers.
+        """
+        if not self._cell_layer_list:
+            return None
+        return self._cell_layer_list.pop()
+
+    def get_top_layer(self) -> WorldObject | None:
+        """
+        Returns the top layer of the cell without removing it if the cell has layers.
+
+        Returns:
+            The top layer, or None if the cell has no layers.
+        """
+        if not self._cell_layer_list:
+            return None
+        return self._cell_layer_list[-1]
+
+    def set_top_layer(self, top_layer: WorldObject) -> None:
+        """
+        Sets the top layer of the cell, replacing any existing layers.
+
+        Args:
+            top_layer: The new top layer for the cell.
+        """
+        self._cell_layer_list.clear()
+        self._cell_layer_list.append(top_layer)
+
+    def number_of_layers(self) -> int:
+        """Returns the number of layers in the cell."""
+        return len(self._cell_layer_list)
+
+    def is_on_fire(self) -> bool:
+        """
+        Checks if the cell is currently on fire.
+
+        Returns:
+            True if the cell is on fire, False otherwise.
+        """
+        return self._on_fire
+
+    def set_on_fire(self, on_fire: bool) -> None:
+        if on_fire:
+            self._on_fire = on_fire
+            self._state = _State.KILLER_CELL
+            self._type = CellType.FIRE_CELL
+        else:
+            self._on_fire = on_fire
+            self._state = _State.STABLE_CELL
+            self._type = CellType.NORMAL_CELL
+
+    def get_cell_info(self) -> CellInfo:
+        """Returns a CellInfo instance representing the current state of the cell."""
+        cell_type = CellType.NORMAL_CELL
+
+        if self.is_fire_cell():
+            cell_type = CellType.FIRE_CELL
+        elif self.is_killer_cell():
+            cell_type = CellType.KILLER_CELL
+        elif self.is_charging_cell():
+            cell_type = CellType.CHARGING_CELL
+
+        return CellInfo(
+            cell_type,
+            self.location.clone(),
+            self._on_fire,
+            self.move_cost,
+            self.agent_id_list.clone(),
+            self.top_layer(),
+        )
+
+    def top_layer(self) -> WorldObject:
+        """Returns information about the top layer of the cell."""
+        if not self._cell_layer_list:
+            return NoLayers()
+
+        return self.get_top_layer() or NoLayers()
+
+    def number_of_survivors(self) -> int:
+        """Returns the number of survivors in the cell."""
+        count = 0
+        for layer in self._cell_layer_list:
+            if isinstance(layer, Survivor):
+                count += 1
+            if isinstance(layer, SurvivorGroup):
+                count += layer.number_of_survivors
+        return count
+
+    def get_generated_life_signals(self) -> LifeSignals:
+        """Returns the generated life signals based on the layers in the cell."""
+        layer = self.number_of_layers() - 1
+        i = 0
+        if not self._cell_layer_list:
+            return LifeSignals()
+        life_signals: list[int] = [0] * self.number_of_layers()
+        life_signals[i] = self._cell_layer_list[layer].get_life_signal()
+        i += 1
+        layer -= 1
+
+        low_range = Constants.DEPTH_LOW_START
+        high_range = Constants.DEPTH_HIGH_START
+        while layer >= 0:
+            lss = self._cell_layer_list[layer].get_life_signal()
+            distortion = Utility.random_in_range(low_range, high_range)
+            if distortion > lss:
+                lss = 0
+            else:
+                lss -= distortion
+            life_signals[i] = lss
+            i += 1
+            layer -= 1
+            low_range += Constants.DEPTH_LOW_INC
+            high_range += Constants.DEPTH_HIGH_INC
+
+        return LifeSignals(life_signals)
+
+    def file_output_string(self) -> str:
+        """Returns a string representation of the cell suitable for file output."""
+        s = f"Cell ( ({self.location.x},{self.location.y}), Move_Cost {self.move_cost}) \n\t\t{{\n"
+        for layer in self._cell_layer_list:
+            s += f"\t\t    {layer.file_output_string()};\n"
+        s += "\t\t}\n\n"
+        return s
+
+    def clone(self) -> Cell:
+        """
+        Creates and returns a copy of the cell.
+
+        Returns:
+            Cell: A new Cell instance with the same attributes.
+        """
+        cell = Cell()
+        cell._type = self._type
+        cell._state = self._state
+        cell.location = self.location
+        cell.agent_id_list = self.agent_id_list.clone()
+        cell._cell_layer_list = [layer.clone() for layer in self._cell_layer_list]
+        cell._on_fire = self._on_fire
+        cell.move_cost = self.move_cost
+        cell.percent_chance = self.percent_chance
+        return cell

@@ -8,7 +8,7 @@ from aegis.parsers.helper.world_file_type import StackContent
 
 class Rubble(WorldObject):
     """
-    Represents a rubble layer in a grid.
+    Represents a rubble layer in a cell.
 
     Attributes:
         id (int): The id of the rubble.

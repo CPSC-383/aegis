@@ -11,10 +11,10 @@ export class WorldMap {
         public readonly low: number,
         public readonly mid: number,
         public readonly high: number,
-        public readonly fireGrids: Location[],
-        public readonly killerGrids: Location[],
-        public readonly chargingGrids: Location[],
-        public readonly spawnGrids: Map<string, number[]>,
+        public readonly fireCells: Location[],
+        public readonly killerCells: Location[],
+        public readonly chargingCells: Location[],
+        public readonly spawnCells: Map<string, number[]>,
         public readonly stacks: Stack[],
         public readonly initialAgentEnergy: number,
         public readonly minMoveCost: number,
@@ -31,14 +31,14 @@ export class WorldMap {
         const mid: number = data.settings.world_info.world_file_levels.mid
         const high: number = data.settings.world_info.world_file_levels.high
 
-        const fireGrids: Location[] = data.grid_types.fire_grids
-        const killerGrids: Location[] = data.grid_types.killer_grids
-        const chargingGrids: Location[] = data.grid_types.charging_grids
-        const spawnGrids: Map<string, number[]> = new Map()
+        const fireCells: Location[] = data.cell_types.fire_cells
+        const killerCells: Location[] = data.cell_types.killer_cells
+        const chargingCells: Location[] = data.cell_types.charging_cells
+        const spawnCells: Map<string, number[]> = new Map()
         data.spawn_locs.forEach((spawn: Spawn) => {
             const key = JSON.stringify({ x: spawn.x, y: spawn.y })
-            if (!spawnGrids.has(key)) spawnGrids.set(key, [])
-            if (spawn.gid) spawnGrids.get(key)?.push(spawn.gid)
+            if (!spawnCells.has(key)) spawnCells.set(key, [])
+            if (spawn.gid) spawnCells.get(key)?.push(spawn.gid)
         })
 
         const stacks: Stack[] = data.stacks
@@ -52,10 +52,10 @@ export class WorldMap {
             low,
             mid,
             high,
-            fireGrids,
-            killerGrids,
-            chargingGrids,
-            spawnGrids,
+            fireCells,
+            killerCells,
+            chargingCells,
+            spawnCells,
             stacks,
             initialAgentEnergy,
             minMoveCost,
@@ -69,7 +69,7 @@ export class WorldMap {
         for (let x = 0; x < width; x++) {
             for (let y = 0; y < height; y++) {
                 stacks.push({
-                    grid_loc: { x, y },
+                    cell_loc: { x, y },
                     move_cost: 1,
                     contents: []
                 })
@@ -96,20 +96,20 @@ export class WorldMap {
         )
     }
 
-    getGridType(x: number, y: number): string {
-        if (this.fireGrids.some((grid) => grid.x === x && grid.y === y)) {
-            return 'GridType.FIRE_GRID'
+    getCellType(x: number, y: number): string {
+        if (this.fireCells.some((cell) => cell.x === x && cell.y === y)) {
+            return 'CellType.FIRE_CELL'
         }
 
-        if (this.killerGrids.some((grid) => grid.x === x && grid.y === y)) {
-            return 'GridType.KILLER_GRID'
+        if (this.killerCells.some((cell) => cell.x === x && cell.y === y)) {
+            return 'CellType.KILLER_CELL'
         }
 
-        if (this.chargingGrids.some((grid) => grid.x === x && grid.y === y)) {
-            return 'GridType.CHARGING_GRID'
+        if (this.chargingCells.some((cell) => cell.x === x && cell.y === y)) {
+            return 'CellType.CHARGING_CELL'
         }
 
-        return 'GridType.NORMAL_GRID'
+        return 'CellType.NORMAL_CELL'
     }
 
     isEmpty(): boolean {
@@ -117,10 +117,10 @@ export class WorldMap {
         const areMoveCostsDefault = this.stacks.every((s) => s.move_cost === 1)
 
         return (
-            this.fireGrids.length === 0 &&
-            this.killerGrids.length === 0 &&
-            this.chargingGrids.length === 0 &&
-            this.spawnGrids.size === 0 &&
+            this.fireCells.length === 0 &&
+            this.killerCells.length === 0 &&
+            this.chargingCells.length === 0 &&
+            this.spawnCells.size === 0 &&
             areStacksEmpty &&
             areMoveCostsDefault
         )
@@ -139,54 +139,54 @@ export class WorldMap {
         ctx.fillStyle = '#000000'
         ctx.fillRect(0, 0, this.width, this.height)
 
-        this.drawGridCells(ctx, thickness)
+        this.drawCells(ctx, thickness)
     }
 
-    private drawGridCells(ctx: CanvasRenderingContext2D, thickness: number) {
-        const moveCosts = this.stacks.map((grid) => grid.move_cost)
+    private drawCells(ctx: CanvasRenderingContext2D, thickness: number) {
+        const moveCosts = this.stacks.map((cell) => cell.move_cost)
         const maxMoveCost = Math.max(...moveCosts)
         const minMoveCost = Math.min(...moveCosts)
 
         for (let x = 0; x < this.width; x++) {
             for (let y = 0; y < this.height; y++) {
-                const grid = this.stacks.find((grid) => grid.grid_loc.x === x && grid.grid_loc.y === y)
-                if (!grid) continue
+                const cell = this.stacks.find((cell) => cell.cell_loc.x === x && cell.cell_loc.y === y)
+                if (!cell) continue
 
-                const whichOpacity = whatBucket(minMoveCost, maxMoveCost, grid.move_cost, shadesOfBrown.length)
-                const gridFillStyle = `rgb(${shadesOfBrown[whichOpacity][0]}, ${shadesOfBrown[whichOpacity][1]}, ${shadesOfBrown[whichOpacity][2]})`
+                const whichOpacity = whatBucket(minMoveCost, maxMoveCost, cell.move_cost, shadesOfBrown.length)
+                const cellFillStyle = `rgb(${shadesOfBrown[whichOpacity][0]}, ${shadesOfBrown[whichOpacity][1]}, ${shadesOfBrown[whichOpacity][2]})`
 
                 const coords = renderCoords(x, y, this.size)
-                ctx.fillStyle = gridFillStyle
+                ctx.fillStyle = cellFillStyle
                 ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
             }
         }
 
-        for (const loc of this.chargingGrids) {
-            const grid = this.stacks.find((grid) => grid.grid_loc.x === loc.x && grid.grid_loc.y === loc.y)
-            if (!grid) continue
+        for (const loc of this.chargingCells) {
+            const cell = this.stacks.find((cell) => cell.cell_loc.x === loc.x && cell.cell_loc.y === loc.y)
+            if (!cell) continue
 
-            const whichOpacity = whatBucket(minMoveCost, maxMoveCost, grid.move_cost, shadesOfBlue.length)
-            const gridFillStyle = `rgb(${shadesOfBlue[whichOpacity][0]}, ${shadesOfBlue[whichOpacity][1]}, ${shadesOfBlue[whichOpacity][2]})`
+            const whichOpacity = whatBucket(minMoveCost, maxMoveCost, cell.move_cost, shadesOfBlue.length)
+            const cellFillStyle = `rgb(${shadesOfBlue[whichOpacity][0]}, ${shadesOfBlue[whichOpacity][1]}, ${shadesOfBlue[whichOpacity][2]})`
 
             const coords = renderCoords(loc.x, loc.y, this.size)
-            ctx.fillStyle = gridFillStyle
+            ctx.fillStyle = cellFillStyle
             ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
         }
 
-        for (const loc of this.fireGrids) {
+        for (const loc of this.fireCells) {
             const coords = renderCoords(loc.x, loc.y, this.size)
             ctx.fillStyle = '#ff9900'
             ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
         }
 
-        for (const loc of this.killerGrids) {
+        for (const loc of this.killerCells) {
             const coords = renderCoords(loc.x, loc.y, this.size)
             ctx.fillStyle = '#cc0000'
             ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
         }
 
         // This will only draw in the world editor
-        for (const [spawn, _] of this.spawnGrids) {
+        for (const [spawn, _] of this.spawnCells) {
             const { x, y } = JSON.parse(spawn)
             const coords = renderCoords(x, y, this.size)
             const x1 = coords.x

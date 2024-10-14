@@ -48,8 +48,8 @@ from aegis.common.commands.aegis_commands import (
     TEAM_DIG_RESULT,
 )
 from aegis.common.network.aegis_socket_exception import AegisSocketException
-from aegis.common.world.grid import Grid
-from aegis.common.world.info.grid_info import GridInfo
+from aegis.common.world.cell import Cell
+from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.objects import Rubble, Survivor, SurvivorGroup, WorldObject
 from aegis.parsers.config_parser import ConfigParser
 from aegis.parsers.world_file_parser import WorldFileParser
@@ -534,42 +534,42 @@ class Aegis:
             temp_agent_list.add(team_dig.get_agent_id())
         self._TEAM_DIG_list.clear()
 
-        temp_grid_agent_list = AgentIDList()
+        temp_cell_agent_list = AgentIDList()
         while temp_agent_list.size() > 0:
-            temp_grid_agent_list.clear()
+            temp_cell_agent_list.clear()
             agent_id = temp_agent_list.remove_at(0)
-            temp_grid_agent_list.add(agent_id)
+            temp_cell_agent_list.add(agent_id)
 
             agent = self._aegis_world.get_agent(agent_id)
             if agent is None:
                 continue
 
-            grid = self._aegis_world.get_grid_at(agent.location)
+            cell = self._aegis_world.get_cell_at(agent.location)
 
-            if grid is None:
+            if cell is None:
                 continue
 
-            for grid_agent in grid.agent_id_list:
-                if grid_agent in temp_agent_list:
-                    temp_grid_agent_list.add(grid_agent)
-                    temp_agent_list.remove(grid_agent)
+            for cell_agent in cell.agent_id_list:
+                if cell_agent in temp_agent_list:
+                    temp_cell_agent_list.add(cell_agent)
+                    temp_agent_list.remove(cell_agent)
 
-            top_layer = grid.get_top_layer()
+            top_layer = cell.get_top_layer()
             if top_layer is None:
                 self._remove_energy_from_agents(
-                    temp_grid_agent_list, self._parameters.TEAM_DIG_ENERGY_COST
+                    temp_cell_agent_list, self._parameters.TEAM_DIG_ENERGY_COST
                 )
                 continue
 
             if isinstance(top_layer, Rubble):
-                if top_layer.remove_agents <= temp_grid_agent_list.size():
-                    self._aegis_world.remove_layer_from_grid(grid.location)
+                if top_layer.remove_agents <= temp_cell_agent_list.size():
+                    self._aegis_world.remove_layer_from_cell(cell.location)
                     self._remove_energy_from_agents(
-                        temp_grid_agent_list, top_layer.remove_energy
+                        temp_cell_agent_list, top_layer.remove_energy
                     )
                 else:
                     self._remove_energy_from_agents(
-                        temp_grid_agent_list, self._parameters.TEAM_DIG_ENERGY_COST
+                        temp_cell_agent_list, self._parameters.TEAM_DIG_ENERGY_COST
                     )
 
         temp_agent_list.clear()
@@ -589,41 +589,41 @@ class Aegis:
             temp_agent_list.add(save_surv.get_agent_id())
 
         self._SAVE_SURV_list.clear()
-        temp_grid_agent_list: list[AgentID] = []
+        temp_cell_agent_list: list[AgentID] = []
 
         while temp_agent_list.size() > 0:
-            temp_grid_agent_list.clear()
+            temp_cell_agent_list.clear()
             gid_counter: list[int] = [0] * 10
 
             agent_id = temp_agent_list.remove_at(0)
-            temp_grid_agent_list.append(agent_id)
+            temp_cell_agent_list.append(agent_id)
             gid_counter[agent_id.gid] += 1
 
             agent = self._aegis_world.get_agent(agent_id)
             if agent is None:
                 continue
 
-            grid = self._aegis_world.get_grid_at(agent.location)
+            cell = self._aegis_world.get_cell_at(agent.location)
 
-            if grid is None:
+            if cell is None:
                 continue
 
-            for grid_agent in grid.agent_id_list:
-                if grid_agent in temp_agent_list:
-                    temp_grid_agent_list.append(grid_agent)
-                    temp_agent_list.remove(grid_agent)
-                    gid_counter[grid_agent.gid] += 1
+            for cell_agent in cell.agent_id_list:
+                if cell_agent in temp_agent_list:
+                    temp_cell_agent_list.append(cell_agent)
+                    temp_agent_list.remove(cell_agent)
+                    gid_counter[cell_agent.gid] += 1
 
-            top_layer = grid.get_top_layer()
+            top_layer = cell.get_top_layer()
             if top_layer is None:
-                for agent_on_grid in temp_grid_agent_list:
-                    agent = self._aegis_world.get_agent(agent_on_grid)
+                for agent_on_cell in temp_cell_agent_list:
+                    agent = self._aegis_world.get_agent(agent_on_cell)
                     if agent is not None:
                         agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
-                        self._SAVE_SURV_RESULT_list.add(agent_on_grid)
+                        self._SAVE_SURV_RESULT_list.add(agent_on_cell)
             else:
                 self._handle_top_layer(
-                    top_layer, grid, temp_grid_agent_list, gid_counter
+                    top_layer, cell, temp_cell_agent_list, gid_counter
                 )
 
         temp_agent_list.clear()
@@ -667,10 +667,10 @@ class Aegis:
                 continue
 
             dest_location = agent.location.add(move.direction)
-            dest_grid = self._aegis_world.get_grid_at(dest_location)
+            dest_cell = self._aegis_world.get_cell_at(dest_location)
 
-            if move.direction != Direction.CENTER and dest_grid:
-                agent.remove_energy(dest_grid.move_cost)
+            if move.direction != Direction.CENTER and dest_cell:
+                agent.remove_energy(dest_cell.move_cost)
                 self._aegis_world.move_agent(agent.agent_id, dest_location)
                 agent.orientation = move.direction
             else:
@@ -684,11 +684,11 @@ class Aegis:
             if agent is None:
                 continue
 
-            agent_grid = self._aegis_world.get_grid_at(agent.location)
+            agent_cell = self._aegis_world.get_cell_at(agent.location)
             config_settings = self._parameters.config_settings
 
             if (config_settings and config_settings.sleep_everywhere) or (
-                agent_grid and agent_grid.is_charging_grid()
+                agent_cell and agent_cell.is_charging_cell()
             ):
                 if (
                     agent.get_energy_level() + Constants.NORMAL_CHARGE
@@ -805,11 +805,11 @@ class Aegis:
                 continue
 
             success = False
-            agent_grid = self._aegis_world.get_grid_at(agent.location)
+            agent_cell = self._aegis_world.get_cell_at(agent.location)
             config_settings = self._parameters.config_settings
 
             if (config_settings and config_settings.sleep_everywhere) or (
-                agent_grid and agent_grid.is_charging_grid()
+                agent_cell and agent_cell.is_charging_cell()
             ):
                 success = True
             sleep_result = SLEEP_RESULT(success, agent.get_energy_level())
@@ -821,15 +821,15 @@ class Aegis:
             if agent is None:
                 continue
 
-            grid_info = GridInfo()
+            cell_info = CellInfo()
             life_signals = LifeSignals()
-            grid = self._aegis_world.get_grid_at(observe.location)
+            cell = self._aegis_world.get_cell_at(observe.location)
 
-            if grid is not None:
-                grid_info = grid.get_grid_info()
-                life_signals = grid.get_generated_life_signals()
+            if cell is not None:
+                cell_info = cell.get_cell_info()
+                life_signals = cell.get_generated_life_signals()
             observe_result = OBSERVE_RESULT(
-                agent.get_energy_level(), grid_info, life_signals
+                agent.get_energy_level(), cell_info, life_signals
             )
 
             self._agent_handler.set_result_of_command(agent.agent_id, observe_result)
@@ -865,15 +865,15 @@ class Aegis:
     def _handle_top_layer(
         self,
         top_layer: WorldObject,
-        grid: Grid,
-        temp_grid_agent_list: list[AgentID],
+        cell: Cell,
+        temp_cell_agent_list: list[AgentID],
         gid_counter: list[int],
     ) -> None:
         if isinstance(top_layer, (Survivor, SurvivorGroup)):
-            self._aegis_world.remove_layer_from_grid(grid.location)
+            self._aegis_world.remove_layer_from_cell(cell.location)
             alive_count, dead_count = self._calculate_survivor_stats(top_layer)
             self._assign_points(
-                temp_grid_agent_list, alive_count, dead_count, gid_counter
+                temp_cell_agent_list, alive_count, dead_count, gid_counter
             )
 
             if (
@@ -882,11 +882,11 @@ class Aegis:
                 and self._prediction_handler is not None
             ):
                 self._prediction_handler.add_agent_to_no_pred_yet(
-                    temp_grid_agent_list[0], top_layer.id
+                    temp_cell_agent_list[0], top_layer.id
                 )
 
         else:
-            for agent_id in temp_grid_agent_list:
+            for agent_id in temp_cell_agent_list:
                 agent = self._aegis_world.get_agent(agent_id)
                 if agent is not None:
                     agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
@@ -914,7 +914,7 @@ class Aegis:
 
     def _assign_points(
         self,
-        temp_grid_agent_list: list[AgentID],
+        temp_cell_agent_list: list[AgentID],
         alive_count: int,
         dead_count: int,
         gid_counter: list[int],
@@ -939,8 +939,8 @@ class Aegis:
                     self._agent_handler.increase_agent_group_saved(gid, amount, state)
 
         elif points_config == ConfigSettings.POINTS_FOR_RANDOM_SAVING_GROUPS:
-            random_id = temp_grid_agent_list[
-                Utility.next_int() % len(temp_grid_agent_list)
+            random_id = temp_cell_agent_list[
+                Utility.next_int() % len(temp_cell_agent_list)
             ]
             if alive_count > 0:
                 state = Constants.SAVE_STATE_ALIVE
@@ -986,11 +986,11 @@ class Aegis:
                         alive_count, dead_count, gid_counter, max_group_size
                     )
 
-        for agent_on_grid_id in temp_grid_agent_list:
-            agent = self._aegis_world.get_agent(agent_on_grid_id)
+        for agent_on_cell_id in temp_cell_agent_list:
+            agent = self._aegis_world.get_agent(agent_on_cell_id)
             if agent is not None:
                 agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
-                self._SAVE_SURV_RESULT_list.add(agent_on_grid_id)
+                self._SAVE_SURV_RESULT_list.add(agent_on_cell_id)
 
     def _handle_random_tie(
         self,

@@ -39,16 +39,16 @@ class Pathfinder:
 
             for dir in Direction:
                 loc = current.add(dir)
-                grid = world.get_grid_at(loc)
+                cell = world.get_cell_at(loc)
 
                 if (
-                    grid is None
-                    or grid.move_cost >= agent.get_energy_level()
-                    or grid.is_killer()
+                    cell is None
+                    or cell.move_cost >= agent.get_energy_level()
+                    or cell.is_killer()
                 ):
                     continue
 
-                new_cost = cost_so_far[current] + grid.move_cost
+                new_cost = cost_so_far[current] + cell.move_cost
                 if loc not in cost_so_far or new_cost < cost_so_far[loc]:
                     cost_so_far[loc] = new_cost
                     prio = new_cost + self._heuristic(loc, end)

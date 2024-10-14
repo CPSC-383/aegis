@@ -20,14 +20,14 @@
       "y": 1
     }
   ],
-  "grid_types": {
-    "fire_grids": [],
-    "killer_grids": [],
-    "charging_grids": []
+  "cell_types": {
+    "fire_cells": [],
+    "killer_cells": [],
+    "charging_cells": []
   },
   "stacks": [
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 0
       },
@@ -54,7 +54,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 1
       },
@@ -88,7 +88,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 2
       },
@@ -115,7 +115,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 0
       },
@@ -133,7 +133,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 1
       },
@@ -167,7 +167,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 2
       },
@@ -185,7 +185,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 0
       },
@@ -219,7 +219,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 1
       },
@@ -253,7 +253,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 2
       },

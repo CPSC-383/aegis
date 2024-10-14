@@ -5,7 +5,7 @@ from aegis.common.location import Location
 
 
 @dataclass
-class GridTypeInfo:
+class CellTypeInfo:
     name: str
     locs: list[Location]
 

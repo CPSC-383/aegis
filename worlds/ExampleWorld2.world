@@ -24,20 +24,20 @@
       "y": 1
     }
   ],
-  "grid_types": {
-    "fire_grids": [
+  "cell_types": {
+    "fire_cells": [
       {
         "x": 0,
         "y": 2
       }
     ],
-    "killer_grids": [
+    "killer_cells": [
       {
         "x": 2,
         "y": 0
       }
     ],
-    "charging_grids": [
+    "charging_cells": [
       {
         "x": 1,
         "y": 1
@@ -46,7 +46,7 @@
   },
   "stacks": [
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 0
       },
@@ -54,7 +54,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 1
       },
@@ -62,7 +62,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 0,
         "y": 2
       },
@@ -70,7 +70,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 0
       },
@@ -78,7 +78,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 1
       },
@@ -86,7 +86,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 1,
         "y": 2
       },
@@ -94,7 +94,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 0
       },
@@ -102,7 +102,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 1
       },
@@ -110,7 +110,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 2,
         "y": 2
       },
@@ -149,7 +149,7 @@
       ]
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 3,
         "y": 0
       },
@@ -157,7 +157,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 3,
         "y": 1
       },
@@ -165,7 +165,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 3,
         "y": 2
       },
@@ -173,7 +173,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 4,
         "y": 0
       },
@@ -181,7 +181,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 4,
         "y": 1
       },
@@ -189,7 +189,7 @@
       "contents": []
     },
     {
-      "grid_loc": {
+      "cell_loc": {
         "x": 4,
         "y": 2
       },

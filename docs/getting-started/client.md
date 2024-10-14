@@ -53,30 +53,30 @@ This will allow you to create custom worlds.
 
 In the editor, you can use four different types of brushes:
 
-- Special Grids Brush
+- Special Cells Brush
 - Move Cost Brush
 - Stack Content Brush
 - Empty Brush
 
-To place something on the map simply left click on a grid. To delete,
+To place something on the map simply left click on a cell. To delete,
 ensure you have the proper brush selected.
 
-For example, to delete a fire grid, you need to select the Special
-Grids Brush with the Fire Brush option.
+For example, to delete a fire cell, you need to select the Special
+Cells Brush with the Fire Brush option.
 To delete an object from a stack, simply right-click on it. You do not
 need to select the correct object first.
 
-#### Special Grids Brush
+#### Special Cells Brush
 
 ##### Spawn
 
 ![Spawn](../assets/spawn.png)
 
 By default, the GID option is set to zero, which means any number of agents from any group
-can spawn on that grid.
+can spawn on that cell.
 
 If the GID is set to another number, only one agent from the set GID will be able to
-spawn on that grid. For that reason, stacking spawns is allowed.
+spawn on that cell. For that reason, stacking spawns is allowed.
 
 ##### Fire, Killer and Charging
 
@@ -86,15 +86,15 @@ These brushes have no settings.
 
 ![Move Cost](../assets/move_cost.png)
 
-Every grid has a move cost of one, which is why the dropdown menu and custom move cost starts at 2.
+Every cell has a move cost of one, which is why the dropdown menu and custom move cost starts at 2.
 If you don't want to use the values from 2-5, you can use the custom move cost to set a higher value.
 
-The higher the move cost, the darker the grid colour will become. This helps you easily
-identify the cost when your agents are moving through different grids.
+The higher the move cost, the darker the cell colour will become. This helps you easily
+identify the cost when your agents are moving through different cells.
 
 #### Stack Content Brush
 
-These objects can be placed on any grid except fire, killer and charging grids.
+These objects can be placed on any cell except fire, killer and charging cells.
 
 When you add an object to a stack, it will be placed at the bottom of the stack.
 
@@ -118,7 +118,7 @@ Energy level is defaulted to zero, and number of survivors is defaulted to one.
 
 #### Empty Brush
 
-This brush will allow you to inspect the grids.
+This brush will allow you to inspect the cells.
 
 ### Settings
 
@@ -138,16 +138,16 @@ Below is an example of all the world types and objects:
 1. Represents a survivor.
 2. Represents a survivor group.
 3. Represents rubble.
-4. Represents a charging grid.
-5. Represents a killer grid.
-6. Represents a fire grid.
+4. Represents a charging cell.
+5. Represents a killer cell.
+6. Represents a fire cell.
 7. Represents a spawn zone.
 
-The small squares on the corner of a grid represent survivors and survivor groups in a stack. Light blue squares 
+The small squares on the corner of a cell represent survivors and survivor groups in a stack. Light blue squares 
 indicate the presence of survivors, while dark blue squares represent survivor groups.
 
-For example, if a grid has 2 light blue squares and 4 dark blue squares, it means that there are 2 survivors
-and 4 survivor groups located on that grid.
+For example, if a cell has 2 light blue squares and 4 dark blue squares, it means that there are 2 survivors
+and 4 survivor groups located on that cell.
 
 #### Timeline
 
@@ -164,19 +164,19 @@ and 4 survivor groups located on that grid.
 
 #### Info Panel
 
-##### Grid Panel
+##### Cell Panel
 
-Clicking on a grid will show the below information:
+Clicking on a cell will show the below information:
 
 ![Panel](../assets/panel.png)
 
-- The type of grid and move cost.
-- Any agents present in the grid, sorted by group and ID.
-- Any layers that exist in the grid.
+- The type of cell and move cost.
+- Any agents present in the cell, sorted by group and ID.
+- Any layers that exist in the cell.
 
 ##### Agent Panel
 
-Clicking on an agent in the grid panel will show the below information:
+Clicking on an agent in the cell panel will show the below information:
 
 ![Agent Panel](../assets/agent_panel.png)
 

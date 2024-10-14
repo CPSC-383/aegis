@@ -8,7 +8,7 @@ from aegis.parsers.helper.world_file_type import StackContent
 
 class Survivor(WorldObject):
     """
-    Represents a survivor layer in a grid.
+    Represents a survivor layer in a cell.
 
     Attributes:
         id (int): The id of the survivor.

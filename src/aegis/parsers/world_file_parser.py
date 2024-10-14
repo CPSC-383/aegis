@@ -4,12 +4,12 @@ from typing import cast
 from aegis.common import AgentID, Location
 from aegis.parsers.aegis_world_file import AegisWorldFile
 from aegis.parsers.helper.world_file_type import SpawnInfo
-from aegis.parsers.helper.grid_info_settings import GridInfoSettings
-from aegis.parsers.helper.grid_type_info import GridTypeInfo
+from aegis.parsers.helper.cell_info_settings import CellInfoSettings
+from aegis.parsers.helper.cell_type_info import CellTypeInfo
 from aegis.parsers.helper.world_file_type import (
     AgentInfo,
-    GridLoc,
-    GridTypes,
+    CellLoc,
+    CellTypes,
     StackInfo,
     WorldFileType,
 )
@@ -36,8 +36,8 @@ class WorldFileParser:
                     "world_file_levels"
                 ]["low"]
 
-                grid_settings = WorldFileParser._parse_grid_settings(data["grid_types"])
-                grid_stack_info = WorldFileParser._parse_grid_stack_info(data["stacks"])
+                cell_settings = WorldFileParser._parse_cell_settings(data["cell_types"])
+                cell_stack_info = WorldFileParser._parse_cell_stack_info(data["stacks"])
                 agent_spawn_locations = WorldFileParser._parse_spawn_locations(
                     data["spawn_locs"]
                 )
@@ -49,8 +49,8 @@ class WorldFileParser:
                     high_survivor_level,
                     mid_survivor_level,
                     low_survivor_level,
-                    grid_stack_info,
-                    grid_settings,
+                    cell_stack_info,
+                    cell_settings,
                     agent_spawn_locations,
                 )
         except Exception as e:
@@ -58,29 +58,29 @@ class WorldFileParser:
             return None
 
     @staticmethod
-    def _parse_grid_stack_info(
-        grid_stack_info: list[StackInfo],
-    ) -> list[GridInfoSettings]:
+    def _parse_cell_stack_info(
+        cell_stack_info: list[StackInfo],
+    ) -> list[CellInfoSettings]:
         return [
-            GridInfoSettings(
-                grid["move_cost"],
-                grid["contents"],
-                Location(grid["grid_loc"]["x"], grid["grid_loc"]["y"]),
+            CellInfoSettings(
+                cell["move_cost"],
+                cell["contents"],
+                Location(cell["cell_loc"]["x"], cell["cell_loc"]["y"]),
             )
-            for grid in grid_stack_info
+            for cell in cell_stack_info
         ]
 
     @staticmethod
-    def _parse_grid_settings(grid_types: GridTypes) -> list[GridTypeInfo]:
+    def _parse_cell_settings(cell_types: CellTypes) -> list[CellTypeInfo]:
         return [
-            GridTypeInfo(
+            CellTypeInfo(
                 name,
                 [
                     Location(loc["x"], loc["y"])
-                    for loc in cast(list[GridLoc], grid_locs)
+                    for loc in cast(list[CellLoc], cell_locs)
                 ],
             )
-            for name, grid_locs in grid_types.items()
+            for name, cell_locs in cell_types.items()
         ]
 
     @staticmethod

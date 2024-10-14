@@ -9,11 +9,11 @@ class ConfigSettings:
     SEND_MESSAGES_TO_ONLY_OWN_GROUP = False
     SEND_MESSAGES_AND_PERFORM_ACTION = True
     SEND_MESSAGE_OR_PERFORM_ACTION = False
-    SLEEP_ON_ALL_GRIDS = True
-    SLEEP_ONLY_ON_CHARGING_GRIDS = False
+    SLEEP_ON_ALL_CELLS = True
+    SLEEP_ONLY_ON_CHARGING_CELLS = False
     points_for_saving_survivors = POINTS_FOR_ALL_SAVING_GROUPS
     points_for_saving_survivors_tie = POINTS_TIE_ALL_SAVING_GROUPS
     predictions_enabled = PREDICTIONS_ENABLED
     handling_messages = SEND_MESSAGES_AND_PERFORM_ACTION
     send_messages_to_all_groups = SEND_MESSAGES_TO_ALL_GROUPS
-    sleep_everywhere = SLEEP_ON_ALL_GRIDS
+    sleep_everywhere = SLEEP_ON_ALL_CELLS

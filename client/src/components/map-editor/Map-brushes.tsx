@@ -4,7 +4,7 @@ import {
     BrushType,
     Location,
     RubbleInfo,
-    SpecialGridBrushTypes,
+    SpecialCellBrushTypes,
     Stack,
     StackContentBrushTypes,
     SurvivorGroupInfo,
@@ -15,9 +15,9 @@ import NumberInput from '../inputs/NumberInput'
 
 function MapBrushes() {
     const { appState } = useAppContext()
-    const [brushType, setBrushType] = useState<BrushType>(BrushType.SpecialGrids)
-    const [specialGridBrushTypes, setSpecialGridBrushTypes] = useState<SpecialGridBrushTypes>(
-        SpecialGridBrushTypes.Killer
+    const [brushType, setBrushType] = useState<BrushType>(BrushType.SpecialCells)
+    const [specialCellBrushTypes, setSpecialCellBrushTypes] = useState<SpecialCellBrushTypes>(
+        SpecialCellBrushTypes.Killer
     )
     const [moveCost, setMoveCost] = useState<number>(2)
     const [gid, setGid] = useState<number>(0)
@@ -41,24 +41,24 @@ function MapBrushes() {
         const rightClicked = event.detail.right
         const worldMap = appState.simulation.worldMap
 
-        const { killerGrids, chargingGrids, fireGrids, stacks } = worldMap
+        const { killerCells, chargingCells, fireCells, stacks } = worldMap
 
-        const isOccupied = (grid: { x: number; y: number }[]) => {
-            return grid.some((g) => g.x === tile.x && g.y === tile.y)
+        const isOccupied = (cell: { x: number; y: number }[]) => {
+            return cell.some((g) => g.x === tile.x && g.y === tile.y)
         }
-        const grid = stacks.find((g) => g.grid_loc.x === tile.x && g.grid_loc.y === tile.y)
-        const isGridOccupied = isOccupied(killerGrids) || isOccupied(fireGrids) || isOccupied(chargingGrids)
+        const cell = stacks.find((g) => g.cell_loc.x === tile.x && g.cell_loc.y === tile.y)
+        const isCellOccupied = isOccupied(killerCells) || isOccupied(fireCells) || isOccupied(chargingCells)
 
         switch (brushType) {
-            case BrushType.SpecialGrids:
-                if (grid && grid.contents.length > 0) break
-                handleSpecialGrids(isGridOccupied, rightClicked, tile)
+            case BrushType.SpecialCells:
+                if (cell && cell.contents.length > 0) break
+                handleSpecialCells(isCellOccupied, rightClicked, tile)
                 break
             case BrushType.MoveCost:
-                handleMoveCost(grid, rightClicked)
+                handleMoveCost(cell, rightClicked)
                 break
             case BrushType.StackContents:
-                handleStackContentBrush(isGridOccupied, rightClicked, grid)
+                handleStackContentBrush(isCellOccupied, rightClicked, cell)
                 break
             case BrushType.Empty:
                 break
@@ -70,100 +70,100 @@ function MapBrushes() {
 
     listenEvent(EventType.TILE_CLICK, applyBrush)
 
-    const handleSpecialGrids = (isGridOccupied: boolean, rightClicked: boolean, tile: Location) => {
-        if (rightClicked) removeSpecialGrid(tile)
-        else if (!isGridOccupied) addSpecialGrid(tile)
+    const handleSpecialCells = (isCellOccupied: boolean, rightClicked: boolean, tile: Location) => {
+        if (rightClicked) removeSpecialCell(tile)
+        else if (!isCellOccupied) addSpecialCell(tile)
     }
 
-    const removeSpecialGrid = (tile: Location) => {
-        const { killerGrids, chargingGrids, fireGrids, spawnGrids } = appState.simulation!.worldMap
-        switch (specialGridBrushTypes) {
-            case SpecialGridBrushTypes.Killer:
-                removeGrid(killerGrids, tile)
+    const removeSpecialCell = (tile: Location) => {
+        const { killerCells, chargingCells, fireCells, spawnCells } = appState.simulation!.worldMap
+        switch (specialCellBrushTypes) {
+            case SpecialCellBrushTypes.Killer:
+                removeCell(killerCells, tile)
                 break
-            case SpecialGridBrushTypes.Fire:
-                removeGrid(fireGrids, tile)
+            case SpecialCellBrushTypes.Fire:
+                removeCell(fireCells, tile)
                 break
-            case SpecialGridBrushTypes.Charging:
-                removeGrid(chargingGrids, tile)
+            case SpecialCellBrushTypes.Charging:
+                removeCell(chargingCells, tile)
                 break
-            case SpecialGridBrushTypes.Spawn:
+            case SpecialCellBrushTypes.Spawn:
                 const key = JSON.stringify(tile) // Consistent key format
-                if (spawnGrids.has(key)) spawnGrids.delete(key)
+                if (spawnCells.has(key)) spawnCells.delete(key)
                 break
             default:
                 break
         }
     }
 
-    const removeGrid = (grids: Location[], tile: Location) => {
-        const index = grids.findIndex((g) => g.x === tile.x && g.y === tile.y)
-        if (index !== -1) grids.splice(index, 1)
+    const removeCell = (cells: Location[], tile: Location) => {
+        const index = cells.findIndex((g) => g.x === tile.x && g.y === tile.y)
+        if (index !== -1) cells.splice(index, 1)
     }
 
-    const addSpecialGrid = (tile: Location) => {
-        const { killerGrids, chargingGrids, fireGrids } = appState.simulation!.worldMap
-        switch (specialGridBrushTypes) {
-            case SpecialGridBrushTypes.Killer:
-                killerGrids.push(tile)
+    const addSpecialCell = (tile: Location) => {
+        const { killerCells, chargingCells, fireCells } = appState.simulation!.worldMap
+        switch (specialCellBrushTypes) {
+            case SpecialCellBrushTypes.Killer:
+                killerCells.push(tile)
                 break
-            case SpecialGridBrushTypes.Fire:
-                fireGrids.push(tile)
+            case SpecialCellBrushTypes.Fire:
+                fireCells.push(tile)
                 break
-            case SpecialGridBrushTypes.Charging:
-                chargingGrids.push(tile)
+            case SpecialCellBrushTypes.Charging:
+                chargingCells.push(tile)
                 break
-            case SpecialGridBrushTypes.Spawn:
-                handleSpawnGrids(tile)
+            case SpecialCellBrushTypes.Spawn:
+                handleSpawnCells(tile)
                 break
         }
     }
 
-    const handleSpawnGrids = (tile: Location) => {
-        const { spawnGrids } = appState.simulation!.worldMap
+    const handleSpawnCells = (tile: Location) => {
+        const { spawnCells } = appState.simulation!.worldMap
         const key = JSON.stringify(tile) // Consistent key format
-        const existingGids = spawnGrids.get(key) || []
+        const existingGids = spawnCells.get(key) || []
 
         if (gid === 0) {
-            if (existingGids.length === 0) spawnGrids.set(key, [])
+            if (existingGids.length === 0) spawnCells.set(key, [])
             return
         }
-        if (!existingGids.includes(gid)) spawnGrids.set(key, [...existingGids, gid])
+        if (!existingGids.includes(gid)) spawnCells.set(key, [...existingGids, gid])
     }
 
-    const handleMoveCost = (grid: Stack | undefined, rightClicked: boolean) => {
-        if (grid) {
-            if (rightClicked) grid.move_cost = 1
-            else grid.move_cost = moveCost
+    const handleMoveCost = (cell: Stack | undefined, rightClicked: boolean) => {
+        if (cell) {
+            if (rightClicked) cell.move_cost = 1
+            else cell.move_cost = moveCost
         }
     }
 
-    const handleStackContentBrush = (isGridOccupied: boolean, rightClicked: boolean, grid: Stack | undefined) => {
-        if (grid) {
-            if (rightClicked && grid.contents.length > 0) {
-                grid.contents.pop()
+    const handleStackContentBrush = (isCellOccupied: boolean, rightClicked: boolean, cell: Stack | undefined) => {
+        if (cell) {
+            if (rightClicked && cell.contents.length > 0) {
+                cell.contents.pop()
                 return
             }
-            if (!isGridOccupied) addStackcontent(grid)
+            if (!isCellOccupied) addStackcontent(cell)
         }
     }
 
-    const addStackcontent = (grid: Stack) => {
+    const addStackcontent = (cell: Stack) => {
         switch (stackType) {
             case StackContentBrushTypes.Rubble:
-                grid.contents.push({
+                cell.contents.push({
                     type: 'rb',
                     arguments: rubbleInfo
                 })
                 break
             case StackContentBrushTypes.SurvivorGroup:
-                grid.contents.push({
+                cell.contents.push({
                     type: 'svg',
                     arguments: survivorGroupInfo
                 })
                 break
             case StackContentBrushTypes.Survivor:
-                grid.contents.push({
+                cell.contents.push({
                     type: 'sv',
                     arguments: survivorInfo
                 })
@@ -178,24 +178,24 @@ function MapBrushes() {
                 onChange={(e) => setBrushType(e.target.value as BrushType)}
                 className="bg-white p-2 w-full border-2 border-gray-300 focus:border-accent-light rounded-md focus:outline-none"
             >
-                <option value={BrushType.SpecialGrids}>Special Grids Brush</option>
+                <option value={BrushType.SpecialCells}>Special Cells Brush</option>
                 <option value={BrushType.MoveCost}>Move Cost Brush</option>
                 <option value={BrushType.StackContents}>Stack Contents Brush</option>
                 <option value={BrushType.Empty}>Empty Brush</option>
             </select>
-            {brushType === BrushType.SpecialGrids && (
+            {brushType === BrushType.SpecialCells && (
                 <>
                     <select
-                        value={specialGridBrushTypes}
-                        onChange={(e) => setSpecialGridBrushTypes(e.target.value as SpecialGridBrushTypes)}
+                        value={specialCellBrushTypes}
+                        onChange={(e) => setSpecialCellBrushTypes(e.target.value as SpecialCellBrushTypes)}
                         className="bg-white p-2 w-full border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
                     >
-                        <option value={SpecialGridBrushTypes.Killer}>Killer Brush</option>
-                        <option value={SpecialGridBrushTypes.Fire}>Fire Brush</option>
-                        <option value={SpecialGridBrushTypes.Charging}>Charging Brush</option>
-                        <option value={SpecialGridBrushTypes.Spawn}>Spawn Brush</option>
+                        <option value={SpecialCellBrushTypes.Killer}>Killer Brush</option>
+                        <option value={SpecialCellBrushTypes.Fire}>Fire Brush</option>
+                        <option value={SpecialCellBrushTypes.Charging}>Charging Brush</option>
+                        <option value={SpecialCellBrushTypes.Spawn}>Spawn Brush</option>
                     </select>
-                    {specialGridBrushTypes === SpecialGridBrushTypes.Spawn && (
+                    {specialCellBrushTypes === SpecialCellBrushTypes.Spawn && (
                         <div className="flex mt-4 items-center justify-center">
                             <p className="mr-2">GID:</p>
                             <NumberInput value={gid} onChange={(newGid) => setGid(newGid)} min={0} extraStyles="w-16" />

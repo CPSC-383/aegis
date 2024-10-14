@@ -15,27 +15,27 @@ Contains core data structures and types used across AEGIS.
 
 ## World
 
-Defines the world and its grid-based structure for simulation.
+Defines the world and its cell-based structure for simulation.
 
-- [`aegis.World`][]: Represents a 2D grid world.
-- [`aegis.Grid`][]: Represents a grid in the world.
+- [`aegis.World`][]: Represents a 2D grid of cells.
+- [`aegis.Cell`][]: Represents a cell in the world.
 
 ### World Objects
 
-The various possible layers in a grid.
+The various possible layers in a cell.
 
 - [`aegis.WorldObject`][]: Represents a object in the world.
-- [`aegis.Survivor`][]: Represents a survivor layer in a grid.
-- [`aegis.SurvivorGroup`][]: Represents a survivor group layer in a grid.
-- [`aegis.Rubble`][]: Represents a rubble layer in a grid.
-- [`aegis.NoLayers`][]: Represents no more layers in a grid.
+- [`aegis.Survivor`][]: Represents a survivor layer in a cell.
+- [`aegis.SurvivorGroup`][]: Represents a survivor group layer in a cell.
+- [`aegis.Rubble`][]: Represents a rubble layer in a cell.
+- [`aegis.NoLayers`][]: Represents no more layers in a cell.
 
 ### World Objects Info
 
 Contains information about world objects.
 
-- [`aegis.GridInfo`][]: Represents the information of a grid in the world.
-- [`aegis.SurroundInfo`][]: Represents the information about the surrounding grid cells of the agent.
+- [`aegis.CellInfo`][]: Represents the information of a cell in the world.
+- [`aegis.SurroundInfo`][]: Represents the information about the surrounding cells of the agent.
 
 ## Commands
 
@@ -47,7 +47,7 @@ Commands available for the agents interacting with AEGIS.
 - [`aegis.AGENT_UNKNOWN`][]: Represents an unknown agent command.
 - [`aegis.END_TURN`][]: Represents a command that allows an agent to tell the server it is done with its turn.
 - [`aegis.MOVE`][]: Represents a command for an agent to move in a specified direction.
-- [`aegis.OBSERVE`][]: Represents a command for an agent to observe a grid in the world.
+- [`aegis.OBSERVE`][]: Represents a command for an agent to observe a cell in the world.
 - [`aegis.PREDICT`][]: Represents the prediction of an agent.
 - [`aegis.SAVE_SURV`][]: Represents a command for an agent to save a survivor or survivor group.
 - [`aegis.SEND_MESSAGE`][]: Represents a command for an agent to send a message to other agents.
@@ -65,7 +65,7 @@ Commands AEGIS uses to interact with the agents.
 - [`aegis.DISCONNECT`][]: Represents if the agent has disconnected and the system has shutdown.
 - [`aegis.FWD_MESSAGE`][]: Represents a message that came from another agent.
 - [`aegis.MOVE_RESULT`][]: Represents the result of the agent moving.
-- [`aegis.OBSERVE_RESULT`][]: Represents the result of observing a grid.
+- [`aegis.OBSERVE_RESULT`][]: Represents the result of observing a cell.
 - [`aegis.PREDICT_RESULT`][]: Represents the result of an agent's prediction.
 - [`aegis.SAVE_SURV_RESULT`][]: Represents the result of saving a survivor.
 - [`aegis.SLEEP_RESULT`][]: Represents the result of the agent sleeping.
@@ -99,9 +99,9 @@ from aegis.common.commands.agent_commands import (
     SLEEP,
     TEAM_DIG,
 )
-from aegis.common.world.grid import Grid
+from aegis.common.world.cell import Cell
 from aegis.common.world.info import (
-    GridInfo,
+    CellInfo,
     SurroundInfo,
 )
 from aegis.common.world.objects import (
@@ -126,8 +126,8 @@ __all__ = [
     "Direction",
     "END_TURN",
     "FWD_MESSAGE",
-    "Grid",
-    "GridInfo",
+    "Cell",
+    "CellInfo",
     "LifeSignals",
     "Location",
     "MOVE",

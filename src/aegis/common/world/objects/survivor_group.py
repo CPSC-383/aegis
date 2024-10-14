@@ -6,7 +6,7 @@ from aegis.parsers.helper.world_file_type import StackContent
 
 class SurvivorGroup(WorldObject):
     """
-    Represents a survivor group layer in a grid.
+    Represents a survivor group layer in a cell.
 
     Attributes:
         id (int): The id of the survivor group.

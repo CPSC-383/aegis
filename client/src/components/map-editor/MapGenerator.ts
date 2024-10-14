@@ -39,7 +39,7 @@ export async function exportWorld(worldMap: WorldMap, worldName: string) {
 }
 
 const validateMap = (world: WorldMap) => {
-    if (world.spawnGrids.size === 0) return 'Missing spawn zones!'
+    if (world.spawnCells.size === 0) return 'Missing spawn zones!'
 
     const hasSurvivors = world.stacks.some((stack) =>
         stack.contents.some((content) => content.type === 'sv' || content.type === 'svg')
@@ -51,7 +51,7 @@ const validateMap = (world: WorldMap) => {
 }
 
 const createWorld = (world: WorldMap) => {
-    const spawn_locs = Array.from(world.spawnGrids, ([spawn, gids]) => {
+    const spawn_locs = Array.from(world.spawnCells, ([spawn, gids]) => {
         const { x, y } = JSON.parse(spawn)
         if (gids.length === 0) return { x, y }
         else return gids.map((gid) => ({ x, y, gid }))
@@ -74,10 +74,10 @@ const createWorld = (world: WorldMap) => {
             }
         },
         spawn_locs,
-        grid_types: {
-            fire_grids: world.fireGrids,
-            killer_grids: world.killerGrids,
-            charging_grids: world.chargingGrids
+        cell_types: {
+            fire_cells: world.fireCells,
+            killer_cells: world.killerCells,
+            charging_cells: world.chargingCells
         },
         stacks: world.stacks
     }

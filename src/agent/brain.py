@@ -24,7 +24,7 @@ from aegis.common.commands.aegis_commands import (
     TEAM_DIG_RESULT,
 )
 from aegis.common.parsers.aegis_parser import AegisParser
-from aegis.common.world.info.grid_info import GridInfo
+from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.world import World
 
 
@@ -178,7 +178,7 @@ class Brain(ABC):
 
         elif isinstance(aegis_command, MOVE_RESULT):
             move_result: MOVE_RESULT = aegis_command
-            move_result_current_info: GridInfo = (
+            move_result_current_info: CellInfo = (
                 move_result.surround_info.get_current_info()
             )
             base_agent.set_energy_level(move_result.energy_level)
@@ -225,7 +225,7 @@ class Brain(ABC):
 
         elif isinstance(aegis_command, TEAM_DIG_RESULT):
             team_dig_result: TEAM_DIG_RESULT = aegis_command
-            team_dig_result_current_info: GridInfo = (
+            team_dig_result_current_info: CellInfo = (
                 team_dig_result.surround_info.get_current_info()
             )
             base_agent.set_energy_level(team_dig_result.energy_level)

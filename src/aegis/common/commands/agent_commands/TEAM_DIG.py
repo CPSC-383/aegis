@@ -8,7 +8,7 @@ class TEAM_DIG(AgentCommand):
     Represents a command for an agent to dig rubble.
 
     If a piece of rubble needs more then one agent to remove it then
-    all the needed agents need to move onto the grid and send the
+    all the needed agents need to move onto the cell and send the
     TEAM_DIG command during the same round.
     """
 

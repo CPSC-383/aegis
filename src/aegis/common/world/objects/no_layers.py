@@ -7,7 +7,7 @@ from aegis.parsers.helper.world_file_type import StackContent
 
 
 class NoLayers(WorldObject):
-    """Represents no more layers in a grid."""
+    """Represents no more layers in a cell."""
 
     def __init__(self) -> None:
         super().__init__()

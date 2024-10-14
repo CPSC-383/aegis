@@ -36,15 +36,15 @@ class AgentInfo(TypedDict):
     y: int
 
 
-class GridLoc(TypedDict):
+class CellLoc(TypedDict):
     x: int
     y: int
 
 
-class GridTypes(TypedDict):
-    fire_grids: list[GridLoc]
-    killer_grids: list[GridLoc]
-    charging_grids: list[GridLoc]
+class CellTypes(TypedDict):
+    fire_cells: list[CellLoc]
+    killer_cells: list[CellLoc]
+    charging_cells: list[CellLoc]
 
 
 Arguments = Literal[
@@ -64,7 +64,7 @@ class StackContent(TypedDict):
 
 
 class StackInfo(TypedDict):
-    grid_loc: GridLoc
+    cell_loc: CellLoc
     move_cost: int
     contents: list[StackContent]
 
@@ -73,5 +73,5 @@ class WorldFileType(TypedDict):
     settings: Settings
     spawn_locs: list[SpawnInfo]
     agent_place: list[AgentInfo]
-    grid_types: GridTypes
+    cell_types: CellTypes
     stacks: list[StackInfo]

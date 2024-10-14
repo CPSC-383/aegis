@@ -1,8 +1,8 @@
 __all__ = [
-    "GridInfo",
+    "CellInfo",
     "SurroundInfo",
 ]
 
 
-from aegis.common.world.info.grid_info import GridInfo
+from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.info.surround_info import SurroundInfo

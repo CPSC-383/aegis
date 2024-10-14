@@ -5,17 +5,17 @@ import { AgentInfoDict, StackContent } from '@/utils/types'
 type Props = {
     selectedAgent: AgentInfoDict
     setSelectedAgent: (value: AgentInfoDict | undefined) => void
-    setGridLayers: (value: StackContent[]) => void
+    setCellLayers: (value: StackContent[]) => void
     simulation: Simulation
 }
 
-function AgentPanel({ selectedAgent, setSelectedAgent, setGridLayers, simulation }: Props) {
+function AgentPanel({ selectedAgent, setSelectedAgent, setCellLayers, simulation }: Props) {
     const updateSelectedAgentInfo = () => {
         if (!selectedAgent) return
         const agent = simulation!.getAgentFromIds(selectedAgent.id, selectedAgent.gid)
-        const layers = simulation!.getGridLayersAtGridCell(selectedAgent.x, selectedAgent.y)
+        const layers = simulation!.getLayersAtCell(selectedAgent.x, selectedAgent.y)
         setSelectedAgent(agent)
-        setGridLayers(layers)
+        setCellLayers(layers)
     }
 
     listenEvent(EventType.RENDER, updateSelectedAgentInfo)

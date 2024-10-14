@@ -1,1 +1,1 @@
-::: aegis.common.world.info.grid_info
+::: aegis.common.world.info.cell_info

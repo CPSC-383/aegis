@@ -21,7 +21,7 @@ nav:
           - LifeSignals: api/common/life-signals.md
       - World:
           - World: api/world/world.md
-          - Grid: api/world/grid.md
+          - Cell: api/world/cell.md
           - WorldObjects:
               - WorldObject: api/world/objects/world-object.md
               - Survivor: api/world/objects/survivor.md
@@ -29,7 +29,7 @@ nav:
               - Rubble: api/world/objects/rubble.md
               - NoLayers: api/world/objects/no-layers.md
           - WorldObjectsInfo:
-              - GridInfo: api/world/info/grid-info.md
+              - CellInfo: api/world/info/cell-info.md
               - SurroundInfo: api/world/info/surround-info.md
       - Commands:
           - Agent Commands:

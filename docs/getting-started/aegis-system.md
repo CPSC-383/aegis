@@ -55,7 +55,7 @@ AEGIS uses the following commands to interact with the agents. Click on each com
 - **[DISCONNECT](../api/aegis_commands/disconnect.md)**: AEGIS is shutting down, allowing the agent to shutdown as well.
 - **[FWD_MESSAGE](../api/aegis_commands/fwd-message.md)**: A message received from one agent that is to be forwarded to another agent.
 - **[MOVE_RESULT](../api/aegis_commands/move-result.md)**: Result of the agent moving in a certain direction.
-- **[OBSERVE_RESULT](../api/aegis_commands/observe-result.md)**: Result of observing a grid.
+- **[OBSERVE_RESULT](../api/aegis_commands/observe-result.md)**: Result of observing a cell.
 - **[PREDICT RESULT](../api/aegis_commands/predict-result.md)**: Represents the result of an agent's prediction.
 - **[SAVE_SURV_RESULT](../api/aegis_commands/save-surv-result.md)**: Result of saving a survivor.
 - **[SLEEP_RESULT](../api/aegis_commands/sleep-result.md)**: Result of the agent sleeping.

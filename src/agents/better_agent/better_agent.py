@@ -76,12 +76,12 @@ class BetterAgent(Brain):
         if world is None:
             return
 
-        loc = ovr.grid_info.location
-        grid = world.get_grid_at(loc)
-        if grid is None:
+        loc = ovr.cell_info.location
+        cell = world.get_cell_at(loc)
+        if cell is None:
             return
 
-        grid.set_top_layer(ovr.grid_info.top_layer)
+        cell.set_top_layer(ovr.cell_info.top_layer)
 
     @override
     def handle_save_surv_result(self, ssr: SAVE_SURV_RESULT) -> None:
@@ -123,17 +123,17 @@ class BetterAgent(Brain):
 
         loc = self.get_best_location(world)
         if loc == self._agent.get_location():
-            grid = world.get_grid_at(loc)
-            if grid is None:
+            cell = world.get_cell_at(loc)
+            if cell is None:
                 return
 
-            top_layer = grid.get_top_layer()
+            top_layer = cell.get_top_layer()
             if top_layer is None:
                 self.send_and_end_turn(OBSERVE(loc))
                 return
 
             if isinstance(top_layer, NoLayers):
-                grid.percent_chance = 0
+                cell.percent_chance = 0
                 loc = self.get_best_location(world)
                 self.send_and_end_turn(self.move(world, loc))
                 return
@@ -157,17 +157,17 @@ class BetterAgent(Brain):
         return MOVE(dir)
 
     def get_best_location(self, world: World) -> Location:
-        best_grid = world.get_world_grid()[0][0]
+        best_cell = world.get_world_grid()[0][0]
         for x in range(world.width):
             for y in range(world.height):
-                grid = world.get_grid_at(Location(x, y))
-                if grid is None:
+                cell = world.get_cell_at(Location(x, y))
+                if cell is None:
                     continue
 
-                if grid.percent_chance > best_grid.percent_chance:
-                    best_grid = grid
+                if cell.percent_chance > best_cell.percent_chance:
+                    best_cell = cell
 
-        return best_grid.location
+        return best_cell.location
 
     def update_surround(self, surround_info: SurroundInfo):
         world = self.get_world()
@@ -175,16 +175,16 @@ class BetterAgent(Brain):
             return
 
         for dir in Direction:
-            grid_info = surround_info.get_surround_info(dir)
-            if grid_info is None:
+            cell_info = surround_info.get_surround_info(dir)
+            if cell_info is None:
                 continue
 
-            grid = world.get_grid_at(grid_info.location)
-            if grid is None:
+            cell = world.get_cell_at(cell_info.location)
+            if cell is None:
                 continue
 
-            grid.move_cost = grid_info.move_cost
-            grid.set_top_layer(grid_info.top_layer)
+            cell.move_cost = cell_info.move_cost
+            cell.set_top_layer(cell_info.top_layer)
 
     def _predict(self, image: NDArray[np.float32]) -> np.int64:
         expected_shape = (28, 28)

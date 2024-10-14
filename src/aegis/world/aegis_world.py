@@ -9,8 +9,8 @@ from typing import TypedDict, cast
 from aegis.assist.state import State
 from aegis.common import AgentID, AgentIDList, Constants, Direction, Location, Utility
 from aegis.common.world.agent import Agent
-from aegis.common.world.grid import Grid
-from aegis.common.world.info import GridInfo, SurroundInfo
+from aegis.common.world.cell import Cell
+from aegis.common.world.info import CellInfo, SurroundInfo
 from aegis.common.world.objects import Survivor, SurvivorGroup
 from aegis.common.world.world import World
 from aegis.parsers.aegis_world_file import AegisWorldFile
@@ -34,13 +34,13 @@ class LocationDict(TypedDict):
 
 
 class Stack(TypedDict):
-    grid_loc: LocationDict
+    cell_loc: LocationDict
     move_cost: int
     contents: list[StackContent]
 
 
-class GridCellDict(TypedDict):
-    grid_type: str
+class CellDict(TypedDict):
+    cell_type: str
     stack: Stack
 
 
@@ -54,7 +54,7 @@ class AgentInfoDict(TypedDict):
 
 
 class WorldDict(TypedDict):
-    grid_data: list[GridCellDict]
+    cell_data: list[CellDict]
     agent_data: list[AgentInfoDict]
     top_layer_rem_data: list[LocationDict]
     number_of_alive_agents: int
@@ -87,14 +87,14 @@ class AegisWorld:
         self.round: int = 0
         self._world: World | None = None
         self._agents: list[Agent] = []
-        self._safe_grid_list: list[Grid] = []
-        self._fire_grids_list: list[Grid] = []
-        self._non_fire_grids_list: list[Grid] = []
+        self._safe_cell_list: list[Cell] = []
+        self._fire_cells_list: list[Cell] = []
+        self._non_fire_cells_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._survivor_groups_list: dict[int, SurvivorGroup] = {}
-        self._top_layer_removed_grid_list: list[Location] = []
+        self._top_layer_removed_cell_list: list[Location] = []
         self._fire_simulator = FireSimulator(
-            self._fire_grids_list, self._non_fire_grids_list, self._world
+            self._fire_cells_list, self._non_fire_cells_list, self._world
         )
         self._survivor_simulator = SurvivorSimulator(
             self._survivors_list, self._survivor_groups_list
@@ -144,47 +144,47 @@ class AegisWorld:
                 width=aegis_world_file.width, height=aegis_world_file.height
             )
 
-            # Special type grids
-            for grid_setting in aegis_world_file.grid_settings:
-                if not grid_setting.locs:
+            # Special type cells
+            for cell_setting in aegis_world_file.cell_settings:
+                if not cell_setting.locs:
                     continue
-                for loc in grid_setting.locs:
-                    grid = self._world.get_grid_at(loc)
-                    if grid is None:
+                for loc in cell_setting.locs:
+                    cell = self._world.get_cell_at(loc)
+                    if cell is None:
                         continue
-                    grid.setup_grid(grid_setting.name)
+                    cell.setup_cell(cell_setting.name)
 
-            # Grid info (move_cost and contents)
-            for grid_info_setting in aegis_world_file.grid_stack_info:
-                if not self._world.on_map(grid_info_setting.location):
+            # cell info (move_cost and contents)
+            for cell_info_setting in aegis_world_file.cell_stack_info:
+                if not self._world.on_map(cell_info_setting.location):
                     continue
 
-                grid = self._world.get_grid_at(grid_info_setting.location)
-                if grid is None:
+                cell = self._world.get_cell_at(cell_info_setting.location)
+                if cell is None:
                     continue
-                grid.move_cost = grid_info_setting.move_cost
+                cell.move_cost = cell_info_setting.move_cost
 
                 # reverse so the top of the stack is actually
                 # the top declared in the world file
-                grid_info_setting.contents.reverse()
-                for content in grid_info_setting.contents:
+                cell_info_setting.contents.reverse()
+                for content in cell_info_setting.contents:
                     object_handler = self._object_handlers.get(content["type"].upper())
                     if not object_handler:
                         continue
 
                     layer = object_handler.create_world_object(content["arguments"])
                     if layer is not None:
-                        grid.add_layer(layer)
+                        cell.add_layer(layer)
 
-            # Grids that are safe
+            # cells that are safe
             for x in range(self._world.width):
                 for y in range(self._world.height):
-                    grid = self._world.get_grid_at(Location(x, y))
-                    if grid is None:
+                    cell = self._world.get_cell_at(Location(x, y))
+                    if cell is None:
                         continue
 
-                    if grid.is_stable():
-                        self._safe_grid_list.append(grid)
+                    if cell.is_stable():
+                        self._safe_cell_list.append(cell)
 
             survivor_group_handler = cast(
                 SurvivorGroupHandler, self._object_handlers.get("SVG")
@@ -225,24 +225,23 @@ class AegisWorld:
                 _ = writer.write(f"Size: ( WIDTH {width} , HEIGHT {height} )\n")
                 for x in range(self._world.width):
                     for y in range(self._world.height):
-                        grid = self._world.get_grid_at(Location(x, y))
-                        if grid is None:
-                            _ = writer.write(f"[({x},{y}),No Grid]\n")
+                        cell = self._world.get_cell_at(Location(x, y))
+                        if cell is None:
+                            _ = writer.write(f"[({x},{y}),No Cell]\n")
                             continue
 
                         choice = Utility.next_boolean()
                         percent = 0
 
-
-                        if grid.number_of_survivors() <= 0:
+                        if cell.number_of_survivors() <= 0:
                             percent = 0
                         else:
-                            if grid.number_of_survivors() <= self._low_survivor_level:
+                            if cell.number_of_survivors() <= self._low_survivor_level:
                                 if choice:
                                     percent = Utility.random_in_range(0, 5)
                                 else:
                                     percent = 5 + Utility.random_in_range(0, 5)
-                            elif grid.number_of_survivors() <= self._mid_survivor_level:
+                            elif cell.number_of_survivors() <= self._mid_survivor_level:
                                 if choice:
                                     percent = 15 + Utility.random_in_range(0, 10)
                                 else:
@@ -254,13 +253,13 @@ class AegisWorld:
                                     percent = 50 + Utility.random_in_range(0, 40)
                             percent = max(1, percent)
 
-                        fire = "+F" if grid.is_on_fire() else "-F"
-                        killer = "+K" if grid.is_killer() else "-K"
-                        charging = "+C" if grid.is_charging_grid() else "-C"
+                        fire = "+F" if cell.is_on_fire() else "-F"
+                        killer = "+K" if cell.is_killer() else "-K"
+                        charging = "+C" if cell.is_charging_cell() else "-C"
 
                         if MOVE_COST_TOGGLE:
                             _ = writer.write(
-                                f"[({x},{y}),({fire},{killer},{charging}),{percent:3.0f}%,{grid.move_cost}]\n"
+                                f"[({x},{y}),({fire},{killer},{charging}),{percent:3.0f}%,{cell.move_cost}]\n"
                             )
                         else:
                             _ = writer.write(
@@ -280,14 +279,14 @@ class AegisWorld:
 
         s += self._survivor_simulator.run()
         top_layer_remove_message = "Top_Layer_Rem; { "
-        if not self._top_layer_removed_grid_list:
+        if not self._top_layer_removed_cell_list:
             top_layer_remove_message += "NONE"
         else:
-            for location in self._top_layer_removed_grid_list:
+            for location in self._top_layer_removed_cell_list:
                 top_layer_remove_message += f"{location.proc_string()},"
         top_layer_remove_message += " };\n"
         s += top_layer_remove_message
-        self._top_layer_removed_grid_list.clear()
+        self._top_layer_removed_cell_list.clear()
 
         agents_information_message = "Agents_Information; { "
         if not self._agents:
@@ -309,15 +308,15 @@ class AegisWorld:
                 continue
 
             if self._world:
-                grid = self._world.get_grid_at(agent.location)
-                if grid is None:
+                cell = self._world.get_cell_at(agent.location)
+                if cell is None:
                     continue
 
-                if grid.is_on_fire():
+                if cell.is_on_fire():
                     print(f"Aegis  : Agent {agent} ran into the fire and died.\n")
                     dead_agents.add(agent.agent_id)
-                elif grid.is_killer():
-                    print(f"Aegis  : Agent {agent} ran into killer grid and died.\n")
+                elif cell.is_killer():
+                    print(f"Aegis  : Agent {agent} ran into killer cell and died.\n")
                     dead_agents.add(agent.agent_id)
 
         self._number_of_dead_agents += dead_agents.size()
@@ -352,26 +351,26 @@ class AegisWorld:
             return
 
         spawn_loc, gid = self._get_spawn(agent_id)
-        grid = self._world.get_grid_at(spawn_loc)
+        cell = self._world.get_cell_at(spawn_loc)
 
-        if grid is not None and gid is not None:
+        if cell is not None and gid is not None:
             self._delete_prio_spawn(spawn_loc, gid)
 
-        if grid is None:
-            if len(self._safe_grid_list) == 0:
-                grid = self._world.get_grid_at(Location(0, 0))
+        if cell is None:
+            if len(self._safe_cell_list) == 0:
+                cell = self._world.get_cell_at(Location(0, 0))
             else:
-                grid = random.choice(self._safe_grid_list)
+                cell = random.choice(self._safe_cell_list)
 
-        if grid is None:
-            raise Exception("Aegis  : No grid found for agent")
+        if cell is None:
+            raise Exception("Aegis  : No cell found for agent")
 
-        if grid.is_on_fire():
-            print("Aegis  : Warning, agent has been placed on a fire grid!")
-        elif grid.is_killer():
-            print("Aegis  : Warning, agent has been placed on a killer grid!")
+        if cell.is_on_fire():
+            print("Aegis  : Warning, agent has been placed on a fire cell!")
+        elif cell.is_killer():
+            print("Aegis  : Warning, agent has been placed on a killer cell!")
 
-        agent = Agent(agent_id, grid.location, self._initial_agent_energy)
+        agent = Agent(agent_id, cell.location, self._initial_agent_energy)
         self.add_agent(agent)
 
     def add_agent(self, agent: Agent) -> None:
@@ -380,11 +379,11 @@ class AegisWorld:
             if self._world is None:
                 return
 
-            grid = self._world.get_grid_at(agent.location)
-            if grid is None:
+            cell = self._world.get_cell_at(agent.location)
+            if cell is None:
                 return
 
-            grid.agent_id_list.add(agent.agent_id)
+            cell.agent_id_list.add(agent.agent_id)
             self._number_of_alive_agents += 1
             print(f"Aegis  : Added agent {agent}")
 
@@ -399,39 +398,39 @@ class AegisWorld:
         if agent is None or self._world is None:
             return
 
-        curr_grid = self._world.get_grid_at(agent.location)
-        dest_grid = self._world.get_grid_at(location)
+        curr_cell = self._world.get_cell_at(agent.location)
+        dest_cell = self._world.get_cell_at(location)
 
-        if dest_grid is None or curr_grid is None:
+        if dest_cell is None or curr_cell is None:
             return
 
-        curr_grid.agent_id_list.remove(agent.agent_id)
-        dest_grid.agent_id_list.add(agent.agent_id)
-        agent.location = dest_grid.location
+        curr_cell.agent_id_list.remove(agent.agent_id)
+        dest_cell.agent_id_list.add(agent.agent_id)
+        agent.location = dest_cell.location
 
     def remove_agent(self, agent: Agent | None) -> None:
         if agent in self._agents and self._world is not None:
             self._agents.remove(agent)
-            agent_grid = self._world.get_grid_at(agent.location)
-            if agent_grid is None:
+            agent_cell = self._world.get_cell_at(agent.location)
+            if agent_cell is None:
                 return
 
-            agent_grid.agent_id_list.remove(agent.agent_id)
+            agent_cell.agent_id_list.remove(agent.agent_id)
             self._number_of_alive_agents -= 1
 
-    def remove_layer_from_grid(self, location: Location) -> None:
+    def remove_layer_from_cell(self, location: Location) -> None:
         if self._world is None:
             return
 
-        grid = self._world.get_grid_at(location)
-        if grid is None:
+        cell = self._world.get_cell_at(location)
+        if cell is None:
             return
 
-        world_object = grid.remove_top_layer()
+        world_object = cell.remove_top_layer()
         if world_object is None:
             return
 
-        self._top_layer_removed_grid_list.append(location)
+        self._top_layer_removed_cell_list.append(location)
         if isinstance(world_object, Survivor):
             survivor = world_object
             if survivor.get_energy_level() <= 0:
@@ -449,27 +448,27 @@ class AegisWorld:
                     survivor_group.number_of_survivors
                 )
 
-    def get_grid_at(self, location: Location) -> Grid | None:
+    def get_cell_at(self, location: Location) -> Cell | None:
         if self._world is not None:
-            return self._world.get_grid_at(location)
+            return self._world.get_cell_at(location)
         return None
 
     def get_surround_info(self, location: Location) -> SurroundInfo | None:
         surround_info = SurroundInfo()
         if self._world is None:
             return
-        grid = self._world.get_grid_at(location)
-        if grid is None:
+        cell = self._world.get_cell_at(location)
+        if cell is None:
             return
-        surround_info.life_signals = grid.get_generated_life_signals()
-        surround_info.set_current_info(grid.get_grid_info())
+        surround_info.life_signals = cell.get_generated_life_signals()
+        surround_info.set_current_info(cell.get_cell_info())
 
         for direction in Direction:
-            grid = self._world.get_grid_at(location.add(direction))
-            if grid is None:
-                surround_info.set_surround_info(direction, GridInfo())
+            cell = self._world.get_cell_at(location.add(direction))
+            if cell is None:
+                surround_info.set_surround_info(direction, CellInfo())
             else:
-                surround_info.set_surround_info(direction, grid.get_grid_info())
+                surround_info.set_surround_info(direction, cell.get_cell_info())
         return surround_info
 
     def remove_survivor(self, survivor: Survivor) -> None:
@@ -490,7 +489,7 @@ class AegisWorld:
             )
 
         agent_data: list[AgentInfoDict] = []
-        grid_data: list[GridCellDict] = []
+        cell_data: list[CellDict] = []
         top_layer_rem_data: list[LocationDict] = []
         agent_map = {
             (
@@ -502,24 +501,24 @@ class AegisWorld:
 
         for x in range(self._world.width):
             for y in range(self._world.height):
-                grid = self._world.get_grid_at(Location(x, y))
-                if grid is None:
+                cell = self._world.get_cell_at(Location(x, y))
+                if cell is None:
                     continue
 
-                grid_info = grid.get_grid_info()
-                grid_layers = grid.get_grid_layers()
+                cell_info = cell.get_cell_info()
+                cell_layers = cell.get_cell_layers()
 
-                grid_dict: GridCellDict = {
-                    "grid_type": str(grid_info.grid_type),
+                cell_dict: CellDict = {
+                    "cell_type": str(cell_info.cell_type),
                     "stack": {
-                        "grid_loc": {"x": x, "y": y},
-                        "move_cost": grid_info.move_cost,
-                        "contents": [layer.json() for layer in grid_layers],
+                        "cell_loc": {"x": x, "y": y},
+                        "move_cost": cell_info.move_cost,
+                        "contents": [layer.json() for layer in cell_layers],
                     },
                 }
-                grid_data.append(grid_dict)
+                cell_data.append(cell_dict)
 
-                for agent_id in grid.agent_id_list:
+                for agent_id in cell.agent_id_list:
                     key = (agent_id.id, agent_id.gid)
                     agent = agent_map.get(key)
 
@@ -534,12 +533,12 @@ class AegisWorld:
                         }
                         agent_data.append(agent_dict)
 
-        for top_layer in self._top_layer_removed_grid_list:
+        for top_layer in self._top_layer_removed_cell_list:
             top_dict: LocationDict = {"x": top_layer.x, "y": top_layer.y}
             top_layer_rem_data.append(top_dict)
 
         world_dict: WorldDict = {
-            "grid_data": grid_data,
+            "cell_data": cell_data,
             "agent_data": agent_data,
             "top_layer_rem_data": top_layer_rem_data,
             "number_of_alive_agents": self._number_of_alive_agents,

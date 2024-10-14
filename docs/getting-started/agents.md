@@ -6,9 +6,9 @@ In the AEGIS simulation, agents are members of the elite space force. Here’s w
 
 1. **Communication**: Agent's can't talk to eachother directly. All communication and actions must go through AEGIS.
 2. **World**: Each agent has to build their own world as they move around in the world. At the start, they only know
-basic information of the world. The information includes fire, killing and charging grids and the chance that a grid has
+basic information of the world. The information includes fire, killing and charging cells and the chance that a cell has
 a Survivor/Survivor Group.
-3. **World Layout**: The world is a 2D grid of squares. Each square has:
+3. **World Layout**: The world is a 2D grid of cells of squares. Each square has:
     - A stack of objects.
     - A move cost, which is the energy lost when moving onto that square.
 4. **Field of View**: Agents can only see:
@@ -26,8 +26,8 @@ Agents can use the following commands to interact with AEGIS. Click on each comm
 
 - **[END_TURN](../api/agent_commands/end-turn.md)**: Indicates the agent is done with its turn.
 - **[MOVE](../api/agent_commands/move.md)**: Moves the agent in a specified direction.
-- **[OBSERVE](../api/agent_commands/observe.md)**: Gathers information about a grid. Information becomes more distorted the further away the grid
-is from the agent. The distortion only affects the life signals list and the top layer of the grid.
+- **[OBSERVE](../api/agent_commands/observe.md)**: Gathers information about a cell. Information becomes more distorted the further away the cell.
+is from the agent. The distortion only affects the life signals list and the top layer of the cell.
 - **[PREDICT](../api/agent_commands/predict.md)**: Represents the prediction of an agent.
 - **[SAVE_SURV](../api/agent_commands/save-surv.md)**: Save a survivor.
 - **[SEND_MESSAGE](../api/agent_commands/send-message.md)**: Sends a message to other agents. Note that messages are sent at the start of

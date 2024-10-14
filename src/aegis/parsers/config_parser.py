@@ -36,9 +36,9 @@ class ConfigParser(AegisParser):
                 sleep_on_every: bool = data["Sleep_On_Every"]
 
                 config_settings.sleep_everywhere = (
-                    ConfigSettings.SLEEP_ON_ALL_GRIDS
+                    ConfigSettings.SLEEP_ON_ALL_CELLS
                     if sleep_on_every
-                    else ConfigSettings.SLEEP_ONLY_ON_CHARGING_GRIDS
+                    else ConfigSettings.SLEEP_ONLY_ON_CHARGING_CELLS
                 )
 
             if "Save_Surv" in data:

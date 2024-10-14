@@ -1,6 +1,6 @@
 import { EventType, dispatchEvent } from '@/events'
 import { WorldMap } from './world-map'
-import { World, RoundData, AgentInfoDict, GridCellDict, StackContent } from '@/utils/types'
+import { World, RoundData, AgentInfoDict, CellDict, StackContent } from '@/utils/types'
 
 export class Simulation {
     private rounds: World[] = []
@@ -25,28 +25,28 @@ export class Simulation {
         dispatchEvent(EventType.RENDER, {})
     }
 
-    getGridInfoAtGridCell(x: number, y: number): GridCellDict {
+    getInfoAtCell(x: number, y: number): CellDict {
         if (!this.currentRoundData) {
-            const grid_type = this.worldMap.getGridType(x, y)
-            const stack = this.worldMap.stacks.find((g) => g.grid_loc.x === x && g.grid_loc.y === y)!
-            return { grid_type, stack }
+            const cell_type = this.worldMap.getCellType(x, y)
+            const stack = this.worldMap.stacks.find((g) => g.cell_loc.x === x && g.cell_loc.y === y)!
+            return { cell_type, stack }
         }
-        return this.currentRoundData.grid_data.find(
-            (cell) => cell.stack.grid_loc.x === x && cell.stack.grid_loc.y === y
+        return this.currentRoundData.cell_data.find(
+            (cell) => cell.stack.cell_loc.x === x && cell.stack.cell_loc.y === y
         )!
     }
 
-    getGridLayersAtGridCell(x: number, y: number): StackContent[] {
+    getLayersAtCell(x: number, y: number): StackContent[] {
         if (!this.currentRoundData) {
-            const stack = this.worldMap.stacks.find((g) => g.grid_loc.x === x && g.grid_loc.y === y)!
+            const stack = this.worldMap.stacks.find((g) => g.cell_loc.x === x && g.cell_loc.y === y)!
             return stack.contents.slice().reverse()
         }
-        return this.currentRoundData.grid_data.find(
-            (cell) => cell.stack.grid_loc.x === x && cell.stack.grid_loc.y === y
+        return this.currentRoundData.cell_data.find(
+            (cell) => cell.stack.cell_loc.x === x && cell.stack.cell_loc.y === y
         )!.stack.contents
     }
 
-    getAgentsAtGridCell(x: number, y: number): AgentInfoDict[] {
+    getAgentsAtCell(x: number, y: number): AgentInfoDict[] {
         return this.currentRoundData?.agent_data.filter((agent) => agent.x === x && agent.y === y) || []
     }
 

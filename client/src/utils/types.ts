@@ -26,7 +26,7 @@ export type StackContent = {
 }
 
 export type Stack = {
-    grid_loc: Location
+    cell_loc: Location
     move_cost: number
     contents: StackContent[]
 }
@@ -45,7 +45,7 @@ export type WorldParams = {
     isInitialized: boolean
 }
 
-export enum SpecialGridBrushTypes {
+export enum SpecialCellBrushTypes {
     Killer = 'killer',
     Fire = 'fire',
     Charging = 'charging',
@@ -53,7 +53,7 @@ export enum SpecialGridBrushTypes {
 }
 
 export enum BrushType {
-    SpecialGrids = 'special_grids',
+    SpecialCells = 'special_cells',
     MoveCost = 'move_cost',
     StackContents = 'stack_contents',
     Empty = 'empty'
@@ -83,8 +83,8 @@ export type SurvivorGroupInfo = {
 }
 
 // ----- Simulation Types ----- //
-export type GridCellDict = {
-    grid_type: string
+export type CellDict = {
+    cell_type: string
     stack: Stack
 }
 
@@ -98,7 +98,7 @@ export type AgentInfoDict = {
 }
 
 export type World = {
-    grid_data: GridCellDict[]
+    cell_data: CellDict[]
     agent_data: AgentInfoDict[]
     top_layer_rem_data: Location[]
     number_of_alive_agents: number
