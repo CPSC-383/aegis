@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import override
 
 from aegis.common import (
     AgentIDList,
@@ -11,13 +12,13 @@ from aegis.common import (
     Utility,
 )
 from aegis.common.world.info import CellInfo
-from aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject, NoLayers
+from aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject
 
 
 class _State(Enum):
     """Enum for the state of the cell."""
 
-    STABLE_CELL = 1
+    SAFE_CELL = 1
     KILLER_CELL = 2
 
 
@@ -46,7 +47,7 @@ class Cell:
             y: The y-coordinate of the cell.
         """
         self._type = CellType.NO_CELL
-        self._state = _State.STABLE_CELL
+        self._state = _State.SAFE_CELL
         self._on_fire = False
         self.move_cost = 1
         self.agent_id_list = AgentIDList()
@@ -65,11 +66,11 @@ class Cell:
         if cell_state_type == "NORMAL_CELLS":
             self._type = CellType.NORMAL_CELL
             self._on_fire = False
-            self._state = _State.STABLE_CELL
+            self._state = _State.SAFE_CELL
         elif cell_state_type == "CHARGING_CELLS":
             self._type = CellType.CHARGING_CELL
             self._on_fire = False
-            self._state = _State.STABLE_CELL
+            self._state = _State.SAFE_CELL
         elif cell_state_type == "FIRE_CELLS":
             self._type = CellType.FIRE_CELL
             self._on_fire = True
@@ -115,14 +116,14 @@ class Cell:
     def set_killer_cell(self) -> None:
         self._type = CellType.KILLER_CELL
 
-    def is_stable(self) -> bool:
+    def is_safe(self) -> bool:
         """
-        Checks if the cell state is STABLE_CELL.
+        Checks if the cell state is SAFE_CELL.
 
         Returns:
-            True if the cell state is STABLE_CELL, False otherwise.
+            True if the cell state is SAFE_CELL, False otherwise.
         """
-        return self._state == _State.STABLE_CELL
+        return self._state == _State.SAFE_CELL
 
     def is_killer(self) -> bool:
         """
@@ -134,13 +135,12 @@ class Cell:
         return self._state == _State.KILLER_CELL
 
     def set_stable(self) -> None:
-        self._state = _State.STABLE_CELL
+        self._state = _State.SAFE_CELL
 
     def set_killer(self) -> None:
         self._state = _State.KILLER_CELL
 
     def get_cell_layers(self) -> list[WorldObject]:
-        """Returns the list of cell layers."""
         return self._cell_layer_list
 
     def add_layer(self, layer: WorldObject) -> None:
@@ -185,7 +185,6 @@ class Cell:
         self._cell_layer_list.append(top_layer)
 
     def number_of_layers(self) -> int:
-        """Returns the number of layers in the cell."""
         return len(self._cell_layer_list)
 
     def is_on_fire(self) -> bool:
@@ -204,11 +203,10 @@ class Cell:
             self._type = CellType.FIRE_CELL
         else:
             self._on_fire = on_fire
-            self._state = _State.STABLE_CELL
+            self._state = _State.SAFE_CELL
             self._type = CellType.NORMAL_CELL
 
     def get_cell_info(self) -> CellInfo:
-        """Returns a CellInfo instance representing the current state of the cell."""
         cell_type = CellType.NORMAL_CELL
 
         if self.is_fire_cell():
@@ -224,18 +222,10 @@ class Cell:
             self._on_fire,
             self.move_cost,
             self.agent_id_list.clone(),
-            self.top_layer(),
+            self.get_top_layer(),
         )
 
-    def top_layer(self) -> WorldObject:
-        """Returns information about the top layer of the cell."""
-        if not self._cell_layer_list:
-            return NoLayers()
-
-        return self.get_top_layer() or NoLayers()
-
     def number_of_survivors(self) -> int:
-        """Returns the number of survivors in the cell."""
         count = 0
         for layer in self._cell_layer_list:
             if isinstance(layer, Survivor):
@@ -245,7 +235,6 @@ class Cell:
         return count
 
     def get_generated_life_signals(self) -> LifeSignals:
-        """Returns the generated life signals based on the layers in the cell."""
         layer = self.number_of_layers() - 1
         i = 0
         if not self._cell_layer_list:
@@ -272,13 +261,17 @@ class Cell:
 
         return LifeSignals(life_signals)
 
-    def file_output_string(self) -> str:
-        """Returns a string representation of the cell suitable for file output."""
+    @override
+    def __str__(self) -> str:
         s = f"Cell ( ({self.location.x},{self.location.y}), Move_Cost {self.move_cost}) \n\t\t{{\n"
         for layer in self._cell_layer_list:
             s += f"\t\t    {layer.file_output_string()};\n"
         s += "\t\t}\n\n"
         return s
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()
 
     def clone(self) -> Cell:
         """
