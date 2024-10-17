@@ -133,7 +133,7 @@ class BetterAgent(Brain):
                 return
 
             if isinstance(top_layer, NoLayers):
-                cell.percent_chance = 0
+                cell.survivor_chance = 0
                 loc = self.get_best_location(world)
                 self.send_and_end_turn(self.move(world, loc))
                 return
@@ -164,7 +164,7 @@ class BetterAgent(Brain):
                 if cell is None:
                     continue
 
-                if cell.percent_chance > best_cell.percent_chance:
+                if cell.survivor_chance > best_cell.survivor_chance:
                     best_cell = cell
 
         return best_cell.location
