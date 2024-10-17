@@ -134,7 +134,7 @@ class Cell:
         """
         return self._state == _State.KILLER_CELL
 
-    def set_stable(self) -> None:
+    def set_safe(self) -> None:
         self._state = _State.SAFE_CELL
 
     def set_killer(self) -> None:

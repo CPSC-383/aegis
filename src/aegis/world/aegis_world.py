@@ -183,7 +183,7 @@ class AegisWorld:
                     if cell is None:
                         continue
 
-                    if cell.is_stable():
+                    if cell.is_safe():
                         self._safe_cell_list.append(cell)
 
             survivor_group_handler = cast(
