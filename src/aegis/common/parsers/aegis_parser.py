@@ -116,7 +116,6 @@ class AegisParser:
         cell.set_on_fire(fire[0] == "+")
 
         if killer[0] == "+":
-            cell.set_killer()
             cell.set_killer_cell()
 
         if charging[0] == "+":

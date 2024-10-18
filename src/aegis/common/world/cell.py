@@ -15,13 +15,6 @@ from aegis.common.world.info import CellInfo
 from aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject
 
 
-class _State(Enum):
-    """Enum for the state of the cell."""
-
-    SAFE_CELL = 1
-    KILLER_CELL = 2
-
-
 class Cell:
     """
     Represents a cell in the world.
@@ -47,7 +40,6 @@ class Cell:
             y: The y-coordinate of the cell.
         """
         self._type = CellType.NO_CELL
-        self._state = _State.SAFE_CELL
         self._on_fire = False
         self.move_cost = 1
         self.agent_id_list = AgentIDList()
@@ -66,19 +58,15 @@ class Cell:
         if cell_state_type == "NORMAL_CELLS":
             self._type = CellType.NORMAL_CELL
             self._on_fire = False
-            self._state = _State.SAFE_CELL
         elif cell_state_type == "CHARGING_CELLS":
             self._type = CellType.CHARGING_CELL
             self._on_fire = False
-            self._state = _State.SAFE_CELL
         elif cell_state_type == "FIRE_CELLS":
             self._type = CellType.FIRE_CELL
             self._on_fire = True
-            self._state = _State.KILLER_CELL
         elif cell_state_type == "KILLER_CELLS":
             self._type = CellType.KILLER_CELL
             self._on_fire = False
-            self._state = _State.KILLER_CELL
 
     def is_charging_cell(self) -> bool:
         """
@@ -107,6 +95,15 @@ class Cell:
         """
         return self._type == CellType.KILLER_CELL
 
+    def is_normal_cell(self) -> bool:
+        """
+        Checks if the cell is of type NORMAL_CELL.
+
+        Returns:
+            True if the cell type is NORMAL_CELL, False otherwise.
+        """
+        return self._type == CellType.NORMAL_CELL
+
     def set_normal_cell(self) -> None:
         self._type = CellType.NORMAL_CELL
 
@@ -115,30 +112,6 @@ class Cell:
 
     def set_killer_cell(self) -> None:
         self._type = CellType.KILLER_CELL
-
-    def is_safe(self) -> bool:
-        """
-        Checks if the cell state is SAFE_CELL.
-
-        Returns:
-            True if the cell state is SAFE_CELL, False otherwise.
-        """
-        return self._state == _State.SAFE_CELL
-
-    def is_killer(self) -> bool:
-        """
-        Checks if the cell state is KILLER_CELL.
-
-        Returns:
-            True if the cell state is KILLER_CELL, False otherwise.
-        """
-        return self._state == _State.KILLER_CELL
-
-    def set_safe(self) -> None:
-        self._state = _State.SAFE_CELL
-
-    def set_killer(self) -> None:
-        self._state = _State.KILLER_CELL
 
     def get_cell_layers(self) -> list[WorldObject]:
         return self._cell_layer_list
@@ -199,11 +172,9 @@ class Cell:
     def set_on_fire(self, on_fire: bool) -> None:
         if on_fire:
             self._on_fire = on_fire
-            self._state = _State.KILLER_CELL
             self._type = CellType.FIRE_CELL
         else:
             self._on_fire = on_fire
-            self._state = _State.SAFE_CELL
             self._type = CellType.NORMAL_CELL
 
     def get_cell_info(self) -> CellInfo:
@@ -282,7 +253,6 @@ class Cell:
         """
         cell = Cell()
         cell._type = self._type
-        cell._state = self._state
         cell.location = self.location
         cell.agent_id_list = self.agent_id_list.clone()
         cell._cell_layer_list = [layer.clone() for layer in self._cell_layer_list]

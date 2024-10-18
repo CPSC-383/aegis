@@ -87,7 +87,7 @@ class AegisWorld:
         self.round: int = 0
         self._world: World | None = None
         self._agents: list[Agent] = []
-        self._safe_cell_list: list[Cell] = []
+        self._normal_cell_list: list[Cell] = []
         self._fire_cells_list: list[Cell] = []
         self._non_fire_cells_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
@@ -176,15 +176,15 @@ class AegisWorld:
                     if layer is not None:
                         cell.add_layer(layer)
 
-            # cells that are safe
+            # Cells that are normal
             for x in range(self._world.width):
                 for y in range(self._world.height):
                     cell = self._world.get_cell_at(Location(x, y))
                     if cell is None:
                         continue
 
-                    if cell.is_safe():
-                        self._safe_cell_list.append(cell)
+                    if cell.is_normal_cell():
+                        self._normal_cell_list.append(cell)
 
             survivor_group_handler = cast(
                 SurvivorGroupHandler, self._object_handlers.get("SVG")
@@ -254,7 +254,7 @@ class AegisWorld:
                             percent = max(1, percent)
 
                         fire = "+F" if cell.is_on_fire() else "-F"
-                        killer = "+K" if cell.is_killer() else "-K"
+                        killer = "+K" if cell.is_killer_cell() else "-K"
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
                         if MOVE_COST_TOGGLE:
@@ -315,7 +315,7 @@ class AegisWorld:
                 if cell.is_on_fire():
                     print(f"Aegis  : Agent {agent} ran into the fire and died.\n")
                     dead_agents.add(agent.agent_id)
-                elif cell.is_killer():
+                elif cell.is_killer_cell():
                     print(f"Aegis  : Agent {agent} ran into killer cell and died.\n")
                     dead_agents.add(agent.agent_id)
 
@@ -357,17 +357,17 @@ class AegisWorld:
             self._delete_prio_spawn(spawn_loc, gid)
 
         if cell is None:
-            if len(self._safe_cell_list) == 0:
+            if len(self._normal_cell_list) == 0:
                 cell = self._world.get_cell_at(Location(0, 0))
             else:
-                cell = random.choice(self._safe_cell_list)
+                cell = random.choice(self._normal_cell_list)
 
         if cell is None:
             raise Exception("Aegis  : No cell found for agent")
 
         if cell.is_on_fire():
             print("Aegis  : Warning, agent has been placed on a fire cell!")
-        elif cell.is_killer():
+        elif cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")
 
         agent = Agent(agent_id, cell.location, self._initial_agent_energy)
