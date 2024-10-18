@@ -44,7 +44,8 @@ class Pathfinder:
                 if (
                     cell is None
                     or cell.move_cost >= agent.get_energy_level()
-                    or cell.is_killer()
+                    or cell.is_killer_cell()
+                    or cell.is_fire_cell()
                 ):
                     continue
 

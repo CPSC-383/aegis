@@ -15,6 +15,7 @@ from aegis import (
     AgentCommand,
     Direction,
     SurroundInfo,
+    Survivor,
 )
 from agent import BaseAgent, Brain, LogLevels
 
