@@ -84,7 +84,6 @@ class AgentIDList:
         return self.__str__()
 
     def proc_string(self) -> str:
-        """Returns a string representation of the AgentIDList in a procedular format."""
         if not self._agent_id_list:
             return "all"
         return f"({', '.join(str(agent_id.proc_string()) for agent_id in self._agent_id_list)})"

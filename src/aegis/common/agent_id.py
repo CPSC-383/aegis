@@ -32,7 +32,6 @@ class AgentID:
         return self.__str__()
 
     def proc_string(self) -> str:
-        """Returns a string representation of the AgentID in a procedular format."""
         return f"({self.id}, {self.gid})"
 
     def clone(self) -> AgentID:

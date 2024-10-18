@@ -14,15 +14,8 @@ class AgentCommand(Command, ABC):
         return self._agent_id
 
     def set_agent_id(self, agent_id: AgentID) -> None:
-        """
-        Sets the unique AgentID of the agent.
-
-        Args:
-            agent_id: The unique AgentID of the agent.
-        """
         self._agent_id = agent_id
 
     @abstractmethod
     def proc_string(self) -> str:
-        """Returns a string in a procedular format."""
         pass

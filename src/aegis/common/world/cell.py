@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from enum import Enum
 from typing import override
 
 from aegis.common import (
@@ -117,12 +116,6 @@ class Cell:
         return self._cell_layer_list
 
     def add_layer(self, layer: WorldObject) -> None:
-        """
-        Adds a layer to the cell.
-
-        Args:
-            layer: The layer to add to the cell.
-        """
         self._cell_layer_list.append(layer)
 
     def remove_top_layer(self) -> WorldObject | None:

@@ -48,15 +48,6 @@ class Survivor(WorldObject):
         return self._energy_level
 
     def set_energy_level(self, energy_level: int) -> None:
-        """
-        Sets the energy level of the survivor.
-
-        If the specified amount of energy is less than or equal to 0,
-        the survivor is deemed DEAD.
-
-        Args:
-            energy_level: The new energy level of the survivor.
-        """
         self._energy_level = energy_level
         if energy_level <= 0:
             self.set_dead()
@@ -73,6 +64,10 @@ class Survivor(WorldObject):
     @override
     def __str__(self) -> str:
         return f"SURVIVOR ( ID {self.id} , ENG_LEV {self._energy_level} , DMG_FAC {self.damage_factor} , BDM {self.body_mass} , MS {self.mental_state} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()
 
     @override
     def get_name(self) -> str:

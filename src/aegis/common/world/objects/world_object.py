@@ -59,15 +59,12 @@ class WorldObject(ABC):
         return self._state == self.State.DEAD
 
     def set_exist(self) -> None:
-        """Sets the world object to the EXIST state."""
         self._state = self.State.EXIST
 
     def set_alive(self) -> None:
-        """Sets the world object to the ALIVE state."""
         self._state = self.State.ALIVE
 
     def set_dead(self) -> None:
-        """Sets the world object to the DEAD state."""
         self._state = self.State.DEAD
 
     @abstractmethod
@@ -77,26 +74,21 @@ class WorldObject(ABC):
 
     @abstractmethod
     def get_name(self) -> str:
-        """Returns the name of the world object."""
         pass
 
     @abstractmethod
     def get_life_signal(self) -> int:
-        """Returns the life signal associated with the world object."""
         pass
 
     @abstractmethod
     def file_output_string(self) -> str:
-        """Returns a string representation of the world object suitable for file output."""
         pass
 
     @abstractmethod
     def json(self) -> StackContent:
-        """Returns a JSON representation of the world object."""
         pass
 
     def string_information(self) -> list[str]:
-        """Returns a list of strings containing basic information about the world object."""
         return [f"State = {self._state}", f"ID = {self.id}"]
 
     def clone(self) -> WorldObject:

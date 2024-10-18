@@ -33,7 +33,6 @@ class Location:
         return self.__str__()
 
     def proc_string(self) -> str:
-        """Returns a string representation of the Location in a procedular format."""
         return f"( {self.x}, {self.y} )"
 
     def clone(self) -> Location:

@@ -35,15 +35,6 @@ class SurvivorGroup(WorldObject):
         return self._energy_level
 
     def set_energy_level(self, energy_level: int) -> None:
-        """
-        Sets the energy level of the survivor group.
-
-        If the specified amount of energy is less than or equal to 0,
-        the survivor group is deemed DEAD.
-
-        Args:
-            energy_level: The new energy level of the survivor group.
-        """
         self._energy_level = energy_level
         if energy_level <= 0:
             self.set_dead()
@@ -60,6 +51,10 @@ class SurvivorGroup(WorldObject):
     @override
     def __str__(self) -> str:
         return f"SURVIVOR_GROUP ( ID {self.id} , NUM_SV {self.number_of_survivors} , ENG_LV {self._energy_level} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()
 
     @override
     def get_name(self) -> str:

@@ -44,7 +44,6 @@ class BaseAgent:
 
     @staticmethod
     def get_base_agent() -> BaseAgent:
-        """Returns the base agent."""
         if BaseAgent._agent is None:
             BaseAgent._agent = BaseAgent()
         return BaseAgent._agent
@@ -85,6 +84,7 @@ class BaseAgent:
         self.log(LogLevels.Always, f"New Energy: {self._energy_level}")
 
     def get_prediction_info_size(self) -> int:
+        """Returns the size of the prediction info queue."""
         return len(self._prediction_info)
 
     def get_prediction_info(
@@ -117,33 +117,12 @@ class BaseAgent:
         self.log(LogLevels.Always, "New Brain")
 
     def start_test(self, brain: agent.brain.Brain) -> None:
-        """
-        Starts the agent in test mode.
-
-        Args:
-            brain: The brain for the base agent.
-        """
         self.start("localhost", "test", brain)
 
     def start_with_group_name(self, group_name: str, brain: agent.brain.Brain) -> None:
-        """
-        Starts the agent with a specified group name.
-
-        Args:
-            group_name: The group name for the base agent.
-            brain: The brain for the base agent.
-        """
         self.start("localhost", group_name, brain)
 
     def start(self, host: str, group_name: str, brain: agent.brain.Brain) -> None:
-        """
-        Starts the agent and connects it to AEGIS.
-
-        Args:
-            host: The hostname or IP address of the AEGIS system.
-            group_name: The group name to use when connecting to AEGIS.
-            brain: The brain for the base agent.
-        """
         if self._agent_state == AgentStates.CONNECTING:
             self._brain = brain
             if self._connect_to_aegis(host, group_name):
@@ -254,12 +233,6 @@ class BaseAgent:
 
     @staticmethod
     def set_log_test_info(log_test: bool) -> None:
-        """
-        Sets the test logging.
-
-        Args:
-            log_test: Enable or disable test logging.
-        """
         BaseAgent._log_test = log_test
 
     @classmethod

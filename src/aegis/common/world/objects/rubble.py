@@ -37,6 +37,10 @@ class Rubble(WorldObject):
         return f"RUBBLE ( ID {self.id} , NUM_TO_RM {self.remove_agents} , RM_ENG {self.remove_energy} )"
 
     @override
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    @override
     def get_name(self) -> str:
         return "Rubble"
 

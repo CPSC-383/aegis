@@ -1,7 +1,5 @@
 from typing import override
 
-from aegis.common.utility import Utility
-
 
 class LifeSignals:
     """
