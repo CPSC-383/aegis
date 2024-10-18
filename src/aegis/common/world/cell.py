@@ -119,12 +119,6 @@ class Cell:
         self._cell_layer_list.append(layer)
 
     def remove_top_layer(self) -> WorldObject | None:
-        """
-        Removes and returns the top layer from the cell.
-
-        Returns:
-            The removed top layer, or None if the cell has no layers.
-        """
         if not self._cell_layer_list:
             return None
         return self._cell_layer_list.pop()
