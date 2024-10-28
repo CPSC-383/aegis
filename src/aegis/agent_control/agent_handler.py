@@ -24,8 +24,6 @@ from aegis.common.parsers.aegis_parser_exception import AegisParserException
 
 import numpy as np
 
-from aegis.common.world import agent
-
 
 class AgentHandler:
     def __init__(self) -> None:
@@ -340,7 +338,7 @@ class AgentHandler:
     def print_group_survivor_saves(self) -> None:
         print("=================================================")
         print("Results for each Group")
-        print("(Number Saved, Number Alive, Number Dead)")
+        print("(Score, Number Saved, Correct Predictions)")
         print("=================================================")
         for group in self.agent_group_list:
-            print(f"( GID {group.GID} ) NAME {group.name} = ( {group.number_saved} , {group.number_saved_alive} , {group.number_saved_dead} );")
+            print(f"{group.name} : ({group.score}, {group.number_saved}, {group.number_predicted_right})")
