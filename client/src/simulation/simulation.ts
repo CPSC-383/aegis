@@ -36,6 +36,10 @@ export class Simulation {
         dispatchEvent(EventType.RENDER, {})
     }
 
+    getRoundNumber(): number {
+        return this.currentRound
+    }
+
     getInfoAtCell(x: number, y: number): CellDict {
         if (!this.currentRoundData) {
             const cell_type = this.worldMap.getCellType(x, y)

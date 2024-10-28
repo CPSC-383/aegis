@@ -39,7 +39,7 @@ function InfoPanel() {
 
     return (
         <div className="absolute w-full h-screen p-4">
-            <div className="h-full space-y-4 p-4 border-2 border-gray-300 bg-white shadow-md rounded-md overflow-auto">
+            <div className="h-full space-y-4 p-4 border-2 border-gray-300 bg-white shadow-md rounded-md overflow-auto scrollbar">
                 {selectedAgent && (
                     <AgentPanel
                         selectedAgent={selectedAgent}

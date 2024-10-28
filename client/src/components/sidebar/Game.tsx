@@ -17,23 +17,26 @@ function Game({ isOpen }: Props) {
     if (!appState.simulation) {
         return (
             <div className="flex items-center p-4 h-60">
-                <p className="text-lg font-bold text-center text-black">
-                    Run A Simulation To See Game Stats!
-                </p>
+                <p className="text-lg font-bold text-center text-black">Run A Simulation To See Game Stats!</p>
             </div>
-        );
+        )
     }
 
-    // if (!isOpen || !appState.simulation) return null
+    if (appState.simulation.getRoundNumber() === 0) {
+        return (
+            <div className="flex items-center p-4 h-60">
+                <p className="text-lg font-bold text-center text-black">Game Stats Will Be Available After The First Round!</p>
+            </div>
+        )
+    }
 
     const stats = appState.simulation.getStats()
-    console.log(stats)
 
     return (
-        <div className="p-4">
+        <div className="p-4 max-h-60 scrollbar overflow-auto">
             {stats.worldStats.AgentsAlive === 0 && stats.groupStats.length === 0 ? (
-                <div className="flex items-center justify-center h-1/2 bg-gray-200 rounded-lg">
-                    <p className="text-lg font-bold text-center text-black">Run a game to see game stats!</p>
+                <div className="flex items-center p-4 h-60">
+                    <p className="text-lg font-bold text-center text-black">Run A Simulation To See Game Stats!</p>
                 </div>
             ) : (
                 <>
@@ -53,28 +56,43 @@ function Game({ isOpen }: Props) {
                         ))}
                     </div>
 
-                    {/* Group Stats Table */}
                     <div className="mt-6 overflow-x-auto">
                         <table className="min-w-full border-collapse">
                             <thead>
                                 <tr className="bg-gray-200">
-                                    <th className="px-4 py-2 text-left">Group ID</th>
-                                    <th className="px-4 py-2 text-left">Group Name</th>
-                                    <th className="px-4 py-2 text-left">Survivors Saved</th>
-                                    <th className="px-4 py-2 text-left">Correct Predictions</th>
-                                    <th className="px-4 py-2 text-left">Incorrect Predictions</th>
+                                    <th className="px-4 py-2 text-left">Metric</th>
+                                    {stats.groupStats.map((group) => (
+                                        <th key={group.gid} className="px-4 py-2 text-left">
+                                            {group.name} (ID: {group.gid})
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {stats.groupStats.map((group) => (
-                                    <tr key={group.gid} className="border-b">
-                                        <td className="px-4 py-2">{group.gid}</td>
-                                        <td className="px-4 py-2">{group.name}</td>
-                                        <td className="px-4 py-2">{group.SurvivorsSaved}</td>
-                                        <td className="px-4 py-2">{group.CorrectPredictions}</td>
-                                        <td className="px-4 py-2">{group.IncorrectPredictions}</td>
-                                    </tr>
-                                ))}
+                                <tr className="border-b">
+                                    <td className="px-4 py-2">Survivors Saved</td>
+                                    {stats.groupStats.map((group) => (
+                                        <td key={group.gid} className="px-4 py-2">
+                                            {group.SurvivorsSaved}
+                                        </td>
+                                    ))}
+                                </tr>
+                                <tr className="border-b">
+                                    <td className="px-4 py-2">Correct Predictions</td>
+                                    {stats.groupStats.map((group) => (
+                                        <td key={group.gid} className="px-4 py-2">
+                                            {group.CorrectPredictions}
+                                        </td>
+                                    ))}
+                                </tr>
+                                <tr className="border-b">
+                                    <td className="px-4 py-2">Incorrect Predictions</td>
+                                    {stats.groupStats.map((group) => (
+                                        <td key={group.gid} className="px-4 py-2">
+                                            {group.IncorrectPredictions}
+                                        </td>
+                                    ))}
+                                </tr>
                             </tbody>
                         </table>
                     </div>

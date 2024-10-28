@@ -125,7 +125,7 @@ class AgentHandler:
     def get_groups_data(self):
         groups_data: list[dict[str, str | int]] = []
         for group in self.agent_group_list:
-            groups_data[group.GID] = {
+            data = {
                 "gid": group.GID,
                 "name": group.name,
                 "score": group.score,
@@ -133,6 +133,7 @@ class AgentHandler:
                 "number_predicted_right": group.number_predicted_right,
                 "number_predicted_wrong": group.number_predicted_wrong,
             }
+            groups_data.append(data)
 
         return groups_data
 

@@ -88,7 +88,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     if (!isOpen) return null
 
     return (
-        <div>
+        <div className='overflow-auto p-2 mb-2 scrollbar'>
             <MapBrushes />
             <div className="flex my-4 items-center justify-center">
                 <p className="mr-2 text-xs">Width:</p>
