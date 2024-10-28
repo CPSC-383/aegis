@@ -22,6 +22,10 @@ from aegis.common.network.aegis_socket_exception import AegisSocketException
 from aegis.common.parsers.aegis_parser import AegisParser
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
 
+import numpy as np
+
+from aegis.common.world import agent
+
 
 class AgentHandler:
     def __init__(self) -> None:
@@ -160,10 +164,7 @@ class AgentHandler:
             return
         try:
             if agent.agent_socket is not None:
-                if (
-                    isinstance(command, SAVE_SURV_RESULT)
-                    and command.image_to_predict is not None
-                ):
+                if isinstance(command, SAVE_SURV_RESULT) and command.image_to_predict is not None:
                     image = command.image_to_predict
                     unique_labels = command.all_unique_labels
                     if unique_labels is None:
@@ -182,14 +183,10 @@ class AgentHandler:
                 else:
                     agent.agent_socket.send_message(str(command))
         except AgentCrashedException as e:
-            print(
-                f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !'
-            )
+            print(f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !')
             raise e
         except Exception as e:
-            print(
-                f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !'
-            )
+            print(f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !')
 
     def send_message_to_all(self, command: AegisCommand) -> None:
         for agent in self.agent_list:
@@ -206,19 +203,13 @@ class AgentHandler:
                 return None
             command = AegisParser.parse_agent_command(s)
         except AgentSocketException:
-            print(
-                f"Aegis  : Exception reading message from agent {self.get_current_agent().agent_id} !"
-            )
+            print(f"Aegis  : Exception reading message from agent {self.get_current_agent().agent_id} !")
             command = AGENT_UNKNOWN()
         except AegisParserException:
-            print(
-                f"Aegis  : Exception parsing message from agent {self.get_current_agent().agent_id} !"
-            )
+            print(f"Aegis  : Exception parsing message from agent {self.get_current_agent().agent_id} !")
             command = AGENT_UNKNOWN()
         except AgentCrashedException as e:
-            print(
-                f"Aegis  : Agent reset the socket connection (possible crash of agent?) {self.get_current_agent().agent_id} !"
-            )
+            print(f"Aegis  : Agent reset the socket connection (possible crash of agent?) {self.get_current_agent().agent_id} !")
             raise e
         command.set_agent_id(self.get_current_agent().agent_id)
         return command
@@ -271,9 +262,7 @@ class AgentHandler:
                 if self.send_messages_to_all_groups:
                     should_message_be_forwarded = True
                 else:
-                    should_message_be_forwarded = (
-                        agent_id.gid == fwd_message.from_agent_id.gid
-                    )
+                    should_message_be_forwarded = agent_id.gid == fwd_message.from_agent_id.gid
                 if should_message_be_forwarded:
                     agent = self.get_agent(agent_id)
                     if agent is None:
@@ -295,9 +284,7 @@ class AgentHandler:
         self.send_message_to(agent.agent_id, MESSAGES_END())
         mailbox.clear()
 
-    def _add_message_to_mailbox(
-        self, agent: AgentControl, fwd_message: FWD_MESSAGE
-    ) -> None:
+    def _add_message_to_mailbox(self, agent: AgentControl, fwd_message: FWD_MESSAGE) -> None:
         if self.current_mailbox == 1:
             agent.mailbox2.append(fwd_message)
         elif self.current_mailbox == 2:
@@ -307,20 +294,14 @@ class AgentHandler:
         self.forward_message_list.clear()
 
     def empty_forward_messages(self) -> None:
-        self.forward_message_list = [
-            msg
-            for msg in self.forward_message_list
-            if msg.get_number_left_to_read() > 0
-        ]
+        self.forward_message_list = [msg for msg in self.forward_message_list if msg.get_number_left_to_read() > 0]
 
         self.current_mailbox = 2 if self.current_mailbox == 1 else 1
 
-    def increase_agent_group_saved(
-        self, gid: int, number_saved: int, save_state: int
-    ) -> None:
+    def increase_agent_group_saved(self, gid: int, number_saved: int, save_state: int) -> None:
         state_message = "alive" if save_state == Constants.SAVE_STATE_ALIVE else "dead"
         print(f"Aegis  : Group {gid} saved {number_saved} survivors {state_message}.")
-        agent_group = self.get_agent_group(gid)
+        agent_group: AgentGroup | None = self.get_agent_group(gid)
         if agent_group is None:
             return
 
@@ -330,12 +311,36 @@ class AgentHandler:
         elif save_state == Constants.SAVE_STATE_DEAD:
             agent_group.number_saved_dead += number_saved
 
+        # update agent group score (BASE for first survivor saved, EXTRA for any additional survivors saved (surv groups))
+        agent_group.score += Constants.SCORE_SURV_SAVED_BASE + (number_saved - 1) * Constants.SCORE_ANY_EXTRA_SURV_SAVED
+
+    def increase_agent_group_predicted(self, gid: int, surv_id: int, label: np.int64, pred_correct: bool) -> None:
+        """called when group predicts, also updates group score accordingly
+
+        Args:
+            gid (int): group id
+        """
+
+        agent_group: AgentGroup | None = self.get_agent_group(gid)
+        if agent_group is None:
+            return
+        
+        correct_string = "correctly!" if pred_correct else "incorrectly."
+        
+        if pred_correct:
+            agent_group.score += Constants.SCORE_CORRECT_PRED
+            agent_group.number_predicted_right += 1
+        else:
+            agent_group.number_predicted_wrong += 1
+        agent_group.number_predicted += 1
+        
+        print(f"Aegis  : Group {gid} predicted symbol {label} from survivor {surv_id} {correct_string}")
+        
+
     def print_group_survivor_saves(self) -> None:
         print("=================================================")
         print("Results for each Group")
         print("(Number Saved, Number Alive, Number Dead)")
         print("=================================================")
         for group in self.agent_group_list:
-            print(
-                f"( GID {group.GID} ) NAME {group.name} = ( {group.number_saved} , {group.number_saved_alive} , {group.number_saved_dead} );"
-            )
+            print(f"( GID {group.GID} ) NAME {group.name} = ( {group.number_saved} , {group.number_saved_alive} , {group.number_saved_dead} );")

@@ -15,6 +15,7 @@ class AgentGroup:
         self.number_predicted_right: int = 0
         self.number_predicted_wrong: int = 0
         self.number_predicted: int = 0
+        self.score: int = 0
 
     @override
     def __eq__(self, other: object) -> bool:
