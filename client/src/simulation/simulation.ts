@@ -1,13 +1,23 @@
 import { EventType, dispatchEvent } from '@/events'
 import { WorldMap } from './world-map'
-import { World, Groups, GroupData, Round, RoundData, AgentInfoDict, CellDict, StackContent } from '@/utils/types'
+import {
+    World,
+    Groups,
+    GroupData,
+    GroupStats,
+    Round,
+    RoundData,
+    AgentInfoDict,
+    CellDict,
+    StackContent
+} from '@/utils/types'
 
 export class Simulation {
     private rounds: Round[] = []
     public maxRounds: number = -1 // Start this at -1 because arrays are 0-indexed
     public currentRound: number = 0
-    public currentRoundData?: World
-    public currentGroupsData?: Groups
+    private currentRoundData?: World
+    private currentGroupsData?: Groups
     public worldMap: WorldMap
     private simPaused: boolean = false
     private renderRoundZero: boolean = true
@@ -19,7 +29,7 @@ export class Simulation {
     addEvent(event: RoundData) {
         if (!event.event_type.startsWith('Round')) return
 
-        this.rounds.push([event.after_world, event.groups_data])
+        this.rounds.push([event.after_world, event.groups_data as Groups])
         this.maxRounds++
 
         // This is to update the max rounds in the control bar
@@ -53,6 +63,36 @@ export class Simulation {
 
     getAgentFromIds(id: number, gid: number): AgentInfoDict | undefined {
         return this.currentRoundData?.agent_data.find((agent) => agent.id === id && agent.gid === gid)
+    }
+
+    public getStats() {
+        const stats = {
+            worldStats: {
+                AgentsAlive: this.currentRoundData?.number_of_alive_agents ?? 0,
+                AgentsDead: this.currentRoundData?.number_of_dead_agents ?? 0,
+                SurvivorsLeft: this.currentRoundData?.number_of_survivors ?? 0,
+                SurvivorsSaved:
+                    (this.currentRoundData?.number_of_survivors_saved_alive ?? 0) +
+                    (this.currentRoundData?.number_of_survivors_saved_dead ?? 0)
+            },
+            groupStats: [] as GroupStats[]
+        }
+
+        if (this.currentGroupsData) {
+            for (const group of this.currentGroupsData) {
+                const groupStat = {
+                    gid: group.gid,
+                    name: group.name,
+                    score: group.score,
+                    SurvivorsSaved: group.number_saved ?? 0,
+                    CorrectPredictions: group.number_predicted_right ?? 0,
+                    IncorrectPredictions: group.number_predicted_wrong ?? 0
+                }
+                stats.groupStats.push(groupStat)
+            }
+        }
+
+        return stats
     }
 
     renderNextRound() {

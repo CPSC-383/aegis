@@ -123,9 +123,10 @@ class AgentHandler:
         return None
 
     def get_groups_data(self):
-        groups_data: dict[int, dict[str, str | int]] = {}
+        groups_data: list[dict[str, str | int]] = []
         for group in self.agent_group_list:
             groups_data[group.GID] = {
+                "gid": group.GID,
                 "name": group.name,
                 "score": group.score,
                 "number_saved": group.number_saved,
