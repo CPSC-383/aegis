@@ -121,6 +121,19 @@ class AgentHandler:
             if group.GID == gid:
                 return group
         return None
+    
+    def get_groups_data(self):
+        groups_data: dict[int, dict[str, str | int]] = {}
+        for group in self.agent_group_list:
+            groups_data[group.GID] = {
+                "name": group.name,
+                "score": group.score,
+                "number_saved": group.number_saved,
+                "number_predicted_right": group.number_predicted_right,
+                "number_predicted_wrong": group.number_predicted_wrong
+            }
+            
+        return groups_data
 
     def get_agent(self, agent_id: AgentID) -> AgentControl | None:
         for agent in self.agent_list:
