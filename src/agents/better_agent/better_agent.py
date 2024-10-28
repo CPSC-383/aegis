@@ -2,6 +2,9 @@ import os
 from typing import override
 
 import numpy as np
+
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
 import tensorflow as tf  # pyright: ignore[reportMissingTypeStubs]
 from aegis import (
     CONNECT_OK,

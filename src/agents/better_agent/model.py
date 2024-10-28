@@ -3,16 +3,8 @@ import random
 
 import numpy as np
 
-# This has to go before tf is initialized.
-# 0 = all messages,
-# 1 = INFO messages only
-# 2 = WARNING messages only
-# 3 = ERROR messages only
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-
 import tensorflow as tf
 from tensorflow.keras.datasets import mnist
-
 
 class Model:
     def __init__(self) -> None:
