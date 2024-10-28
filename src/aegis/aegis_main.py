@@ -368,7 +368,7 @@ class Aegis:
                 "event_type": "Round",
                 "round": round,
                 "after_world": after_json_world,
-                "group_data" : self._agent_handler.get_groups_data(),
+                "groups_data" : self._agent_handler.get_groups_data(),
             }
             event = json.dumps(round_data).encode()
             self._compress_and_send(event)

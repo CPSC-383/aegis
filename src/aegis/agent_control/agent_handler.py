@@ -121,7 +121,7 @@ class AgentHandler:
             if group.GID == gid:
                 return group
         return None
-    
+
     def get_groups_data(self):
         groups_data: dict[int, dict[str, str | int]] = {}
         for group in self.agent_group_list:
@@ -130,9 +130,9 @@ class AgentHandler:
                 "score": group.score,
                 "number_saved": group.number_saved,
                 "number_predicted_right": group.number_predicted_right,
-                "number_predicted_wrong": group.number_predicted_wrong
+                "number_predicted_wrong": group.number_predicted_wrong,
             }
-            
+
         return groups_data
 
     def get_agent(self, agent_id: AgentID) -> AgentControl | None:
@@ -335,18 +335,17 @@ class AgentHandler:
         agent_group: AgentGroup | None = self.get_agent_group(gid)
         if agent_group is None:
             return
-        
+
         correct_string = "correctly!" if pred_correct else "incorrectly."
-        
+
         if pred_correct:
             agent_group.score += Constants.SCORE_CORRECT_PRED
             agent_group.number_predicted_right += 1
         else:
             agent_group.number_predicted_wrong += 1
         agent_group.number_predicted += 1
-        
+
         print(f"Aegis  : Group {gid} predicted symbol {label} from survivor {surv_id} {correct_string}")
-        
 
     def print_group_survivor_saves(self) -> None:
         print("=================================================")

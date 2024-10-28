@@ -1,12 +1,13 @@
 import { EventType, dispatchEvent } from '@/events'
 import { WorldMap } from './world-map'
-import { World, RoundData, AgentInfoDict, CellDict, StackContent } from '@/utils/types'
+import { World, Groups, GroupData, Round, RoundData, AgentInfoDict, CellDict, StackContent } from '@/utils/types'
 
 export class Simulation {
-    private rounds: World[] = []
+    private rounds: Round[] = []
     public maxRounds: number = -1 // Start this at -1 because arrays are 0-indexed
     public currentRound: number = 0
     public currentRoundData?: World
+    public currentGroupsData?: Groups
     public worldMap: WorldMap
     private simPaused: boolean = false
     private renderRoundZero: boolean = true
@@ -18,7 +19,7 @@ export class Simulation {
     addEvent(event: RoundData) {
         if (!event.event_type.startsWith('Round')) return
 
-        this.rounds.push(event.after_world)
+        this.rounds.push([event.after_world, event.groups_data])
         this.maxRounds++
 
         // This is to update the max rounds in the control bar
@@ -70,7 +71,9 @@ export class Simulation {
         if (newRound === this.currentRound && newRound !== 0) return
         this.currentRound = newRound
 
-        this.currentRoundData = this.rounds[this.currentRound]
+        // this.currentRoundData = this.rounds[this.currentRound]
+        this.currentRoundData = this.rounds[this.currentRound][0]
+        this.currentGroupsData = this.rounds[this.currentRound][1]
 
         dispatchEvent(EventType.RENDER, {})
         if (this.currentRoundData.top_layer_rem_data) dispatchEvent(EventType.RENDER_STACK, {})
