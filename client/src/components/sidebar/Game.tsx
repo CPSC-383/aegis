@@ -25,7 +25,9 @@ function Game({ isOpen }: Props) {
     if (appState.simulation.getRoundNumber() === 0) {
         return (
             <div className="flex items-center p-4 h-60">
-                <p className="text-lg font-bold text-center text-black">Game Stats Will Be Available After The First Round!</p>
+                <p className="text-lg font-bold text-center text-black">
+                    Game Stats Will Be Available After The First Round!
+                </p>
             </div>
         )
     }
@@ -33,18 +35,18 @@ function Game({ isOpen }: Props) {
     const stats = appState.simulation.getStats()
 
     return (
-        <div className="p-4 max-h-60 scrollbar overflow-auto">
+        <div className="p-2 max-h-60 scrollbar overflow-auto">
             {stats.worldStats.AgentsAlive === 0 && stats.groupStats.length === 0 ? (
                 <div className="flex items-center p-4 h-60">
                     <p className="text-lg font-bold text-center text-black">Run A Simulation To See Game Stats!</p>
                 </div>
             ) : (
                 <>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                         {Object.entries(stats.worldStats).map(([key, value]) => (
                             <div key={key} className="flex">
                                 <div className="w-1 h-full bg-accent-light"></div>
-                                <div className="flex-1 p-4 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
+                                <div className="flex-1 p-2 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
                                     <div className="flex-grow">
                                         <p className="text-xs font-medium text-black">
                                             {key.replace(/([A-Z])/g, ' $1').trim()}
@@ -57,20 +59,27 @@ function Game({ isOpen }: Props) {
                     </div>
 
                     <div className="mt-6 overflow-x-auto">
-                        <table className="min-w-full border-collapse">
+                        <table className="min-w-full text-sm border-collapse border text-center">
                             <thead>
                                 <tr className="bg-gray-200">
-                                    <th className="px-4 py-2 text-left">Metric</th>
+                                    <th className="px-2 py-2">
+                                        Group Stats Table
+                                    </th>
                                     {stats.groupStats.map((group) => (
-                                        <th key={group.gid} className="px-4 py-2 text-left">
-                                            {group.name} (ID: {group.gid})
+                                        <th key={group.gid} className="px-4 py-2">
+                                            {group.name}
+                                            <br /> ID: {group.gid}
                                         </th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr className="border-b">
-                                    <td className="px-4 py-2">Survivors Saved</td>
+                                    <td className="px-2 py-2">
+                                        Survivors
+                                        <br />
+                                        Saved
+                                    </td>
                                     {stats.groupStats.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
                                             {group.SurvivorsSaved}
@@ -78,7 +87,11 @@ function Game({ isOpen }: Props) {
                                     ))}
                                 </tr>
                                 <tr className="border-b">
-                                    <td className="px-4 py-2">Correct Predictions</td>
+                                    <td className="px-2 py-2">
+                                        Correct
+                                        <br />
+                                        Predictions
+                                    </td>
                                     {stats.groupStats.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
                                             {group.CorrectPredictions}
@@ -86,7 +99,11 @@ function Game({ isOpen }: Props) {
                                     ))}
                                 </tr>
                                 <tr className="border-b">
-                                    <td className="px-4 py-2">Incorrect Predictions</td>
+                                    <td className="px-2 py-2">
+                                        Incorrect
+                                        <br />
+                                        Predictions
+                                    </td>
                                     {stats.groupStats.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
                                             {group.IncorrectPredictions}
