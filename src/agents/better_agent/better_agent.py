@@ -27,7 +27,6 @@ from aegis import (
     NoLayers,
     SurroundInfo,
     Survivor,
-    SurvivorGroup,
     World,
 )
 from agent.base_agent import BaseAgent
@@ -141,7 +140,7 @@ class BetterAgent(Brain):
                 self.send_and_end_turn(self.move(world, loc))
                 return
 
-            if isinstance(top_layer, Survivor) or isinstance(top_layer, SurvivorGroup):
+            if isinstance(top_layer, Survivor):
                 self.send_and_end_turn(SAVE_SURV())
             else:
                 self.send_and_end_turn(TEAM_DIG())

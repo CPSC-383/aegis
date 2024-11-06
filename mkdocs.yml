@@ -25,7 +25,6 @@ nav:
           - WorldObjects:
               - WorldObject: api/world/objects/world-object.md
               - Survivor: api/world/objects/survivor.md
-              - SurvivorGroup: api/world/objects/survivor-group.md
               - Rubble: api/world/objects/rubble.md
               - NoLayers: api/world/objects/no-layers.md
           - WorldObjectsInfo:

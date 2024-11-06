@@ -26,7 +26,6 @@ The various possible layers in a cell.
 
 - [`aegis.WorldObject`][]: Represents a object in the world.
 - [`aegis.Survivor`][]: Represents a survivor layer in a cell.
-- [`aegis.SurvivorGroup`][]: Represents a survivor group layer in a cell.
 - [`aegis.Rubble`][]: Represents a rubble layer in a cell.
 - [`aegis.NoLayers`][]: Represents no more layers in a cell.
 
@@ -49,7 +48,7 @@ Commands available for the agents interacting with AEGIS.
 - [`aegis.MOVE`][]: Represents a command for an agent to move in a specified direction.
 - [`aegis.OBSERVE`][]: Represents a command for an agent to observe a cell in the world.
 - [`aegis.PREDICT`][]: Represents the prediction of an agent.
-- [`aegis.SAVE_SURV`][]: Represents a command for an agent to save a survivor or survivor group.
+- [`aegis.SAVE_SURV`][]: Represents a command for an agent to save a survivor.
 - [`aegis.SEND_MESSAGE`][]: Represents a command for an agent to send a message to other agents.
 - [`aegis.SLEEP`][]: Represents a command for an agent to sleep and recharge energy.
 - [`aegis.TEAM_DIG`][]: Represents a command for an agent to dig rubble.
@@ -108,7 +107,6 @@ from aegis.common.world.objects import (
     NoLayers,
     Rubble,
     Survivor,
-    SurvivorGroup,
     WorldObject,
 )
 from aegis.common.world.world import World
@@ -145,7 +143,6 @@ __all__ = [
     "SLEEP_RESULT",
     "SurroundInfo",
     "Survivor",
-    "SurvivorGroup",
     "TEAM_DIG",
     "TEAM_DIG_RESULT",
     "World",

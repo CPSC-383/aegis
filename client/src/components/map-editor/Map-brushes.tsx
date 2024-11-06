@@ -7,7 +7,6 @@ import {
     SpecialCellBrushTypes,
     Stack,
     StackContentBrushTypes,
-    SurvivorGroupInfo,
     SurvivorInfo
 } from '@/utils/types'
 import { useState } from 'react'
@@ -23,10 +22,6 @@ function MapBrushes() {
     const [gid, setGid] = useState<number>(0)
     const [stackType, setStackType] = useState<StackContentBrushTypes>(StackContentBrushTypes.Survivor)
     const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({ remove_energy: 0, remove_agents: 0 })
-    const [survivorGroupInfo, setSurvivorGroupInfo] = useState<SurvivorGroupInfo>({
-        energy_level: 0,
-        number_of_survivors: 1
-    })
     const [survivorInfo, setSurvivorInfo] = useState<SurvivorInfo>({
         energy_level: 0,
         body_mass: 0,
@@ -156,12 +151,6 @@ function MapBrushes() {
                     arguments: rubbleInfo
                 })
                 break
-            case StackContentBrushTypes.SurvivorGroup:
-                cell.contents.push({
-                    type: 'svg',
-                    arguments: survivorGroupInfo
-                })
-                break
             case StackContentBrushTypes.Survivor:
                 cell.contents.push({
                     type: 'sv',
@@ -234,7 +223,6 @@ function MapBrushes() {
                         className="bg-white p-2 w-full border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
                     >
                         <option value={StackContentBrushTypes.Survivor}>Survivor Brush</option>
-                        <option value={StackContentBrushTypes.SurvivorGroup}>Survivor Group Brush</option>
                         <option value={StackContentBrushTypes.Rubble}>Rubble Brush</option>
                     </select>
                     {stackType === StackContentBrushTypes.Rubble && (
@@ -254,35 +242,6 @@ function MapBrushes() {
                                     value={rubbleInfo.remove_agents}
                                     onChange={(newAgents) => setRubbleInfo({ ...rubbleInfo, remove_agents: newAgents })}
                                     min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                        </div>
-                    )}
-                    {stackType === StackContentBrushTypes.SurvivorGroup && (
-                        <div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Energy Level:</p>
-                                <NumberInput
-                                    value={survivorGroupInfo.energy_level}
-                                    onChange={(newEnergy) =>
-                                        setSurvivorGroupInfo({ ...survivorGroupInfo, energy_level: newEnergy })
-                                    }
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Number of Survivors:</p>
-                                <NumberInput
-                                    value={survivorGroupInfo.number_of_survivors}
-                                    onChange={(newSurvivors) =>
-                                        setSurvivorGroupInfo({
-                                            ...survivorGroupInfo,
-                                            number_of_survivors: newSurvivors
-                                        })
-                                    }
-                                    min={1}
                                     extraStyles="w-16"
                                 />
                             </div>

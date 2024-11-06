@@ -111,26 +111,26 @@ export type World = {
 }
 
 export type GroupData = {
-    gid: number;
-    name: string;
-    score: number;
-    number_saved: number;
-    number_predicted_right: number;
-    number_predicted_wrong: number;
-};
+    gid: number
+    name: string
+    score: number
+    number_saved: number
+    number_predicted_right: number
+    number_predicted_wrong: number
+}
 
 export type GroupStats = {
-    gid: number;
-    name: string;
-    score: number;
-    SurvivorsSaved: number;
-    CorrectPredictions: number;
-    IncorrectPredictions: number;
-};
+    gid: number
+    name: string
+    score: number
+    SurvivorsSaved: number
+    CorrectPredictions: number
+    IncorrectPredictions: number
+}
 
-export type Groups = GroupData[];
+export type Groups = GroupData[]
 
-export type Round = [World, Groups];
+export type Round = [World, Groups]
 
 export type RoundData = {
     event_type: string

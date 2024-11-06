@@ -110,12 +110,6 @@ Remove energy and agents are defaulted to zero.
 
 Energy level, body mass, damage factor and mental state are all defaulted to zero.
 
-##### Survivor Group
-
-![Survivor Group](../assets/survivor_group.png)
-
-Energy level is defaulted to zero, and number of survivors is defaulted to one.
-
 #### Empty Brush
 
 This brush will allow you to inspect the cells.
