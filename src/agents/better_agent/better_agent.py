@@ -44,7 +44,7 @@ class BetterAgent(Brain):
         self._model = self._load_model()  # pyright: ignore[reportUnknownMemberType]
 
     def _load_model(self):  # pyright: ignore[reportUnknownParameterType]
-        model_path = os.path.join(os.path.dirname(__file__), "model.keras")
+        model_path = os.path.join(os.path.dirname(__file__), "model_mnist.keras")
         if os.path.isfile(model_path):
             model = tf.keras.models.load_model(model_path)  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType, reportAttributeAccessIssue]
             return model  # pyright: ignore[reportUnknownVariableType]
