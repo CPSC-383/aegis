@@ -1,6 +1,7 @@
 import { aegisAPI } from '@/aegis-api'
 import { Simulation } from '@/simulation/simulation'
 import { WorldMap } from '@/simulation/world-map'
+import { SpawnZoneTypes } from '@/utils/types'
 
 export async function importWorld(file: File): Promise<Simulation> {
     return new Promise((resolve, reject) => {
@@ -41,6 +42,20 @@ export async function exportWorld(worldMap: WorldMap, worldName: string) {
 const validateMap = (world: WorldMap) => {
     if (world.spawnCells.size === 0) return 'Missing spawn zones!'
 
+    let hasAnyZone = false
+
+    // Validate spawn zones
+    for (const [key, data] of world.spawnCells) {
+        const coord = JSON.parse(key)
+        if (data.type === SpawnZoneTypes.Group && data.groups.length === 0) {
+            return `Group spawn zone at (${coord.x}, ${coord.y}) is missing a group ID!`
+        }
+
+        if (data.type === SpawnZoneTypes.Any) hasAnyZone = true
+    }
+
+    if (!hasAnyZone) return "Missing at least 1 'Any' spawn zone!"
+
     const hasSurvivors = world.stacks.some((stack) =>
         stack.contents.some((content) => content.type === 'sv' || content.type === 'svg')
     )
@@ -51,10 +66,19 @@ const validateMap = (world: WorldMap) => {
 }
 
 const createWorld = (world: WorldMap) => {
-    const spawn_locs = Array.from(world.spawnCells, ([spawn, gids]) => {
+    const spawn_locs = Array.from(world.spawnCells, ([spawn, data]) => {
         const { x, y } = JSON.parse(spawn)
-        if (gids.length === 0) return { x, y }
-        else return gids.map((gid) => ({ x, y, gid }))
+
+        if (data.groups.length === 0) {
+            return { x, y, type: data.type }
+        }
+
+        return data.groups.map((gid) => ({
+            x,
+            y,
+            gid,
+            type: data.type
+        }))
     }).flat()
 
     return {
