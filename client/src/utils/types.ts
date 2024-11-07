@@ -35,6 +35,7 @@ export type Spawn = {
     x: number
     y: number
     gid?: number
+    type: SpawnZoneTypes
 }
 
 // ----- Map Editor Types ----- //
@@ -80,6 +81,11 @@ export type SurvivorInfo = {
 export type SurvivorGroupInfo = {
     energy_level: number
     number_of_survivors: number
+}
+
+export enum SpawnZoneTypes {
+    Any = 'any',
+    Group = 'group'
 }
 
 // ----- Simulation Types ----- //

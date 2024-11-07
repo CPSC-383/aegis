@@ -7,7 +7,8 @@ import {
     SpecialCellBrushTypes,
     Stack,
     StackContentBrushTypes,
-    SurvivorInfo
+    SurvivorInfo,
+    SpawnZoneTypes
 } from '@/utils/types'
 import { useState } from 'react'
 import NumberInput from '../inputs/NumberInput'
@@ -20,6 +21,7 @@ function MapBrushes() {
     )
     const [moveCost, setMoveCost] = useState<number>(2)
     const [gid, setGid] = useState<number>(0)
+    const [spawnZoneType, setSpawnZoneType] = useState<SpawnZoneTypes>(SpawnZoneTypes.Any)
     const [stackType, setStackType] = useState<StackContentBrushTypes>(StackContentBrushTypes.Survivor)
     const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({ remove_energy: 0, remove_agents: 0 })
     const [survivorInfo, setSurvivorInfo] = useState<SurvivorInfo>({
@@ -117,13 +119,13 @@ function MapBrushes() {
     const handleSpawnCells = (tile: Location) => {
         const { spawnCells } = appState.simulation!.worldMap
         const key = JSON.stringify(tile) // Consistent key format
-        const existingGids = spawnCells.get(key) || []
+        const existingGids = spawnCells.get(key)?.groups || []
 
         if (gid === 0) {
-            if (existingGids.length === 0) spawnCells.set(key, [])
+            if (existingGids.length === 0) spawnCells.set(key, { type: spawnZoneType, groups: [] })
             return
         }
-        if (!existingGids.includes(gid)) spawnCells.set(key, [...existingGids, gid])
+        if (!existingGids.includes(gid)) spawnCells.set(key, { type: spawnZoneType, groups: [...existingGids, gid] })
     }
 
     const handleMoveCost = (cell: Stack | undefined, rightClicked: boolean) => {
@@ -185,10 +187,30 @@ function MapBrushes() {
                         <option value={SpecialCellBrushTypes.Spawn}>Spawn Brush</option>
                     </select>
                     {specialCellBrushTypes === SpecialCellBrushTypes.Spawn && (
-                        <div className="flex mt-4 items-center justify-center">
-                            <p className="mr-2">GID:</p>
-                            <NumberInput value={gid} onChange={(newGid) => setGid(newGid)} min={0} extraStyles="w-16" />
-                        </div>
+                        <>
+                            <div className="flex mt-4 items-center justify-center">
+                                <p className="mr-2">Type:</p>
+                                <select
+                                    value={spawnZoneType}
+                                    onChange={(e) => setSpawnZoneType(e.target.value as SpawnZoneTypes)}
+                                    className="bg-white p-2 border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
+                                >
+                                    <option value={SpawnZoneTypes.Any}>Any Group</option>
+                                    <option value={SpawnZoneTypes.Group}>Specific Group</option>
+                                </select>
+                            </div>
+                            {spawnZoneType === SpawnZoneTypes.Group && (
+                                <div className="flex mt-4 items-center justify-center">
+                                    <p className="mr-2">GID:</p>
+                                    <NumberInput
+                                        value={gid}
+                                        onChange={(newGid) => setGid(newGid)}
+                                        min={0}
+                                        extraStyles="w-16"
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
                 </>
             )}
@@ -248,60 +270,14 @@ function MapBrushes() {
                         </div>
                     )}
                     {stackType === StackContentBrushTypes.Survivor && (
-                        <div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Energy Level:</p>
-                                <NumberInput
-                                    value={survivorInfo.energy_level}
-                                    onChange={(newEnergy) =>
-                                        setSurvivorInfo({ ...survivorInfo, energy_level: newEnergy })
-                                    }
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Body Mass:</p>
-                                <NumberInput
-                                    value={survivorInfo.body_mass}
-                                    onChange={(newBodyMass) =>
-                                        setSurvivorInfo({
-                                            ...survivorInfo,
-                                            body_mass: newBodyMass
-                                        })
-                                    }
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Damage Factor:</p>
-                                <NumberInput
-                                    value={survivorInfo.damage_factor}
-                                    onChange={(newDamage) =>
-                                        setSurvivorInfo({
-                                            ...survivorInfo,
-                                            damage_factor: newDamage
-                                        })
-                                    }
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Mental State:</p>
-                                <NumberInput
-                                    value={survivorInfo.mental_state}
-                                    onChange={(newMental) =>
-                                        setSurvivorInfo({
-                                            ...survivorInfo,
-                                            mental_state: newMental
-                                        })
-                                    }
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
+                        <div className="flex mt-4 items-center justify-center">
+                            <p className="mr-2">Energy Level:</p>
+                            <NumberInput
+                                value={survivorInfo.energy_level}
+                                onChange={(newEnergy) => setSurvivorInfo({ ...survivorInfo, energy_level: newEnergy })}
+                                min={0}
+                                extraStyles="w-16"
+                            />
                         </div>
                     )}
                 </>

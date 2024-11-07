@@ -1,4 +1,4 @@
-import { Location, Stack, Size, Spawn } from '@/utils/types'
+import { Location, Stack, Size, Spawn, SpawnZoneTypes } from '@/utils/types'
 import { whatBucket } from '@/utils/util'
 import { shadesOfBrown, shadesOfBlue } from '@/utils/types'
 import { renderCoords } from '@/utils/renderUtils'
@@ -14,7 +14,7 @@ export class WorldMap {
         public readonly fireCells: Location[],
         public readonly killerCells: Location[],
         public readonly chargingCells: Location[],
-        public readonly spawnCells: Map<string, number[]>,
+        public readonly spawnCells: Map<string, { type: SpawnZoneTypes; groups: number[] }>,
         public readonly stacks: Stack[],
         public readonly initialAgentEnergy: number,
         public readonly minMoveCost: number,
@@ -34,11 +34,11 @@ export class WorldMap {
         const fireCells: Location[] = data.cell_types.fire_cells
         const killerCells: Location[] = data.cell_types.killer_cells
         const chargingCells: Location[] = data.cell_types.charging_cells
-        const spawnCells: Map<string, number[]> = new Map()
+        const spawnCells: Map<string, { type: SpawnZoneTypes; groups: number[] }> = new Map()
         data.spawn_locs.forEach((spawn: Spawn) => {
             const key = JSON.stringify({ x: spawn.x, y: spawn.y })
-            if (!spawnCells.has(key)) spawnCells.set(key, [])
-            if (spawn.gid) spawnCells.get(key)?.push(spawn.gid)
+            if (!spawnCells.has(key)) spawnCells.set(key, { type: spawn.type as SpawnZoneTypes, groups: [] })
+            if (spawn.gid) spawnCells.get(key)?.groups.push(spawn.gid)
         })
 
         const stacks: Stack[] = data.stacks
@@ -185,7 +185,6 @@ export class WorldMap {
             ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
         }
 
-        // This will only draw in the world editor
         for (const [spawn, _] of this.spawnCells) {
             const { x, y } = JSON.parse(spawn)
             const coords = renderCoords(x, y, this.size)
