@@ -18,7 +18,6 @@ from aegis.parsers.helper.world_file_type import StackContent, WorldFileType
 from aegis.parsers.world_file_parser import WorldFileParser
 from aegis.server_websocket import WebSocketServer
 from aegis.world.object_handlers import (
-    NoLayersHandler,
     ObjectHandler,
     RubbleHandler,
     SurvivorGroupHandler,
@@ -75,12 +74,10 @@ MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
 class AegisWorld:
     def __init__(self) -> None:
         self._object_handlers: dict[str, ObjectHandler] = {}
-        self.install_object_handler(NoLayersHandler())
         self.install_object_handler(RubbleHandler())
         self.install_object_handler(SurvivorGroupHandler())
         self.install_object_handler(SurvivorHandler())
         self._agent_locations: dict[AgentID, Location] = {}
-        # self._agent_spawn_locations: list[SpawnZone] = []
         self._spawn_manager: SpawnManger = SpawnManger()
         self._low_survivor_level: int = 0
         self._mid_survivor_level: int = 0

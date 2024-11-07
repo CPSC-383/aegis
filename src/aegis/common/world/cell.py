@@ -134,7 +134,7 @@ class Cell:
             return None
         return self._cell_layer_list[-1]
 
-    def set_top_layer(self, top_layer: WorldObject) -> None:
+    def set_top_layer(self, top_layer: WorldObject | None) -> None:
         """
         Sets the top layer of the cell, replacing any existing layers.
 
@@ -142,6 +142,8 @@ class Cell:
             top_layer: The new top layer for the cell.
         """
         self._cell_layer_list.clear()
+        if top_layer is None:
+            return
         self._cell_layer_list.append(top_layer)
 
     def number_of_layers(self) -> int:

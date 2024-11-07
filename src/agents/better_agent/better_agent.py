@@ -12,7 +12,6 @@ from aegis import (
     FWD_MESSAGE,
     MOVE,
     MOVE_RESULT,
-    OBSERVE,
     OBSERVE_RESULT,
     PREDICT,
     PREDICT_RESULT,
@@ -24,7 +23,6 @@ from aegis import (
     AgentCommand,
     Direction,
     Location,
-    NoLayers,
     SurroundInfo,
     Survivor,
     World,
@@ -131,10 +129,6 @@ class BetterAgent(Brain):
 
             top_layer = cell.get_top_layer()
             if top_layer is None:
-                self.send_and_end_turn(OBSERVE(loc))
-                return
-
-            if isinstance(top_layer, NoLayers):
                 cell.survivor_chance = 0
                 loc = self.get_best_location(world)
                 self.send_and_end_turn(self.move(world, loc))

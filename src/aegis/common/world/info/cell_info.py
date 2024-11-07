@@ -1,7 +1,7 @@
 from typing import override
 
 from aegis.common import AgentIDList, CellType, Location
-from aegis.common.world.objects import NoLayers, WorldObject
+from aegis.common.world.objects import WorldObject
 
 
 class CellInfo:
@@ -44,7 +44,7 @@ class CellInfo:
         self.agent_id_list = (
             agent_id_list if agent_id_list is not None else AgentIDList()
         )
-        self.top_layer = top_layer if top_layer is not None else NoLayers()
+        self.top_layer = top_layer if top_layer is not None else None
 
     @override
     def __str__(self) -> str:

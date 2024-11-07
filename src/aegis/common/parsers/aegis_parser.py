@@ -54,7 +54,6 @@ from aegis.common.world.info import (
     SurroundInfo,
 )
 from aegis.common.world.objects import (
-    NoLayers,
     Rubble,
     Survivor,
     SurvivorGroup,
@@ -131,6 +130,7 @@ class AegisParser:
     def parse_aegis_command(string: str) -> AegisCommand:
         try:
             string = string.strip()
+            print(string)
             tokens = iter(string.split())
             if string.startswith(Command.STR_CONNECT_OK):
                 AegisParser.text(tokens, Command.STR_CONNECT_OK)
@@ -578,7 +578,7 @@ class AegisParser:
         )
 
     @staticmethod
-    def object(tokens: Iterator[str]) -> WorldObject:
+    def object(tokens: Iterator[str]) -> WorldObject | None:
         object_type = next(tokens)
         if object_type == "RUBBLE":
             return AegisParser.rubble(tokens)
@@ -586,8 +586,8 @@ class AegisParser:
             return AegisParser.survivor(tokens)
         elif object_type == "SURVIVOR_GROUP":
             return AegisParser.survivor_group(tokens)
-        elif object_type == "NO_LAYERS":
-            return NoLayers()
+        elif object_type == "None":
+            return None
         else:
             raise AegisParserException(f"Expected <object>, found {object_type}")
 

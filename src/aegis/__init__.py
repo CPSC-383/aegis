@@ -27,7 +27,6 @@ The various possible layers in a cell.
 - [`aegis.WorldObject`][]: Represents a object in the world.
 - [`aegis.Survivor`][]: Represents a survivor layer in a cell.
 - [`aegis.Rubble`][]: Represents a rubble layer in a cell.
-- [`aegis.NoLayers`][]: Represents no more layers in a cell.
 
 ### World Objects Info
 
@@ -104,7 +103,6 @@ from aegis.common.world.info import (
     SurroundInfo,
 )
 from aegis.common.world.objects import (
-    NoLayers,
     Rubble,
     Survivor,
     WorldObject,
@@ -130,7 +128,6 @@ __all__ = [
     "Location",
     "MOVE",
     "MOVE_RESULT",
-    "NoLayers",
     "OBSERVE",
     "OBSERVE_RESULT",
     "PREDICT",
