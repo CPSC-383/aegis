@@ -12,9 +12,12 @@ class PredictionHandler:
     # (gid, survivor_id), ([agent(s) helped save], idx for img/label)
     _no_pred_yet: dict[tuple[int, int], tuple[list[AgentID], int]] = {}
 
-    # gid, {survivor_id: (agent_id, prediction_correct)}    
+    # gid, {survivor_id: (agent_id, prediction_correct)}
     _pred_results: dict[int, dict[int, tuple[int, bool]]] = {}
-    aegis_testing_output_dir = os.path.join("src", "aegis", "testing_data")
+
+    aegis_testing_output_dir = os.path.join(
+        "src", "aegis", "agent_predictions", "model_testing_data"
+    )
     _x_test: NDArray[np.float32] = np.load(
         os.path.join(aegis_testing_output_dir, "x_test_a3.npy")
     )

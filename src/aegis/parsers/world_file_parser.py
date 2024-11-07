@@ -3,16 +3,17 @@ from typing import cast
 
 from aegis.common import AgentID, Location
 from aegis.parsers.aegis_world_file import AegisWorldFile
-from aegis.parsers.helper.world_file_type import SpawnInfo
 from aegis.parsers.helper.cell_info_settings import CellInfoSettings
 from aegis.parsers.helper.cell_type_info import CellTypeInfo
 from aegis.parsers.helper.world_file_type import (
     AgentInfo,
     CellLoc,
     CellTypes,
+    SpawnInfo,
     StackInfo,
     WorldFileType,
 )
+from aegis.world.spawn_manager import SpawnZone, SpawnZoneType
 
 
 class WorldFileParser:
@@ -95,15 +96,14 @@ class WorldFileParser:
     @staticmethod
     def _parse_spawn_locations(
         spawn_locs: list[SpawnInfo],
-    ) -> dict[tuple[Location, int | None], int]:
-        spawn_counts: dict[tuple[Location, int | None], int] = {}
+    ) -> list[SpawnZone]:
+        spawns: list[SpawnZone] = []
 
         for loc in spawn_locs:
+            zone_type = SpawnZoneType(loc["type"])
             location = Location(loc["x"], loc["y"])
             gid = loc.get("gid")
-            key = (location, gid)
-            if key not in spawn_counts:
-                spawn_counts[key] = 0
-            spawn_counts[key] += 1
+            spawn = SpawnZone(location, zone_type, gid)
+            spawns.append(spawn)
 
-        return spawn_counts
+        return spawns

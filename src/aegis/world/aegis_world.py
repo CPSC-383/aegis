@@ -26,6 +26,7 @@ from aegis.world.object_handlers import (
 )
 from aegis.world.simulators.fire_simulator import FireSimulator
 from aegis.world.simulators.survivor_simulator import SurvivorSimulator
+from aegis.world.spawn_manager import SpawnManger
 
 
 class LocationDict(TypedDict):
@@ -79,7 +80,8 @@ class AegisWorld:
         self.install_object_handler(SurvivorGroupHandler())
         self.install_object_handler(SurvivorHandler())
         self._agent_locations: dict[AgentID, Location] = {}
-        self._agent_spawn_locations: dict[tuple[Location, int | None], int] = {}
+        # self._agent_spawn_locations: list[SpawnZone] = []
+        self._spawn_manager: SpawnManger = SpawnManger()
         self._low_survivor_level: int = 0
         self._mid_survivor_level: int = 0
         self._high_survivor_level: int = 0
@@ -130,7 +132,9 @@ class AegisWorld:
         if aegis_world_file is None:
             return False
         try:
-            self._agent_spawn_locations = aegis_world_file.agent_spawn_locations
+            # This is so spawn_manager can error check the spawn zones
+            for spawn in aegis_world_file.agent_spawn_locations:
+                self._spawn_manager.add_spawn_zone(spawn)
             self._low_survivor_level = aegis_world_file.low_survivor_level
             self._mid_survivor_level = aegis_world_file.mid_survivor_level
             self._high_survivor_level = aegis_world_file.high_survivor_level
@@ -325,36 +329,13 @@ class AegisWorld:
     def get_agent_world_filename(self) -> str:
         return self._agent_world_filename
 
-    def _get_spawn(self, agent_id: AgentID) -> tuple[Location, int | None]:
-        # Priority spawn
-        spawns = self._agent_spawn_locations
-        for spawn, gid in spawns:
-            if gid == agent_id.gid:
-                return spawn, gid
-
-        # Spawn randomly
-        no_gid_locations = [spawn for spawn, gid in spawns if gid is None]
-
-        return random.choice(no_gid_locations), None
-
-    def _delete_prio_spawn(self, loc: Location, gid: int):
-        spawn_locs = self._agent_spawn_locations
-        key = (loc, gid)
-        if key in spawn_locs:
-            if spawn_locs[key] > 1:
-                spawn_locs[key] -= 1
-            else:
-                del spawn_locs[key]
-
     def add_agent_by_id(self, agent_id: AgentID) -> None:
         if self._world is None:
             return
 
-        spawn_loc, gid = self._get_spawn(agent_id)
-        cell = self._world.get_cell_at(spawn_loc)
+        spawn_loc = self._spawn_manager.get_spawn_location(agent_id.gid)
 
-        if cell is not None and gid is not None:
-            self._delete_prio_spawn(spawn_loc, gid)
+        cell = self._world.get_cell_at(spawn_loc)
 
         if cell is None:
             if len(self._normal_cell_list) == 0:

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from aegis.common.location import Location
 from aegis.parsers.helper.cell_info_settings import CellInfoSettings
 from aegis.parsers.helper.cell_type_info import CellTypeInfo
+from aegis.world.spawn_manager import SpawnZone
 
 
 @dataclass
@@ -16,4 +16,4 @@ class AegisWorldFile:
     low_survivor_level: int
     cell_stack_info: list[CellInfoSettings]
     cell_settings: list[CellTypeInfo]
-    agent_spawn_locations: dict[tuple[Location, int | None], int]
+    agent_spawn_locations: list[SpawnZone]

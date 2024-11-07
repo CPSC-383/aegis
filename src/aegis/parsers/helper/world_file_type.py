@@ -1,5 +1,7 @@
 from typing import Literal, TypedDict
 
+from aegis.world.spawn_manager import SpawnZoneType
+
 
 class WorldSize(TypedDict):
     width: int
@@ -27,6 +29,7 @@ class SpawnInfo(TypedDict):
     x: int
     y: int
     gid: int | None
+    type: SpawnZoneType
 
 
 class AgentInfo(TypedDict):

@@ -7,12 +7,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 def usage() -> None:
-    python = "python" if platform.system() == "Windows" else "python3"
     print(
-        f"Usage: {python} run_headless_aegis_with_agents.py <agent amount> <num of rounds> <agent directory> <world file>"
-    )
-    print(
-        f"Example: {python} run_headless_aegis_with_agents.py 2 50 example_agent ExampleWorld"
+        "Usage: python run_headless_aegis_with_agents.py <agent amount> <num of rounds> <agent directory> <world file>"
     )
 
 
@@ -45,8 +41,9 @@ def main(agent_amount: int, rounds: int, world_file: str, agentt: str) -> None:
     curr_dir = os.path.dirname(os.path.realpath(__file__))
     # # print(curr_dir)
     os.environ["PYTHONPATH"] = os.path.join(curr_dir, "src")
-    os.environ["PYTHONPATH"] += os.pathsep + os.path.join(curr_dir, ".venv", "Lib", "site-packages")
-    
+    os.environ["PYTHONPATH"] += os.pathsep + os.path.join(
+        curr_dir, ".venv", "Lib", "site-packages"
+    )
 
     with ThreadPoolExecutor(max_workers=agent_amount + 1) as exec:
         _ = exec.submit(run_aegis, curr_dir, agent_amount, rounds, world_file)
