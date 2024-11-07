@@ -14,7 +14,7 @@ class CellInfo:
         on_fire (bool): A boolean indicating if the cell is on fire.
         move_cost (int): The cost to move through the cell.
         agent_id_list (AgentIDList): A list of agent IDs on the cell.
-        top_layer (WorldObject): Information about the top layer object.
+        top_layer (WorldObject | None): Information about the top layer object.
     """
 
     def __init__(
