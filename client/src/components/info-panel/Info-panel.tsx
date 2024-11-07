@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAppContext } from '@/context'
 import { EventType, listenEvent } from '@/events'
-import { AgentInfoDict, CellDict, StackContent } from '@/utils/types'
+import { AgentInfoDict, CellDict, SpawnZoneTypes, StackContent } from '@/utils/types'
 import AgentPanel from './Agent-panel'
 import CellPanel from './Cell-panel'
 
@@ -12,6 +12,7 @@ function InfoPanel() {
     const [cellLayers, setCellLayers] = useState<StackContent[]>([])
     const [agents, setAgents] = useState<AgentInfoDict[]>([])
     const [selectedAgent, setSelectedAgent] = useState<AgentInfoDict | undefined>()
+    const [spawns, setSpawns] = useState<{ type: SpawnZoneTypes; groups: number[] } | undefined>(undefined)
 
     const gatherData = () => {
         if (!simulation || !selectedCell) return
@@ -21,6 +22,7 @@ function InfoPanel() {
         setCellInfo(simulation.getInfoAtCell(x, y))
         setCellLayers(simulation.getLayersAtCell(x, y))
         setAgents(simulation.getAgentsAtCell(x, y))
+        setSpawns(simulation.getSpawns(x, y))
     }
 
     // This is to get the info for a new
@@ -84,6 +86,29 @@ function InfoPanel() {
                         )}
                     </div>
                 </div>
+                {spawns && (
+                    <div className="m-2">
+                        <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Spawn</h3>
+                        {!spawns ? (
+                            <p className="text-gray-500">Nothing at this location.</p>
+                        ) : (
+                            <>
+                                <div>Type: {spawns.type}</div>
+                                {spawns.type === SpawnZoneTypes.Group && (
+                                    <div>
+                                        Groups:{' '}
+                                        {spawns.groups.map((group, index) => (
+                                            <span key={index}>
+                                                {group}
+                                                {index < spawns.groups.length - 1 ? ', ' : ''}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )

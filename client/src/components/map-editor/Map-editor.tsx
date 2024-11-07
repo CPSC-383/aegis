@@ -63,6 +63,11 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
         if (fileInputRef.current) fileInputRef.current.value = ''
     }
 
+    const handleClear = () => {
+        setWorldParams({ ...worldParams, isInitialized: false })
+        setErrMsg('')
+    }
+
     useEffect(() => {
         if (isOpen) {
             if (!simulation.current || !worldParams.isInitialized) {
@@ -88,7 +93,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     if (!isOpen) return null
 
     return (
-        <div className='overflow-auto p-2 mb-2 scrollbar'>
+        <div className="overflow-auto p-2 mb-2 scrollbar">
             <MapBrushes />
             <div className="flex my-4 items-center justify-center">
                 <p className="mr-2 text-xs">Width:</p>
@@ -121,7 +126,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
                 />
             </div>
             <Button
-                onClick={() => setWorldParams({ ...worldParams, isInitialized: false })}
+                onClick={handleClear}
                 label={'Clear to change world settings'}
                 styles={`bg-secondary text-xs mt-2 ${isWorldEmpty ? 'invisible' : ''}`}
             />

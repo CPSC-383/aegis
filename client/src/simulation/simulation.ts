@@ -3,13 +3,13 @@ import { WorldMap } from './world-map'
 import {
     World,
     Groups,
-    GroupData,
     GroupStats,
     Round,
     RoundData,
     AgentInfoDict,
     CellDict,
-    StackContent
+    StackContent,
+    SpawnZoneTypes
 } from '@/utils/types'
 
 export class Simulation {
@@ -59,6 +59,16 @@ export class Simulation {
         return this.currentRoundData.cell_data.find(
             (cell) => cell.stack.cell_loc.x === x && cell.stack.cell_loc.y === y
         )!.stack.contents
+    }
+
+    getSpawns(x: number, y: number): { type: SpawnZoneTypes; groups: number[] } | undefined {
+        if (!this.currentRoundData) {
+            const key = JSON.stringify({ x, y })
+            const spawns = this.worldMap.spawnCells.get(key)
+            return spawns
+        }
+
+        return this.currentRoundData
     }
 
     getAgentsAtCell(x: number, y: number): AgentInfoDict[] {

@@ -99,7 +99,8 @@ function MapBrushes() {
     }
 
     const addSpecialCell = (tile: Location) => {
-        const { killerCells, chargingCells, fireCells } = appState.simulation!.worldMap
+        const { killerCells, chargingCells, fireCells, spawnCells } = appState.simulation!.worldMap
+        if (!!spawnCells.get(JSON.stringify({ x: tile.x, y: tile.y }))) return
         switch (specialCellBrushTypes) {
             case SpecialCellBrushTypes.Killer:
                 killerCells.push(tile)
@@ -119,7 +120,17 @@ function MapBrushes() {
     const handleSpawnCells = (tile: Location) => {
         const { spawnCells } = appState.simulation!.worldMap
         const key = JSON.stringify(tile) // Consistent key format
-        const existingGids = spawnCells.get(key)?.groups || []
+        const spawn = spawnCells.get(key)
+        const existingGids = spawn?.groups || []
+
+        // Don't place group spawn on any zone, and vice versa
+        if (spawn && spawn.type === SpawnZoneTypes.Any && spawnZoneType === SpawnZoneTypes.Group) return
+        if (spawn && spawn.type === SpawnZoneTypes.Group && spawnZoneType === SpawnZoneTypes.Any) return
+
+        if (spawnZoneType === SpawnZoneTypes.Any) {
+            spawnCells.set(key, { type: spawnZoneType, groups: [] })
+            return
+        }
 
         if (gid === 0) {
             if (existingGids.length === 0) spawnCells.set(key, { type: spawnZoneType, groups: [] })
@@ -146,6 +157,8 @@ function MapBrushes() {
     }
 
     const addStackcontent = (cell: Stack) => {
+        const { spawnCells } = appState.simulation!.worldMap
+        if (!!spawnCells.get(JSON.stringify({ x: cell.cell_loc.x, y: cell.cell_loc.y }))) return
         switch (stackType) {
             case StackContentBrushTypes.Rubble:
                 cell.contents.push({
