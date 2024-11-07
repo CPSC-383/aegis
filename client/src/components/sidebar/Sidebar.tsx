@@ -60,7 +60,11 @@ function RightSidebar() {
                                 />
                                 <Game isOpen={selectedTab === TabNames.Game} />
                                 <MapEditor isOpen={selectedTab === TabNames.Editor} />
-                                <Settings isOpen={selectedTab === TabNames.Settings} setupAegisPath={setupAegisPath} />
+                                <Settings
+                                    isOpen={selectedTab === TabNames.Settings}
+                                    setupAegisPath={setupAegisPath}
+                                    aegisPath={aegisPath || ''}
+                                />
                             </div>
                             {(selectedTab === TabNames.Agents ||
                                 selectedTab === TabNames.Aegis ||
