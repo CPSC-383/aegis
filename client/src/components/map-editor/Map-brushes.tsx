@@ -100,15 +100,17 @@ function MapBrushes() {
 
     const addSpecialCell = (tile: Location) => {
         const { killerCells, chargingCells, fireCells, spawnCells } = appState.simulation!.worldMap
-        if (!!spawnCells.get(JSON.stringify({ x: tile.x, y: tile.y }))) return
         switch (specialCellBrushTypes) {
             case SpecialCellBrushTypes.Killer:
+                if (!!spawnCells.get(JSON.stringify({ x: tile.x, y: tile.y }))) return
                 killerCells.push(tile)
                 break
             case SpecialCellBrushTypes.Fire:
+                if (!!spawnCells.get(JSON.stringify({ x: tile.x, y: tile.y }))) return
                 fireCells.push(tile)
                 break
             case SpecialCellBrushTypes.Charging:
+                if (!!spawnCells.get(JSON.stringify({ x: tile.x, y: tile.y }))) return
                 chargingCells.push(tile)
                 break
             case SpecialCellBrushTypes.Spawn:

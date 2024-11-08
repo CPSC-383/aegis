@@ -67,8 +67,7 @@ export class Simulation {
             const spawns = this.worldMap.spawnCells.get(key)
             return spawns
         }
-
-        return this.currentRoundData
+        return undefined
     }
 
     getAgentsAtCell(x: number, y: number): AgentInfoDict[] {
@@ -125,7 +124,6 @@ export class Simulation {
         if (newRound === this.currentRound && newRound !== 0) return
         this.currentRound = newRound
 
-        // this.currentRoundData = this.rounds[this.currentRound]
         this.currentRoundData = this.rounds[this.currentRound][0]
         this.currentGroupsData = this.rounds[this.currentRound][1]
 
