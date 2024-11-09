@@ -11,14 +11,14 @@ import {
     SpawnZoneTypes
 } from '@/utils/types'
 import { useState } from 'react'
-import NumberInput from '../inputs/NumberInput'
+import SpecialCellsBrush from './brushes/SpecialCellsBrush'
+import MoveCostBrush from './brushes/MoveCostBrush'
+import StackContentBrush from './brushes/StackContentBrush'
 
 function MapBrushes() {
     const { appState } = useAppContext()
     const [brushType, setBrushType] = useState<BrushType>(BrushType.SpecialCells)
-    const [specialCellBrushTypes, setSpecialCellBrushTypes] = useState<SpecialCellBrushTypes>(
-        SpecialCellBrushTypes.Killer
-    )
+    const [specialCellType, setSpecialCellType] = useState<SpecialCellBrushTypes>(SpecialCellBrushTypes.Killer)
     const [moveCost, setMoveCost] = useState<number>(2)
     const [gid, setGid] = useState<number>(0)
     const [spawnZoneType, setSpawnZoneType] = useState<SpawnZoneTypes>(SpawnZoneTypes.Any)
@@ -74,7 +74,7 @@ function MapBrushes() {
 
     const removeSpecialCell = (tile: Location) => {
         const { killerCells, chargingCells, fireCells, spawnCells } = appState.simulation!.worldMap
-        switch (specialCellBrushTypes) {
+        switch (specialCellType) {
             case SpecialCellBrushTypes.Killer:
                 removeCell(killerCells, tile)
                 break
@@ -100,7 +100,7 @@ function MapBrushes() {
 
     const addSpecialCell = (tile: Location) => {
         const { killerCells, chargingCells, fireCells, spawnCells } = appState.simulation!.worldMap
-        switch (specialCellBrushTypes) {
+        switch (specialCellType) {
             case SpecialCellBrushTypes.Killer:
                 if (!!spawnCells.get(JSON.stringify({ x: tile.x, y: tile.y }))) return
                 killerCells.push(tile)
@@ -177,6 +177,37 @@ function MapBrushes() {
         }
     }
 
+    const renderBrushContent = () => {
+        switch (brushType) {
+            case BrushType.SpecialCells:
+                return (
+                    <SpecialCellsBrush
+                        specialCellType={specialCellType}
+                        setSpecialCellType={setSpecialCellType}
+                        spawnZoneType={spawnZoneType}
+                        setSpawnZoneType={setSpawnZoneType}
+                        gid={gid}
+                        setGid={setGid}
+                    />
+                )
+            case BrushType.MoveCost:
+                return <MoveCostBrush moveCost={moveCost} setMoveCost={setMoveCost} />
+            case BrushType.StackContents:
+                return (
+                    <StackContentBrush
+                        stackType={stackType}
+                        setStackType={setStackType}
+                        rubbleInfo={rubbleInfo}
+                        setRubbleInfo={setRubbleInfo}
+                        survivorInfo={survivorInfo}
+                        setSurvivorInfo={setSurvivorInfo}
+                    />
+                )
+            default:
+                return null
+        }
+    }
+
     return (
         <div className="flex flex-col">
             <select
@@ -189,114 +220,7 @@ function MapBrushes() {
                 <option value={BrushType.StackContents}>Stack Contents Brush</option>
                 <option value={BrushType.Empty}>Empty Brush</option>
             </select>
-            {brushType === BrushType.SpecialCells && (
-                <>
-                    <select
-                        value={specialCellBrushTypes}
-                        onChange={(e) => setSpecialCellBrushTypes(e.target.value as SpecialCellBrushTypes)}
-                        className="bg-white p-2 w-full border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
-                    >
-                        <option value={SpecialCellBrushTypes.Killer}>Killer Brush</option>
-                        <option value={SpecialCellBrushTypes.Fire}>Fire Brush</option>
-                        <option value={SpecialCellBrushTypes.Charging}>Charging Brush</option>
-                        <option value={SpecialCellBrushTypes.Spawn}>Spawn Brush</option>
-                    </select>
-                    {specialCellBrushTypes === SpecialCellBrushTypes.Spawn && (
-                        <>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Type:</p>
-                                <select
-                                    value={spawnZoneType}
-                                    onChange={(e) => setSpawnZoneType(e.target.value as SpawnZoneTypes)}
-                                    className="bg-white p-2 border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
-                                >
-                                    <option value={SpawnZoneTypes.Any}>Any Group</option>
-                                    <option value={SpawnZoneTypes.Group}>Specific Group</option>
-                                </select>
-                            </div>
-                            {spawnZoneType === SpawnZoneTypes.Group && (
-                                <div className="flex mt-4 items-center justify-center">
-                                    <p className="mr-2">GID:</p>
-                                    <NumberInput
-                                        value={gid}
-                                        onChange={(newGid) => setGid(newGid)}
-                                        min={0}
-                                        extraStyles="w-16"
-                                    />
-                                </div>
-                            )}
-                        </>
-                    )}
-                </>
-            )}
-            {brushType === BrushType.MoveCost && (
-                <>
-                    <select
-                        value={moveCost}
-                        onChange={(e) => setMoveCost(parseInt(e.target.value))}
-                        className="bg-white p-2 w-full border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
-                    >
-                        <option value={2}>2</option>
-                        <option value={3}>3</option>
-                        <option value={4}>4</option>
-                        <option value={5}>5</option>
-                    </select>
-                    <div className="flex mt-4 items-center justify-center">
-                        <p className="mr-2">Custom Move Cost:</p>
-                        <NumberInput
-                            value={moveCost}
-                            onChange={(newCost) => setMoveCost(newCost)}
-                            min={2}
-                            extraStyles="w-16"
-                        />
-                    </div>
-                </>
-            )}
-            {brushType === BrushType.StackContents && (
-                <>
-                    <select
-                        value={stackType}
-                        onChange={(e) => setStackType(e.target.value as StackContentBrushTypes)}
-                        className="bg-white p-2 w-full border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
-                    >
-                        <option value={StackContentBrushTypes.Survivor}>Survivor Brush</option>
-                        <option value={StackContentBrushTypes.Rubble}>Rubble Brush</option>
-                    </select>
-                    {stackType === StackContentBrushTypes.Rubble && (
-                        <div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Remove Energy:</p>
-                                <NumberInput
-                                    value={rubbleInfo.remove_energy}
-                                    onChange={(newEnergy) => setRubbleInfo({ ...rubbleInfo, remove_energy: newEnergy })}
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                            <div className="flex mt-4 items-center justify-center">
-                                <p className="mr-2">Remove Agents:</p>
-                                <NumberInput
-                                    value={rubbleInfo.remove_agents}
-                                    onChange={(newAgents) => setRubbleInfo({ ...rubbleInfo, remove_agents: newAgents })}
-                                    min={0}
-                                    extraStyles="w-16"
-                                />
-                            </div>
-                        </div>
-                    )}
-                    {stackType === StackContentBrushTypes.Survivor && (
-                        <div className="flex mt-4 items-center justify-center">
-                            <p className="mr-2">Energy Level:</p>
-                            <NumberInput
-                                value={survivorInfo.energy_level}
-                                onChange={(newEnergy) => setSurvivorInfo({ ...survivorInfo, energy_level: newEnergy })}
-                                min={0}
-                                extraStyles="w-16"
-                            />
-                        </div>
-                    )}
-                </>
-            )}
+            {renderBrushContent()}
         </div>
     )
 }
