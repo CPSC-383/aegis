@@ -61,7 +61,7 @@ export enum BrushType {
 }
 
 export enum StackContentBrushTypes {
-    SurvivorGroup = 'survivor_group',
+    // SurvivorGroup = 'survivor_group',
     Survivor = 'survivor',
     Rubble = 'rubble'
 }

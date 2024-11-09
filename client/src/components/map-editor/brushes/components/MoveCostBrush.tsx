@@ -1,4 +1,4 @@
-import NumberInput from '../../inputs/NumberInput'
+import NumberInput from '@/components/inputs/NumberInput'
 
 interface Props {
     moveCost: number

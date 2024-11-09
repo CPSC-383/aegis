@@ -1,5 +1,4 @@
 import { RubbleInfo, StackContentBrushTypes, SurvivorInfo } from '@/utils/types'
-import NumberInput from '../../inputs/NumberInput'
 import RubbleSettings from './RubbleSettings'
 import SurvivorSettings from './SurvivorSettings'
 

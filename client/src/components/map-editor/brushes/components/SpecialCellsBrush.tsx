@@ -1,5 +1,5 @@
 import { SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
-import NumberInput from '../../inputs/NumberInput'
+import NumberInput from '@/components/inputs/NumberInput'
 
 interface Props {
     specialCellType: SpecialCellBrushTypes

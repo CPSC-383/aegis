@@ -1,5 +1,5 @@
 import { SurvivorInfo } from '@/utils/types'
-import NumberInput from '../../inputs/NumberInput'
+import NumberInput from '@/components/inputs/NumberInput'
 
 interface Props {
     survivorInfo: SurvivorInfo

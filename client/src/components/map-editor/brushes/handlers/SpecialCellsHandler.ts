@@ -1,0 +1,103 @@
+import { Location, SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
+import BrushHandler from './BrushHandler'
+
+class SpecialCellsHandler extends BrushHandler {
+    constructor(
+        worldMap: any,
+        private specialCellType: SpecialCellBrushTypes,
+        private spawnZoneType: SpawnZoneTypes,
+        private gid: number
+    ) {
+        super(worldMap)
+    }
+
+    handle(tile: Location, rightClicked: boolean): void {
+        const stack = this.getStack(tile)
+        if (stack && stack.contents.length > 0) return
+
+        if (rightClicked) {
+            this.removeSpecialCell(tile)
+        } else if (!this.isOccupied(tile)) {
+            this.addSpecialCell(tile)
+        }
+    }
+
+    private removeSpecialCell(tile: Location): void {
+        const { killerCells, chargingCells, fireCells, spawnCells } = this.worldMap
+        const key = JSON.stringify(tile)
+
+        switch (this.specialCellType) {
+            case SpecialCellBrushTypes.Killer:
+                this.removeFromArray(killerCells, tile)
+                break
+            case SpecialCellBrushTypes.Fire:
+                this.removeFromArray(fireCells, tile)
+                break
+            case SpecialCellBrushTypes.Charging:
+                this.removeFromArray(chargingCells, tile)
+                break
+            case SpecialCellBrushTypes.Spawn:
+                spawnCells.delete(key)
+                break
+        }
+    }
+
+    private removeFromArray(cells: Location[], tile: Location): void {
+        const index = cells.findIndex((g) => g.x === tile.x && g.y === tile.y)
+        if (index !== -1) cells.splice(index, 1)
+    }
+
+    private addSpecialCell(tile: Location): void {
+        const { killerCells, chargingCells, fireCells, spawnCells } = this.worldMap
+        const key = JSON.stringify(tile)
+
+        if (this.specialCellType !== SpecialCellBrushTypes.Spawn && spawnCells.get(key)) return
+
+        switch (this.specialCellType) {
+            case SpecialCellBrushTypes.Killer:
+                killerCells.push(tile)
+                break
+            case SpecialCellBrushTypes.Fire:
+                fireCells.push(tile)
+                break
+            case SpecialCellBrushTypes.Charging:
+                chargingCells.push(tile)
+                break
+            case SpecialCellBrushTypes.Spawn:
+                this.handleSpawnCells(tile)
+                break
+        }
+    }
+
+    private handleSpawnCells(tile: Location): void {
+        const { spawnCells } = this.worldMap
+        const key = JSON.stringify(tile)
+        const spawn = spawnCells.get(key)
+        const existingGids = spawn?.groups || []
+
+        if (spawn) {
+            if (
+                (spawn.type === SpawnZoneTypes.Any && this.spawnZoneType === SpawnZoneTypes.Group) ||
+                (spawn.type === SpawnZoneTypes.Group && this.spawnZoneType === SpawnZoneTypes.Any)
+            ) {
+                return
+            }
+        }
+
+        if (this.spawnZoneType === SpawnZoneTypes.Any) {
+            spawnCells.set(key, { type: this.spawnZoneType, groups: [] })
+            return
+        }
+
+        if (this.gid === 0) return
+
+        if (!existingGids.includes(this.gid)) {
+            spawnCells.set(key, {
+                type: this.spawnZoneType,
+                groups: [...existingGids, this.gid]
+            })
+        }
+    }
+}
+
+export default SpecialCellsHandler
