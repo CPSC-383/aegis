@@ -1,3 +1,7 @@
+---
+icon: octicons/download-16
+---
+
 This section will cover the basic information about downloading and installing AEGIS.
 
 !!! info "Before You Begin"

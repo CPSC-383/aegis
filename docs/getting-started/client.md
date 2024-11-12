@@ -1,3 +1,7 @@
+---
+icon: material/laptop
+---
+
 This section will cover the basics on how to use the client, covering its 
 features and functionality to help you get started.
 

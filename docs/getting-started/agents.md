@@ -1,3 +1,7 @@
+---
+icon: octicons/people-16
+---
+
 This section will cover the basics needed to create agents that work with AEGIS. 
 
 ## Agents and the Simulated world in AEGIS

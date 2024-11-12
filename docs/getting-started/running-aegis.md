@@ -1,3 +1,7 @@
+---
+icon: octicons/play-16
+---
+
 This section will cover how to run AEGIS.
 
 ## How to run AEGIS

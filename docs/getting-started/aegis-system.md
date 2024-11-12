@@ -1,3 +1,7 @@
+---
+icon: material/book-open-variant
+---
+
 This section will cover the basics of how AEGIS works, and how to use the different parts of AEGIS. 
 
 ## What is AEGIS?
