@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef } from 'react'
 type Props = {
     selectedCell: { x: number; y: number }
     setSelectedAgent: (value: AgentInfoDict) => void
-    cellInfo: cellDict | undefined
+    cellInfo: CellDict | undefined
     agents: AgentInfoDict[]
     simulation: Simulation
 }
@@ -128,6 +128,7 @@ function CellPanel({ selectedCell, setSelectedAgent, cellInfo, agents, simulatio
                                     <canvas
                                         ref={(el) => (canvasRefs.current[parseInt(gid)] = el)}
                                         onClick={handleAgentCanvasClick}
+                                        className="hover:cursor-pointer"
                                     />
                                 </div>
                             ))}
