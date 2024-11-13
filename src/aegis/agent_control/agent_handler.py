@@ -32,7 +32,7 @@ class AgentHandler:
         self.current_agent: int = 0
         self.agent_group_list: list[AgentGroup] = []
         self.current_mailbox: int = 1
-        self.send_message_result_list: list[SEND_MESSAGE_RESULT] = []
+        self.forward_message_list: list[SEND_MESSAGE_RESULT] = []
         self.send_messages_to_all_groups: bool = False
         self.server_socket: socket.socket | None = None
 
