@@ -5,7 +5,7 @@ __all__ = [
     "CONNECT_OK",
     "DEATH_CARD",
     "DISCONNECT",
-    "FWD_MESSAGE",
+    "SEND_MESSAGE_RESULT",
     "MESSAGES_END",
     "MESSAGES_START",
     "MOVE_RESULT",
@@ -24,7 +24,7 @@ from aegis.common.commands.aegis_commands.CMD_RESULT_START import CMD_RESULT_STA
 from aegis.common.commands.aegis_commands.CONNECT_OK import CONNECT_OK
 from aegis.common.commands.aegis_commands.DEATH_CARD import DEATH_CARD
 from aegis.common.commands.aegis_commands.DISCONNECT import DISCONNECT
-from aegis.common.commands.aegis_commands.FWD_MESSAGE import FWD_MESSAGE
+from aegis.common.commands.aegis_commands.SEND_MESSAGE_RESULT import SEND_MESSAGE_RESULT
 from aegis.common.commands.aegis_commands.MESSAGES_END import MESSAGES_END
 from aegis.common.commands.aegis_commands.MESSAGES_START import MESSAGES_START
 from aegis.common.commands.aegis_commands.MOVE_RESULT import MOVE_RESULT

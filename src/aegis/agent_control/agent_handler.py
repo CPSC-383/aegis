@@ -12,7 +12,7 @@ from aegis.common.commands.aegis_command import AegisCommand
 from aegis.common.commands.aegis_commands import (
     CMD_RESULT_END,
     CMD_RESULT_START,
-    FWD_MESSAGE,
+    SEND_MESSAGE_RESULT,
     MESSAGES_END,
     MESSAGES_START,
     SAVE_SURV_RESULT,
@@ -32,7 +32,7 @@ class AgentHandler:
         self.current_agent: int = 0
         self.agent_group_list: list[AgentGroup] = []
         self.current_mailbox: int = 1
-        self.forward_message_list: list[FWD_MESSAGE] = []
+        self.send_message_result_list: list[SEND_MESSAGE_RESULT] = []
         self.send_messages_to_all_groups: bool = False
         self.server_socket: socket.socket | None = None
 
@@ -177,7 +177,10 @@ class AgentHandler:
             return
         try:
             if agent.agent_socket is not None:
-                if isinstance(command, SAVE_SURV_RESULT) and command.image_to_predict is not None:
+                if (
+                    isinstance(command, SAVE_SURV_RESULT)
+                    and command.image_to_predict is not None
+                ):
                     image = command.image_to_predict
                     unique_labels = command.all_unique_labels
                     if unique_labels is None:
@@ -196,10 +199,14 @@ class AgentHandler:
                 else:
                     agent.agent_socket.send_message(str(command))
         except AgentCrashedException as e:
-            print(f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !')
+            print(
+                f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !'
+            )
             raise e
         except Exception as e:
-            print(f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !')
+            print(
+                f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !'
+            )
 
     def send_message_to_all(self, command: AegisCommand) -> None:
         for agent in self.agent_list:
@@ -216,13 +223,19 @@ class AgentHandler:
                 return None
             command = AegisParser.parse_agent_command(s)
         except AgentSocketException:
-            print(f"Aegis  : Exception reading message from agent {self.get_current_agent().agent_id} !")
+            print(
+                f"Aegis  : Exception reading message from agent {self.get_current_agent().agent_id} !"
+            )
             command = AGENT_UNKNOWN()
         except AegisParserException:
-            print(f"Aegis  : Exception parsing message from agent {self.get_current_agent().agent_id} !")
+            print(
+                f"Aegis  : Exception parsing message from agent {self.get_current_agent().agent_id} !"
+            )
             command = AGENT_UNKNOWN()
         except AgentCrashedException as e:
-            print(f"Aegis  : Agent reset the socket connection (possible crash of agent?) {self.get_current_agent().agent_id} !")
+            print(
+                f"Aegis  : Agent reset the socket connection (possible crash of agent?) {self.get_current_agent().agent_id} !"
+            )
             raise e
         command.set_agent_id(self.get_current_agent().agent_id)
         return command
@@ -244,74 +257,82 @@ class AgentHandler:
             self.send_message_to(agent.agent_id, CMD_RESULT_START(0))
             self.send_message_to(agent.agent_id, CMD_RESULT_END())
 
-    def forward_message_to_all(self, fwd_message: FWD_MESSAGE) -> None:
-        fwd_message.set_number_left_to_read(len(self.agent_list))
+    def forward_message_to_all(self, smr: SEND_MESSAGE_RESULT) -> None:
+        smr.set_number_left_to_read(len(self.agent_list))
 
         for agent in self.agent_list:
-            self._add_message_to_mailbox(agent, fwd_message)
-        self.forward_message_list.append(fwd_message)
+            self._add_message_to_mailbox(agent, smr)
+        self.forward_message_list.append(smr)
 
-    def forward_message_to_group(self, gid: int, fwd_message: FWD_MESSAGE) -> None:
+    def forward_message_to_group(self, gid: int, smr: SEND_MESSAGE_RESULT) -> None:
         group = self.get_agent_group(gid)
         if group is None:
             return
 
-        fwd_message.set_number_left_to_read(len(group.agent_list))
+        smr.set_number_left_to_read(len(group.agent_list))
 
         for agent in group.agent_list:
-            self._add_message_to_mailbox(agent, fwd_message)
-        self.forward_message_list.append(fwd_message)
+            self._add_message_to_mailbox(agent, smr)
+        self.forward_message_list.append(smr)
 
-    def forward_message(self, fwd_message: FWD_MESSAGE) -> None:
-        fwd_message.set_number_left_to_read(0)
-        for agent_id in fwd_message.agent_id_list:
+    def forward_message(self, smr: SEND_MESSAGE_RESULT) -> None:
+        smr.set_number_left_to_read(0)
+        for agent_id in smr.agent_id_list:
             if agent_id.id == 0:
                 if self.send_messages_to_all_groups:
-                    self.forward_message_to_group(agent_id.gid, fwd_message)
+                    self.forward_message_to_group(agent_id.gid, smr)
                 else:
-                    if agent_id.gid == fwd_message.from_agent_id.gid:
-                        self.forward_message_to_group(agent_id.gid, fwd_message)
+                    if agent_id.gid == smr.from_agent_id.gid:
+                        self.forward_message_to_group(agent_id.gid, smr)
             else:
                 if self.send_messages_to_all_groups:
                     should_message_be_forwarded = True
                 else:
-                    should_message_be_forwarded = agent_id.gid == fwd_message.from_agent_id.gid
+                    should_message_be_forwarded = agent_id.gid == smr.from_agent_id.gid
                 if should_message_be_forwarded:
                     agent = self.get_agent(agent_id)
                     if agent is None:
                         continue
 
-                    fwd_message.increase_number_left_to_read(1)
-                    self._add_message_to_mailbox(agent, fwd_message)
-        self.forward_message_list.append(fwd_message)
+                    smr.increase_number_left_to_read(1)
+                    self._add_message_to_mailbox(agent, smr)
+        self.forward_message_list.append(smr)
 
     def send_forward_messages_to_current(self) -> None:
         agent = self.get_current_agent()
         mailbox = agent.mailbox1 if self.current_mailbox == 1 else agent.mailbox2
 
         self.send_message_to(agent.agent_id, MESSAGES_START(len(mailbox)))
-        for fwd_message in mailbox:
-            fwd_message.decrease_number_left_to_read()
-            self.send_message_to(agent.agent_id, fwd_message)
+        for smr in mailbox:
+            smr.decrease_number_left_to_read()
+            self.send_message_to(agent.agent_id, smr)
 
         self.send_message_to(agent.agent_id, MESSAGES_END())
         mailbox.clear()
 
-    def _add_message_to_mailbox(self, agent: AgentControl, fwd_message: FWD_MESSAGE) -> None:
+    def _add_message_to_mailbox(
+        self, agent: AgentControl, smr: SEND_MESSAGE_RESULT
+    ) -> None:
         if self.current_mailbox == 1:
-            agent.mailbox2.append(fwd_message)
+            agent.mailbox2.append(smr)
         elif self.current_mailbox == 2:
-            agent.mailbox1.append(fwd_message)
+            agent.mailbox1.append(smr)
 
     def remove_all_forward_messages(self) -> None:
         self.forward_message_list.clear()
 
     def empty_forward_messages(self) -> None:
-        self.forward_message_list = [msg for msg in self.forward_message_list if msg.get_number_left_to_read() > 0]
+        self.forward_message_list = [
+            msg
+            for msg in self.forward_message_list
+            if msg.get_number_left_to_read() > 0
+        ]
 
         self.current_mailbox = 2 if self.current_mailbox == 1 else 1
 
-    def increase_agent_group_saved(self, gid: int, number_saved: int, save_state: int) -> None:
+    def increase_agent_group_saved(
+        self, gid: int, number_saved: int, save_state: int
+    ) -> None:
         state_message = "alive" if save_state == Constants.SAVE_STATE_ALIVE else "dead"
         print(f"Aegis  : Group {gid} saved {number_saved} survivors {state_message}.")
         agent_group: AgentGroup | None = self.get_agent_group(gid)
@@ -325,9 +346,14 @@ class AgentHandler:
             agent_group.number_saved_dead += number_saved
 
         # update agent group score (BASE for first survivor saved, EXTRA for any additional survivors saved (surv groups))
-        agent_group.score += Constants.SCORE_SURV_SAVED_BASE + (number_saved - 1) * Constants.SCORE_ANY_EXTRA_SURV_SAVED
+        agent_group.score += (
+            Constants.SCORE_SURV_SAVED_BASE
+            + (number_saved - 1) * Constants.SCORE_ANY_EXTRA_SURV_SAVED
+        )
 
-    def increase_agent_group_predicted(self, gid: int, surv_id: int, label: np.int64, pred_correct: bool) -> None:
+    def increase_agent_group_predicted(
+        self, gid: int, surv_id: int, label: np.int64, pred_correct: bool
+    ) -> None:
         """called when group predicts, also updates group score accordingly
 
         Args:
@@ -347,7 +373,9 @@ class AgentHandler:
             agent_group.number_predicted_wrong += 1
         agent_group.number_predicted += 1
 
-        print(f"Aegis  : Group {gid} predicted symbol {label} from survivor {surv_id} {correct_string}")
+        print(
+            f"Aegis  : Group {gid} predicted symbol {label} from survivor {surv_id} {correct_string}"
+        )
 
     def print_group_survivor_saves(self) -> None:
         print("=================================================")
@@ -355,4 +383,6 @@ class AgentHandler:
         print("(Score, Number Saved, Correct Predictions)")
         print("=================================================")
         for group in self.agent_group_list:
-            print(f"{group.name} : ({group.score}, {group.number_saved}, {group.number_predicted_right})")
+            print(
+                f"{group.name} : ({group.score}, {group.number_saved}, {group.number_predicted_right})"
+            )

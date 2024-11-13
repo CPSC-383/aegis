@@ -47,7 +47,7 @@ nav:
               - ConnectOK: api/aegis_commands/connect-ok.md
               - DeathCard: api/aegis_commands/death-card.md
               - Disconnect: api/aegis_commands/disconnect.md
-              - FwdMessage: api/aegis_commands/fwd-message.md
+              - SendMessageResult: api/aegis_commands/send-message-result.md
               - MoveResult: api/aegis_commands/move-result.md
               - ObserveResult: api/aegis_commands/observe-result.md
               - PredictResult: api/aegis_commands/predict-result.md

@@ -21,7 +21,7 @@ from aegis.common.commands.aegis_commands import (
     CONNECT_OK,
     DEATH_CARD,
     DISCONNECT,
-    FWD_MESSAGE,
+    SEND_MESSAGE_RESULT,
     MESSAGES_END,
     MESSAGES_START,
     MOVE_RESULT,
@@ -181,8 +181,8 @@ class AegisParser:
                 AegisParser.text(tokens, Command.STR_DEATH_CARD)
                 AegisParser.done(tokens)
                 return DEATH_CARD()
-            elif string.startswith(Command.STR_FWD_MESSAGE):
-                AegisParser.text(tokens, Command.STR_FWD_MESSAGE)
+            elif string.startswith(Command.STR_SEND_MESSAGE_RESULT):
+                AegisParser.text(tokens, Command.STR_SEND_MESSAGE_RESULT)
                 AegisParser.open_round_bracket(tokens)
                 AegisParser.text(tokens, "IDFrom")
                 AegisParser.open_round_bracket(tokens)
@@ -209,7 +209,7 @@ class AegisParser:
                 tokens = iter(string[msg_end + 1 :].split())
                 AegisParser.close_round_bracket(tokens)
                 AegisParser.done(tokens)
-                return FWD_MESSAGE(AgentID(id, gid), agent_id_list, message)
+                return SEND_MESSAGE_RESULT(AgentID(id, gid), agent_id_list, message)
             elif string.startswith(Command.STR_MESSAGES_END):
                 AegisParser.text(tokens, Command.STR_MESSAGES_END)
                 AegisParser.done(tokens)

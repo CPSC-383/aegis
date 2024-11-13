@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
 
-import agent.base_agent
-from agent.agent_states import AgentStates
-from agent.log_levels import LogLevels
 from aegis.common.commands.aegis_command import AegisCommand
 from aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
@@ -11,7 +8,6 @@ from aegis.common.commands.aegis_commands import (
     CONNECT_OK,
     DEATH_CARD,
     DISCONNECT,
-    FWD_MESSAGE,
     MESSAGES_END,
     MESSAGES_START,
     MOVE_RESULT,
@@ -20,12 +16,17 @@ from aegis.common.commands.aegis_commands import (
     ROUND_END,
     ROUND_START,
     SAVE_SURV_RESULT,
+    SEND_MESSAGE_RESULT,
     SLEEP_RESULT,
     TEAM_DIG_RESULT,
 )
 from aegis.common.parsers.aegis_parser import AegisParser
 from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.world import World
+
+import agent.base_agent
+from agent.agent_states import AgentStates
+from agent.log_levels import LogLevels
 
 
 class Brain(ABC):
@@ -60,12 +61,12 @@ class Brain(ABC):
         pass
 
     @abstractmethod
-    def handle_fwd_message(self, msg: FWD_MESSAGE) -> None:
+    def handle_send_message_result(self, smr: SEND_MESSAGE_RESULT) -> None:
         """
-        Handles the FWD_MESSAGE command.
+        Handles the SEND_MESSAGE_RESULT command.
 
         Args:
-            msg: The FWD_MESSAGE command to handle.
+            smr: The SEND_MESSAGE_RESULT command to handle.
         """
         pass
 
@@ -167,8 +168,8 @@ class Brain(ABC):
             base_agent.set_agent_state(AgentStates.SHUTTING_DOWN)
             self.handle_disconnect()
 
-        elif isinstance(aegis_command, FWD_MESSAGE):
-            self.handle_fwd_message(aegis_command)
+        elif isinstance(aegis_command, SEND_MESSAGE_RESULT):
+            self.handle_send_message_result(aegis_command)
 
         elif isinstance(aegis_command, MESSAGES_END):
             base_agent.set_agent_state(AgentStates.IDLE)

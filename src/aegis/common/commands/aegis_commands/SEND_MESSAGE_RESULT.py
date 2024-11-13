@@ -4,7 +4,7 @@ from aegis.common import AgentID, AgentIDList
 from aegis.common.commands.aegis_command import AegisCommand
 
 
-class FWD_MESSAGE(AegisCommand):
+class SEND_MESSAGE_RESULT(AegisCommand):
     """
     Represents a message that came from another agent.
 
@@ -18,7 +18,7 @@ class FWD_MESSAGE(AegisCommand):
         self, from_agent_id: AgentID, agent_id_list: AgentIDList, msg: str
     ) -> None:
         """
-        Initializes a new FWD_MESSAGE instance.
+        Initializes a new SEND_MESSAGE_RESULT instance.
 
         Args:
             from_agent_id: The AgentID of the agent sending the message.
@@ -32,7 +32,7 @@ class FWD_MESSAGE(AegisCommand):
 
     @override
     def __str__(self) -> str:
-        return f"{self.STR_FWD_MESSAGE} ( IDFrom ( {self.from_agent_id.id} , {self.from_agent_id.gid} ) , MsgSize {len(self.msg)} , NUM_TO {self.agent_id_list.size()} , IDS {self.agent_id_list} , MSG {self.msg} )"
+        return f"{self.STR_SEND_MESSAGE_RESULT} ( IDFrom ( {self.from_agent_id.id} , {self.from_agent_id.gid} ) , MsgSize {len(self.msg)} , NUM_TO {self.agent_id_list.size()} , IDS {self.agent_id_list} , MSG {self.msg} )"
 
     def get_number_left_to_read(self) -> int:
         return self._number_left_to_read

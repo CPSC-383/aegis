@@ -37,7 +37,7 @@ from aegis.common.commands.aegis_commands import (
     CONNECT_OK,
     DEATH_CARD,
     DISCONNECT,
-    FWD_MESSAGE,
+    SEND_MESSAGE_RESULT,
     MOVE_RESULT,
     OBSERVE_RESULT,
     PREDICT_RESULT,
@@ -500,7 +500,7 @@ class Aegis:
             self._OBSERVE_list.append(command)
         elif isinstance(command, SEND_MESSAGE):
             send_message: SEND_MESSAGE = command
-            fwd_message = FWD_MESSAGE(
+            send_message_result = SEND_MESSAGE_RESULT(
                 send_message.get_agent_id(),
                 send_message.agent_id_list,
                 send_message.message,
@@ -508,13 +508,13 @@ class Aegis:
             if send_message.agent_id_list.is_empty():
                 if self._parameters.config_settings is not None:
                     if self._parameters.config_settings.send_messages_to_all_groups:
-                        self._agent_handler.forward_message_to_all(fwd_message)
+                        self._agent_handler.forward_message_to_all(send_message_result)
                     else:
                         self._agent_handler.forward_message_to_group(
-                            send_message.get_agent_id().gid, fwd_message
+                            send_message.get_agent_id().gid, send_message_result
                         )
             else:
-                self._agent_handler.forward_message(fwd_message)
+                self._agent_handler.forward_message(send_message_result)
 
     def _process_commands(self) -> None:
         self._process_TEAM_DIG()

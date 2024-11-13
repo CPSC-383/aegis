@@ -57,7 +57,7 @@ AEGIS uses the following commands to interact with the agents. Click on each com
 - **[CONNECT_OK](../api/aegis_commands/connect-ok.md)**: Result of the agent successfully connecting to AEGIS.
 - **[DEATH_CARD](../api/aegis_commands/death-card.md)**: If the agent has died.
 - **[DISCONNECT](../api/aegis_commands/disconnect.md)**: AEGIS is shutting down, allowing the agent to shutdown as well.
-- **[FWD_MESSAGE](../api/aegis_commands/fwd-message.md)**: A message received from one agent that is to be forwarded to another agent.
+- **[SEND_MESSAGE_RESULT](../api/aegis_commands/send-message-result.md)**: A message received from one agent that is to be forwarded to another agent.
 - **[MOVE_RESULT](../api/aegis_commands/move-result.md)**: Result of the agent moving in a certain direction.
 - **[OBSERVE_RESULT](../api/aegis_commands/observe-result.md)**: Result of observing a cell.
 - **[PREDICT RESULT](../api/aegis_commands/predict-result.md)**: Represents the result of an agent's prediction.

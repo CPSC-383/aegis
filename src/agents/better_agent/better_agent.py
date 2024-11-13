@@ -9,7 +9,7 @@ import tensorflow as tf  # pyright: ignore[reportMissingTypeStubs]
 from aegis import (
     CONNECT_OK,
     END_TURN,
-    FWD_MESSAGE,
+    SEND_MESSAGE_RESULT,
     MOVE,
     MOVE_RESULT,
     OBSERVE_RESULT,
@@ -62,8 +62,8 @@ class BetterAgent(Brain):
         BaseAgent.log(LogLevels.Always, "DEAD")
 
     @override
-    def handle_fwd_message(self, msg: FWD_MESSAGE) -> None:
-        BaseAgent.log(LogLevels.Always, f"FWD MESSAGE: {msg}")
+    def handle_send_message_result(self, msg: SEND_MESSAGE_RESULT) -> None:
+        BaseAgent.log(LogLevels.Always, f"SEND_MESSAGE_RESULT: {msg}")
         BaseAgent.log(LogLevels.Test, f"{msg}")
 
     @override

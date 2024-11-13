@@ -61,7 +61,7 @@ Commands AEGIS uses to interact with the agents.
 - [`aegis.CONNECT_OK`][]: Represents the result of the agent successfully connecting to AEGIS.
 - [`aegis.DEATH_CARD`][]: Represents if the agent has died.
 - [`aegis.DISCONNECT`][]: Represents if the agent has disconnected and the system has shutdown.
-- [`aegis.FWD_MESSAGE`][]: Represents a message that came from another agent.
+- [`aegis.SEND_MESSAGE_RESULT`][]: Represents a message that came from another agent.
 - [`aegis.MOVE_RESULT`][]: Represents the result of the agent moving.
 - [`aegis.OBSERVE_RESULT`][]: Represents the result of observing a cell.
 - [`aegis.PREDICT_RESULT`][]: Represents the result of an agent's prediction.
@@ -77,11 +77,11 @@ from aegis.common.commands.aegis_commands import (
     CONNECT_OK,
     DEATH_CARD,
     DISCONNECT,
-    FWD_MESSAGE,
     MOVE_RESULT,
     OBSERVE_RESULT,
     PREDICT_RESULT,
     SAVE_SURV_RESULT,
+    SEND_MESSAGE_RESULT,
     SLEEP_RESULT,
     TEAM_DIG_RESULT,
 )
@@ -121,7 +121,7 @@ __all__ = [
     "DISCONNECT",
     "Direction",
     "END_TURN",
-    "FWD_MESSAGE",
+    "SEND_MESSAGE_RESULT",
     "Cell",
     "CellInfo",
     "LifeSignals",

@@ -3,15 +3,15 @@ from typing import override
 from aegis.agent_control.network.agent_socket import AgentSocket
 from aegis.common.agent_id import AgentID
 from aegis.common.commands.aegis_command import AegisCommand
-from aegis.common.commands.aegis_commands import FWD_MESSAGE
+from aegis.common.commands.aegis_commands import SEND_MESSAGE_RESULT
 
 
 class AgentControl:
     def __init__(self, agent_id: AgentID) -> None:
         self.agent_id: AgentID = agent_id
         self.agent_socket: AgentSocket | None = None
-        self.mailbox1: list[FWD_MESSAGE] = []
-        self.mailbox2: list[FWD_MESSAGE] = []
+        self.mailbox1: list[SEND_MESSAGE_RESULT] = []
+        self.mailbox2: list[SEND_MESSAGE_RESULT] = []
         self.result_of_command: AegisCommand | None = None
 
     @override

@@ -3,7 +3,7 @@ from typing import override
 from aegis import (
     CONNECT_OK,
     END_TURN,
-    FWD_MESSAGE,
+    SEND_MESSAGE_RESULT,
     MOVE,
     MOVE_RESULT,
     OBSERVE_RESULT,
@@ -38,9 +38,9 @@ class ExampleAgent(Brain):
         BaseAgent.log(LogLevels.Always, "DEAD")
 
     @override
-    def handle_fwd_message(self, msg: FWD_MESSAGE) -> None:
-        BaseAgent.log(LogLevels.Always, f"FWD MESSAGE: {msg}")
-        BaseAgent.log(LogLevels.Test, f"{msg}")
+    def handle_send_message_result(self, smr: SEND_MESSAGE_RESULT) -> None:
+        BaseAgent.log(LogLevels.Always, f"SEND_MESSAGE_RESULT: {smr}")
+        BaseAgent.log(LogLevels.Test, f"{smr}")
 
     @override
     def handle_move_result(self, mr: MOVE_RESULT) -> None:
