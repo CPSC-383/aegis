@@ -10,7 +10,7 @@ function Settings({ isOpen, setupAegisPath, aegisPath }: Props) {
     if (!isOpen) return null
     return (
         <div className="space-y-2 flex flex-col items-center">
-            <p className="text-sm">{aegisPath}</p>
+            <p className="text-sm w-full break-words">{aegisPath}</p>
             <Button onClick={setupAegisPath} label="Reconfigure Aegis Path" styles="bg-primary text-sm" />
         </div>
     )
