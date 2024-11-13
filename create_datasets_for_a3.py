@@ -3,8 +3,8 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 
-values = np.load("values.npy")
-labels = np.load("labels.npy")
+values = np.load(os.path.join("sys_files", "values.npy"))
+labels = np.load(os.path.join("sys_files", "labels.npy"))
 
 # shuffle data
 data_size = values.shape[0]
@@ -26,7 +26,9 @@ plt.show()
 
 # save data to the 4 spots ! !
 agent_training_output_dir = os.path.join("src", "agent", "model_training_data")
-ares_testing_output_dir = os.path.join("src", "aegis", "agent_predictions", "model_testing_data")
+ares_testing_output_dir = os.path.join(
+    "src", "aegis", "agent_predictions", "model_testing_data"
+)
 
 os.makedirs(agent_training_output_dir, exist_ok=True)
 os.makedirs(ares_testing_output_dir, exist_ok=True)

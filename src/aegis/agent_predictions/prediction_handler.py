@@ -35,12 +35,12 @@ class PredictionHandler:
 
     @staticmethod
     def get_image_from_index(index: int) -> NDArray[np.float32]:
-        print(f"\n\nx_test shape: {PredictionHandler._x_test.shape}\n\n\n")
+        # print(f"\n\nx_test shape: {PredictionHandler._x_test.shape}\n\n\n")
         return PredictionHandler._x_test[index]
 
     @staticmethod
     def get_label_from_index(index: int) -> int:
-        print(f"\n\ny_test shape: {PredictionHandler._y_test.shape}\n\n\n")
+        # print(f"\n\ny_test shape: {PredictionHandler._y_test.shape}\n\n\n")
         return PredictionHandler._y_test[index]
 
     @staticmethod

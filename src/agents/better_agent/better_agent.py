@@ -13,7 +13,7 @@ from aegis import (
     MOVE,
     MOVE_RESULT,
     OBSERVE_RESULT,
-    PREDICT,
+    # PREDICT,
     PREDICT_RESULT,
     SAVE_SURV,
     SAVE_SURV_RESULT,
@@ -114,12 +114,12 @@ class BetterAgent(Brain):
         if world is None:
             return
 
-        if self._agent.get_prediction_info_size() > 0:
-            surv_id, image, _ = self._agent.get_prediction_info()
-            if image is not None:
-                predicted_label = self._predict(image)
-                self.send_and_end_turn(PREDICT(surv_id, predicted_label))
-                return
+        # if self._agent.get_prediction_info_size() > 0:
+        #     surv_id, image, _ = self._agent.get_prediction_info()
+        #     if image is not None:
+        #         predicted_label = self._predict(image)
+        #         self.send_and_end_turn(PREDICT(surv_id, predicted_label))
+        #         return
 
         loc = self.get_best_location(world)
         if loc == self._agent.get_location():

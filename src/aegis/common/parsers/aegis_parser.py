@@ -130,7 +130,6 @@ class AegisParser:
     def parse_aegis_command(string: str) -> AegisCommand:
         try:
             string = string.strip()
-            print(string)
             tokens = iter(string.split())
             if string.startswith(Command.STR_CONNECT_OK):
                 AegisParser.text(tokens, Command.STR_CONNECT_OK)
@@ -402,8 +401,7 @@ class AegisParser:
                     f"Cannot parse Agent to Kernel Command from {string} | Did your agent throw an exception?"
                 )
                 return AGENT_UNKNOWN()
-        except Exception as e:
-            print(e)
+        except Exception:
             return AGENT_UNKNOWN()
 
     @staticmethod
