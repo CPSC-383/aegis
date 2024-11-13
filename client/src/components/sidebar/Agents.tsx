@@ -25,8 +25,8 @@ function Agents({ isOpen, aegisPath, numAgentsAegis, agents }: AgentsProps) {
     }, [numAgentsAegis, appState.simulation])
 
     const handleGroupName = (value: string) => {
-        // dont allow space characters
-        setGroupName(value.replace(/\s/g, ''))
+        // dont allow space characters and dont allow longer than 10 characters
+        setGroupName(value.replace(/\s/g, '').slice(0, 10))
     }
 
     const handleConnectAgents = async () => {
