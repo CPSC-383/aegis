@@ -22,7 +22,7 @@ git checkout a1
 - For assignment 3:
 
 ```bash
-git checkout main
+git checkout a3
 ```
 
 2. Create a new tag for the documentation release.
@@ -58,7 +58,7 @@ git checkout a1
 - For assignment 3:
 
 ```bash
-git checkout main
+git checkout a3
 ```
 
 2. Create a new tag for the documentation release.
