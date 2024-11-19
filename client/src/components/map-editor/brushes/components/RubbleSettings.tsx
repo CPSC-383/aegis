@@ -10,7 +10,7 @@ function RubbleSettings({ rubbleInfo, setRubbleInfo }: Props) {
     return (
         <>
             <div className="flex mt-4 items-center justify-center">
-                <p className="mr-2">Remove Energy:</p>
+                <p className="mr-2">Energy to Remove:</p>
                 <NumberInput
                     value={rubbleInfo.remove_energy}
                     onChange={(newEnergy) => setRubbleInfo({ ...rubbleInfo, remove_energy: newEnergy })}
@@ -19,7 +19,7 @@ function RubbleSettings({ rubbleInfo, setRubbleInfo }: Props) {
                 />
             </div>
             <div className="flex mt-4 items-center justify-center">
-                <p className="mr-2">Remove Agents:</p>
+                <p className="mr-2">Required Agents:</p>
                 <NumberInput
                     value={rubbleInfo.remove_agents}
                     onChange={(newAgents) => setRubbleInfo({ ...rubbleInfo, remove_agents: newAgents })}
