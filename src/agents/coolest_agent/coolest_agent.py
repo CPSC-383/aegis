@@ -178,7 +178,6 @@ class CoolestAgent(Brain):
     def populate_surv_spots(self, world: World):
         for row in world.get_world_grid():
             for cell in row:
-                cell.number_of_survivors()
                 if cell.survivor_chance > 0:
                     self.locs_with_survs[cell.location] = cell.survivor_chance
 
