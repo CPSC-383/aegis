@@ -3,7 +3,9 @@ from typing import override
 
 class LifeSignals:
     """
-    Represents a collection of life signals.
+    Represents a collection of life signals, where a survivor's life signal
+    represents their energy level, and rubble is represented as 0. The deeper
+    the layer, the more distorted the signal become.
 
     Attributes:
         life_signals (list[int]): A list of life signals.
@@ -14,7 +16,7 @@ class LifeSignals:
         Initializes a LifeSignals instance.
 
         Args:
-            life_signals: A list of life signals.
+            life_signals: An optional list of life signals.
         """
         self.life_signals = life_signals or []
 

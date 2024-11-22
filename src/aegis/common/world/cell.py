@@ -22,7 +22,6 @@ class Cell:
         move_cost (int): The movement cost associated with the cell.
         agent_id_list (AgentIDList): List of agent IDs present in the cell.
         survivor_chance (int): The percent chance that there are survivors in the cell.
-        stored_life_signals (LifeSignals): The life signals stored in the cell.
         location (Location): The location of the cell on the map.
     """
 
@@ -44,7 +43,6 @@ class Cell:
         self.agent_id_list = AgentIDList()
         self._cell_layer_list: list[WorldObject] = []
         self.survivor_chance = -1
-        self.stored_life_signals = LifeSignals()
 
         if x is not None and y is not None:
             self.location = Location(x, y)
