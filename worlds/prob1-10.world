@@ -5,32 +5,888 @@
         "width": 15,
         "height": 15
       },
-      "seed": 6668,
+      "seed": 2231,
       "world_file_levels": {
-        "high": 12,
-        "mid": 7,
-        "low": 1
+        "high": 14,
+        "mid": 8,
+        "low": 2
       },
       "agent_energy": 500
     }
   },
   "spawn_locs": [
     {
-      "x": 7,
-      "y": 7,
-      "type": "any"
+      "x": 2,
+      "y": 1
+    },
+    {
+      "x": 12,
+      "y": 1
     }
   ],
-  "cell_types": {
-    "fire_cells": [],
-    "killer_cells": [],
-    "charging_cells": []
+  "grid_types": {
+    "fire_grids": [],
+    "killer_grids": [
+      {
+        "x": 7,
+        "y": 14
+      },
+      {
+        "x": 6,
+        "y": 14
+      },
+      {
+        "x": 6,
+        "y": 13
+      },
+      {
+        "x": 7,
+        "y": 13
+      },
+      {
+        "x": 7,
+        "y": 12
+      },
+      {
+        "x": 6,
+        "y": 12
+      },
+      {
+        "x": 8,
+        "y": 12
+      },
+      {
+        "x": 8,
+        "y": 13
+      },
+      {
+        "x": 8,
+        "y": 14
+      },
+      {
+        "x": 7,
+        "y": 11
+      },
+      {
+        "x": 7,
+        "y": 9
+      },
+      {
+        "x": 7,
+        "y": 10
+      },
+      {
+        "x": 7,
+        "y": 8
+      },
+      {
+        "x": 7,
+        "y": 7
+      },
+      {
+        "x": 7,
+        "y": 6
+      },
+      {
+        "x": 7,
+        "y": 5
+      },
+      {
+        "x": 8,
+        "y": 5
+      },
+      {
+        "x": 8,
+        "y": 4
+      },
+      {
+        "x": 9,
+        "y": 4
+      },
+      {
+        "x": 9,
+        "y": 3
+      },
+      {
+        "x": 9,
+        "y": 2
+      },
+      {
+        "x": 9,
+        "y": 1
+      },
+      {
+        "x": 9,
+        "y": 0
+      },
+      {
+        "x": 6,
+        "y": 5
+      },
+      {
+        "x": 6,
+        "y": 4
+      },
+      {
+        "x": 5,
+        "y": 4
+      },
+      {
+        "x": 5,
+        "y": 3
+      },
+      {
+        "x": 5,
+        "y": 2
+      },
+      {
+        "x": 5,
+        "y": 1
+      },
+      {
+        "x": 5,
+        "y": 0
+      },
+      {
+        "x": 8,
+        "y": 9
+      },
+      {
+        "x": 6,
+        "y": 9
+      },
+      {
+        "x": 5,
+        "y": 9
+      },
+      {
+        "x": 9,
+        "y": 9
+      },
+      {
+        "x": 10,
+        "y": 8
+      },
+      {
+        "x": 10,
+        "y": 7
+      },
+      {
+        "x": 10,
+        "y": 6
+      },
+      {
+        "x": 4,
+        "y": 10
+      },
+      {
+        "x": 2,
+        "y": 11
+      },
+      {
+        "x": 3,
+        "y": 11
+      },
+      {
+        "x": 3,
+        "y": 12
+      }
+    ],
+    "charging_grids": []
   },
   "stacks": [
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 0,
         "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 0,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 1,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 2,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 3,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 4,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "grid_loc": {
+        "x": 5,
+        "y": 11
       },
       "move_cost": 1,
       "contents": [
@@ -46,579 +902,340 @@
       ]
     },
     {
-      "cell_loc": {
-        "x": 0,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
+      "grid_loc": {
+        "x": 5,
         "y": 12
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 0,
+      "grid_loc": {
+        "x": 5,
         "y": 13
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 0,
+      "grid_loc": {
+        "x": 5,
         "y": 14
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 0
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 1
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 2
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 3
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 4
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 5
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 6
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 7
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 8
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 9
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 10
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 11
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 12
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 13
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 1,
+      "grid_loc": {
+        "x": 6,
         "y": 14
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 0
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 1
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 2
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 3
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 4
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 5
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 6
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 7
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 8
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 9
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 10
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 11
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 12
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 13
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 2,
+      "grid_loc": {
+        "x": 7,
         "y": 14
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 0
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 1
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 2
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 3
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 4
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 5
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 6
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 7
       },
       "move_cost": 1,
       "contents": []
     },
     {
-      "cell_loc": {
-        "x": 3,
+      "grid_loc": {
+        "x": 8,
         "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 11
       },
       "move_cost": 1,
       "contents": [
-        {
-          "type": "rb",
-          "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
-          }
-        },
         {
           "type": "sv",
           "arguments": {
@@ -631,463 +1248,7 @@
       ]
     },
     {
-      "cell_loc": {
-        "x": 4,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
+      "grid_loc": {
         "x": 8,
         "y": 9
       },
@@ -1095,7 +1256,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 8,
         "y": 10
       },
@@ -1103,7 +1264,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 8,
         "y": 11
       },
@@ -1111,7 +1272,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 8,
         "y": 12
       },
@@ -1119,7 +1280,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 8,
         "y": 13
       },
@@ -1127,7 +1288,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 8,
         "y": 14
       },
@@ -1135,7 +1296,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 0
       },
@@ -1143,7 +1304,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 1
       },
@@ -1151,7 +1312,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 2
       },
@@ -1159,7 +1320,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 3
       },
@@ -1167,7 +1328,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 4
       },
@@ -1175,7 +1336,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 5
       },
@@ -1183,7 +1344,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 6
       },
@@ -1191,7 +1352,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 7
       },
@@ -1199,7 +1360,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 8
       },
@@ -1207,7 +1368,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 9
       },
@@ -1215,7 +1376,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 10
       },
@@ -1223,7 +1384,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 11
       },
@@ -1231,7 +1392,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 12
       },
@@ -1239,7 +1400,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 13
       },
@@ -1247,7 +1408,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 9,
         "y": 14
       },
@@ -1255,7 +1416,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 0
       },
@@ -1263,7 +1424,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 1
       },
@@ -1271,7 +1432,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 2
       },
@@ -1279,7 +1440,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 3
       },
@@ -1287,7 +1448,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 4
       },
@@ -1295,7 +1456,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 5
       },
@@ -1303,7 +1464,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 6
       },
@@ -1311,7 +1472,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 7
       },
@@ -1319,7 +1480,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 8
       },
@@ -1327,7 +1488,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 9
       },
@@ -1335,7 +1496,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 10
       },
@@ -1343,7 +1504,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 11
       },
@@ -1351,7 +1512,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 12
       },
@@ -1359,7 +1520,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 13
       },
@@ -1367,7 +1528,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 10,
         "y": 14
       },
@@ -1375,7 +1536,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 0
       },
@@ -1383,7 +1544,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 1
       },
@@ -1391,7 +1552,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 2
       },
@@ -1399,7 +1560,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 3
       },
@@ -1407,7 +1568,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 4
       },
@@ -1415,7 +1576,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 5
       },
@@ -1423,7 +1584,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 6
       },
@@ -1431,7 +1592,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 7
       },
@@ -1439,7 +1600,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 8
       },
@@ -1447,7 +1608,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 9
       },
@@ -1455,7 +1616,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 10
       },
@@ -1463,32 +1624,15 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 11
       },
       "move_cost": 1,
-      "contents": [
-        {
-          "type": "rb",
-          "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
-          }
-        },
-        {
-          "type": "sv",
-          "arguments": {
-            "energy_level": 0,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
-          }
-        }
-      ]
+      "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 12
       },
@@ -1496,7 +1640,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 13
       },
@@ -1504,7 +1648,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 11,
         "y": 14
       },
@@ -1512,7 +1656,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 0
       },
@@ -1520,7 +1664,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 1
       },
@@ -1528,7 +1672,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 2
       },
@@ -1536,7 +1680,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 3
       },
@@ -1544,7 +1688,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 4
       },
@@ -1552,7 +1696,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 5
       },
@@ -1560,7 +1704,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 6
       },
@@ -1568,7 +1712,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 7
       },
@@ -1576,7 +1720,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 8
       },
@@ -1584,7 +1728,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 9
       },
@@ -1592,7 +1736,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 10
       },
@@ -1600,7 +1744,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 11
       },
@@ -1608,7 +1752,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 12
       },
@@ -1616,7 +1760,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 13
       },
@@ -1624,7 +1768,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 12,
         "y": 14
       },
@@ -1632,7 +1776,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 0
       },
@@ -1640,7 +1784,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 1
       },
@@ -1648,7 +1792,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 2
       },
@@ -1656,7 +1800,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 3
       },
@@ -1664,7 +1808,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 4
       },
@@ -1672,7 +1816,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 5
       },
@@ -1680,7 +1824,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 6
       },
@@ -1688,7 +1832,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 7
       },
@@ -1696,7 +1840,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 8
       },
@@ -1704,7 +1848,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 9
       },
@@ -1712,7 +1856,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 10
       },
@@ -1720,7 +1864,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 11
       },
@@ -1728,7 +1872,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 12
       },
@@ -1736,7 +1880,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 13
       },
@@ -1744,7 +1888,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 13,
         "y": 14
       },
@@ -1752,7 +1896,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 0
       },
@@ -1760,7 +1904,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 1
       },
@@ -1768,7 +1912,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 2
       },
@@ -1776,7 +1920,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 3
       },
@@ -1784,7 +1928,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 4
       },
@@ -1792,7 +1936,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 5
       },
@@ -1800,7 +1944,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 6
       },
@@ -1808,7 +1952,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 7
       },
@@ -1816,7 +1960,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 8
       },
@@ -1824,7 +1968,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 9
       },
@@ -1832,7 +1976,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 10
       },
@@ -1840,7 +1984,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 11
       },
@@ -1848,7 +1992,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 12
       },
@@ -1856,7 +2000,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 13
       },
@@ -1864,7 +2008,7 @@
       "contents": []
     },
     {
-      "cell_loc": {
+      "grid_loc": {
         "x": 14,
         "y": 14
       },

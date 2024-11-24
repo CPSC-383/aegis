@@ -5,26 +5,31 @@
         "width": 15,
         "height": 15
       },
-      "seed": 6668,
+      "seed": 7780,
       "world_file_levels": {
-        "high": 12,
-        "mid": 7,
-        "low": 1
+        "high": 14,
+        "mid": 10,
+        "low": 5
       },
-      "agent_energy": 500
+      "agent_energy": 19
     }
   },
   "spawn_locs": [
     {
-      "x": 7,
-      "y": 7,
+      "x": 0,
+      "y": 14,
       "type": "any"
     }
   ],
   "cell_types": {
     "fire_cells": [],
     "killer_cells": [],
-    "charging_cells": []
+    "charging_cells": [
+      {
+        "x": 14,
+        "y": 8
+      }
+    ]
   },
   "stacks": [
     {
@@ -33,17 +38,7 @@
         "y": 0
       },
       "move_cost": 1,
-      "contents": [
-        {
-          "type": "sv",
-          "arguments": {
-            "energy_level": 0,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
-          }
-        }
-      ]
+      "contents": []
     },
     {
       "cell_loc": {
@@ -218,7 +213,7 @@
         "x": 1,
         "y": 7
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -242,7 +237,7 @@
         "x": 1,
         "y": 10
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -346,7 +341,7 @@
         "x": 2,
         "y": 8
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -370,7 +365,7 @@
         "x": 2,
         "y": 11
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -474,7 +469,7 @@
         "x": 3,
         "y": 9
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -498,7 +493,7 @@
         "x": 3,
         "y": 12
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -611,24 +606,7 @@
         "y": 11
       },
       "move_cost": 1,
-      "contents": [
-        {
-          "type": "rb",
-          "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
-          }
-        },
-        {
-          "type": "sv",
-          "arguments": {
-            "energy_level": 0,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
-          }
-        }
-      ]
+      "contents": []
     },
     {
       "cell_loc": {
@@ -643,7 +621,7 @@
         "x": 4,
         "y": 13
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -747,7 +725,7 @@
         "x": 5,
         "y": 11
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -875,7 +853,7 @@
         "x": 6,
         "y": 12
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -1003,7 +981,7 @@
         "x": 7,
         "y": 13
       },
-      "move_cost": 1,
+      "move_cost": 5,
       "contents": []
     },
     {
@@ -1468,24 +1446,7 @@
         "y": 11
       },
       "move_cost": 1,
-      "contents": [
-        {
-          "type": "rb",
-          "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
-          }
-        },
-        {
-          "type": "sv",
-          "arguments": {
-            "energy_level": 0,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
-          }
-        }
-      ]
+      "contents": []
     },
     {
       "cell_loc": {
@@ -1757,7 +1718,17 @@
         "y": 0
       },
       "move_cost": 1,
-      "contents": []
+      "contents": [
+        {
+          "type": "sv",
+          "arguments": {
+            "energy_level": 0,
+            "body_mass": 0,
+            "mental_state": 0,
+            "damage_factor": 0
+          }
+        }
+      ]
     },
     {
       "cell_loc": {

@@ -5,19 +5,19 @@
         "width": 15,
         "height": 15
       },
-      "seed": 6668,
+      "seed": 587,
       "world_file_levels": {
-        "high": 12,
+        "high": 15,
         "mid": 7,
-        "low": 1
+        "low": 3
       },
-      "agent_energy": 500
+      "agent_energy": 5
     }
   },
   "spawn_locs": [
     {
-      "x": 7,
-      "y": 7,
+      "x": 0,
+      "y": 0,
       "type": "any"
     }
   ],
@@ -33,6 +33,118 @@
         "y": 0
       },
       "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 14
+      },
+      "move_cost": 1,
       "contents": [
         {
           "type": "sv",
@@ -47,118 +159,6 @@
     },
     {
       "cell_loc": {
-        "x": 0,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
         "x": 1,
         "y": 0
       },
@@ -425,200 +425,9 @@
       "cell_loc": {
         "x": 3,
         "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 3,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 11
       },
       "move_cost": 1,
       "contents": [
-        {
-          "type": "rb",
-          "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
-          }
-        },
         {
           "type": "sv",
           "arguments": {
@@ -632,6 +441,190 @@
     },
     {
       "cell_loc": {
+        "x": 3,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
         "x": 4,
         "y": 12
       },
@@ -700,7 +693,17 @@
         "y": 5
       },
       "move_cost": 1,
-      "contents": []
+      "contents": [
+        {
+          "type": "sv",
+          "arguments": {
+            "energy_level": 0,
+            "body_mass": 0,
+            "mental_state": 0,
+            "damage_factor": 0
+          }
+        }
+      ]
     },
     {
       "cell_loc": {
@@ -892,7 +895,17 @@
         "y": 14
       },
       "move_cost": 1,
-      "contents": []
+      "contents": [
+        {
+          "type": "sv",
+          "arguments": {
+            "energy_level": 0,
+            "body_mass": 0,
+            "mental_state": 0,
+            "damage_factor": 0
+          }
+        }
+      ]
     },
     {
       "cell_loc": {
@@ -956,7 +969,17 @@
         "y": 7
       },
       "move_cost": 1,
-      "contents": []
+      "contents": [
+        {
+          "type": "sv",
+          "arguments": {
+            "energy_level": 0,
+            "body_mass": 0,
+            "mental_state": 0,
+            "damage_factor": 0
+          }
+        }
+      ]
     },
     {
       "cell_loc": {
@@ -1212,7 +1235,17 @@
         "y": 9
       },
       "move_cost": 1,
-      "contents": []
+      "contents": [
+        {
+          "type": "sv",
+          "arguments": {
+            "energy_level": 0,
+            "body_mass": 0,
+            "mental_state": 0,
+            "damage_factor": 0
+          }
+        }
+      ]
     },
     {
       "cell_loc": {
@@ -1469,13 +1502,6 @@
       },
       "move_cost": 1,
       "contents": [
-        {
-          "type": "rb",
-          "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
-          }
-        },
         {
           "type": "sv",
           "arguments": {
@@ -1869,7 +1895,17 @@
         "y": 14
       },
       "move_cost": 1,
-      "contents": []
+      "contents": [
+        {
+          "type": "sv",
+          "arguments": {
+            "energy_level": 0,
+            "body_mass": 0,
+            "mental_state": 0,
+            "damage_factor": 0
+          }
+        }
+      ]
     }
   ]
 }

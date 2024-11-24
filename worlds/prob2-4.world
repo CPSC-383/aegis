@@ -5,19 +5,19 @@
         "width": 15,
         "height": 15
       },
-      "seed": 6668,
+      "seed": 6477,
       "world_file_levels": {
-        "high": 12,
-        "mid": 7,
-        "low": 1
+        "high": 14,
+        "mid": 6,
+        "low": 2
       },
       "agent_energy": 500
     }
   },
   "spawn_locs": [
     {
-      "x": 7,
-      "y": 7,
+      "x": 0,
+      "y": 0,
       "type": "any"
     }
   ],
@@ -33,7 +33,814 @@
         "y": 0
       },
       "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 0,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 1,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 2,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 3,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 4,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 10
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 11
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 12
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 13
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 5,
+        "y": 14
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 0
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 1
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 2
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 3
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 4
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 5
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 6
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 7
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 8
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 9
+      },
+      "move_cost": 1,
+      "contents": []
+    },
+    {
+      "cell_loc": {
+        "x": 6,
+        "y": 10
+      },
+      "move_cost": 1,
       "contents": [
+        {
+          "type": "rb",
+          "arguments": {
+            "remove_energy": 0,
+            "remove_agents": 3
+          }
+        },
         {
           "type": "sv",
           "arguments": {
@@ -47,87 +854,7 @@
     },
     {
       "cell_loc": {
-        "x": 0,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 0,
+        "x": 6,
         "y": 11
       },
       "move_cost": 1,
@@ -135,7 +862,7 @@
     },
     {
       "cell_loc": {
-        "x": 0,
+        "x": 6,
         "y": 12
       },
       "move_cost": 1,
@@ -143,7 +870,7 @@
     },
     {
       "cell_loc": {
-        "x": 0,
+        "x": 6,
         "y": 13
       },
       "move_cost": 1,
@@ -151,7 +878,7 @@
     },
     {
       "cell_loc": {
-        "x": 0,
+        "x": 6,
         "y": 14
       },
       "move_cost": 1,
@@ -159,7 +886,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 0
       },
       "move_cost": 1,
@@ -167,7 +894,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 1
       },
       "move_cost": 1,
@@ -175,7 +902,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 2
       },
       "move_cost": 1,
@@ -183,7 +910,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 3
       },
       "move_cost": 1,
@@ -191,7 +918,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 4
       },
       "move_cost": 1,
@@ -199,7 +926,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 5
       },
       "move_cost": 1,
@@ -207,7 +934,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 6
       },
       "move_cost": 1,
@@ -215,7 +942,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 7
       },
       "move_cost": 1,
@@ -223,7 +950,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 8
       },
       "move_cost": 1,
@@ -231,7 +958,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 9
       },
       "move_cost": 1,
@@ -239,7 +966,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 10
       },
       "move_cost": 1,
@@ -247,7 +974,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 11
       },
       "move_cost": 1,
@@ -255,7 +982,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 12
       },
       "move_cost": 1,
@@ -263,7 +990,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 13
       },
       "move_cost": 1,
@@ -271,7 +998,7 @@
     },
     {
       "cell_loc": {
-        "x": 1,
+        "x": 7,
         "y": 14
       },
       "move_cost": 1,
@@ -279,7 +1006,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 0
       },
       "move_cost": 1,
@@ -287,7 +1014,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 1
       },
       "move_cost": 1,
@@ -295,7 +1022,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 2
       },
       "move_cost": 1,
@@ -303,7 +1030,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 3
       },
       "move_cost": 1,
@@ -311,7 +1038,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 4
       },
       "move_cost": 1,
@@ -319,7 +1046,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 5
       },
       "move_cost": 1,
@@ -327,7 +1054,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 6
       },
       "move_cost": 1,
@@ -335,7 +1062,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 7
       },
       "move_cost": 1,
@@ -343,7 +1070,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 8
       },
       "move_cost": 1,
@@ -351,7 +1078,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 9
       },
       "move_cost": 1,
@@ -359,7 +1086,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 10
       },
       "move_cost": 1,
@@ -367,7 +1094,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 11
       },
       "move_cost": 1,
@@ -375,7 +1102,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 12
       },
       "move_cost": 1,
@@ -383,7 +1110,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 13
       },
       "move_cost": 1,
@@ -391,7 +1118,7 @@
     },
     {
       "cell_loc": {
-        "x": 2,
+        "x": 8,
         "y": 14
       },
       "move_cost": 1,
@@ -399,7 +1126,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 0
       },
       "move_cost": 1,
@@ -407,7 +1134,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 1
       },
       "move_cost": 1,
@@ -415,7 +1142,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 2
       },
       "move_cost": 1,
@@ -423,7 +1150,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 3
       },
       "move_cost": 1,
@@ -431,7 +1158,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 4
       },
       "move_cost": 1,
@@ -439,7 +1166,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 5
       },
       "move_cost": 1,
@@ -447,7 +1174,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 6
       },
       "move_cost": 1,
@@ -455,7 +1182,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 7
       },
       "move_cost": 1,
@@ -463,7 +1190,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 8
       },
       "move_cost": 1,
@@ -471,7 +1198,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 9
       },
       "move_cost": 1,
@@ -479,7 +1206,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 10
       },
       "move_cost": 1,
@@ -487,7 +1214,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 11
       },
       "move_cost": 1,
@@ -495,7 +1222,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 12
       },
       "move_cost": 1,
@@ -503,7 +1230,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 13
       },
       "move_cost": 1,
@@ -511,7 +1238,7 @@
     },
     {
       "cell_loc": {
-        "x": 3,
+        "x": 9,
         "y": 14
       },
       "move_cost": 1,
@@ -519,7 +1246,7 @@
     },
     {
       "cell_loc": {
-        "x": 4,
+        "x": 10,
         "y": 0
       },
       "move_cost": 1,
@@ -527,7 +1254,7 @@
     },
     {
       "cell_loc": {
-        "x": 4,
+        "x": 10,
         "y": 1
       },
       "move_cost": 1,
@@ -535,7 +1262,7 @@
     },
     {
       "cell_loc": {
-        "x": 4,
+        "x": 10,
         "y": 2
       },
       "move_cost": 1,
@@ -543,7 +1270,7 @@
     },
     {
       "cell_loc": {
-        "x": 4,
+        "x": 10,
         "y": 3
       },
       "move_cost": 1,
@@ -551,7 +1278,7 @@
     },
     {
       "cell_loc": {
-        "x": 4,
+        "x": 10,
         "y": 4
       },
       "move_cost": 1,
@@ -559,7 +1286,7 @@
     },
     {
       "cell_loc": {
-        "x": 4,
+        "x": 10,
         "y": 5
       },
       "move_cost": 1,
@@ -567,48 +1294,8 @@
     },
     {
       "cell_loc": {
-        "x": 4,
+        "x": 10,
         "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 11
       },
       "move_cost": 1,
       "contents": [
@@ -632,686 +1319,6 @@
     },
     {
       "cell_loc": {
-        "x": 4,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 4,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 5,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 6,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 7,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 8,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 7
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 8
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 9
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 10
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 11
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 12
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 13
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 9,
-        "y": 14
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 10,
-        "y": 0
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 10,
-        "y": 1
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 10,
-        "y": 2
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 10,
-        "y": 3
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 10,
-        "y": 4
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 10,
-        "y": 5
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
-        "x": 10,
-        "y": 6
-      },
-      "move_cost": 1,
-      "contents": []
-    },
-    {
-      "cell_loc": {
         "x": 10,
         "y": 7
       },
@@ -1468,24 +1475,7 @@
         "y": 11
       },
       "move_cost": 1,
-      "contents": [
-        {
-          "type": "rb",
-          "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
-          }
-        },
-        {
-          "type": "sv",
-          "arguments": {
-            "energy_level": 0,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
-          }
-        }
-      ]
+      "contents": []
     },
     {
       "cell_loc": {
