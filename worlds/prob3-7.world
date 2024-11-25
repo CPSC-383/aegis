@@ -11,7 +11,7 @@
         "mid": 10,
         "low": 5
       },
-      "agent_energy": 19
+      "agent_energy": 14
     }
   },
   "spawn_locs": [
@@ -26,7 +26,7 @@
     "killer_cells": [],
     "charging_cells": [
       {
-        "x": 14,
+        "x": 13,
         "y": 8
       }
     ]

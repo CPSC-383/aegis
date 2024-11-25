@@ -23,32 +23,38 @@
     {
       "x": 1,
       "y": 6,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 0,
       "y": 10,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 4,
       "y": 13,
-      "type": "any"
-    },
-    {
-      "x": 13,
-      "y": 10,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 12,
       "y": 3,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 3,
       "y": 0,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
+    },
+    {
+      "x": 13,
+      "y": 10,
+      "gid": 1,
+      "type": "group"
     }
   ],
   "cell_types": {

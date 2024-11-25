@@ -18,27 +18,32 @@
     {
       "x": 14,
       "y": 0,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 0,
       "y": 14,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 0,
       "y": 0,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 14,
       "y": 14,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 4,
       "y": 12,
-      "type": "any"
+      "gid": 1,
+      "type": "group"
     },
     {
       "x": 10,
