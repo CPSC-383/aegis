@@ -98,9 +98,12 @@ class CoolestAgent(Brain):
         if world is None:
             return
         if self._agent.get_round_number() == 1:
-
             # send a message of our current location
-            self._agent.send(SEND_MESSAGE(AgentIDList(), f"My location: {self._agent.get_location()}"))
+            self._agent.send(
+                SEND_MESSAGE(
+                    AgentIDList(), f"My location: {self._agent.get_location()}"
+                )
+            )
 
         self.locs_with_survs = {}
         # Retrieve the current state of the world, and find all the survivors on the map
@@ -128,7 +131,7 @@ class CoolestAgent(Brain):
             print(f"Top layer type: {type(top_layer)}")
             if top_layer is None:
                 # nothing here anymore, find a new closest surv
-                cell.survivor_chance = 0
+                cell.has_survivors = False
                 self.locs_with_survs.pop(surv_loc)
                 surv_loc: Location = self.get_closest_survivor()
             if isinstance(top_layer, Rubble):
@@ -145,11 +148,9 @@ class CoolestAgent(Brain):
         self.send_and_end_turn(MOVE(dir_to_goal))
         return
 
-
         # # # Default action: Move the agent north if no other specific conditions are met.
         # print("Didn't send a command, thats not good...")
         # self.send_and_end_turn(MOVE(Direction.CENTER))
-        
 
     def send_and_end_turn(self, command: AgentCommand):
         """Send a command and end your turn."""
@@ -178,8 +179,8 @@ class CoolestAgent(Brain):
     def populate_surv_spots(self, world: World):
         for row in world.get_world_grid():
             for cell in row:
-                if cell.survivor_chance > 0:
-                    self.locs_with_survs[cell.location] = cell.survivor_chance
+                if cell.has_survivors:
+                    self.locs_with_survs[cell.location] = cell.has_survivors
 
     def get_closest_survivor(self) -> Location:
         closest_surv: Location = Location(0, 0)
@@ -190,7 +191,7 @@ class CoolestAgent(Brain):
                 closest_surv = loc
                 closest_dist = distance_to_surv
         return closest_surv
-    
+
     # def get_best_location(self, world: World) -> Location:
     #     best_cell = world.get_world_grid()[0][0]
     #     for x in range(world.width):

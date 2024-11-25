@@ -231,28 +231,9 @@ class AegisWorld:
                             _ = writer.write(f"[({x},{y}),No Cell]\n")
                             continue
 
-                        choice = Utility.next_boolean()
-                        percent = 0
-
+                        has_survivors = True
                         if cell.number_of_survivors() <= 0:
-                            percent = 0
-                        else:
-                            if cell.number_of_survivors() <= self._low_survivor_level:
-                                if choice:
-                                    percent = Utility.random_in_range(0, 5)
-                                else:
-                                    percent = 5 + Utility.random_in_range(0, 5)
-                            elif cell.number_of_survivors() <= self._mid_survivor_level:
-                                if choice:
-                                    percent = 15 + Utility.random_in_range(0, 10)
-                                else:
-                                    percent = 25 + Utility.random_in_range(0, 15)
-                            else:
-                                if choice:
-                                    percent = 15 + Utility.random_in_range(0, 35)
-                                else:
-                                    percent = 50 + Utility.random_in_range(0, 40)
-                            percent = max(1, percent)
+                            has_survivors = False
 
                         fire = "+F" if cell.is_on_fire() else "-F"
                         killer = "+K" if cell.is_killer_cell() else "-K"
@@ -260,11 +241,11 @@ class AegisWorld:
 
                         if MOVE_COST_TOGGLE:
                             _ = writer.write(
-                                f"[({x},{y}),({fire},{killer},{charging}),{percent:3.0f}%,{cell.move_cost}]\n"
+                                f"[({x},{y}),({fire},{killer},{charging}),{has_survivors},{cell.move_cost}]\n"
                             )
                         else:
                             _ = writer.write(
-                                f"[({x},{y}),({fire},{killer},{charging}),{percent:3.0f}%]\n"
+                                f"[({x},{y}),({fire},{killer},{charging}),{has_survivors}]\n"
                             )
             path = os.path.realpath(os.getcwd())
             self._agent_world_filename = os.path.join(path, file)

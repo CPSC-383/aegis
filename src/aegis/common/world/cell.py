@@ -21,7 +21,7 @@ class Cell:
     Attributes:
         move_cost (int): The movement cost associated with the cell.
         agent_id_list (AgentIDList): List of agent IDs present in the cell.
-        survivor_chance (int): The percent chance that there are survivors in the cell.
+        has_survivors (bool): If there are survivors in the cell.
         location (Location): The location of the cell on the map.
     """
 
@@ -42,7 +42,7 @@ class Cell:
         self.move_cost = 1
         self.agent_id_list = AgentIDList()
         self._cell_layer_list: list[WorldObject] = []
-        self.survivor_chance = -1
+        self.has_survivors = False
 
         if x is not None and y is not None:
             self.location = Location(x, y)
@@ -245,5 +245,5 @@ class Cell:
         cell._cell_layer_list = [layer.clone() for layer in self._cell_layer_list]
         cell._on_fire = self._on_fire
         cell.move_cost = self.move_cost
-        cell.survivor_chance = self.survivor_chance
+        cell.has_survivors = self.has_survivors
         return cell

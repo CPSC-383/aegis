@@ -108,7 +108,7 @@ class AegisParser:
         fire = tokens[2]
         killer = tokens[3]
         charging = tokens[4]
-        survivor_chance = int(tokens[5])
+        has_survivors = tokens[5] == "True"
         cell = Cell(x, y)
 
         cell.set_normal_cell()
@@ -120,7 +120,7 @@ class AegisParser:
         if charging[0] == "+":
             cell.set_charging_cell()
 
-        cell.survivor_chance = survivor_chance
+        cell.has_survivors = has_survivors
 
         if MOVE_COST_TOGGLE:
             cell.move_cost = int(tokens[6])
