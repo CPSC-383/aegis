@@ -135,7 +135,7 @@ class CoolestAgent2(Brain):
                 # nothing here anymore, find a new closest surv
                 cell.has_survivors = False
                 self.locs_with_survs.pop(surv_loc)
-                surv_loc: Location = self.get_closest_survivor()
+                surv_loc = self.get_closest_survivor()
             if isinstance(top_layer, Rubble):
                 self.send_and_end_turn(TEAM_DIG())
                 return

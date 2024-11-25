@@ -14,7 +14,7 @@ prob1-10: good
 
 prob2-1: bad: no rubble on top of survivors
 prob2-2: good
-prob2-3: ...sure
+prob2-3: ...good
 prob2-4: good
 prob2-5: bad: no rubble on top of survivors (and some pathfinding required, fuzzy nav following wall should work)
 prob2-6: good
