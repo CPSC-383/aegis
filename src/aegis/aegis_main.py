@@ -361,8 +361,8 @@ class Aegis:
                 return
 
             ReplayFileWriter.write_string(f"RS;{round};\n")
-
             self._run_agent_round()
+            
             for command in self._agent_commands:
                 self._handle_agent_command(command)
             self._agent_commands.clear()
