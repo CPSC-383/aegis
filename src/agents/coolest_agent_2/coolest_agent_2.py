@@ -117,20 +117,20 @@ class CoolestAgent2(Brain):
         # find the closest survivor
         surv_loc: Location = self.get_closest_survivor()
         # surv_loc = self.get_best_location(world)
-        print(f"Closest survivor: {surv_loc}")
+        # print(f"Closest survivor: {surv_loc}")
 
         # if on top of the closest surv, try saving it or digging to it, depending on what the top layer is
         if self._agent.get_location() == surv_loc:
-            print("On top of closest survivor")
+            # print("On top of closest survivor")
             cell = world.get_cell_at(surv_loc)
             if cell is None:
                 # BaseAgent.log(LogLevels.Always, "\n\t\tCell is None when i am on the surv loc???????")
                 return
             top_layer = cell.get_top_layer()
 
-            print(f"current loc: {self._agent.get_location()} | surv loc: {surv_loc}")
-            print(f"Top layer: {top_layer}")
-            print(f"Top layer type: {type(top_layer)}")
+            # print(f"current loc: {self._agent.get_location()} | surv loc: {surv_loc}")
+            # print(f"Top layer: {top_layer}")
+            # print(f"Top layer type: {type(top_layer)}")
             if top_layer is None:
                 # nothing here anymore, find a new closest surv
                 cell.has_survivors = False
@@ -138,15 +138,16 @@ class CoolestAgent2(Brain):
                 surv_loc = self.get_closest_survivor()
             if isinstance(top_layer, Rubble):
                 self.send_and_end_turn(TEAM_DIG())
+                print(top_layer.remove_agents)
                 return
             elif isinstance(top_layer, Survivor):
                 self.send_and_end_turn(SAVE_SURV())
                 return
 
         # if not on top of the closest surv, move to it
-        print("Moving to closest survivor at ", surv_loc)
+        # print("Moving to closest survivor at ", surv_loc)
         dir_to_goal: Direction = self.move_towards_goal(surv_loc)
-        print(dir_to_goal)
+        # print(dir_to_goal)
         self.send_and_end_turn(MOVE(dir_to_goal))
         return
 
