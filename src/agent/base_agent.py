@@ -50,6 +50,10 @@ class BaseAgent:
 
     def set_agent_state(self, agent_state: AgentStates) -> None:
         self._agent_state = agent_state
+
+        if agent_state == AgentStates.READ_MAIL:
+            self._round += 1
+
         self.log(LogLevels.Nothing, f"New State: {self._agent_state}")
 
     def get_agent_state(self) -> AgentStates:
@@ -178,7 +182,6 @@ class BaseAgent:
                                 self._brain.handle_aegis_command(aegis_command)
                                 agent_state = self._agent_state
                                 if agent_state == AgentStates.THINK:
-                                    self._round += 1
                                     self._brain.think()
                                     self._did_end_turn = False
                                 elif agent_state == AgentStates.SHUTTING_DOWN:
