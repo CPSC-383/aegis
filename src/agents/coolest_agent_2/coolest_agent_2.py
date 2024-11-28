@@ -25,15 +25,12 @@ from aegis import (
     Rubble,
 )
 from agent import BaseAgent, Brain, LogLevels
-import agent
 
 LOC_UPDATE_IDENTIFIER = "loc_update:"
 
+JOB_ASSIGNED_IDENTIFIER = "new_job_assigned:"
 JOB_UPDATE_IDENTIFIER = "job_update:"
 DONE_JOB_TOKEN = "Done"
-
-JOB_ASSIGNED_IDENTIFIER = "new_job_assigned:"
-# MESSAGE_SEPERATOR = " | "
 
 
 class CoolestAgent2(Brain):
@@ -41,7 +38,7 @@ class CoolestAgent2(Brain):
 
     # agent_id: (curr_location, job_location)
     agents_info: dict[int, tuple[Location, Location]] = {}
-    processed_first_round: bool = False  # if we are getting agent locs, and its the first round, give them a job immediately!
+    # processed_first_round: bool = False  # if we are getting agent locs, and its the first round, give them a job immediately!
     jobs_to_give: list[Location] = []
     my_job_loc: Location | None = None
 
@@ -63,16 +60,15 @@ class CoolestAgent2(Brain):
 
     @override
     def handle_send_message_result(self, smr: SEND_MESSAGE_RESULT) -> None:
-        # should always only be agent_id == 1 getting the messages, but just double checking
+        # should always only be agent_id == 1 getting loc_update messages, but just double checking
         if self._agent.get_agent_id().id == 1:
             self.team_leader_handle_message(smr)
 
+        # check if I was sent a new job to start performing
         self.new_job_handle_message(smr)
 
     @override
     def handle_move_result(self, mr: MOVE_RESULT) -> None:
-        # BaseAgent.log(LogLevels.Always, f"MOVE_RESULT: {mr}")
-        # BaseAgent.log(LogLevels.Test, f"{mr}")
         self.update_surround(mr.surround_info)
 
     @override
@@ -107,24 +103,17 @@ class CoolestAgent2(Brain):
     def think(self) -> None:
         BaseAgent.log(LogLevels.Always, "Thinking")
 
-        # # On the first round, send a request for surrounding information
-        # # by moving to the center (not moving). This will help initiate pathfinding.
-        # if self._agent.get_round_number() == 1:
-        #     self.send_and_end_turn(MOVE(Direction.CENTER))
-        #     return
         world = self.get_world()
         if world is None:
             return
 
         # Every round, send a message of our current location to agent id 1 (team leader!)
-        print("sending my loc")
         self._agent.send(
             SEND_MESSAGE(
                 AgentIDList([AgentID(1, self._agent.get_agent_id().gid)]),
                 f"{LOC_UPDATE_IDENTIFIER}{self._agent.get_agent_id().id}@{self._agent.get_location()}",
             )
         )
-        print("sent my loc")
 
         # Retrieve the current state of the world, and find all the survivors on the map
         # TODO: do agents other than team leader need this?
@@ -135,34 +124,25 @@ class CoolestAgent2(Brain):
                 # team leader needs to create initial job list from the surv locations in the world
                 for loc, _ in self.locs_with_survs.items():
                     self.jobs_to_give.append(loc)
-
-        if self._agent.get_agent_id().id == 1:
+                    
+        if self._agent.get_agent_id().id == 1 and self._agent.get_round_number() > 1:
             # each round, team leader assigns jobs to all agents
 
             # check if an agent has None as their job location. If so, give them a new job
-            pass
-
-        # move to closest survivor, and once on top, dig rubbble or save surv, whatever is on the top layer
-        # if no survivors are found, move to the center
-
-        # # find the closest survivor
-        # surv_loc: Location = self.get_closest_survivor(self._agent.get_location())
-        # surv_loc = self.get_best_location(world)
-        # print(f"Closest survivor: {surv_loc}")
-
+            for agent_id, (agent_loc, agent_job) in self.agents_info.items():
+                # BaseAgent.log(LogLevels.Always, f"agent_id: {agent_id} | agent_job: {agent_job}")
+                if agent_job == Location(-1, -1):
+                    # print("Saw an agent had no job, giving them one")
+                    self.assign_new_job(agent_id, agent_loc)
+                    
         # if on top of the closest surv, try saving it or digging to it, depending on what the top layer is
         if self.my_job_loc is not None:
             if self._agent.get_location() == self.my_job_loc:
-                # print("On top of closest survivor")
                 cell = world.get_cell_at(self.my_job_loc)
                 if cell is None:
-                    # BaseAgent.log(LogLevels.Always, "\n\t\tCell is None when i am on the surv loc???????")
                     return
                 top_layer = cell.get_top_layer()
 
-                # print(f"current loc: {self._agent.get_location()} | surv loc: {surv_loc}")
-                # print(f"Top layer: {top_layer}")
-                # print(f"Top layer type: {type(top_layer)}")
                 if top_layer is None:
                     # The job is done. Tell team leader you need a new job!
                     self.my_job_loc = None
@@ -197,8 +177,6 @@ class CoolestAgent2(Brain):
         BaseAgent.log(LogLevels.Always, f"SENDING {command}")
         self._agent.send(command)
         self._agent.send(END_TURN())
-        if self._agent.get_agent_id().id == 1 and self._agent.get_round_number() == 1:
-            self.processed_first_round = True
 
     def update_surround(self, surround_info: SurroundInfo):
         """Updates the current and surrounding cells of the agent."""
@@ -232,29 +210,6 @@ class CoolestAgent2(Brain):
                 if cell.has_survivors:
                     self.locs_with_survs[cell.location] = cell.has_survivors
 
-    # def get_closest_survivor(self, agent_loc: Location) -> Location:
-    #     closest_surv: Location = Location(0, 0)
-    #     closest_dist = 1000
-    #     for loc, _ in self.locs_with_survs.items():
-    #         distance_to_surv = agent_loc.distance_to(loc)
-    #         if distance_to_surv < closest_dist:
-    #             closest_surv = loc
-    #             closest_dist = distance_to_surv
-    #     return closest_surv
-
-    # def get_best_location(self, world: World) -> Location:
-    #     best_cell = world.get_world_grid()[0][0]
-    #     for x in range(world.width):
-    #         for y in range(world.height):
-    #             cell = world.get_cell_at(Location(x, y))
-    #             if cell is None:
-    #                 continue
-
-    #             if cell.survivor_chance > best_cell.survivor_chance:
-    #                 best_cell = cell
-
-    #     return best_cell.location
-
     def move_towards_goal(self, goal: Location) -> Direction:
         agent_loc = self._agent.get_location()
         dir_to_goal = agent_loc.direction_to(goal)
@@ -262,45 +217,40 @@ class CoolestAgent2(Brain):
 
     def new_job_handle_message(self, smr: SEND_MESSAGE_RESULT) -> None:
         agent_message = smr.msg
-        BaseAgent.log(LogLevels.Always, f"\tfrom {smr.from_agent_id.id}: {smr.msg}")
 
         if agent_message.startswith(JOB_ASSIGNED_IDENTIFIER):
             # big boss gave me a job! Make that my new job
+            BaseAgent.log(LogLevels.Always, f"job identifier found! {agent_message}")
             agent_message = agent_message[len(JOB_ASSIGNED_IDENTIFIER) :]
             agent_id, agent_job_loc = agent_message.split("@")
             agent_id = int(agent_id)
             agent_job_loc = self.loc_str_to_loc(agent_job_loc)
             self.my_job_loc = agent_job_loc
+            BaseAgent.log(LogLevels.Always, f"New job assigned: {self.my_job_loc}")
 
     def team_leader_handle_message(self, smr: SEND_MESSAGE_RESULT) -> None:
         agent_message = smr.msg
-        BaseAgent.log(LogLevels.Always, f"\tfrom {smr.from_agent_id.id}: {smr.msg}")
 
         # process the location update message
         if agent_message.startswith(LOC_UPDATE_IDENTIFIER):
             # get the agent id and location from the message
             agent_message = agent_message[len(LOC_UPDATE_IDENTIFIER) :]
-            print(agent_message)
             agent_id, agent_loc_str = agent_message.split("@")
             agent_id = int(agent_id)
             agent_loc = self.loc_str_to_loc(agent_loc_str)
 
-            # update the location of the agent
-            current_info = self.agents_info.get(int(agent_id))
-            if current_info is not None:
-                # agent already has a job, dont overwrite it
-                self.agents_info[agent_id] = (agent_loc, current_info[1])
+            # update the location of the agent ("None" job if we are initializing them into the dict)
+            if agent_id not in self.agents_info:
+                self.agents_info[agent_id] = (agent_loc, Location(-1, -1))
             else:
-                # on round 1, this agent has no job! Get them a job immediately!
-                self.assign_new_job(agent_id, agent_loc)
-                # job_loc: Location = self.get_a_job(agent_loc)
-                # self.agents_info[agent_id] = (agent_loc, job_loc)
+                self.agents_info[agent_id] = (agent_loc, self.agents_info[agent_id][1])
 
         elif agent_message.startswith(JOB_UPDATE_IDENTIFIER):
             agent_message = agent_message[len(JOB_UPDATE_IDENTIFIER) :]
             agent_id, agent_job_status = agent_message.split("@")
             agent_id = int(agent_id)
             if agent_job_status == DONE_JOB_TOKEN:
+                BaseAgent.log(LogLevels.Always, f"Agent {agent_id} has finished their job!")
                 # agent has finished their job. Give them a new one!
                 agent_loc, _ = self.agents_info[int(agent_id)]
                 job_loc: Location = self.get_a_job(agent_loc)
@@ -308,7 +258,7 @@ class CoolestAgent2(Brain):
 
     def get_a_job(self, agent_loc: Location) -> Location:
         if len(self.jobs_to_give) == 0:
-            return Location(0, 0)
+            return Location(-1, -1)
 
         # find the closest job to the agent
         closest_job = self.jobs_to_give[0]
@@ -335,8 +285,6 @@ class CoolestAgent2(Brain):
         self._agent.send(
             SEND_MESSAGE(
                 AgentIDList([AgentID(agent_id, self._agent.get_agent_id().gid)]),
-                f"{JOB_UPDATE_IDENTIFIER}{agent_id}@{new_job_loc}",
+                f"{JOB_ASSIGNED_IDENTIFIER}{agent_id}@{new_job_loc}",
             )
         )
-
-        return
