@@ -13,8 +13,9 @@ import { TabNames } from '@/utils/types'
 import MapEditor from '../map-editor/Map-editor'
 import Game from './Game'
 import Settings from './Settings'
+import PopupConsole from '../Popup-console'
 
-function RightSidebar() {
+function Sidebar() {
     const scaffold = createScaffold()
     const { aegisPath, setupAegisPath, agents, output } = scaffold
     const { appState } = useAppContext()
@@ -24,6 +25,7 @@ function RightSidebar() {
     const [numAgentsAegis, setNumAgentsAegis] = useState<number>(0)
     const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
     const [isCollapsed, setIsCollapsed] = useState(false)
+    const [isPopupOpen, setIsPopupOpen] = useState(false)
 
     useEffect(() => {
         setIsCollapsed(appState.selectedCell != null)
@@ -37,7 +39,7 @@ function RightSidebar() {
                     x: isCollapsed ? '100%' : '0%'
                 }}
                 transition={{ duration: 0.5 }}
-                className="h-screen w-full bg-white absolute left-0 top-0 z-50"
+                className="h-screen w-full bg-white absolute right-0 top-0 z-50"
             >
                 <div className="flex flex-col justify-between h-full p-4">
                     {!aegisPath ? (
@@ -68,7 +70,9 @@ function RightSidebar() {
                             </div>
                             {(selectedTab === TabNames.Agents ||
                                 selectedTab === TabNames.Aegis ||
-                                selectedTab === TabNames.Game) && <Console output={output} />}
+                                selectedTab === TabNames.Game) && (
+                                <Console output={output} isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} />
+                            )}
                         </>
                     )}
                 </div>
@@ -86,8 +90,9 @@ function RightSidebar() {
                 </button>
             </motion.div>
             <InfoPanel />
+            <PopupConsole output={output} isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} />
         </div>
     )
 }
 
-export default RightSidebar
+export default Sidebar

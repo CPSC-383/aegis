@@ -1,6 +1,6 @@
 import GameArea from './components/Game-area'
 import ControlsBar from './components/controls-bar/Controls-bar'
-import RightSidebar from './components/sidebar/Sidebar'
+import Sidebar from './components/sidebar/Sidebar'
 
 function MainPage() {
     return (
@@ -9,7 +9,7 @@ function MainPage() {
                 <GameArea />
                 <ControlsBar />
             </div>
-            <RightSidebar />
+            <Sidebar />
         </div>
     )
 }
