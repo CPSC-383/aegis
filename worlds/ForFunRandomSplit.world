@@ -517,21 +517,21 @@
           "type": "rb",
           "arguments": {
             "remove_energy": 5,
-            "remove_agents": 2
+            "remove_agents": 1
           }
         },
         {
           "type": "rb",
           "arguments": {
             "remove_energy": 5,
-            "remove_agents": 2
+            "remove_agents": 1
           }
         },
         {
           "type": "rb",
           "arguments": {
             "remove_energy": 5,
-            "remove_agents": 2
+            "remove_agents": 1
           }
         },
         {
@@ -1087,7 +1087,7 @@
           "type": "rb",
           "arguments": {
             "remove_energy": 16,
-            "remove_agents": 2
+            "remove_agents": 1
           }
         },
         {
@@ -1720,7 +1720,7 @@
           "type": "rb",
           "arguments": {
             "remove_energy": 3,
-            "remove_agents": 2
+            "remove_agents": 1
           }
         },
         {
