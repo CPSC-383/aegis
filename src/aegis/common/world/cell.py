@@ -7,22 +7,37 @@ from aegis.common import (
     Constants,
     CellType,
     LifeSignals,
-    Location,
+    InternalLocation,
     Utility,
 )
 from aegis.common.world.info import CellInfo
 from aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject
 
 
-class Cell:
+class InternalCell:
     """
     Represents a cell in the world.
+
+    Examples:
+        >>> top_layer = cell.get_top_layer()
+        >>> top_layer
+        None    # Will return None when there are no layers.
+        >>> cell.is_normal_cell()
+        True
+        >>> cell.is_fire_cell()
+        False
+        >>> cell.is_killer_cell()
+        False
+        >>> cell.is_charging_cell()
+        False
+
+
 
     Attributes:
         move_cost (int): The movement cost associated with the cell.
         agent_id_list (AgentIDList): List of agent IDs present in the cell.
         has_survivors (bool): If there are survivors in the cell.
-        location (Location): The location of the cell on the map.
+        location (InternalLocation): The location of the cell on the map.
     """
 
     def __init__(
@@ -31,7 +46,7 @@ class Cell:
         y: int | None = None,
     ) -> None:
         """
-        Initializes a Cell instance.
+        Initializes an InternalCell instance.
 
         Args:
             x: The x-coordinate of the cell.
@@ -45,9 +60,9 @@ class Cell:
         self.has_survivors = False
 
         if x is not None and y is not None:
-            self.location = Location(x, y)
+            self.location: InternalLocation = InternalLocation(x, y)
         else:
-            self.location = Location(-1, -1)
+            self.location = InternalLocation(-1, -1)
 
     def setup_cell(self, cell_state_type: str) -> None:
         cell_state_type = cell_state_type.upper().strip()
@@ -231,14 +246,8 @@ class Cell:
     def __repr__(self) -> str:
         return self.__str__()
 
-    def clone(self) -> Cell:
-        """
-        Creates and returns a copy of the cell.
-
-        Returns:
-            Cell: A new Cell instance with the same attributes.
-        """
-        cell = Cell()
+    def clone(self) -> InternalCell:
+        cell = InternalCell()
         cell._type = self._type
         cell.location = self.location
         cell.agent_id_list = self.agent_id_list.clone()

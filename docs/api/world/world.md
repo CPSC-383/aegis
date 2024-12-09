@@ -2,4 +2,4 @@
 icon: material/grid
 ---
 
-::: aegis.common.world.world
+::: aegis.api.world

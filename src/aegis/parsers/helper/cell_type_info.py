@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from typing import override
 
-from aegis.common.location import Location
+from aegis.common.location import InternalLocation
 
 
 @dataclass
 class CellTypeInfo:
     name: str
-    locs: list[Location]
+    locs: list[InternalLocation]
 
     @override
     def __str__(self) -> str:

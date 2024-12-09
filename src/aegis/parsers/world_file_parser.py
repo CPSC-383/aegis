@@ -1,7 +1,7 @@
 import json
 from typing import cast
 
-from aegis.common import AgentID, Location
+from aegis.common import AgentID, InternalLocation
 from aegis.parsers.aegis_world_file import AegisWorldFile
 from aegis.parsers.helper.cell_info_settings import CellInfoSettings
 from aegis.parsers.helper.cell_type_info import CellTypeInfo
@@ -66,7 +66,7 @@ class WorldFileParser:
             CellInfoSettings(
                 cell["move_cost"],
                 cell["contents"],
-                Location(cell["cell_loc"]["x"], cell["cell_loc"]["y"]),
+                InternalLocation(cell["cell_loc"]["x"], cell["cell_loc"]["y"]),
             )
             for cell in cell_stack_info
         ]
@@ -77,7 +77,7 @@ class WorldFileParser:
             CellTypeInfo(
                 name,
                 [
-                    Location(loc["x"], loc["y"])
+                    InternalLocation(loc["x"], loc["y"])
                     for loc in cast(list[CellLoc], cell_locs)
                 ],
             )
@@ -85,9 +85,9 @@ class WorldFileParser:
         ]
 
     @staticmethod
-    def _parse_agents(agents: list[AgentInfo]) -> dict[AgentID, Location]:
+    def _parse_agents(agents: list[AgentInfo]) -> dict[AgentID, InternalLocation]:
         return {
-            AgentID(agent_info["id"], agent_info["gid"]): Location(
+            AgentID(agent_info["id"], agent_info["gid"]): InternalLocation(
                 agent_info["x"], agent_info["y"]
             )
             for agent_info in agents

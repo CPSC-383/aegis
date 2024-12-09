@@ -48,7 +48,7 @@ from aegis.common.commands.aegis_commands import (
     TEAM_DIG_RESULT,
 )
 from aegis.common.network.aegis_socket_exception import AegisSocketException
-from aegis.common.world.cell import Cell
+from aegis.common.world.cell import InternalCell
 from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.objects import Rubble, Survivor, SurvivorGroup, WorldObject
 from aegis.parsers.config_parser import ConfigParser
@@ -60,11 +60,11 @@ from aegis.world.aegis_world import AegisWorld
 
 class Aegis:
     def __init__(self) -> None:
-        self._parameters = Parameters()
-        self._state = State.NONE
-        self._started_idling = -1
-        self._end = False
-        self._agent_handler = AgentHandler()
+        self._parameters: Parameters = Parameters()
+        self._state: State = State.NONE
+        self._started_idling: int = -1
+        self._end: bool = False
+        self._agent_handler: AgentHandler = AgentHandler()
         self._agent_commands: list[AgentCommand] = []
         self._command_records: list[str] = []
         self._TEAM_DIG_list: list[TEAM_DIG] = []
@@ -73,16 +73,14 @@ class Aegis:
         self._MOVE_list: list[MOVE] = []
         self._SLEEP_list: list[SLEEP] = []
         self._OBSERVE_list: list[OBSERVE] = []
-        self._TEAM_DIG_RESULT_list = AgentIDList()
-        self._SAVE_SURV_RESULT_list = AgentIDList()
-        self._PREDICT_RESULT_list = AgentIDList()
-        self._MOVE_RESULT_list = AgentIDList()
-        self._SLEEP_RESULT_list = AgentIDList()
+        self._TEAM_DIG_RESULT_list: AgentIDList = AgentIDList()
+        self._SAVE_SURV_RESULT_list: AgentIDList = AgentIDList()
+        self._MOVE_RESULT_list: AgentIDList = AgentIDList()
+        self._SLEEP_RESULT_list: AgentIDList = AgentIDList()
         self._OBSERVE_RESULT_list: list[OBSERVE] = []
-        self._crashed_agents = AgentIDList()
-        self._aegis_world = AegisWorld()
-        self._ws_server = WebSocketServer()
-        self._prediction_handler: PredictionHandler | None = None
+        self._crashed_agents: AgentIDList = AgentIDList()
+        self._aegis_world: AegisWorld = AegisWorld()
+        self._ws_server: WebSocketServer = WebSocketServer()
 
     def read_command_line(self, args: list[str]) -> bool:
         try:
@@ -875,7 +873,7 @@ class Aegis:
     def _handle_top_layer(
         self,
         top_layer: WorldObject,
-        cell: Cell,
+        cell: InternalCell,
         temp_cell_agent_list: list[AgentID],
         gid_counter: list[int],
     ) -> None:

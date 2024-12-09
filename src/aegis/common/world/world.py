@@ -1,8 +1,8 @@
-from aegis.common import Constants, Location
-from aegis.common.world.cell import Cell
+from aegis.common import Constants, InternalLocation
+from aegis.common.world.cell import InternalCell
 
 
-class World:
+class InternalWorld:
     """
     Represents a 2D grid of cells.
 
@@ -15,7 +15,10 @@ class World:
     """
 
     def __init__(
-        self, world: list[list[Cell]] | None = None, width: int = 0, height: int = 0
+        self,
+        world: list[list[InternalCell]] | None = None,
+        width: int = 0,
+        height: int = 0,
     ) -> None:
         """
         Initializes a World instance.
@@ -32,13 +35,15 @@ class World:
             ValueError: If both initializing methods are None or both were passed.
         """
         if world is not None and (width == 0 and height == 0):
-            self.height = len(world[0])
-            self.width = len(world)
-            self._world = world
+            self.height: int = len(world[0])
+            self.width: int = len(world)
+            self._world: list[list[InternalCell]] = world
         elif width > 0 and height > 0 and world is None:
             self.height = height
             self.width = width
-            self._world = [[Cell(x, y) for y in range(height)] for x in range(width)]
+            self._world = [
+                [InternalCell(x, y) for y in range(height)] for x in range(width)
+            ]
         else:
             raise ValueError(
                 "Either 'world' OR 'width and height' must be passed into the class"
@@ -65,16 +70,16 @@ class World:
         if self.height > Constants.WORLD_MAX:
             raise ValueError(f"World height must be beneath {Constants.WORLD_MAX}")
 
-    def get_world_grid(self) -> list[list[Cell]]:
+    def get_world_grid(self) -> list[list[InternalCell]]:
         """Returns the 2D grid representing the world."""
         return self._world
 
-    def set_world_grid(self, world: list[list[Cell]]) -> None:
+    def set_world_grid(self, world: list[list[InternalCell]]) -> None:
         self.height = len(world[0])
         self.width = len(world)
         self._world = world
 
-    def on_map(self, location: Location) -> bool:
+    def on_map(self, location: InternalLocation) -> bool:
         """
         Checks if a given location is on the map.
 
@@ -91,11 +96,11 @@ class World:
             and location.y < self.height
         )
 
-    def set_cell_at(self, location: Location, cell: Cell) -> None:
+    def set_cell_at(self, location: InternalLocation, cell: InternalCell) -> None:
         if self.on_map(location):
             self._world[location.x][location.y] = cell
 
-    def get_cell_at(self, location: Location) -> Cell | None:
+    def get_cell_at(self, location: InternalLocation) -> InternalCell | None:
         """
         Returns the cell at the given location if it exists.
 

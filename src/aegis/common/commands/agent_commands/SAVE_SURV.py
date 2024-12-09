@@ -4,7 +4,13 @@ from aegis.common.commands.agent_command import AgentCommand
 
 
 class SAVE_SURV(AgentCommand):
-    """Represents a command for an agent to save a survivor or survivor group."""
+    """
+    Represents a command for an agent to save a survivor
+
+    Examples:
+        >>> SAVE_SURV()
+        SAVE_SURV
+    """
 
     @override
     def __str__(self) -> str:

@@ -2,4 +2,4 @@
 icon: octicons/location-16
 ---
 
-::: aegis.common.location
+::: aegis.api.location

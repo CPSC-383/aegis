@@ -70,7 +70,8 @@ Commands AEGIS uses to interact with the agents.
 - [`aegis.TEAM_DIG_RESULT`][]: Represents the result of digging rubble.
 """
 
-from aegis.common import AgentID, AgentIDList, Direction, LifeSignals, Location
+from aegis.api import Cell, Location, World
+from aegis.common import AgentID, Direction
 from aegis.common.commands.aegis_command import AegisCommand
 from aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
@@ -97,7 +98,6 @@ from aegis.common.commands.agent_commands import (
     SLEEP,
     TEAM_DIG,
 )
-from aegis.common.world.cell import Cell
 from aegis.common.world.info import (
     CellInfo,
     SurroundInfo,
@@ -107,7 +107,6 @@ from aegis.common.world.objects import (
     Survivor,
     WorldObject,
 )
-from aegis.common.world.world import World
 
 __all__ = [
     "AGENT_UNKNOWN",

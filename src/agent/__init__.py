@@ -9,12 +9,12 @@ Contains the core components for agents.
 
 from agent.base_agent import BaseAgent
 from agent.brain import Brain
-from agent.log_levels import LogLevels
 from agent.agent_states import AgentStates
+from agent.agent_controller import AgentController
 
 __all__ = [
     "AgentStates",
+    "AgentController",
     "BaseAgent",
     "Brain",
-    "LogLevels",
 ]

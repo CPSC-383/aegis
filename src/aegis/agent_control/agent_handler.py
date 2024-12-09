@@ -16,7 +16,6 @@ from aegis.common.commands.aegis_commands import (
     SEND_MESSAGE_RESULT,
     MESSAGES_END,
     MESSAGES_START,
-    SAVE_SURV_RESULT,
 )
 from aegis.common.constants import Constants
 from aegis.common.network.aegis_socket_exception import AegisSocketException

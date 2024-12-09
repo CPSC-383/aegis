@@ -7,12 +7,19 @@ import random
 from typing import TypedDict, cast
 
 from aegis.assist.state import State
-from aegis.common import AgentID, AgentIDList, Constants, Direction, Location, Utility
+from aegis.common import (
+    AgentID,
+    AgentIDList,
+    Constants,
+    Direction,
+    InternalLocation,
+    Utility,
+)
 from aegis.common.world.agent import Agent
-from aegis.common.world.cell import Cell
+from aegis.common.world.cell import InternalCell
 from aegis.common.world.info import CellInfo, SurroundInfo
 from aegis.common.world.objects import Survivor, SurvivorGroup
-from aegis.common.world.world import World
+from aegis.common.world.world import InternalWorld
 from aegis.parsers.aegis_world_file import AegisWorldFile
 from aegis.parsers.helper.world_file_type import StackContent, WorldFileType
 from aegis.parsers.world_file_parser import WorldFileParser
@@ -84,18 +91,18 @@ class AegisWorld:
         self._high_survivor_level: int = 0
         self._random_seed: int = 0
         self.round: int = 0
-        self._world: World | None = None
+        self._world: InternalWorld | None = None
         self._agents: list[Agent] = []
-        self._normal_cell_list: list[Cell] = []
-        self._fire_cells_list: list[Cell] = []
-        self._non_fire_cells_list: list[Cell] = []
+        self._normal_cell_list: list[InternalCell] = []
+        self._fire_cells_list: list[InternalCell] = []
+        self._non_fire_cells_list: list[InternalCell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._survivor_groups_list: dict[int, SurvivorGroup] = {}
-        self._top_layer_removed_cell_list: list[Location] = []
-        self._fire_simulator = FireSimulator(
+        self._top_layer_removed_cell_list: list[InternalLocation] = []
+        self._fire_simulator: FireSimulator = FireSimulator(
             self._fire_cells_list, self._non_fire_cells_list, self._world
         )
-        self._survivor_simulator = SurvivorSimulator(
+        self._survivor_simulator: SurvivorSimulator = SurvivorSimulator(
             self._survivors_list, self._survivor_groups_list
         )
         self._initial_agent_energy: int = Constants.DEFAULT_MAX_ENERGY_LEVEL
@@ -141,7 +148,7 @@ class AegisWorld:
             self.round = 1
 
             # Create a world of known size
-            self._world = World(
+            self._world = InternalWorld(
                 width=aegis_world_file.width, height=aegis_world_file.height
             )
 
@@ -180,7 +187,7 @@ class AegisWorld:
             # Cells that are normal
             for x in range(self._world.width):
                 for y in range(self._world.height):
-                    cell = self._world.get_cell_at(Location(x, y))
+                    cell = self._world.get_cell_at(InternalLocation(x, y))
                     if cell is None:
                         continue
 
@@ -226,7 +233,7 @@ class AegisWorld:
                 _ = writer.write(f"Size: ( WIDTH {width} , HEIGHT {height} )\n")
                 for x in range(self._world.width):
                     for y in range(self._world.height):
-                        cell = self._world.get_cell_at(Location(x, y))
+                        cell = self._world.get_cell_at(InternalLocation(x, y))
                         if cell is None:
                             _ = writer.write(f"[({x},{y}),No Cell]\n")
                             continue
@@ -317,7 +324,7 @@ class AegisWorld:
 
         if cell is None:
             if len(self._normal_cell_list) == 0:
-                cell = self._world.get_cell_at(Location(0, 0))
+                cell = self._world.get_cell_at(InternalLocation(0, 0))
             else:
                 cell = random.choice(self._normal_cell_list)
 
@@ -352,7 +359,7 @@ class AegisWorld:
                 return agent
         return None
 
-    def move_agent(self, agent_id: AgentID, location: Location) -> None:
+    def move_agent(self, agent_id: AgentID, location: InternalLocation) -> None:
         agent = self.get_agent(agent_id)
         if agent is None or self._world is None:
             return
@@ -377,7 +384,7 @@ class AegisWorld:
             agent_cell.agent_id_list.remove(agent.agent_id)
             self._number_of_alive_agents -= 1
 
-    def remove_layer_from_cell(self, location: Location) -> None:
+    def remove_layer_from_cell(self, location: InternalLocation) -> None:
         if self._world is None:
             return
 
@@ -407,12 +414,12 @@ class AegisWorld:
                     survivor_group.number_of_survivors
                 )
 
-    def get_cell_at(self, location: Location) -> Cell | None:
+    def get_cell_at(self, location: InternalLocation) -> InternalCell | None:
         if self._world is not None:
             return self._world.get_cell_at(location)
         return None
 
-    def get_surround_info(self, location: Location) -> SurroundInfo | None:
+    def get_surround_info(self, location: InternalLocation) -> SurroundInfo | None:
         surround_info = SurroundInfo()
         if self._world is None:
             return
@@ -460,7 +467,7 @@ class AegisWorld:
 
         for x in range(self._world.width):
             for y in range(self._world.height):
-                cell = self._world.get_cell_at(Location(x, y))
+                cell = self._world.get_cell_at(InternalLocation(x, y))
                 if cell is None:
                     continue
 

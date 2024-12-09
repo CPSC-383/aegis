@@ -7,6 +7,10 @@ class END_TURN(AgentCommand):
     """
     Represents a command that allows an agent to
     tell the server it is done with its turn.
+
+    Examples:
+        >>> END_TURN()
+        END_TURN
     """
 
     @override

@@ -17,67 +17,17 @@ from aegis import (
     SurroundInfo,
     Survivor,
 )
-from agent import BaseAgent, Brain, LogLevels
+from agent import BaseAgent, Brain, AgentController
 
 
 class ExampleAgent(Brain):
     def __init__(self) -> None:
         super().__init__()
-        self._agent = BaseAgent.get_base_agent()
-
-    @override
-    def handle_connect_ok(self, connect_ok: CONNECT_OK) -> None:
-        BaseAgent.log(LogLevels.Always, "CONNECT_OK")
-
-    @override
-    def handle_disconnect(self) -> None:
-        BaseAgent.log(LogLevels.Always, "DISCONNECT")
-
-    @override
-    def handle_dead(self) -> None:
-        BaseAgent.log(LogLevels.Always, "DEAD")
-
-    @override
-    def handle_send_message_result(self, smr: SEND_MESSAGE_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"SEND_MESSAGE_RESULT: {smr}")
-        BaseAgent.log(LogLevels.Test, f"{smr}")
-
-    @override
-    def handle_move_result(self, mr: MOVE_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"MOVE_RESULT: {mr}")
-        BaseAgent.log(LogLevels.Test, f"{mr}")
-
-    @override
-    def handle_observe_result(self, ovr: OBSERVE_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"OBSERVER_RESULT: {ovr}")
-        BaseAgent.log(LogLevels.Always, f"{ovr.energy_level}")
-        BaseAgent.log(LogLevels.Always, f"{ovr.life_signals}")
-        BaseAgent.log(LogLevels.Always, f"{ovr.cell_info}")
-        BaseAgent.log(LogLevels.Test, f"{ovr}")
-
-    @override
-    def handle_save_surv_result(self, ssr: SAVE_SURV_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"SAVE_SURV_RESULT: {ssr}")
-        BaseAgent.log(LogLevels.Test, f"{ssr}")
-
-    @override
-    def handle_predict_result(self, prd: PREDICT_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"PREDICT_RESULT: {prd}")
-        BaseAgent.log(LogLevels.Test, f"{prd}")
-
-    @override
-    def handle_sleep_result(self, sr: SLEEP_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"SLEEP_RESULT: {sr}")
-        BaseAgent.log(LogLevels.Test, f"{sr}")
-
-    @override
-    def handle_team_dig_result(self, tdr: TEAM_DIG_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"TEAM_DIG_RSULT: {tdr}")
-        BaseAgent.log(LogLevels.Test, f"{tdr}")
+        self._agent: AgentController = BaseAgent.get_agent()
 
     @override
     def think(self) -> None:
-        BaseAgent.log(LogLevels.Always, "Thinking")
+        self._agent.log("Thinking")
 
         # On the first round, send a request for surrounding information
         # by moving to the center (not moving). This will help initiate pathfinding.
@@ -90,6 +40,8 @@ class ExampleAgent(Brain):
         if world is None:
             self.send_and_end_turn(MOVE(Direction.CENTER))
             return
+
+        self._agent.log("THIS WORKS AAAAHHHHH")
 
         # Fetch the cell at the agent’s current location. If the location is outside the world’s bounds,
         # return a default move action and end the turn.
@@ -110,7 +62,7 @@ class ExampleAgent(Brain):
 
     def send_and_end_turn(self, command: AgentCommand):
         """Send a command and end your turn."""
-        BaseAgent.log(LogLevels.Always, f"SENDING {command}")
+        self._agent.log(f"SENDING {command}")
         self._agent.send(command)
         self._agent.send(END_TURN())
 

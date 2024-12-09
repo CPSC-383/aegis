@@ -9,6 +9,24 @@ class Direction(Enum):
     """
     Enum representing different directions.
 
+    Examples:
+        >>> Direction.NORTH
+        NORTH
+        >>> Direction.SOUTH
+        SOUTH
+        >>> for dir in Direction:
+        ...     print(dir)
+        NORTH_WEST
+        NORTH
+        NORTH_EAST
+        EAST
+        SOUTH_EAST
+        SOUTH
+        SOUTH_WEST
+        WEST
+        CENTER
+
+
     Attributes:
         dx (int): The change in the x-coordinate when moving in this direction.
         dy (int): The change in the y-coordinate when moving in this direction.

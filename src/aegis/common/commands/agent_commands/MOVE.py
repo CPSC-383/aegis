@@ -8,6 +8,12 @@ class MOVE(AgentCommand):
     """
     Represents a command for an agent to move in a specified direction.
 
+    Examples:
+        >>> dir = Direction.EAST
+        >>> MOVE(dir)
+        MOVE ( EAST )
+
+
     Attributes:
         direction (Direction): The direction to move.
     """

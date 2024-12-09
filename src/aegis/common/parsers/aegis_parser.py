@@ -11,7 +11,7 @@ from aegis.common import (
     Direction,
     CellType,
     LifeSignals,
-    Location,
+    InternalLocation,
 )
 from aegis.common.commands.aegis_command import AegisCommand
 from aegis.common.commands.aegis_commands import (
@@ -48,7 +48,7 @@ from aegis.common.commands.agent_commands import (
 )
 from aegis.common.commands.command import Command
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
-from aegis.common.world.cell import Cell
+from aegis.common.world.cell import InternalCell
 from aegis.common.world.info import (
     CellInfo,
     SurroundInfo,
@@ -68,8 +68,8 @@ MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
 
 class AegisParser:
     @staticmethod
-    def build_world(file_location: str) -> list[list[Cell]] | None:
-        world: list[list[Cell]] | None = None
+    def build_world(file_location: str) -> list[list[InternalCell]] | None:
+        world: list[list[InternalCell]] | None = None
         try:
             with open(file_location) as file:
                 world = AegisParser.read_world_size(file)
@@ -92,14 +92,14 @@ class AegisParser:
         return world
 
     @staticmethod
-    def read_world_size(file: TextIO) -> list[list[Cell]]:
+    def read_world_size(file: TextIO) -> list[list[InternalCell]]:
         tokens = file.readline().split()
         width = int(tokens[3])
         height = int(tokens[6])
         return [[None] * height for _ in range(width)]  # pyright: ignore[reportReturnType]
 
     @staticmethod
-    def read_and_build_cell(line: str) -> Cell:
+    def read_and_build_cell(line: str) -> InternalCell:
         pattern = r"[\[\]\(\),% ]"
         tokens = re.split(pattern, line.strip())
         tokens = [token for token in tokens if token]
@@ -109,7 +109,7 @@ class AegisParser:
         killer = tokens[3]
         charging = tokens[4]
         has_survivors = tokens[5] == "True"
-        cell = Cell(x, y)
+        cell = InternalCell(x, y)
 
         cell.set_normal_cell()
         cell.set_on_fire(fire[0] == "+")
@@ -156,7 +156,7 @@ class AegisParser:
                 file_name = AegisParser.file(tokens)
                 AegisParser.done(tokens)
                 return CONNECT_OK(
-                    AgentID(id, gid), energy_level, Location(x, y), file_name
+                    AgentID(id, gid), energy_level, InternalLocation(x, y), file_name
                 )
             elif string.startswith(Command.STR_DISCONNECT):
                 AegisParser.text(tokens, Command.STR_DISCONNECT)
@@ -350,7 +350,7 @@ class AegisParser:
                 y = AegisParser.integer(tokens)
                 AegisParser.close_round_bracket(tokens)
                 AegisParser.done(tokens)
-                return OBSERVE(Location(x, y))
+                return OBSERVE(InternalLocation(x, y))
             elif string.startswith(Command.STR_SAVE_SURV):
                 AegisParser.text(tokens, Command.STR_SAVE_SURV)
                 AegisParser.done(tokens)
@@ -570,9 +570,8 @@ class AegisParser:
         top_layer = AegisParser.object(tokens)
         AegisParser.close_round_bracket(tokens)
         AegisParser.close_round_bracket(tokens)
-        cell_type = CellType.NORMAL_CELL if normal_cell else CellType.CHARGING_CELL
         return CellInfo(
-            cell_type, Location(x, y), on_fire, move_cost, agent_id_list, top_layer
+            cell_type, InternalLocation(x, y), move_cost, agent_id_list, top_layer
         )
 
     @staticmethod

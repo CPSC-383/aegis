@@ -22,11 +22,11 @@ from aegis.common.commands.aegis_commands import (
 )
 from aegis.common.parsers.aegis_parser import AegisParser
 from aegis.common.world.info.cell_info import CellInfo
-from aegis.common.world.world import World
+from aegis.common.world.world import InternalWorld
+from aegis.api import World
 
 import agent.base_agent
 from agent.agent_states import AgentStates
-from agent.log_levels import LogLevels
 
 
 class Brain(ABC):
@@ -39,16 +39,6 @@ class Brain(ABC):
     def get_world(self) -> World | None:
         """Returns the current world information associated with the brain."""
         return self._world
-
-    def set_world(self, world_info: World) -> None:
-        """
-        Sets the current world information associated with the brain.
-
-        Args:
-            world_info: The new world information for the brain.
-        """
-        self._world = world_info
-        agent.base_agent.BaseAgent.log(LogLevels.State_Changes, "Brain: New World")
 
     @abstractmethod
     def handle_connect_ok(self, connect_ok: CONNECT_OK) -> None:
@@ -149,16 +139,17 @@ class Brain(ABC):
         Args:
             aegis_command: The command received from AEGIS.
         """
-        base_agent = agent.base_agent.BaseAgent.get_base_agent()
+        base_agent = agent.base_agent.BaseAgent.get_agent()
         if isinstance(aegis_command, CONNECT_OK):
             connect_ok: CONNECT_OK = aegis_command
             base_agent.set_agent_id(connect_ok.new_agent_id)
             base_agent.set_energy_level(connect_ok.energy_level)
             base_agent.set_location(connect_ok.location)
-            self._world = World(AegisParser.build_world(connect_ok.world_filename))
+            self._world = InternalWorld(
+                AegisParser.build_world(connect_ok.world_filename)
+            )  # pyright: ignore[reportAttributeAccessIssue]
             base_agent.set_agent_state(AgentStates.CONNECTED)
-            agent.base_agent.BaseAgent.log(LogLevels.Test, "Connected Successfully")
-            self.handle_connect_ok(connect_ok)
+            base_agent.log("Connected Successfully")
 
         elif isinstance(aegis_command, DEATH_CARD):
             base_agent.set_agent_state(AgentStates.SHUTTING_DOWN)
@@ -184,12 +175,7 @@ class Brain(ABC):
             )
             base_agent.set_energy_level(move_result.energy_level)
             base_agent.set_location(move_result_current_info.location)
-            self.handle_move_result(move_result)
-
-        elif isinstance(aegis_command, OBSERVE_RESULT):
-            observe_result: OBSERVE_RESULT = aegis_command
-            base_agent.set_energy_level(observe_result.energy_level)
-            self.handle_observe_result(observe_result)
+            base_agent.update_surround(move_result.surround_info, self.get_world())  # pyright: ignore[reportArgumentType]
 
         elif isinstance(aegis_command, ROUND_END):
             base_agent.set_agent_state(AgentStates.IDLE)
@@ -234,9 +220,7 @@ class Brain(ABC):
             self.handle_team_dig_result(team_dig_result)
 
         elif isinstance(aegis_command, AEGIS_UNKNOWN):
-            agent.base_agent.BaseAgent.log(
-                LogLevels.Always, "Brain: Got Unknown command reply from AEGIS."
-            )
+            base_agent.log("Brain: Got Unknown command reply from AEGIS.")
 
         elif isinstance(aegis_command, CMD_RESULT_START):
             base_agent.set_agent_state(AgentStates.GET_CMD_RESULT)
@@ -245,7 +229,6 @@ class Brain(ABC):
             base_agent.set_agent_state(AgentStates.IDLE)
 
         else:
-            agent.base_agent.BaseAgent.log(
-                LogLevels.Warning,
+            base_agent.log(
                 f"Brain: Got unrecognized reply from AEGIS: {aegis_command.__class__.__name__}.",
             )

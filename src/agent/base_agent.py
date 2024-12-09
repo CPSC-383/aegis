@@ -6,8 +6,16 @@ from __future__ import annotations
 import sys
 from collections import deque
 
-import numpy as np
-from aegis import END_TURN, AgentCommand, AgentID, Location
+from aegis import (
+    END_TURN,
+    AgentCommand,
+    AgentID,
+    Direction,
+    SurroundInfo,
+)
+from aegis.api import Location
+from aegis.common.location import InternalLocation
+from aegis.common.world.world import InternalWorld
 from aegis.common.commands.agent_commands import CONNECT
 from aegis.common.network.aegis_socket import AegisSocket
 from aegis.common.network.aegis_socket_exception import AegisSocketException
@@ -17,23 +25,20 @@ from numpy.typing import NDArray
 
 import agent.brain
 from agent.agent_states import AgentStates
-from agent.log_levels import LogLevels
 
 
 class BaseAgent:
     """Represents a base agent that connects to and interacts with AEGIS."""
 
-    AGENT_PORT = 6001
-    _agent = None
-    _log_level: LogLevels = LogLevels.Nothing
-    _log_test: bool = False
+    AGENT_PORT: int = 6001
+    _agent: BaseAgent | None = None
 
     def __init__(self) -> None:
         """Initializes a BaseAgent instance."""
-        self._round = 0
-        self._agent_state = AgentStates.CONNECTING
-        self._id = AgentID(-1, -1)
-        self._location = Location(-1, -1)
+        self._round: int = 0
+        self._agent_state: AgentStates = AgentStates.CONNECTING
+        self._id: AgentID = AgentID(-1, -1)
+        self._location: InternalLocation = InternalLocation(-1, -1)
         self._brain: agent.brain.Brain | None = None
         self._energy_level = -1
         self._aegis_socket = None
@@ -43,7 +48,7 @@ class BaseAgent:
         self._did_end_turn = False
 
     @staticmethod
-    def get_base_agent() -> BaseAgent:
+    def get_agent() -> BaseAgent:
         if BaseAgent._agent is None:
             BaseAgent._agent = BaseAgent()
         return BaseAgent._agent
@@ -69,15 +74,15 @@ class BaseAgent:
 
     def set_agent_id(self, id: AgentID) -> None:
         self._id = id
-        self.log(LogLevels.Always, f"New ID: {self._id}")
+        self.log(f"New ID: {self._id}")
 
     def get_location(self) -> Location:
         """Returns the location of the base agent."""
-        return self._location
+        return self._location  # pyright: ignore[reportReturnType]
 
-    def set_location(self, location: Location) -> None:
+    def set_location(self, location: InternalLocation) -> None:
         self._location = location
-        self.log(LogLevels.Always, f"New Location: {self._location}")
+        self.log(f"New Location: {self._location}")
 
     def get_energy_level(self) -> int:
         """Returns the energy level of the base agent."""
@@ -85,7 +90,7 @@ class BaseAgent:
 
     def set_energy_level(self, energy_level: int) -> None:
         self._energy_level = energy_level
-        self.log(LogLevels.Always, f"New Energy: {self._energy_level}")
+        self.log(f"New Energy: {self._energy_level}")
 
     def get_prediction_info_size(self) -> int:
         """Returns the size of the prediction info queue."""
@@ -118,7 +123,7 @@ class BaseAgent:
 
     def set_brain(self, brain: agent.brain.Brain) -> None:
         self._brain = brain
-        self.log(LogLevels.Always, "New Brain")
+        self.log("New Brain")
 
     def start_test(self, brain: agent.brain.Brain) -> None:
         self.start("localhost", "test", brain)
@@ -132,16 +137,14 @@ class BaseAgent:
             if self._connect_to_aegis(host, group_name):
                 self._run_base_agent_states()
             else:
-                self.log(LogLevels.Error, "Failed to connect to AEGIS.")
+                self.log("Failed to connect to AEGIS.")
         else:
-            self.log(
-                LogLevels.Error, "Multiple calls made to start method, ( call ignored )"
-            )
+            self.log("Multiple calls made to start method, ( call ignored )")
 
     def _connect_to_aegis(self, host: str, group_name: str) -> bool:
         result: bool = False
         for _ in range(5):
-            self.log(LogLevels.Always, "Trying to connect to AEGIS...")
+            self.log("Trying to connect to AEGIS...")
             try:
                 self._aegis_socket = AegisSocket()
                 self._aegis_socket.connect(host, self.AGENT_PORT)
@@ -162,9 +165,9 @@ class BaseAgent:
             if result:
                 break
             else:
-                self.log(LogLevels.Always, "Failed to connect")
+                self.log("Failed to connect")
         if result:
-            self.log(LogLevels.Always, "Connected")
+            self.log("Connected")
         _ = sys.stdout.flush()
         return result
 
@@ -188,13 +191,10 @@ class BaseAgent:
                                     end = True
                     except AegisParserException as e:
                         self.log(
-                            LogLevels.Always,
                             f"Got AegisParserException '{e}'",
                         )
             except AegisSocketException as e:
-                self.log(
-                    LogLevels.Always, f"Got AegisSocketException '{e}', shutting down."
-                )
+                self.log(f"Got AegisSocketException '{e}', shutting down.")
                 end = True
             _ = sys.stdout.flush()
 
@@ -214,50 +214,17 @@ class BaseAgent:
                 if isinstance(agent_action, END_TURN):
                     self._did_end_turn = True
             except AegisSocketException:
-                self.log(LogLevels.Always, f"Failed to send {agent_action}")
+                self.log(f"Failed to send {agent_action}")
 
-    @staticmethod
-    def get_log_level() -> LogLevels:
-        return BaseAgent._log_level
-
-    @staticmethod
-    def set_log_level(level: LogLevels) -> None:
+    def log(self, message: str) -> None:
         """
-        Sets the current log level.
+        Logs a message with the agent's ID and the round number.
 
         Args:
-            level: The log level to set.
-        """
-        BaseAgent._log_level = level
-
-    @staticmethod
-    def get_log_test_info() -> bool:
-        return BaseAgent._log_test
-
-    @staticmethod
-    def set_log_test_info(log_test: bool) -> None:
-        BaseAgent._log_test = log_test
-
-    @classmethod
-    def log(cls, lev: LogLevels, message: str) -> None:
-        """
-        Logs a message based on the specified logging level.
-
-        Args:
-            lev: The logging level for the message.
             message: The message to log.
         """
-        agent_id = cls.get_base_agent()._id
-        id_str = f"[Agent#({agent_id.id}:{agent_id.gid})]@{cls.get_base_agent()._round}"
 
-        if lev == LogLevels.Test and BaseAgent._log_test:
-            print(f"{id_str}: {lev} : {message}")
-        elif lev == LogLevels.Always:
-            print(f"{id_str}: {message}")
-        elif lev == LogLevels.Warning:
-            print(f"{id_str}: WARNING {message}")
-        elif lev == LogLevels.Error:
-            print(f"{id_str}: ERROR {message}")
-        elif BaseAgent._log_level != LogLevels.Nothing or lev == LogLevels.All:
-            if lev == BaseAgent._log_level or BaseAgent._log_level == LogLevels.All:
-                print(f"{id_str}: {lev} : {message}")
+        agent = self.get_agent()
+        agent_id = agent.get_agent_id()
+        id_str = f"[Agent#({agent_id.id}:{agent_id.gid})]@{agent.get_round_number()}"
+        print(f"{id_str}: {message}")

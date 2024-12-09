@@ -55,7 +55,7 @@ nav:
               - SleepResult: api/aegis_commands/sleep-result.md
               - TeamDigResult: api/aegis_commands/team-dig-result.md
       - Agent:
-          - BaseAgent: api/agent/base-agent.md
+          - AgentController: api/agent/agent-controller.md
   - Common Errors: common_errors.md
 
 theme:

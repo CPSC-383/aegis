@@ -1,14 +1,14 @@
 from aegis.common import Direction, Utility
-from aegis.common.world.cell import Cell
-from aegis.common.world.world import World
+from aegis.common.world.cell import InternalCell
+from aegis.common.world.world import InternalWorld
 
 
 class FireSimulator:
     def __init__(
         self,
-        fire_cells_list: list[Cell],
-        non_fire_cells_list: list[Cell],
-        world: World | None,
+        fire_cells_list: list[InternalCell],
+        non_fire_cells_list: list[InternalCell],
+        world: InternalWorld | None,
     ) -> None:
         self._fire_cells_list = fire_cells_list
         self._non_fire_cells_list = non_fire_cells_list
