@@ -1,4 +1,5 @@
 import socket
+import sys
 
 from aegis.agent_control.agent_control import AgentControl
 from aegis.agent_control.agent_group import AgentGroup
@@ -196,10 +197,16 @@ class AgentHandler:
                 else:
                     agent.agent_socket.send_message(str(command))
         except AgentCrashedException as e:
-            print(f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !')
+            print(
+                f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !',
+                file=sys.stderr,
+            )
             raise e
         except Exception as e:
-            print(f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !')
+            print(
+                f'Aegis  : Exception "{e}" sending message " {command} " to agent {agent_id} !',
+                file=sys.stderr,
+            )
 
     def send_message_to_all(self, command: AegisCommand) -> None:
         for agent in self.agent_list:
@@ -216,13 +223,22 @@ class AgentHandler:
                 return None
             command = AegisParser.parse_agent_command(s)
         except AgentSocketException:
-            print(f"Aegis  : Exception reading message from agent {self.get_current_agent().agent_id} !")
+            print(
+                f"Aegis  : Exception reading message from agent {self.get_current_agent().agent_id} !",
+                file=sys.stderr,
+            )
             command = AGENT_UNKNOWN()
         except AegisParserException:
-            print(f"Aegis  : Exception parsing message from agent {self.get_current_agent().agent_id} !")
+            print(
+                f"Aegis  : Exception parsing message from agent {self.get_current_agent().agent_id} !",
+                file=sys.stderr,
+            )
             command = AGENT_UNKNOWN()
         except AgentCrashedException as e:
-            print(f"Aegis  : Agent reset the socket connection (possible crash of agent?) {self.get_current_agent().agent_id} !")
+            print(
+                f"Aegis  : Agent reset the socket connection (possible crash of agent?) {self.get_current_agent().agent_id} !",
+                file=sys.stderr,
+            )
             raise e
         command.set_agent_id(self.get_current_agent().agent_id)
         return command

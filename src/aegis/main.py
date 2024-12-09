@@ -9,16 +9,25 @@ def main() -> None:
     try:
         print("Aegis  : Initializing.")
         if not aegis.read_command_line(sys.argv[1:]):
-            print("Aegis  : Unable to initialize.")
+            print(
+                "Aegis  : Unable to initialize.",
+                file=sys.stderr,
+            )
             sys.exit(1)
 
         print("Aegis  : Starting Up.")
         if not aegis.start_up():
-            print("Aegis  : Unable to start up.")
+            print(
+                "Aegis  : Unable to start up.",
+                file=sys.stderr,
+            )
             sys.exit(1)
 
         if not aegis.build_world():
-            print("Aegis  : Error building world.")
+            print(
+                "Aegis  : Error building world.",
+                file=sys.stderr,
+            )
             sys.exit(1)
 
         print("Aegis  : Waiting for agents.")

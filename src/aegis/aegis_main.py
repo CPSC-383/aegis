@@ -419,11 +419,13 @@ class Aegis:
                             == ConfigSettings.SEND_MESSAGES_AND_PERFORM_ACTION
                         ):
                             print(
-                                f"Agent {current_agent.agent_id} sent no action (non-send) command this round."
+                                f"Agent {current_agent.agent_id} sent no action (non-send) command this round.",
+                                file=sys.stderr,
                             )
                         else:
                             print(
-                                f"Agent {current_agent.agent_id} sent no command this round."
+                                f"Agent {current_agent.agent_id} sent no command this round.",
+                                file=sys.stderr,
                             )
 
                 self._agent_handler.send_message_to_current(ROUND_END())
