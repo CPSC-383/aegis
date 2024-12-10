@@ -105,10 +105,6 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <label className="text-sm flex items-center text-gray-700">
-                            <Grid3x3 className="w-4 h-4 mr-2 text-gray-500" />
-                            Width
-                        </label>
                         <NumberInput
                             value={worldParams.width}
                             onChange={(width: number) => {
@@ -118,14 +114,12 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
                             min={MAP_MIN}
                             extraStyles="w-full"
                             disabled={!isWorldEmpty}
+                            label={'Width'}
+                            icon={Grid3x3}
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm flex items-center text-gray-700">
-                            <Grid3x3 className="w-4 h-4 mr-2 text-gray-500" />
-                            Height
-                        </label>
                         <NumberInput
                             value={worldParams.height}
                             onChange={(height: number) => {
@@ -135,15 +129,13 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
                             min={MAP_MIN}
                             extraStyles="w-full"
                             disabled={!isWorldEmpty}
+                            label={'Height'}
+                            icon={Grid3x3}
                         />
                     </div>
                 </div>
 
                 <div className="space-y-2 mt-4">
-                    <label className="text-sm flex items-center text-gray-700">
-                        <Zap className="w-4 h-4 mr-2 text-gray-500" />
-                        Initial Agent Energy
-                    </label>
                     <NumberInput
                         value={worldParams.initialEnergy}
                         onChange={(initialEnergy: number) => {
@@ -153,6 +145,8 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
                         min={1}
                         extraStyles="w-full"
                         disabled={!isWorldEmpty}
+                        label={'Initial Agent Energy'}
+                        icon={Zap}
                     />
 
                     {!isWorldEmpty && (

@@ -47,6 +47,13 @@ function Dropdown({
 
     const SelectedIcon = normalizedItems.find((item) => item.value === selectedItem)?.icon || ProvidedIcon
 
+    const formatDisplayText = (text: string): string => {
+        const stringText = String(text)
+        const words = stringText.replace(/_/g, ' ').split(' ')
+        const formattedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        return formattedWords.join(' ')
+    }
+
     return (
         <div className="relative w-full" ref={dropdownRef}>
             {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
@@ -57,7 +64,7 @@ function Dropdown({
             >
                 <div className="flex items-center space-x-2">
                     <SelectedIcon className="w-5 h-5 text-gray-600" />
-                    <span className="text-sm">{selectedItem || placeholder}</span>
+                    <span className="text-sm">{formatDisplayText(selectedItem || placeholder)}</span>
                 </div>
                 <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </motion.button>
@@ -82,7 +89,7 @@ function Dropdown({
                                     className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
                                 >
                                     <Icon className="w-5 h-5 mr-2 text-gray-600" />
-                                    <span className="text-sm">{item.value}</span>
+                                    <span className="text-sm">{formatDisplayText(item.value)}</span>
                                 </motion.div>
                             )
                         })}

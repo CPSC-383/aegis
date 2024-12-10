@@ -1,6 +1,6 @@
 import { SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
 import NumberInput from '@/components/inputs/NumberInput'
-import { Flame, PlusCircle, Target, Zap } from 'lucide-react'
+import { Flame, PlusCircle, Target, Zap, Users, User, Tag } from 'lucide-react'
 import Dropdown from '@/components/Dropdown'
 
 interface Props {
@@ -30,6 +30,14 @@ function SpecialCellsBrush({
         }[type]
     }))
 
+    const spawnZoneItems = Object.values(SpawnZoneTypes).map((type) => ({
+        value: type,
+        icon: {
+            [SpawnZoneTypes.Any]: Users,
+            [SpawnZoneTypes.Group]: User
+        }[type]
+    }))
+
     return (
         <>
             <Dropdown
@@ -39,22 +47,21 @@ function SpecialCellsBrush({
             />
             {specialCellType === SpecialCellBrushTypes.Spawn && (
                 <>
-                    <div className="flex mt-4 items-center justify-center">
-                        <p className="mr-2">Type:</p>
-                        <select
-                            value={spawnZoneType}
-                            onChange={(e) => setSpawnZoneType(e.target.value as SpawnZoneTypes)}
-                            className="bg-white p-2 border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
-                        >
-                            <option value={SpawnZoneTypes.Any}>Any Group</option>
-                            <option value={SpawnZoneTypes.Group}>Specific Group</option>
-                        </select>
-                    </div>
+                    <Dropdown
+                        items={spawnZoneItems}
+                        onSelect={(item) => setSpawnZoneType(item as SpawnZoneTypes)}
+                        selectedItem={spawnZoneType}
+                        label={'Type:'}
+                    />
                     {spawnZoneType === SpawnZoneTypes.Group && (
-                        <div className="flex mt-4 items-center justify-center">
-                            <p className="mr-2">GID:</p>
-                            <NumberInput value={gid} onChange={(newGid) => setGid(newGid)} min={0} extraStyles="w-16" />
-                        </div>
+                        <NumberInput
+                            value={gid}
+                            onChange={(newGid) => setGid(newGid)}
+                            min={0}
+                            extraStyles="w-full"
+                            label={'GID:'}
+                            icon={Tag}
+                        />
                     )}
                 </>
             )}
