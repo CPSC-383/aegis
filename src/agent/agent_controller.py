@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Protocol, runtime_checkable
 
 from aegis import AgentCommand, Location
+from aegis.common.agent_id import AgentID
 
 
 @runtime_checkable
@@ -10,6 +11,10 @@ class AgentController(Protocol):
     """
     Interface for controlling an agent and interacting with the AEGIS system.
     """
+
+    def get_agent_id(self) -> AgentID:
+        """Returns the ID of the agent."""
+        ...
 
     def get_energy_level(self) -> int:
         """Returns the energy level of the agent."""

@@ -242,7 +242,7 @@ class AegisWorld:
                         if cell.number_of_survivors() <= 0:
                             has_survivors = False
 
-                        fire = "+F" if cell.is_on_fire() else "-F"
+                        fire = "+F" if cell.is_fire_cell() else "-F"
                         killer = "+K" if cell.is_killer_cell() else "-K"
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
@@ -301,7 +301,7 @@ class AegisWorld:
                 if cell is None:
                     continue
 
-                if cell.is_on_fire():
+                if cell.is_fire_cell():
                     print(f"Aegis  : Agent {agent} ran into the fire and died.\n")
                     dead_agents.add(agent.agent_id)
                 elif cell.is_killer_cell():
@@ -331,7 +331,7 @@ class AegisWorld:
         if cell is None:
             raise Exception("Aegis  : No cell found for agent")
 
-        if cell.is_on_fire():
+        if cell.is_fire_cell():
             print("Aegis  : Warning, agent has been placed on a fire cell!")
         elif cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")

@@ -71,7 +71,8 @@ Commands AEGIS uses to interact with the agents.
 """
 
 from aegis.api import Cell, Location, World
-from aegis.common import AgentID, Direction
+from aegis.api.location import create_location
+from aegis.common import AgentID, AgentIDList, Direction, LifeSignals
 from aegis.common.commands.aegis_command import AegisCommand
 from aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
@@ -143,4 +144,5 @@ __all__ = [
     "TEAM_DIG_RESULT",
     "World",
     "WorldObject",
+    "create_location",
 ]

@@ -83,7 +83,7 @@ export class Simulation {
             worldStats: {
                 AgentsAlive: this.currentRoundData?.number_of_alive_agents ?? 0,
                 AgentsDead: this.currentRoundData?.number_of_dead_agents ?? 0,
-                SurvivorsLeft: this.currentRoundData?.number_of_survivors ?? 0,
+                TotalSurvivors: this.currentRoundData?.number_of_survivors ?? 0,
                 SurvivorsSaved:
                     (this.currentRoundData?.number_of_survivors_saved_alive ?? 0) +
                     (this.currentRoundData?.number_of_survivors_saved_dead ?? 0)

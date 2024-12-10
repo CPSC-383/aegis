@@ -32,24 +32,22 @@ function Aegis({ isOpen, numAgentsAegis, setNumAgentsAegis, scaffold }: Props) {
                         placeholder={'Select a world'}
                         icon={Globe}
                     />
-                    <div>
-                        <p className="text-xs font-semibold">Number of Agents:</p>
-                        <NumberInput
-                            value={numAgentsAegis}
-                            onChange={(value) => setNumAgentsAegis(value)}
-                            min={0}
-                            placeholder="Number of Agents"
-                            extraStyles="w-full"
-                        />
-                        <p className="text-xs font-semibold mt-2">Number of Rounds:</p>
-                        <NumberInput
-                            value={numRounds}
-                            onChange={(value) => setNumRounds(value)}
-                            min={0}
-                            placeholder="Number of Rounds"
-                            extraStyles="w-full"
-                        />
-                    </div>
+                    <NumberInput
+                        value={numAgentsAegis}
+                        onChange={(value) => setNumAgentsAegis(value)}
+                        min={0}
+                        placeholder="Number of Agents"
+                        extraStyles="w-full"
+                        label={'Number of Agents:'}
+                    />
+                    <NumberInput
+                        value={numRounds}
+                        onChange={(value) => setNumRounds(value)}
+                        min={0}
+                        placeholder="Number of Rounds"
+                        extraStyles="w-full"
+                        label={'Number of Rounds:'}
+                    />
                     {killSim ? (
                         <Button onClick={killSim} label="Kill Game" styles="bg-secondary" />
                     ) : (

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Protocol, runtime_checkable
 
 from aegis.common.direction import Direction
+from aegis.common.location import InternalLocation
 
 
 # This class only exposes what students can use for Location.
@@ -56,3 +57,30 @@ class Location(Protocol):
             The direction to the target location.
         """
         ...
+
+    def distance_to(self, location: Location) -> int:
+        """
+        Calculates the squared distance between the current location
+        and the given location.
+
+        Args:
+            location: The location to which the distance is calculated.
+
+        Returns:
+            The squared distance to the given location.
+        """
+        ...
+
+
+def create_location(x: int, y: int) -> Location:
+    """
+    Create a new Location object.
+
+    Args:
+        x: The x-coordinate
+        y: The y-coordinate
+
+    Returns:
+        A Location object at the specified coordinates
+    """
+    return InternalLocation(x, y)  # pyright: ignore[reportReturnType]

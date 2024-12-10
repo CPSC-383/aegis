@@ -199,6 +199,7 @@ class Brain(ABC):
                 base_agent.add_prediction_info((surv_id, image, labels))
 
             self.handle_save_surv_result(save_surv_result)
+            base_agent.update_surround(save_surv_result.surround_info, self.get_world())  # pyright: ignore[reportArgumentType]
 
         elif isinstance(aegis_command, PREDICT_RESULT):
             pred_req: PREDICT_RESULT = aegis_command
@@ -218,6 +219,7 @@ class Brain(ABC):
             base_agent.set_energy_level(team_dig_result.energy_level)
             base_agent.set_location(team_dig_result_current_info.location)
             self.handle_team_dig_result(team_dig_result)
+            base_agent.update_surround(team_dig_result.surround_info, self.get_world())  # pyright: ignore[reportArgumentType]
 
         elif isinstance(aegis_command, AEGIS_UNKNOWN):
             base_agent.log("Brain: Got Unknown command reply from AEGIS.")

@@ -29,7 +29,7 @@ class WorldObject(ABC):
     def __init__(self) -> None:
         """Initializes a WorldObject instance."""
         self._state = self.State.EXIST
-        self.id = -1
+        self.id: int = -1
 
     def is_exist(self) -> bool:
         """

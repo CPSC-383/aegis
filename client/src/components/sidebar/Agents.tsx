@@ -57,23 +57,21 @@ function Agents({ isOpen, aegisPath, numAgentsAegis, agents }: AgentsProps) {
                         placeholder={'Select an agent'}
                         icon={User}
                     />
-                    <div>
-                        <p className="text-xs font-semibold">Group Name:</p>
-                        <Input
-                            value={groupName}
-                            onChange={(value) => handleGroupName(value)}
-                            placeholder="Group Name"
-                        />
-                        <p className="text-xs font-semibold mt-2">Number of Agents to Connect:</p>
-                        <NumberInput
-                            value={numAgents}
-                            onChange={(value) => setNumAgents(value)}
-                            max={maxAgents}
-                            min={0}
-                            placeholder="Number of Agents"
-                            extraStyles="w-full"
-                        />
-                    </div>
+                    <Input
+                        value={groupName}
+                        onChange={(value) => handleGroupName(value)}
+                        placeholder="Group Name"
+                        label={'Group Name:'}
+                    />
+                    <NumberInput
+                        value={numAgents}
+                        onChange={(value) => setNumAgents(value)}
+                        max={maxAgents}
+                        min={0}
+                        placeholder="Number of Agents"
+                        extraStyles="w-full"
+                        label={'Number of Agents to Connect:'}
+                    />
                     {maxAgents ? <p className="text-xs">{maxAgents} agents left to connect.</p> : null}
                     <Button
                         onClick={handleConnectAgents}

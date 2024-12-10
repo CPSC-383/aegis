@@ -2,9 +2,10 @@ interface InputFieldProps {
     value: string | number
     onChange: (value: string) => void
     placeholder?: string
+    label?: string
 }
 
-export default function Input({ value, onChange, placeholder }: InputFieldProps) {
+export default function Input({ value, onChange, placeholder, label }: InputFieldProps) {
     return (
         <div>
             {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}

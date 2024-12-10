@@ -1,7 +1,7 @@
 from typing import override
 
 from aegis.common import AgentIDList, CellType, InternalLocation
-from aegis.common.world.objects import WorldObject, NoLayers
+from aegis.common.world.objects import WorldObject
 
 
 class CellInfo:
@@ -30,7 +30,6 @@ class CellInfo:
         Args:
             cell_type: The type of the cell.
             location: The location of the cell.
-            on_fire: Indicates if the cell is on fire.
             move_cost: The cost to move through the cell.
             agent_id_list: List of agent IDs on the cell.
             top_layer: Information about the top layer object.
@@ -43,7 +42,9 @@ class CellInfo:
         self.agent_id_list: AgentIDList = (
             agent_id_list if agent_id_list is not None else AgentIDList()
         )
-        self.top_layer: WorldObject = top_layer if top_layer is not None else NoLayers()
+        self.top_layer: WorldObject | None = (
+            top_layer if top_layer is not None else None
+        )
 
     @override
     def __str__(self) -> str:

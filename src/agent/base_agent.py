@@ -6,6 +6,7 @@ from __future__ import annotations
 import sys
 from collections import deque
 
+import numpy as np
 from aegis import (
     END_TURN,
     AgentCommand,
@@ -14,13 +15,13 @@ from aegis import (
     SurroundInfo,
 )
 from aegis.api import Location
-from aegis.common.location import InternalLocation
-from aegis.common.world.world import InternalWorld
 from aegis.common.commands.agent_commands import CONNECT
+from aegis.common.location import InternalLocation
 from aegis.common.network.aegis_socket import AegisSocket
 from aegis.common.network.aegis_socket_exception import AegisSocketException
 from aegis.common.parsers.aegis_parser import AegisParser
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
+from aegis.common.world.world import InternalWorld
 from numpy.typing import NDArray
 
 import agent.brain
@@ -40,12 +41,12 @@ class BaseAgent:
         self._id: AgentID = AgentID(-1, -1)
         self._location: InternalLocation = InternalLocation(-1, -1)
         self._brain: agent.brain.Brain | None = None
-        self._energy_level = -1
-        self._aegis_socket = None
+        self._energy_level: int = -1
+        self._aegis_socket: AegisSocket | None = None
         self._prediction_info: deque[
             tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]
         ] = deque()
-        self._did_end_turn = False
+        self._did_end_turn: bool = False
 
     @staticmethod
     def get_agent() -> BaseAgent:
@@ -53,13 +54,31 @@ class BaseAgent:
             BaseAgent._agent = BaseAgent()
         return BaseAgent._agent
 
+    def update_surround(
+        self, surround_info: SurroundInfo, world: InternalWorld | None
+    ) -> None:
+        if world is None:
+            return
+
+        for dir in Direction:
+            cell_info = surround_info.get_surround_info(dir)
+            if cell_info is None:
+                continue
+
+            cell = world.get_cell_at(cell_info.location)
+            if cell is None:
+                continue
+
+            cell.move_cost = cell_info.move_cost
+            cell.set_top_layer(cell_info.top_layer)
+
     def set_agent_state(self, agent_state: AgentStates) -> None:
         self._agent_state = agent_state
 
         if agent_state == AgentStates.READ_MAIL:
             self._round += 1
 
-        self.log(LogLevels.Nothing, f"New State: {self._agent_state}")
+        self.log(f"New State: {self._agent_state}")
 
     def get_agent_state(self) -> AgentStates:
         return self._agent_state
@@ -112,11 +131,11 @@ class BaseAgent:
         ],
     ) -> None:
         self._prediction_info.append(prediction_info)
-        self.log(LogLevels.Always, "New Prediction Info!")
+        self.log("New Prediction Info!")
 
     def clear_prediction_info(self) -> None:
         self._prediction_info.clear()
-        self.log(LogLevels.Always, "Cleared Prediction Info")
+        self.log("Cleared Prediction Info")
 
     def get_brain(self) -> agent.brain.Brain | None:
         return self._brain

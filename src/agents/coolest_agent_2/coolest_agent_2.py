@@ -3,28 +3,28 @@ from typing import override
 from aegis import (
     CONNECT_OK,
     END_TURN,
-    SEND_MESSAGE_RESULT,
     MOVE,
     MOVE_RESULT,
     OBSERVE_RESULT,
     PREDICT_RESULT,
     SAVE_SURV,
     SAVE_SURV_RESULT,
+    SEND_MESSAGE,
+    SEND_MESSAGE_RESULT,
     SLEEP_RESULT,
+    TEAM_DIG,
     TEAM_DIG_RESULT,
     AgentCommand,
-    Direction,
-    SurroundInfo,
-    Survivor,
-    Location,
-    World,
-    SEND_MESSAGE,
-    AgentIDList,
     AgentID,
-    TEAM_DIG,
+    AgentIDList,
+    Direction,
+    Location,
     Rubble,
+    Survivor,
+    World,
+    create_location,
 )
-from agent import BaseAgent, Brain, LogLevels
+from agent import AgentController, BaseAgent, Brain
 
 LOC_UPDATE_IDENTIFIER = "loc_update:"
 
@@ -44,19 +44,19 @@ class CoolestAgent2(Brain):
 
     def __init__(self) -> None:
         super().__init__()
-        self._agent = BaseAgent.get_base_agent()
+        self._agent: AgentController = BaseAgent.get_agent()
 
     @override
     def handle_connect_ok(self, connect_ok: CONNECT_OK) -> None:
-        BaseAgent.log(LogLevels.Always, "CONNECT_OK")
+        self._agent.log("CONNECT_OK")
 
     @override
     def handle_disconnect(self) -> None:
-        BaseAgent.log(LogLevels.Always, "DISCONNECT")
+        self._agent.log("DISCONNECT")
 
     @override
     def handle_dead(self) -> None:
-        BaseAgent.log(LogLevels.Always, "DEAD")
+        self._agent.log("DEAD")
 
     @override
     def handle_send_message_result(self, smr: SEND_MESSAGE_RESULT) -> None:
@@ -69,39 +69,39 @@ class CoolestAgent2(Brain):
 
     @override
     def handle_move_result(self, mr: MOVE_RESULT) -> None:
-        self.update_surround(mr.surround_info)
+        pass
 
     @override
     def handle_observe_result(self, ovr: OBSERVE_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"OBSERVER_RESULT: {ovr}")
-        BaseAgent.log(LogLevels.Always, f"{ovr.energy_level}")
-        BaseAgent.log(LogLevels.Always, f"{ovr.life_signals}")
-        BaseAgent.log(LogLevels.Always, f"{ovr.cell_info}")
-        BaseAgent.log(LogLevels.Test, f"{ovr}")
+        self._agent.log(f"OBSERVER_RESULT: {ovr}")
+        self._agent.log(f"{ovr.energy_level}")
+        self._agent.log(f"{ovr.life_signals}")
+        self._agent.log(f"{ovr.cell_info}")
+        self._agent.log(f"{ovr}")
 
     @override
     def handle_save_surv_result(self, ssr: SAVE_SURV_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"SAVE_SURV_RESULT: {ssr}")
-        self.update_surround(ssr.surround_info)
+        self._agent.log(f"SAVE_SURV_RESULT: {ssr}")
+        pass
 
     @override
     def handle_predict_result(self, prd: PREDICT_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"PREDICT_RESULT: {prd}")
-        BaseAgent.log(LogLevels.Test, f"{prd}")
+        self._agent.log(f"PREDICT_RESULT: {prd}")
+        self._agent.log(f"{prd}")
 
     @override
     def handle_sleep_result(self, sr: SLEEP_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"SLEEP_RESULT: {sr}")
-        BaseAgent.log(LogLevels.Test, f"{sr}")
+        self._agent.log(f"SLEEP_RESULT: {sr}")
+        self._agent.log(f"{sr}")
 
     @override
     def handle_team_dig_result(self, tdr: TEAM_DIG_RESULT) -> None:
-        BaseAgent.log(LogLevels.Always, f"TEAM_DIG_RSULT: {tdr}")
-        self.update_surround(tdr.surround_info)
+        self._agent.log(f"TEAM_DIG_RSULT: {tdr}")
+        pass
 
     @override
     def think(self) -> None:
-        BaseAgent.log(LogLevels.Always, "Thinking")
+        self._agent.log("Thinking")
 
         world = self.get_world()
         if world is None:
@@ -124,17 +124,17 @@ class CoolestAgent2(Brain):
                 # team leader needs to create initial job list from the surv locations in the world
                 for loc, _ in self.locs_with_survs.items():
                     self.jobs_to_give.append(loc)
-                    
+
         if self._agent.get_agent_id().id == 1 and self._agent.get_round_number() > 1:
             # each round, team leader assigns jobs to all agents
 
             # check if an agent has None as their job location. If so, give them a new job
             for agent_id, (agent_loc, agent_job) in self.agents_info.items():
                 # BaseAgent.log(LogLevels.Always, f"agent_id: {agent_id} | agent_job: {agent_job}")
-                if agent_job == Location(-1, -1):
+                if agent_job == create_location(-1, -1):
                     # print("Saw an agent had no job, giving them one")
                     self.assign_new_job(agent_id, agent_loc)
-                    
+
         # if on top of the closest surv, try saving it or digging to it, depending on what the top layer is
         if self.my_job_loc is not None:
             if self._agent.get_location() == self.my_job_loc:
@@ -174,34 +174,16 @@ class CoolestAgent2(Brain):
 
     def send_and_end_turn(self, command: AgentCommand):
         """Send a command and end your turn."""
-        BaseAgent.log(LogLevels.Always, f"SENDING {command}")
+        self._agent.log(f"SENDING {command}")
         self._agent.send(command)
         self._agent.send(END_TURN())
 
-    def update_surround(self, surround_info: SurroundInfo):
-        """Updates the current and surrounding cells of the agent."""
-        world = self.get_world()
-        if world is None:
-            return
-
-        for dir in Direction:
-            cell_info = surround_info.get_surround_info(dir)
-            if cell_info is None:
-                continue
-
-            cell = world.get_cell_at(cell_info.location)
-            if cell is None:
-                continue
-
-            cell.move_cost = cell_info.move_cost
-            cell.set_top_layer(cell_info.top_layer)
-            
     def loc_str_to_loc(self, loc_str: str) -> Location:
         loc_str = loc_str.strip("()")
         loc_str_list = loc_str.split(", ")
         x: int = int(loc_str_list[0].strip()[2:])
         y: int = int(loc_str_list[1].strip()[2:])
-        return Location(x, y)
+        return create_location(x, y)
 
     def populate_surv_spots(self, world: World):
         self.locs_with_survs = {}
@@ -220,13 +202,13 @@ class CoolestAgent2(Brain):
 
         if agent_message.startswith(JOB_ASSIGNED_IDENTIFIER):
             # big boss gave me a job! Make that my new job
-            BaseAgent.log(LogLevels.Always, f"job identifier found! {agent_message}")
+            self._agent.log(f"job identifier found! {agent_message}")
             agent_message = agent_message[len(JOB_ASSIGNED_IDENTIFIER) :]
             agent_id, agent_job_loc = agent_message.split("@")
             agent_id = int(agent_id)
             agent_job_loc = self.loc_str_to_loc(agent_job_loc)
             self.my_job_loc = agent_job_loc
-            BaseAgent.log(LogLevels.Always, f"New job assigned: {self.my_job_loc}")
+            self._agent.log(f"New job assigned: {self.my_job_loc}")
 
     def team_leader_handle_message(self, smr: SEND_MESSAGE_RESULT) -> None:
         agent_message = smr.msg
@@ -241,7 +223,7 @@ class CoolestAgent2(Brain):
 
             # update the location of the agent ("None" job if we are initializing them into the dict)
             if agent_id not in self.agents_info:
-                self.agents_info[agent_id] = (agent_loc, Location(-1, -1))
+                self.agents_info[agent_id] = (agent_loc, create_location(-1, -1))
             else:
                 self.agents_info[agent_id] = (agent_loc, self.agents_info[agent_id][1])
 
@@ -250,7 +232,7 @@ class CoolestAgent2(Brain):
             agent_id, agent_job_status = agent_message.split("@")
             agent_id = int(agent_id)
             if agent_job_status == DONE_JOB_TOKEN:
-                BaseAgent.log(LogLevels.Always, f"Agent {agent_id} has finished their job!")
+                self._agent.log(f"Agent {agent_id} has finished their job!")
                 # agent has finished their job. Give them a new one!
                 agent_loc, _ = self.agents_info[int(agent_id)]
                 job_loc: Location = self.get_a_job(agent_loc)
@@ -258,7 +240,7 @@ class CoolestAgent2(Brain):
 
     def get_a_job(self, agent_loc: Location) -> Location:
         if len(self.jobs_to_give) == 0:
-            return Location(-1, -1)
+            return create_location(-1, -1)
 
         # find the closest job to the agent
         closest_job = self.jobs_to_give[0]

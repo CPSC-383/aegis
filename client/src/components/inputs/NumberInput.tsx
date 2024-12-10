@@ -8,6 +8,7 @@ interface NumberInputProps {
     placeholder?: string
     extraStyles?: string
     disabled?: boolean
+    label?: string
 }
 
 export default function NumberInput({
@@ -17,7 +18,8 @@ export default function NumberInput({
     max,
     min,
     extraStyles,
-    disabled
+    disabled,
+    label
 }: NumberInputProps) {
     const [internalNum, setInternalNum] = useState<string>(value === 0 ? '' : value.toString())
 
@@ -31,15 +33,18 @@ export default function NumberInput({
     }
 
     return (
-        <input
-            type="number"
-            className={`p-2 my-1 focus:border-accent-light focus:outline-none border-2 border-gray-300 rounded-md ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-            value={internalNum}
-            onInput={handleChange}
-            onChange={(e) => setInternalNum(e.target.value)}
-            onBlur={() => setInternalNum(value === 0 ? '' : value.toString())}
-            placeholder={value === 0 ? placeholder : undefined}
-            disabled={disabled}
-        />
+        <div>
+            {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
+            <input
+                type="number"
+                className={`p-2 focus:ring-accent-light focus:ring-2 focus:outline-none border border-gray-300 rounded-md ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                value={internalNum}
+                onInput={handleChange}
+                onChange={(e) => setInternalNum(e.target.value)}
+                onBlur={() => setInternalNum(value === 0 ? '' : value.toString())}
+                placeholder={value === 0 ? placeholder : undefined}
+                disabled={disabled}
+            />
+        </div>
     )
 }

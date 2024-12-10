@@ -31,8 +31,6 @@ class InternalCell:
         >>> cell.is_charging_cell()
         False
 
-
-
     Attributes:
         move_cost (int): The movement cost associated with the cell.
         agent_id_list (AgentIDList): List of agent IDs present in the cell.
@@ -52,12 +50,11 @@ class InternalCell:
             x: The x-coordinate of the cell.
             y: The y-coordinate of the cell.
         """
-        self._type = CellType.NO_CELL
-        self._on_fire = False
-        self.move_cost = 1
-        self.agent_id_list = AgentIDList()
+        self._type: CellType = CellType.NO_CELL
+        self.move_cost: int = 1
+        self.agent_id_list: AgentIDList = AgentIDList()
         self._cell_layer_list: list[WorldObject] = []
-        self.has_survivors = False
+        self.has_survivors: bool = False
 
         if x is not None and y is not None:
             self.location: InternalLocation = InternalLocation(x, y)
@@ -69,16 +66,12 @@ class InternalCell:
 
         if cell_state_type == "NORMAL_CELLS":
             self._type = CellType.NORMAL_CELL
-            self._on_fire = False
         elif cell_state_type == "CHARGING_CELLS":
             self._type = CellType.CHARGING_CELL
-            self._on_fire = False
         elif cell_state_type == "FIRE_CELLS":
             self._type = CellType.FIRE_CELL
-            self._on_fire = True
         elif cell_state_type == "KILLER_CELLS":
             self._type = CellType.KILLER_CELL
-            self._on_fire = False
 
     def is_charging_cell(self) -> bool:
         """
@@ -125,6 +118,9 @@ class InternalCell:
     def set_killer_cell(self) -> None:
         self._type = CellType.KILLER_CELL
 
+    def set_fire_cell(self) -> None:
+        self._type = CellType.FIRE_CELL
+
     def get_cell_layers(self) -> list[WorldObject]:
         return self._cell_layer_list
 
@@ -162,23 +158,6 @@ class InternalCell:
     def number_of_layers(self) -> int:
         return len(self._cell_layer_list)
 
-    def is_on_fire(self) -> bool:
-        """
-        Checks if the cell is currently on fire.
-
-        Returns:
-            True if the cell is on fire, False otherwise.
-        """
-        return self._on_fire
-
-    def set_on_fire(self, on_fire: bool) -> None:
-        if on_fire:
-            self._on_fire = on_fire
-            self._type = CellType.FIRE_CELL
-        else:
-            self._on_fire = on_fire
-            self._type = CellType.NORMAL_CELL
-
     def get_cell_info(self) -> CellInfo:
         cell_type = CellType.NORMAL_CELL
 
@@ -192,7 +171,6 @@ class InternalCell:
         return CellInfo(
             cell_type,
             self.location.clone(),
-            self._on_fire,
             self.move_cost,
             self.agent_id_list.clone(),
             self.get_top_layer(),
@@ -252,7 +230,6 @@ class InternalCell:
         cell.location = self.location
         cell.agent_id_list = self.agent_id_list.clone()
         cell._cell_layer_list = [layer.clone() for layer in self._cell_layer_list]
-        cell._on_fire = self._on_fire
         cell.move_cost = self.move_cost
         cell.has_survivors = self.has_survivors
         return cell

@@ -65,21 +65,3 @@ class ExampleAgent(Brain):
         self._agent.log(f"SENDING {command}")
         self._agent.send(command)
         self._agent.send(END_TURN())
-
-    def update_surround(self, surround_info: SurroundInfo):
-        """Updates the current and surrounding cells of the agent."""
-        world = self.get_world()
-        if world is None:
-            return
-
-        for dir in Direction:
-            cell_info = surround_info.get_surround_info(dir)
-            if cell_info is None:
-                continue
-
-            cell = world.get_cell_at(cell_info.location)
-            if cell is None:
-                continue
-
-            cell.move_cost = cell_info.move_cost
-            cell.set_top_layer(cell_info.top_layer)

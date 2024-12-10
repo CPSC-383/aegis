@@ -37,7 +37,7 @@ def main() -> None:
         aegis.run_state()
 
     except Exception as e:
-        print(f"Exception: {e}")
+        print(f"Exception: {e}", file=sys.stderr)
         sys.exit(1)
     finally:
         print("Aegis  : Done.")

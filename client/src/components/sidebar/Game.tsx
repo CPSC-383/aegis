@@ -1,9 +1,8 @@
 import { useAppContext } from '@/context'
 import { EventType, listenEvent } from '@/events'
 import { useForceUpdate } from '@/utils/util'
-import { GroupStats } from '@/utils/types'
 import { motion } from 'framer-motion'
-import { Save, Footprints, AlertTriangle, Trophy } from 'lucide-react'
+import { AlertTriangle, Trophy } from 'lucide-react'
 
 type Props = {
     isOpen: boolean
@@ -54,83 +53,75 @@ function Game({ isOpen }: Props) {
 
     return (
         <div className="p-2 max-h-60 scrollbar overflow-auto">
-            {stats.worldStats.AgentsAlive === 0 && stats.groupStats.length === 0 ? (
-                <div className="flex items-center p-4 h-60">
-                    <p className="text-lg font-bold text-center text-black">Run A Simulation To See Game Stats!</p>
-                </div>
-            ) : (
-                <>
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                        {Object.entries(stats.worldStats).map(([key, value]) => (
-                            <div key={key} className="flex">
-                                <div className="w-1 h-full bg-accent-light"></div>
-                                <div className="flex-1 p-2 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
-                                    <div className="flex-grow">
-                                        <p className="text-xs font-medium text-black">
-                                            {key.replace(/([A-Z])/g, ' $1').trim()}
-                                        </p>
-                                        <p className="text-lg font-bold text-black">{value}</p>
-                                    </div>
-                                </div>
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                {Object.entries(stats.worldStats).map(([key, value]) => (
+                    <div key={key} className="flex">
+                        <div className="w-1 h-full bg-accent-light"></div>
+                        <div className="flex-1 p-2 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
+                            <div className="flex-grow">
+                                <p className="text-xs font-medium text-black">
+                                    {key.replace(/([A-Z])/g, ' $1').trim()}
+                                </p>
+                                <p className="text-lg font-bold text-black">{value}</p>
                             </div>
-                        ))}
+                        </div>
                     </div>
+                ))}
+            </div>
 
-                    <div className="mt-6 overflow-x-auto">
-                        <table className="min-w-full text-sm border-collapse border text-center">
-                            <thead>
-                                <tr className="bg-gray-200">
-                                    <th className="px-2 py-2">Group Stats Table</th>
-                                    {stats.groupStats.map((group) => (
-                                        <th key={group.gid} className="px-4 py-2">
-                                            {group.name}
-                                            <br /> ID: {group.gid}
-                                        </th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr className="border-b">
-                                    <td className="px-2 py-2">
-                                        Survivors
-                                        <br />
-                                        Saved
-                                    </td>
-                                    {stats.groupStats.map((group) => (
-                                        <td key={group.gid} className="px-4 py-2">
-                                            {group.SurvivorsSaved}
-                                        </td>
-                                    ))}
-                                </tr>
-                                <tr className="border-b">
-                                    <td className="px-2 py-2">
-                                        Correct
-                                        <br />
-                                        Predictions
-                                    </td>
-                                    {stats.groupStats.map((group) => (
-                                        <td key={group.gid} className="px-4 py-2">
-                                            {group.CorrectPredictions}
-                                        </td>
-                                    ))}
-                                </tr>
-                                <tr className="border-b">
-                                    <td className="px-2 py-2">
-                                        Incorrect
-                                        <br />
-                                        Predictions
-                                    </td>
-                                    {stats.groupStats.map((group) => (
-                                        <td key={group.gid} className="px-4 py-2">
-                                            {group.IncorrectPredictions}
-                                        </td>
-                                    ))}
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </>
-            )}
+            <div className="mt-6 overflow-x-auto">
+                <table className="min-w-full text-sm border-collapse border text-center">
+                    <thead>
+                        <tr className="bg-gray-200">
+                            <th className="px-2 py-2">Group Stats Table</th>
+                            {stats.groupStats.map((group) => (
+                                <th key={group.gid} className="px-4 py-2">
+                                    {group.name}
+                                    <br /> ID: {group.gid}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr className="border-b">
+                            <td className="px-2 py-2">
+                                Survivors
+                                <br />
+                                Saved
+                            </td>
+                            {stats.groupStats.map((group) => (
+                                <td key={group.gid} className="px-4 py-2">
+                                    {group.SurvivorsSaved}
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="border-b">
+                            <td className="px-2 py-2">
+                                Correct
+                                <br />
+                                Predictions
+                            </td>
+                            {stats.groupStats.map((group) => (
+                                <td key={group.gid} className="px-4 py-2">
+                                    {group.CorrectPredictions}
+                                </td>
+                            ))}
+                        </tr>
+                        <tr className="border-b">
+                            <td className="px-2 py-2">
+                                Incorrect
+                                <br />
+                                Predictions
+                            </td>
+                            {stats.groupStats.map((group) => (
+                                <td key={group.gid} className="px-4 py-2">
+                                    {group.IncorrectPredictions}
+                                </td>
+                            ))}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     )
 }

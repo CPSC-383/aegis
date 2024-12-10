@@ -2,6 +2,7 @@ import json
 import os
 import re
 from collections.abc import Iterator
+import sys
 from typing import TextIO
 
 import numpy as np
@@ -112,7 +113,8 @@ class AegisParser:
         cell = InternalCell(x, y)
 
         cell.set_normal_cell()
-        cell.set_on_fire(fire[0] == "+")
+        if fire[0] == "+":
+            cell.set_fire_cell()
 
         if killer[0] == "+":
             cell.set_killer_cell()
@@ -314,7 +316,7 @@ class AegisParser:
                 return TEAM_DIG_RESULT(energy_level, surround_information)
             raise AegisParserException(f"Cannot parse AEGIS Action from {string}")
         except Exception as e:
-            print(f"Exception: {e}")
+            print(f"Exception: {e}", file=sys.stderr)
             return AEGIS_UNKNOWN()
 
     @staticmethod
@@ -401,7 +403,8 @@ class AegisParser:
                     f"Cannot parse Agent to Kernel Command from {string} | Did your agent throw an exception?"
                 )
                 return AGENT_UNKNOWN()
-        except Exception:
+        except Exception as e:
+            print(f"Exception: {e}", file=sys.stderr)
             return AGENT_UNKNOWN()
 
     @staticmethod
@@ -541,8 +544,14 @@ class AegisParser:
 
         if cell_type == "NO_CELL":
             return CellInfo()
-
-        normal_cell = cell_type == "NORMAL_CELL"
+        elif cell_type == "FIRE_CELL":
+            cell_type = CellType.FIRE_CELL
+        elif cell_type == "KILLER_CELL":
+            cell_type = CellType.KILLER_CELL
+        elif cell_type == "CHARGING_CELL":
+            cell_type = CellType.CHARGING_CELL
+        else:
+            cell_type = CellType.NORMAL_CELL
 
         AegisParser.open_round_bracket(tokens)
         AegisParser.text(tokens, "X")
@@ -550,9 +559,6 @@ class AegisParser:
         AegisParser.comma(tokens)
         AegisParser.text(tokens, "Y")
         y = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "ON_FIRE")
-        on_fire = AegisParser.boolean(tokens)
         AegisParser.comma(tokens)
         AegisParser.text(tokens, "MV_COST")
         move_cost = AegisParser.integer(tokens)

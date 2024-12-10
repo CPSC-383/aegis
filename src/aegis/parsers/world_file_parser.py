@@ -101,7 +101,7 @@ class WorldFileParser:
 
         for loc in spawn_locs:
             zone_type = SpawnZoneType(loc["type"])
-            location = Location(loc["x"], loc["y"])
+            location = InternalLocation(loc["x"], loc["y"])
             gid = loc.get("gid")
             spawn = SpawnZone(location, zone_type, gid)
             spawns.append(spawn)

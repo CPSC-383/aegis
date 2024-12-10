@@ -10,9 +10,9 @@ class FireSimulator:
         non_fire_cells_list: list[InternalCell],
         world: InternalWorld | None,
     ) -> None:
-        self._fire_cells_list = fire_cells_list
-        self._non_fire_cells_list = non_fire_cells_list
-        self._world = world
+        self._fire_cells_list: list[InternalCell] = fire_cells_list
+        self._non_fire_cells_list: list[InternalCell] = non_fire_cells_list
+        self._world: InternalWorld | None = world
 
     def run(self) -> str:
         s = ""
@@ -29,13 +29,13 @@ class FireSimulator:
             for _ in range(number_of_directions):
                 dir = Direction.get_random_direction()
                 spread_cell = self._world.get_cell_at(fire_cell.location.add(dir))
-                if spread_cell is None or spread_cell.is_on_fire():
+                if spread_cell is None or spread_cell.is_fire_cell():
                     continue
 
                 s += f"{spread_cell.location.proc_string()}"
                 count += 1
                 self._non_fire_cells_list.remove(spread_cell)
-                spread_cell.set_on_fire(True)
+                spread_cell.set_fire_cell()
                 self._fire_cells_list.append(spread_cell)
         if count <= 0:
             s += "NONE"

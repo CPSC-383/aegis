@@ -77,10 +77,12 @@ class Aegis:
         self._SAVE_SURV_RESULT_list: AgentIDList = AgentIDList()
         self._MOVE_RESULT_list: AgentIDList = AgentIDList()
         self._SLEEP_RESULT_list: AgentIDList = AgentIDList()
+        self._PREDICT_RESULT_list: AgentIDList = AgentIDList()
         self._OBSERVE_RESULT_list: list[OBSERVE] = []
         self._crashed_agents: AgentIDList = AgentIDList()
         self._aegis_world: AegisWorld = AegisWorld()
         self._ws_server: WebSocketServer = WebSocketServer()
+        self._prediction_handler: PredictionHandler | None = None
 
     def read_command_line(self, args: list[str]) -> bool:
         try:
@@ -360,7 +362,7 @@ class Aegis:
 
             ReplayFileWriter.write_string(f"RS;{round};\n")
             self._run_agent_round()
-            
+
             for command in self._agent_commands:
                 self._handle_agent_command(command)
             self._agent_commands.clear()

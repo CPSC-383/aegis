@@ -21,8 +21,8 @@ class InternalLocation:
             x: The x-coordinate of the location.
             y: The y-coordinate of the location.
         """
-        self.x = x
-        self.y = y
+        self.x: int = x
+        self.y: int = y
 
     @override
     def __str__(self) -> str:
@@ -90,6 +90,21 @@ class InternalLocation:
             return Direction.SOUTH
 
         return Direction.CENTER
+
+    def distance_to(self, location: InternalLocation) -> int:
+        """
+        Calculates the squared distance between the current location
+        and the given location.
+
+        Args:
+            location: The location to which the distance is calculated.
+
+        Returns:
+            The squared distance to the given location.
+        """
+        dx = self.x - location.x
+        dy = self.y - location.y
+        return dx * dx + dy * dy
 
     @override
     def __eq__(self, other: object) -> bool:
