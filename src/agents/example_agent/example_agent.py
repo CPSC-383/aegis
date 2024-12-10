@@ -10,11 +10,14 @@ from aegis import (
     PREDICT_RESULT,
     SAVE_SURV,
     SAVE_SURV_RESULT,
+    SEND_MESSAGE,
     SLEEP_RESULT,
+    TEAM_DIG,
     TEAM_DIG_RESULT,
     AgentCommand,
+    AgentIDList,
     Direction,
-    SurroundInfo,
+    Rubble,
     Survivor,
 )
 from agent import BaseAgent, Brain, AgentController
@@ -26,22 +29,75 @@ class ExampleAgent(Brain):
         self._agent: AgentController = BaseAgent.get_agent()
 
     @override
+    def handle_connect_ok(self, connect_ok: CONNECT_OK) -> None:
+        self._agent.log("CONNECT_OK")
+
+    @override
+    def handle_disconnect(self) -> None:
+        self._agent.log("DISCONNECT")
+
+    @override
+    def handle_dead(self) -> None:
+        self._agent.log("DEAD")
+
+    @override
+    def handle_send_message_result(self, smr: SEND_MESSAGE_RESULT) -> None:
+        self._agent.log(f"SEND_MESSAGE_RESULT: {smr}")
+        self._agent.log(f"{smr}")
+        print("#--- You need to implement handle_send_message_result function! ---#")
+
+    @override
+    def handle_move_result(self, mr: MOVE_RESULT) -> None:
+        self._agent.log(f"MOVE_RESULT: {mr}")
+        self._agent.log(f"{mr}")
+        print("#--- You need to implement handle_move_result function! ---#")
+
+    @override
+    def handle_observe_result(self, ovr: OBSERVE_RESULT) -> None:
+        self._agent.log(f"OBSERVER_RESULT: {ovr}")
+        self._agent.log(f"{ovr}")
+        print("#--- You need to implement handle_observe_result function! ---#")
+
+    @override
+    def handle_save_surv_result(self, ssr: SAVE_SURV_RESULT) -> None:
+        self._agent.log(f"SAVE_SURV_RESULT: {ssr}")
+        self._agent.log(f"{ssr}")
+        print("#--- You need to implement handle_save_surv_result function! ---#")
+
+    @override
+    def handle_predict_result(self, prd: PREDICT_RESULT) -> None:
+        self._agent.log(f"PREDICT_RESULT: {prd}")
+        self._agent.log(f"{prd}")
+
+    @override
+    def handle_sleep_result(self, sr: SLEEP_RESULT) -> None:
+        self._agent.log(f"SLEEP_RESULT: {sr}")
+        self._agent.log(f"{sr}")
+        print("#--- You need to implement handle_sleep_result function! ---#")
+
+    @override
+    def handle_team_dig_result(self, tdr: TEAM_DIG_RESULT) -> None:
+        self._agent.log(f"TEAM_DIG_RSULT: {tdr}")
+        self._agent.log(f"{tdr}")
+        print("#--- You need to implement handle_team_dig_result function! ---#")
+
+    @override
     def think(self) -> None:
         self._agent.log("Thinking")
 
-        # On the first round, send a request for surrounding information
-        # by moving to the center (not moving). This will help initiate pathfinding.
-        if self._agent.get_round_number() == 1:
-            self.send_and_end_turn(MOVE(Direction.CENTER))
-            return
+        # Send a message to other agents in my group.
+        # Empty AgentIDList will send to group members.
+        self._agent.send(
+            SEND_MESSAGE(
+                AgentIDList(), f"Hello from agent {self._agent.get_agent_id().id}"
+            )
+        )
 
         # Retrieve the current state of the world.
         world = self.get_world()
         if world is None:
             self.send_and_end_turn(MOVE(Direction.CENTER))
             return
-
-        self._agent.log("THIS WORKS AAAAHHHHH")
 
         # Fetch the cell at the agent’s current location. If the location is outside the world’s bounds,
         # return a default move action and end the turn.
@@ -51,10 +107,16 @@ class ExampleAgent(Brain):
             return
 
         # Get the top layer at the agent’s current location.
-        # If a survivor is present, save it and end the turn.
         top_layer = cell.get_top_layer()
+
+        # If a survivor is present, save it and end the turn.
         if isinstance(top_layer, Survivor):
             self.send_and_end_turn(SAVE_SURV())
+            return
+
+        # If rubble is present, clear it and end the turn.
+        if isinstance(top_layer, Rubble):
+            self.send_and_end_turn(TEAM_DIG())
             return
 
         # Default action: Move the agent north if no other specific conditions are met.
