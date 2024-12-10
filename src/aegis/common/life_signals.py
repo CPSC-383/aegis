@@ -5,7 +5,7 @@ class LifeSignals:
     """
     Represents a collection of life signals, where a survivor's life signal
     represents their energy level, and rubble is represented as 0. The deeper
-    the layer, the more distorted the signal become.
+    the layer, the more distorted the signal becomes.
 
     Attributes:
         life_signals (list[int]): A list of life signals.
@@ -18,7 +18,7 @@ class LifeSignals:
         Args:
             life_signals: An optional list of life signals.
         """
-        self.life_signals = life_signals or []
+        self.life_signals: list[int] = life_signals or []
 
     def size(self) -> int:
         """Returns the number of life signals."""

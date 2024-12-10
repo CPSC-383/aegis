@@ -11,7 +11,7 @@ If you encounter any issues that you can't resolve using this guide, please cont
     - **Folder Path Restrictions:** Ensure the path to the folder you unzipped **does not contain spaces**. For example,
     if a folder is called "CPSC 383", the space will cause some undefined behaviour when running the system. To be safe,
     rename each parent folder to have no spaces, such as "CPSC_383" or "CPSC-383".  
-    - **Python Version Requirements:** Only python versions >= 3.12 are supported.  
+    - **Python Version Requirements:** Only python versions 3.12.x are supported.  
 
 ## Setup and Runtime Issues 
 

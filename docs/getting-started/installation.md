@@ -7,7 +7,7 @@ This section will cover the basic information about downloading and installing A
 !!! info "Before You Begin"
     Ensure that your system meets the following prerequisites:
 
-    - **Python 3.12** or greater  
+    - **Python 3.12.x**  
       To check if you have the correct Python version installed, run the following command in your terminal:
       
         === ":fontawesome-brands-apple: / :fontawesome-brands-linux: Mac/Linux"
@@ -21,7 +21,7 @@ This section will cover the basic information about downloading and installing A
             python --version
             ```
 
-      This should return **Python 3.12** or greater.
+      This should return **Python 3.12.x**.
 
 ## Installation
 
@@ -36,34 +36,52 @@ This section will cover the basic information about downloading and installing A
     cd aegis
     ```
 
-3. **Installing required Python packages into a virtual environment:**
+3. **Setting up the project**
 
     AEGIS requires a set of Python packages to function. Installing these in a virtual
     environment ensures there are no conflicts with other Python projects or system-wide packages.
 
-    - Create and activate the virtual environment:
+
+    - Run the setup script:
+
+        === ":fontawesome-brands-apple: / :fontawesome-brands-linux: Mac/Linux"
+            
+            ```
+            python3 setup.py 
+            source .venv/bin/activate
+            ```
+
+        === ":fontawesome-brands-windows: Windows"
+            
+            ```
+            python setup.py 
+            .venv\Scripts\activate
+            ```
+        
+        If the script was successful, a virtual environment named `.venv` should have been created, 
+        the required packages installed within it and the client for your platform should be in the `client` folder.
+
+    - Steps do to it manually if the setup script failed:
 
         === ":fontawesome-brands-apple: / :fontawesome-brands-linux: Mac/Linux"
             
             ```
             python3 -m venv .venv
             source .venv/bin/activate
+            pip install -r requirements
+
+            Unzip your platform client in the client folder with your preferred method.
             ```
+
         === ":fontawesome-brands-windows: Windows"
             
             ```
             python -m venv .venv
             .venv\Scripts\activate
+            pip install -r requirements
+
+            Unzip the windows client in the client folder with your preferred method.
             ```
-
-    - Run the setup script:
-        
-        ```bash
-        python setup.py
-        ```
-
-        If the script was successful, the required packages should have been installed and the client for your platform
-        should be in the `client` folder.
    
     To deactivate the virtual environment once you're done:
 

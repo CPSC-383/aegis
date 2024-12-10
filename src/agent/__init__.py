@@ -4,7 +4,7 @@
 
 Contains the core components for agents.
 
-- [`agent.BaseAgent`][]: Represents a base agent that connects to and interacts with AEGIS.
+- [`agent.AgentController`][]: An interface for controlling an agent and interacting with the AEGIS system.
 """
 
 from agent.base_agent import BaseAgent
