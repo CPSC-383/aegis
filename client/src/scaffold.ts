@@ -4,14 +4,14 @@ import { ClientWebSocket } from './websocket'
 import { useAppContext } from './context'
 import { Simulation } from './simulation/simulation'
 import { useForceUpdate } from './utils/util'
+import { ConsoleLine } from './utils/types'
 
 export type Scaffold = {
     aegisPath: string | undefined
     setupAegisPath: () => Promise<void>
     worlds: string[]
     agents: string[]
-    output: string[]
-    setOutput: (value: string[]) => void
+    output: ConsoleLine[]
     startSimulation: (numRounds: number, numAgentsAegis: number, worldFile: string) => void
     killSim: (() => void) | undefined
 }
@@ -21,13 +21,14 @@ function createScaffold(): Scaffold {
     const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
     const [worlds, setWorlds] = useState<string[]>([])
     const [agents, setAgents] = useState<string[]>([])
-    const [output, setOutput] = useState<string[]>([])
+    const [output, setOutput] = useState<ConsoleLine[]>([])
     const aegisPid = useRef<string | undefined>(undefined)
     const forceUpdate = useForceUpdate()
 
-    const addOutput = (data: string) => {
+    const addOutput = (data: string, has_error: boolean) => {
         const splitData = data.split('\n')
-        setOutput((prevOutput) => prevOutput.concat(splitData))
+        const formattedData = splitData.map((line) => ({ has_error, message: line }))
+        setOutput((prevOutput) => prevOutput.concat(formattedData))
     }
 
     const setupAegisPath = async () => {
@@ -67,11 +68,11 @@ function createScaffold(): Scaffold {
 
         // Setup aegis listeners once
         aegisAPI.aegis_child_process.onStdout((data: string) => {
-            addOutput(data)
+            addOutput(data, false)
         })
 
         aegisAPI.aegis_child_process.onStderr((data: string) => {
-            addOutput(data)
+            addOutput(data, true)
         })
 
         aegisAPI.aegis_child_process.onExit(() => {
@@ -81,11 +82,11 @@ function createScaffold(): Scaffold {
 
         // Setup agent listeners once
         aegisAPI.agent_child_process.onStdout((data: string) => {
-            addOutput(data)
+            addOutput(data, false)
         })
 
         aegisAPI.agent_child_process.onStderr((data: string) => {
-            addOutput(data)
+            addOutput(data, true)
         })
 
         const onSimCreated = (sim: Simulation) => {
@@ -110,7 +111,7 @@ function createScaffold(): Scaffold {
     }, [aegisPath])
 
     const killSim = aegisPid.current ? killSimulation : undefined
-    return { aegisPath, setupAegisPath, worlds, agents, output, setOutput, startSimulation, killSim }
+    return { aegisPath, setupAegisPath, worlds, agents, output, startSimulation, killSim }
 }
 
 const getAegisPath = async () => {

@@ -1,20 +1,15 @@
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useAppContext } from '@/context'
-import { useEffect, useState } from 'react'
 import { EventType, listenEvent } from '@/events'
 import { useForceUpdate } from '@/utils/util'
 import Timeline from './Timeline'
-
-import PauseIcon from '@/assets/pause.svg'
-import PlayIcon from '@/assets/play.svg'
-import NextIcon from '@/assets/next.svg'
-import PrevIcon from '@/assets/prev.svg'
-import MinimizeIcon from '@/assets/minimize.svg'
+import { Play, Pause, SkipForward, SkipBack, Minimize2, Maximize2 } from 'lucide-react'
 
 function ControlsBar() {
     const roundIntervalDuration = 200
     const { appState, setAppState } = useAppContext()
     const { simulation, simPaused } = appState
-
     const [isMinimized, setIsMinimized] = useState<boolean>(false)
 
     const togglePlayPause = (paused: boolean) => {
@@ -30,48 +25,126 @@ function ControlsBar() {
         simulation.jumpToRound(simulation.currentRound + step)
     }
 
+    const handleKeyPress = (e: KeyboardEvent) => {
+        switch (e.key.toLowerCase()) {
+            case ' ':
+            case 'k':
+                e.preventDefault()
+                togglePlayPause(!simPaused)
+                break
+            case 'arrowleft':
+            case 'j':
+                handleRound(-1)
+                break
+            case 'arrowright':
+            case 'l':
+                handleRound(1)
+                break
+            case 'm':
+                setIsMinimized((prev) => !prev)
+                break
+            default:
+                break
+        }
+    }
+
+    useEffect(() => {
+        if (!simulation) return
+        window.addEventListener('keydown', handleKeyPress)
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress)
+        }
+    }, [simulation, simPaused])
+
     useEffect(() => {
         if (!simulation || simPaused) return
-
         const roundInterval = setInterval(() => {
             simulation.renderNextRound()
-
             if (simulation.isGameOver()) {
                 togglePlayPause(true)
             }
         }, roundIntervalDuration)
-
         return () => {
             clearInterval(roundInterval)
         }
     }, [simulation, simPaused])
 
-    const simPlayPauseIcon = !simPaused ? PauseIcon : PlayIcon
-
     listenEvent(EventType.RENDER, useForceUpdate())
 
+    // If maxRounds is -1, this means we are in the editor.
+    // Don't show the control bar when there isnt a simulation as well.
+    if (simulation?.maxRounds == -1 || !simulation) return null
+
     return (
-        <div className="absolute bottom-0 z-50">
-            <div
-                className={`relative flex items-center gap-2 bg-white p-0.5 ${isMinimized ? 'opacity-50' : 'bg-opacity-90'}`}
-            >
-                <button onClick={() => setIsMinimized(!isMinimized)} className="cursor-pointer">
-                    <img src={MinimizeIcon} alt="Toggle Minimize" />
-                </button>
-                <Timeline />
-                <div className="flex items-center justify-center">
-                    <button onClick={() => handleRound(-1)} className="cursor-pointer">
-                        <img src={PrevIcon} alt="Previous Round" />
-                    </button>
-                    <button onClick={() => togglePlayPause(!simPaused)} className="cursor-pointer">
-                        <img src={simPlayPauseIcon} alt={simPaused ? 'Play' : 'Pause'} />
-                    </button>
-                    <button onClick={() => handleRound(1)} className="cursor-pointer">
-                        <img src={NextIcon} alt="Next Round" />
-                    </button>
-                </div>
-            </div>
-        </div>
+        <AnimatePresence>
+            {isMinimized ? (
+                <motion.button
+                    key="minimized-button"
+                    initial={{ opacity: 0, scale: 0.5, y: 50 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.5, y: 50 }}
+                    transition={{
+                        type: 'spring',
+                        stiffness: 300,
+                        damping: 20
+                    }}
+                    onClick={() => setIsMinimized(false)}
+                    className="fixed bottom-2 left-2 z-50 bg-white/90 p-2 rounded-full shadow-lg border border-gray-200 hover:bg-gray-100 transition-all duration-300 outline-none"
+                >
+                    <Maximize2 className="w-5 h-5" />
+                </motion.button>
+            ) : (
+                <motion.div
+                    key="full-controls"
+                    initial={{ opacity: 0, scale: 0.5, y: 50 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.5, y: 50 }}
+                    transition={{
+                        type: 'spring',
+                        stiffness: 300,
+                        damping: 20
+                    }}
+                    className="fixed bottom-2 z-50"
+                >
+                    <div className="flex items-center bg-white/90 rounded-full shadow-lg border border-gray-200">
+                        <button
+                            onClick={() => setIsMinimized(true)}
+                            className="p-2 pr-0 hover:bg-gray-100 rounded-full transition-colors flex items-center outline-none"
+                        >
+                            <Minimize2 className="w-5 h-5" />
+                        </button>
+
+                        <div className="mx-4">
+                            <Timeline />
+                        </div>
+
+                        <div className="flex items-center space-x-1 pr-2">
+                            <button
+                                onClick={() => handleRound(-1)}
+                                className="hover:bg-gray-100 rounded-full transition-colors cursor-pointer outline-none"
+                                disabled={!simulation}
+                            >
+                                <SkipBack className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => togglePlayPause(!simPaused)}
+                                className="hover:bg-gray-100 rounded-full transition-colors cursor-pointer outline-none"
+                                disabled={!simulation}
+                            >
+                                {simPaused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
+                            </button>
+                            <button
+                                onClick={() => handleRound(1)}
+                                className="hover:bg-gray-100 rounded-full transition-colors cursor-pointer outline-none"
+                                disabled={!simulation}
+                            >
+                                <SkipForward className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     )
 }
 

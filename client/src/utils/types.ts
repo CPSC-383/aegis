@@ -170,3 +170,8 @@ export const shadesOfBlue = [
     [0, 0, 191],
     [0, 0, 171] // Dark Blue
 ]
+
+export type ConsoleLine = {
+    has_error: boolean
+    message: string
+}

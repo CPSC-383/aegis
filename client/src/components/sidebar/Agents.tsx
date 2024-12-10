@@ -4,6 +4,9 @@ import Button from '@/components/Button'
 import Input from '../inputs/Input'
 import NumberInput from '../inputs/NumberInput'
 import { useAppContext } from '@/context'
+import Dropdown from '../Dropdown'
+import { User } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 interface AgentsProps {
     isOpen: boolean
@@ -43,42 +46,44 @@ function Agents({ isOpen, aegisPath, numAgentsAegis, agents }: AgentsProps) {
 
     if (!isOpen) return null
     return (
-        <div className="h-fit flex flex-col justify-between">
-            <div className="space-y-2">
-                <select
-                    className="bg-white p-2 w-full border-2 border-gray-300 focus:border-accent-light rounded-md focus:outline-none"
-                    value={agent}
-                    onChange={(e) => setAgent(e.target.value)}
-                >
-                    <option value="">Select an agent</option>
-                    {agents.map((agent, i) => (
-                        <option key={i} value={agent}>
-                            {agent}
-                        </option>
-                    ))}
-                </select>
-                <div>
-                    <p className="text-xs font-semibold">Group Name:</p>
-                    <Input value={groupName} onChange={(value) => handleGroupName(value)} placeholder="Group Name" />
-                    <p className="text-xs font-semibold mt-2">Number of Agents to Connect:</p>
-                    <NumberInput
-                        value={numAgents}
-                        onChange={(value) => setNumAgents(value)}
-                        max={maxAgents}
-                        min={0}
-                        placeholder="Number of Agents"
-                        extraStyles="w-full"
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+            <div className="h-fit flex flex-col justify-between">
+                <div className="space-y-2">
+                    <Dropdown
+                        items={agents}
+                        selectedItem={agent}
+                        onSelect={(item) => setAgent(item)}
+                        label={'Select an agent'}
+                        placeholder={'Select an agent'}
+                        icon={User}
+                    />
+                    <div>
+                        <p className="text-xs font-semibold">Group Name:</p>
+                        <Input
+                            value={groupName}
+                            onChange={(value) => handleGroupName(value)}
+                            placeholder="Group Name"
+                        />
+                        <p className="text-xs font-semibold mt-2">Number of Agents to Connect:</p>
+                        <NumberInput
+                            value={numAgents}
+                            onChange={(value) => setNumAgents(value)}
+                            max={maxAgents}
+                            min={0}
+                            placeholder="Number of Agents"
+                            extraStyles="w-full"
+                        />
+                    </div>
+                    {maxAgents ? <p className="text-xs">{maxAgents} agents left to connect.</p> : null}
+                    <Button
+                        onClick={handleConnectAgents}
+                        label={'Connect Agents'}
+                        styles="bg-primary"
+                        disabled={isButtonDisabled}
                     />
                 </div>
-                {maxAgents ? <p className="text-xs">{maxAgents} agents left to connect.</p> : null}
-                <Button
-                    onClick={handleConnectAgents}
-                    label={'Connect Agents'}
-                    styles="bg-primary"
-                    disabled={isButtonDisabled}
-                />
             </div>
-        </div>
+        </motion.div>
     )
 }
 

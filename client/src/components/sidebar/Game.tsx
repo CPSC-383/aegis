@@ -2,6 +2,8 @@ import { useAppContext } from '@/context'
 import { EventType, listenEvent } from '@/events'
 import { useForceUpdate } from '@/utils/util'
 import { GroupStats } from '@/utils/types'
+import { motion } from 'framer-motion'
+import { Save, Footprints, AlertTriangle, Trophy } from 'lucide-react'
 
 type Props = {
     isOpen: boolean
@@ -16,19 +18,35 @@ function Game({ isOpen }: Props) {
 
     if (!appState.simulation) {
         return (
-            <div className="flex items-center p-4 h-60">
-                <p className="text-lg font-bold text-center text-black">Run A Simulation To See Game Stats!</p>
-            </div>
+            <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="flex justify-center items-center h-60"
+            >
+                <div className="text-center p-4">
+                    <AlertTriangle className="mx-auto mb-4" size={48} />
+                    <p className="text-lg font-bold text-center text-black">Run A Simulation To See Game Stats!</p>
+                </div>
+            </motion.div>
         )
     }
 
     if (appState.simulation.getRoundNumber() === 0) {
         return (
-            <div className="flex items-center p-4 h-60">
-                <p className="text-lg font-bold text-center text-black">
-                    Game Stats Will Be Available After The First Round!
-                </p>
-            </div>
+            <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="flex justify-center items-center h-60"
+            >
+                <div className="text-center p-4">
+                    <Trophy className="mx-auto mb-4" size={48} />
+                    <p className="text-lg font-bold text-center text-black">
+                        Game Stats Will Be Available After The First Round!
+                    </p>
+                </div>
+            </motion.div>
         )
     }
 
@@ -62,9 +80,7 @@ function Game({ isOpen }: Props) {
                         <table className="min-w-full text-sm border-collapse border text-center">
                             <thead>
                                 <tr className="bg-gray-200">
-                                    <th className="px-2 py-2">
-                                        Group Stats Table
-                                    </th>
+                                    <th className="px-2 py-2">Group Stats Table</th>
                                     {stats.groupStats.map((group) => (
                                         <th key={group.gid} className="px-4 py-2">
                                             {group.name}

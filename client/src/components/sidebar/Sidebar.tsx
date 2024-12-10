@@ -1,15 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import createScaffold from '@/scaffold'
+import { useAppContext } from '@/context'
+import { TabNames } from '@/utils/types'
+import { ChevronRight } from 'lucide-react'
+
 import Tabs from '@/components/Tabs'
 import Aegis from './Aegis'
 import Agents from './Agents'
-import createScaffold from '@/scaffold'
-import ArrowIcon from '@/assets/arrow.svg'
 import Console from '../Console'
 import Button from '../Button'
 import InfoPanel from '../info-panel/Info-panel'
-import { useAppContext } from '@/context'
-import { TabNames } from '@/utils/types'
 import MapEditor from '../map-editor/Map-editor'
 import Game from './Game'
 import Settings from './Settings'
@@ -76,17 +77,14 @@ function Sidebar() {
                         </>
                     )}
                 </div>
-                <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className={`absolute top-1/2 rotate-180 ${isCollapsed ? '-left-4' : '-left-7'}`}
-                >
-                    <motion.img
-                        animate={{ rotate: isCollapsed ? 180 : 0 }}
+                <button onClick={() => setIsCollapsed(!isCollapsed)} className="absolute top-1/2 rotate-180 -left-6">
+                    <motion.div
+                        animate={{ rotate: isCollapsed ? 0 : 180 }}
                         transition={{ duration: 0.5 }}
                         className="cursor-pointer"
-                        src={ArrowIcon}
-                        alt="Toggle Sidebar"
-                    />
+                    >
+                        <ChevronRight />
+                    </motion.div>
                 </button>
             </motion.div>
             <InfoPanel />

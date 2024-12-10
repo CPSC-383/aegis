@@ -1,5 +1,7 @@
 import { SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
 import NumberInput from '@/components/inputs/NumberInput'
+import { Flame, PlusCircle, Target, Zap } from 'lucide-react'
+import Dropdown from '@/components/Dropdown'
 
 interface Props {
     specialCellType: SpecialCellBrushTypes
@@ -18,18 +20,23 @@ function SpecialCellsBrush({
     gid,
     setGid
 }: Props) {
+    const specialCellItems = Object.values(SpecialCellBrushTypes).map((type) => ({
+        value: type,
+        icon: {
+            [SpecialCellBrushTypes.Killer]: Target,
+            [SpecialCellBrushTypes.Fire]: Flame,
+            [SpecialCellBrushTypes.Charging]: Zap,
+            [SpecialCellBrushTypes.Spawn]: PlusCircle
+        }[type]
+    }))
+
     return (
         <>
-            <select
-                value={specialCellType}
-                onChange={(e) => setSpecialCellType(e.target.value as SpecialCellBrushTypes)}
-                className="bg-white p-2 w-full border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
-            >
-                <option value={SpecialCellBrushTypes.Killer}>Killer Brush</option>
-                <option value={SpecialCellBrushTypes.Fire}>Fire Brush</option>
-                <option value={SpecialCellBrushTypes.Charging}>Charging Brush</option>
-                <option value={SpecialCellBrushTypes.Spawn}>Spawn Brush</option>
-            </select>
+            <Dropdown
+                items={specialCellItems}
+                selectedItem={specialCellType}
+                onSelect={(item) => setSpecialCellType(item as SpecialCellBrushTypes)}
+            />
             {specialCellType === SpecialCellBrushTypes.Spawn && (
                 <>
                     <div className="flex mt-4 items-center justify-center">

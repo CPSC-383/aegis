@@ -8,6 +8,8 @@ import Button from '../Button'
 import Input from '../inputs/Input'
 import { exportWorld, importWorld } from './MapGenerator'
 import MapBrushes from './Map-brushes'
+import { motion } from 'framer-motion'
+import { AlertCircle, Download, Grid3x3, Zap } from 'lucide-react'
 
 function MapEditor({ isOpen }: { isOpen: boolean }) {
     const MAP_MAX = 30
@@ -26,18 +28,6 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const isWorldEmpty = !appState.simulation || appState.simulation.worldMap.isEmpty()
-
-    const changeWidth = (width: number) => {
-        setWorldParams({ ...worldParams, width, isInitialized: false })
-    }
-
-    const changeHeight = (height: number) => {
-        setWorldParams({ ...worldParams, height, isInitialized: false })
-    }
-
-    const changeInitialEnergy = (initialEnergy: number) => {
-        setWorldParams({ ...worldParams, initialEnergy, isInitialized: false })
-    }
 
     const handleExport = async () => {
         const err = await exportWorld(appState.simulation!.worldMap, worldName)
@@ -63,7 +53,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
         if (fileInputRef.current) fileInputRef.current.value = ''
     }
 
-    const handleClear = () => {
+    const handleReset = () => {
         setWorldParams({ ...worldParams, isInitialized: false })
         setErrMsg('')
     }
@@ -93,52 +83,133 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     if (!isOpen) return null
 
     return (
-        <div className="overflow-auto p-2 mb-2 scrollbar">
+        <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-4 overflow-auto pb-4 scrollbar"
+        >
             <MapBrushes />
-            <div className="flex my-4 items-center justify-center">
-                <p className="mr-2 text-xs">Width:</p>
-                <NumberInput
-                    value={worldParams.width}
-                    onChange={changeWidth}
-                    max={MAP_MAX}
-                    min={MAP_MIN}
-                    extraStyles="w-16"
-                    disabled={!isWorldEmpty}
-                />
-                <p className="mr-2 ml-4 text-xs">Height:</p>
-                <NumberInput
-                    value={worldParams.height}
-                    onChange={changeHeight}
-                    max={MAP_MAX}
-                    min={MAP_MIN}
-                    extraStyles="w-16"
-                    disabled={!isWorldEmpty}
-                />
+
+            <div className="space-y-3 p-4 bg-gray-50 rounded-lg shadow-sm">
+                <div className="flex items-center space-x-2 mb-4">
+                    <motion.h2
+                        className="text-lg font-semibold text-gray-800 flex items-center space-x-2"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <Grid3x3 className="w-5 h-5" />
+                        <span>World Configuration</span>
+                    </motion.h2>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <label className="text-sm flex items-center text-gray-700">
+                            <Grid3x3 className="w-4 h-4 mr-2 text-gray-500" />
+                            Width
+                        </label>
+                        <NumberInput
+                            value={worldParams.width}
+                            onChange={(width: number) => {
+                                setWorldParams({ ...worldParams, width, isInitialized: false })
+                            }}
+                            max={MAP_MAX}
+                            min={MAP_MIN}
+                            extraStyles="w-full"
+                            disabled={!isWorldEmpty}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm flex items-center text-gray-700">
+                            <Grid3x3 className="w-4 h-4 mr-2 text-gray-500" />
+                            Height
+                        </label>
+                        <NumberInput
+                            value={worldParams.height}
+                            onChange={(height: number) => {
+                                setWorldParams({ ...worldParams, height, isInitialized: false })
+                            }}
+                            max={MAP_MAX}
+                            min={MAP_MIN}
+                            extraStyles="w-full"
+                            disabled={!isWorldEmpty}
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-2 mt-4">
+                    <label className="text-sm flex items-center text-gray-700">
+                        <Zap className="w-4 h-4 mr-2 text-gray-500" />
+                        Initial Agent Energy
+                    </label>
+                    <NumberInput
+                        value={worldParams.initialEnergy}
+                        onChange={(initialEnergy: number) => {
+                            setWorldParams({ ...worldParams, initialEnergy, isInitialized: false })
+                        }}
+                        max={MAP_MAX}
+                        min={1}
+                        extraStyles="w-full"
+                        disabled={!isWorldEmpty}
+                    />
+
+                    {!isWorldEmpty && (
+                        <Button
+                            onClick={handleReset}
+                            label={'Reset to change settings'}
+                            styles="text-sm bg-secondary mt-2 hover:bg-[#e9505b] transition-colors duration-200"
+                        />
+                    )}
+                </div>
             </div>
-            <div className="flex justify-center items-center">
-                <p className="mr-2 text-xs">Initial Agent Energy:</p>
-                <NumberInput
-                    value={worldParams.initialEnergy}
-                    onChange={changeInitialEnergy}
-                    min={1}
-                    extraStyles="w-16"
-                    disabled={!isWorldEmpty}
-                />
+
+            <div className="space-y-3 p-4 bg-gray-50 rounded-lg shadow-sm">
+                <div className="flex items-center space-x-2 mb-4">
+                    <motion.h2
+                        className="text-lg font-semibold text-gray-800 flex items-center space-x-2"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        <Download className="w-5 h-5" />
+                        <span>World Management</span>
+                    </motion.h2>
+                </div>
+
+                <div className="space-y-3">
+                    <Input placeholder="World Name" value={worldName} onChange={setWorldName} />
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <Button
+                            onClick={handleExport}
+                            disabled={!worldName}
+                            label={'Export'}
+                            styles="bg-primary mt-2 hover:bg-[#71c3c6] transition-colors duration-200"
+                        />
+
+                        <Button
+                            onClick={() => fileInputRef.current?.click()}
+                            label={'Import'}
+                            styles="bg-primary mt-2 hover:bg-[#71c3c6] transition-colors duration-200"
+                        />
+                    </div>
+
+                    <input type="file" accept=".world" ref={fileInputRef} onChange={handleImport} className="hidden" />
+
+                    {errMsg && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-red-500 text-sm flex items-center bg-red-50 p-2 rounded-md border border-red-200"
+                        >
+                            <AlertCircle className="w-5 h-5 mr-2" />
+                            {errMsg}
+                        </motion.div>
+                    )}
+                </div>
             </div>
-            <Button
-                onClick={handleClear}
-                label={'Clear to change world settings'}
-                styles={`bg-secondary text-xs mt-2 ${isWorldEmpty ? 'invisible' : ''}`}
-            />
-            <div className="h-[4px] w-[90%] mx-auto border-[2px] border-black rounded-full my-3"></div>
-            <div className="flex flex-col mt-4 justify-center items-center">
-                <Input placeholder="World Name" value={worldName} onChange={setWorldName} />
-                <Button onClick={handleExport} label="Export World" styles="bg-primary mt-2" disabled={!worldName} />
-                <Button onClick={() => fileInputRef.current?.click()} label="Import World" styles="bg-primary mt-2" />
-                <input hidden type="file" accept=".world" ref={fileInputRef} onChange={handleImport} />
-                <div className="mt-2 text-red-600">{errMsg}</div>
-            </div>
-        </div>
+        </motion.div>
     )
 }
 

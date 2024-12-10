@@ -1,6 +1,8 @@
 import { RubbleInfo, StackContentBrushTypes, SurvivorInfo } from '@/utils/types'
 import RubbleSettings from './RubbleSettings'
 import SurvivorSettings from './SurvivorSettings'
+import { Mountain, PlusCircle, PlusIcon, PlusSquare } from 'lucide-react'
+import Dropdown from '@/components/Dropdown'
 
 interface Props {
     stackType: StackContentBrushTypes
@@ -19,16 +21,20 @@ function StackContentBrush({
     survivorInfo,
     setSurvivorInfo
 }: Props) {
+    const stackItems = Object.values(StackContentBrushTypes).map((type) => ({
+        value: type,
+        icon: {
+            [StackContentBrushTypes.Survivor]: PlusSquare,
+            [StackContentBrushTypes.Rubble]: Mountain
+        }[type]
+    }))
     return (
         <>
-            <select
-                value={stackType}
-                onChange={(e) => setStackType(e.target.value as StackContentBrushTypes)}
-                className="bg-white p-2 w-full border-2 border-gray-300 my-1 focus:border-accent-light rounded-md focus:outline-none"
-            >
-                <option value={StackContentBrushTypes.Survivor}>Survivor Brush</option>
-                <option value={StackContentBrushTypes.Rubble}>Rubble Brush</option>
-            </select>
+            <Dropdown
+                items={stackItems}
+                selectedItem={stackType}
+                onSelect={(item) => setStackType(item as StackContentBrushTypes)}
+            />
             {stackType === StackContentBrushTypes.Rubble ? (
                 <RubbleSettings rubbleInfo={rubbleInfo} setRubbleInfo={setRubbleInfo} />
             ) : (

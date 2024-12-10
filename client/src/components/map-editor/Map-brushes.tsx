@@ -16,6 +16,9 @@ import StackContentBrush from './brushes/components/StackContentBrush'
 import SpecialCellsHandler from './brushes/handlers/SpecialCellsHandler'
 import MoveCostHandler from './brushes/handlers/MoveCostHandler'
 import StackContentHandler from './brushes/handlers/StackContentHandler'
+import { Brush, PlusSquare, Target, Trash2, Zap } from 'lucide-react'
+import Dropdown from '../Dropdown'
+import { motion } from 'framer-motion'
 
 function MapBrushes() {
     const { appState } = useAppContext()
@@ -67,6 +70,16 @@ function MapBrushes() {
 
     listenEvent(EventType.TILE_CLICK, handleBrush)
 
+    const brushTypeItems = Object.values(BrushType).map((type) => ({
+        value: type,
+        icon: {
+            [BrushType.SpecialCells]: Target,
+            [BrushType.MoveCost]: Zap,
+            [BrushType.StackContents]: PlusSquare,
+            [BrushType.Empty]: Trash2
+        }[type]
+    }))
+
     const renderBrushContent = () => {
         switch (brushType) {
             case BrushType.SpecialCells:
@@ -99,17 +112,20 @@ function MapBrushes() {
     }
 
     return (
-        <div className="flex flex-col">
-            <select
-                value={brushType}
-                onChange={(e) => setBrushType(e.target.value as BrushType)}
-                className="bg-white p-2 w-full border-2 border-gray-300 focus:border-accent-light rounded-md focus:outline-none"
+        <div className="space-y-3 p-4 bg-gray-50 rounded-lg shadow-sm">
+            <motion.h2
+                className="text-lg font-semibold text-gray-800 flex items-center space-x-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
             >
-                <option value={BrushType.SpecialCells}>Special Cells Brush</option>
-                <option value={BrushType.MoveCost}>Move Cost Brush</option>
-                <option value={BrushType.StackContents}>Stack Contents Brush</option>
-                <option value={BrushType.Empty}>Empty Brush</option>
-            </select>
+                <Brush className="w-6 h-6" />
+                <span>Map Brushes</span>
+            </motion.h2>
+            <Dropdown
+                items={brushTypeItems}
+                selectedItem={brushType}
+                onSelect={(item) => setBrushType(item as BrushType)}
+            />
             {renderBrushContent()}
         </div>
     )

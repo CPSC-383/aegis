@@ -1,7 +1,8 @@
+import { ConsoleLine } from '@/utils/types'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface Props {
-    output: string[]
+    output: ConsoleLine[]
     isPopupOpen: boolean
     setIsPopupOpen: (isOpen: boolean) => void
 }
@@ -39,8 +40,11 @@ function PopoutConsole({ output, isPopupOpen, setIsPopupOpen }: Props) {
                         </div>
                         <div className="flex-grow overflow-auto p-4 font-mono text-sm scrollbar">
                             {output.map((line, index) => (
-                                <div key={index} className="whitespace-pre-wrap break-words">
-                                    {line}
+                                <div
+                                    key={index}
+                                    className={`whitespace-pre-wrap break-words ${line.has_error ? 'text-secondary' : ''}`}
+                                >
+                                    {line.message}
                                 </div>
                             ))}
                         </div>

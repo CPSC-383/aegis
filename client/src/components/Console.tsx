@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
-import Expand from '@/assets/expand.svg'
+import { Maximize2 } from 'lucide-react'
+import { ConsoleLine } from '@/utils/types'
 
 interface ConsoleProps {
-    output: string[]
+    output: ConsoleLine[]
     isPopupOpen: boolean
     setIsPopupOpen: (isOpen: boolean) => void
 }
@@ -29,12 +30,14 @@ function Console({ output, isPopupOpen, setIsPopupOpen }: ConsoleProps) {
             <div className="flex justify-between items-center mb-2">
                 <h2 className="font-bold text-accent">Console</h2>
                 <button onClick={() => setIsPopupOpen(true)} className="outline-none">
-                    <img src={Expand} />
+                    <Maximize2 />
                 </button>
             </div>
             <div className="h-full p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
                 {output.map((line, id) => (
-                    <div key={id}>{line}</div>
+                    <div key={id} className={line.has_error ? 'text-secondary' : ''}>
+                        {line.message}
+                    </div>
                 ))}
             </div>
         </div>
