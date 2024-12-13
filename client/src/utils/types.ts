@@ -57,7 +57,7 @@ export enum BrushType {
     SpecialCells = 'special_cells',
     MoveCost = 'move_cost',
     StackContents = 'stack_contents',
-    Empty = 'empty'
+    View = 'view'
 }
 
 export enum StackContentBrushTypes {
