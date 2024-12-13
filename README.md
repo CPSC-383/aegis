@@ -25,22 +25,16 @@ git checkout a1
 git checkout a3
 ```
 
-2. Create a new tag for the documentation release.
+2. Navigate into the `docs` directory.
 
 ```bash
-git tag -a docs-v<major>.<minor>.<patch> -m "<release message>"
+cd docs
 ```
 
-Example:
+3. Deploy the docs.
 
 ```bash
-git tag -a docs-v2.1.3 -m "Fix typo in installation guide"
-```
-
-3. Push the tag.
-
-```bash
-git push origin <tag name>
+npm run deploy
 ```
 
 ## Release Build for the Aegis Client
@@ -79,6 +73,6 @@ git tag -a v2.1.3 -m "Fix bug in map editor"
 git push origin <tag name>
 ```
 
-### Finding the Latest Release for the Aegis Client
+### Finding the Aegis Client
 
-The zipped client will be in the "Releases" section. Check there for the most recent build.
+The zipped client will be in the "Releases" section.
