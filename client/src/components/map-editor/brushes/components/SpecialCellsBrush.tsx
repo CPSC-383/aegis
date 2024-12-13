@@ -1,6 +1,6 @@
 import { SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
 import NumberInput from '@/components/inputs/NumberInput'
-import { Flame, PlusCircle, Target, Zap, Users, User, Tag } from 'lucide-react'
+import { Flame, PlusCircle, Zap, Users, User, Tag, Skull } from 'lucide-react'
 import Dropdown from '@/components/Dropdown'
 
 interface Props {
@@ -23,7 +23,7 @@ function SpecialCellsBrush({
     const specialCellItems = Object.values(SpecialCellBrushTypes).map((type) => ({
         value: type,
         icon: {
-            [SpecialCellBrushTypes.Killer]: Target,
+            [SpecialCellBrushTypes.Killer]: Skull,
             [SpecialCellBrushTypes.Fire]: Flame,
             [SpecialCellBrushTypes.Charging]: Zap,
             [SpecialCellBrushTypes.Spawn]: PlusCircle

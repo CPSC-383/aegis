@@ -16,7 +16,7 @@ import StackContentBrush from './brushes/components/StackContentBrush'
 import SpecialCellsHandler from './brushes/handlers/SpecialCellsHandler'
 import MoveCostHandler from './brushes/handlers/MoveCostHandler'
 import StackContentHandler from './brushes/handlers/StackContentHandler'
-import { Brush, PlusSquare, Target, Trash2, Zap } from 'lucide-react'
+import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
 import Dropdown from '../Dropdown'
 import { motion } from 'framer-motion'
 
@@ -29,7 +29,7 @@ function MapBrushes() {
     const [spawnZoneType, setSpawnZoneType] = useState<SpawnZoneTypes>(SpawnZoneTypes.Any)
     const [stackType, setStackType] = useState<StackContentBrushTypes>(StackContentBrushTypes.Survivor)
     const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({ remove_energy: 0, remove_agents: 0 })
-    const [survivorInfo, setSurvivorInfo] = useState<SurvivorInfo>({
+    const [survivorInfo, _] = useState<SurvivorInfo>({
         energy_level: 0,
         body_mass: 0,
         mental_state: 0,
@@ -76,7 +76,7 @@ function MapBrushes() {
             [BrushType.SpecialCells]: Target,
             [BrushType.MoveCost]: Zap,
             [BrushType.StackContents]: PlusSquare,
-            [BrushType.Empty]: Trash2
+            [BrushType.View]: MousePointerClick
         }[type]
     }))
 
@@ -102,8 +102,6 @@ function MapBrushes() {
                         setStackType={setStackType}
                         rubbleInfo={rubbleInfo}
                         setRubbleInfo={setRubbleInfo}
-                        survivorInfo={survivorInfo}
-                        setSurvivorInfo={setSurvivorInfo}
                     />
                 )
             default:

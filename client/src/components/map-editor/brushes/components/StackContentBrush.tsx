@@ -1,7 +1,6 @@
-import { RubbleInfo, StackContentBrushTypes, SurvivorInfo } from '@/utils/types'
+import { RubbleInfo, StackContentBrushTypes } from '@/utils/types'
 import RubbleSettings from './RubbleSettings'
-import SurvivorSettings from './SurvivorSettings'
-import { Mountain, PlusSquare } from 'lucide-react'
+import { Mountain, User } from 'lucide-react'
 import Dropdown from '@/components/Dropdown'
 
 interface Props {
@@ -9,22 +8,13 @@ interface Props {
     setStackType: (type: StackContentBrushTypes) => void
     rubbleInfo: RubbleInfo
     setRubbleInfo: (info: RubbleInfo) => void
-    survivorInfo: SurvivorInfo
-    setSurvivorInfo: (info: SurvivorInfo) => void
 }
 
-function StackContentBrush({
-    stackType,
-    setStackType,
-    rubbleInfo,
-    setRubbleInfo,
-    survivorInfo,
-    setSurvivorInfo
-}: Props) {
+function StackContentBrush({ stackType, setStackType, rubbleInfo, setRubbleInfo }: Props) {
     const stackItems = Object.values(StackContentBrushTypes).map((type) => ({
         value: type,
         icon: {
-            [StackContentBrushTypes.Survivor]: PlusSquare,
+            [StackContentBrushTypes.Survivor]: User,
             [StackContentBrushTypes.Rubble]: Mountain
         }[type]
     }))
