@@ -59,8 +59,9 @@ function RunningAegis() {
           Using the client
         </h2>
         <p className="text-gray-600 dark:text-gray-300 mt-2">
-          Make sure you open the client from the command line. Run the following
-          in the <code>aegis</code> folder:
+          You can either open the client from the command line or a file
+          explorer. Run the following in the <code>aegis</code> folder if you
+          use the command line:
         </p>
         <CodeBlock language="bash">{`cd client`}</CodeBlock>
         <SystemSwitcher
@@ -100,10 +101,10 @@ function RunningAegis() {
                 <p>
                   Since the client can't automatically find the Aegis code,
                   you'll need to set it up manually. Click on the{" "}
-                  <em>Setup Aegis Path</em> button, and select the Aegis root
-                  directory. If set up properly, the sidebar tabs will appear
-                  and the client should display a list of available worlds when
-                  you attempt to select one.
+                  <em>Setup Aegis Path</em> button, and select the{" "}
+                  <code>aegis</code> root directory. If set up properly, the
+                  sidebar tabs will appear and the client should display a list
+                  of available worlds when you attempt to select one.
                 </p>
               ),
             },

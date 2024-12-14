@@ -114,10 +114,6 @@ function CommonErrors() {
                         {
                           title: "Click Open Anyway to proceed",
                         },
-                        {
-                          title:
-                            "Once the application opens, close it and reopen it from the terminal",
-                        },
                       ]}
                     />
                   </div>
@@ -150,6 +146,11 @@ function CommonErrors() {
                         },
                         {
                           title: "Recreate the virtual environment",
+                          description: (
+                            <CodeBlock language="bash">
+                              python setup.py --no-client
+                            </CodeBlock>
+                          ),
                         },
                       ]}
                     />
@@ -172,10 +173,6 @@ function CommonErrors() {
                   <div className="ml-4">
                     <UnorderedList
                       items={[
-                        {
-                          title:
-                            "Ensure you are running the client inside an activated virtual environment. Start the client from the command line with an activated venv, not by clicking on it from a file explorer",
-                        },
                         {
                           title: "Install with setup script",
                           description: (

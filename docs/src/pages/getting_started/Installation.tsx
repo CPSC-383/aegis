@@ -142,7 +142,7 @@ pip install -r requirements
                   To confirm that Aegis installed properly, follow the steps
                   outlined{" "}
                   <Link
-                    to="/getting-started/running-aegis"
+                    to="/getting-started/aegis/running-aegis"
                     className="text-light-primary dark:text-dark-primary"
                   >
                     here
@@ -166,6 +166,13 @@ pip install -r requirements
               You must reactivate the virtual environment every time you work on
               the project. If you're not inside the environment, you may
               encounter missing dependency errors.
+            </p>
+            <p>
+              <strong>Note:</strong> For Assignment 1, activating the virtual
+              environment is optional, as the client and script directly use the
+              Python executable from the virtual environment. However, for
+              consistency and future assignments, it's good practice to activate
+              it.
             </p>
           </div>
         </Admonition>
