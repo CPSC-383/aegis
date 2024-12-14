@@ -62,13 +62,33 @@ class AegisRunner:
         """
         Set up the Python path environment variables.
         """
+        venv_path = os.path.join(self.curr_dir, ".venv")
+
+        if platform.system() == "Windows":
+            python_executable = os.path.join(venv_path, "Scripts", "python.exe")
+        else:
+            python_executable = os.path.join(venv_path, "bin", "python")
+
+        if os.path.exists(python_executable):
+            self.python_command = python_executable
+        else:
+            raise FileNotFoundError(
+                f"Python executable not found in venv: {python_executable}"
+            )
+
         os.environ["PYTHONPATH"] = os.path.join(self.curr_dir, "src")
 
-        # Add virtual environment site-packages if it exists
-        venv_path = os.path.join(self.curr_dir, ".venv", "Lib", "site-packages")
-        if os.path.exists(venv_path):
-            os.environ["PYTHONPATH"] += os.pathsep + venv_path
+        site_packages = (
+            os.path.join(venv_path, "Lib", "site-packages")
+            if platform.system() == "Windows"
+            else os.path.join(
+                venv_path, "lib", f"python{sys.version[:3]}", "site-packages"
+            )
+        )
+        if os.path.exists(site_packages):
+            os.environ["PYTHONPATH"] += os.pathsep + site_packages
 
+        self._log(f"Using Python interpreter: {self.python_command}")
         self._log(f"PYTHONPATH set to: {os.environ['PYTHONPATH']}")
 
     def run_agent(self, agent_index: int | None = None) -> None:
