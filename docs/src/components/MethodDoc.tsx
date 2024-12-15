@@ -54,16 +54,11 @@ function MethodDoc({
       onValueChange={handleValueChange}
       className="w-full my-2"
     >
-      <AccordionItem
-        value="method-details"
-        className="border-gray-200 dark:border-gray-800"
-      >
-        <AccordionTrigger className="px-4 hover:no-underline">
+      <AccordionItem value="method-details">
+        <AccordionTrigger className="px-4">
           <div className="flex items-center space-x-2">
             <Code className="text-green-600 dark:text-green-400" size={20} />
-            <span className="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-200">
-              {name}
-            </span>
+            <span className="font-semibold">{name}</span>
           </div>
         </AccordionTrigger>
         <AccordionContent ref={methodDocRef} className="px-4 pb-4">

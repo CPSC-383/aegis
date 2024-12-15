@@ -136,8 +136,7 @@ function DocsSearch({ docsRoutes, gettingStartedRoutes }: Props) {
         variant="outline"
         className="text-gray-600 dark:text-gray-300 bg-light-main-background dark:bg-dark-main-background"
       >
-        <span className="hidden lg:flex">Search documentation...</span>
-        <span className="lg:hidden flex">Search...</span>
+        <span className="mr-2">Search...</span>
         <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-gray-200 dark:border-gray-800 px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
           <div className="flex items-center text-xs">
             {os === "mac" ? (

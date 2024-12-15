@@ -31,7 +31,7 @@ function Installation() {
                 To check if you have the correct Python version installed, run
                 the following command in your terminal:
               </p>
-              <Tabs defaultValue="maclinux" className="w-[400px] mt-4">
+              <Tabs defaultValue="maclinux" className="mt-4">
                 <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
                   <TabsTrigger value="maclinux">Mac/Linux</TabsTrigger>
                   <TabsTrigger value="windows">Windows</TabsTrigger>
@@ -112,7 +112,7 @@ function Installation() {
                   </p>
                   <div className="mt-4">
                     <p>Run the setup script:</p>
-                    <Tabs defaultValue="maclinux" className="w-[400px] mt-4">
+                    <Tabs defaultValue="maclinux" className="mt-4">
                       <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
                         <TabsTrigger value="maclinux">Mac/Linux</TabsTrigger>
                         <TabsTrigger value="windows">Windows</TabsTrigger>
@@ -165,7 +165,7 @@ source .venv/bin/activate`}
                   </div>
                   <div className="mt-4">
                     <p>Steps do to it manually if the setup script failed:</p>
-                    <Tabs defaultValue="maclinux" className="w-[400px] mt-4">
+                    <Tabs defaultValue="maclinux" className="mt-4">
                       <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
                         <TabsTrigger value="maclinux">Mac/Linux</TabsTrigger>
                         <TabsTrigger value="windows">Windows</TabsTrigger>

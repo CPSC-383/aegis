@@ -72,7 +72,7 @@ function RunningAegis() {
         </p>
         <CodeBlock language="bash">{`cd client`}</CodeBlock>
 
-        <Tabs defaultValue="mac" className="w-[400px] mt-4">
+        <Tabs defaultValue="mac" className="mt-4">
           <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
             <TabsTrigger value="mac">Mac</TabsTrigger>
             <TabsTrigger value="windows">Windows</TabsTrigger>

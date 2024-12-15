@@ -65,9 +65,9 @@ function APIReference({
         <Accordion type="single" collapsible>
           <AccordionItem
             value="child-attributes"
-            className="border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 border rounded-lg mt-2"
+            className="text-gray-600 dark:text-gray-300 border rounded-lg mt-2"
           >
-            <AccordionTrigger className="px-4 hover:no-underline">
+            <AccordionTrigger className="px-4">
               Child Attributes
             </AccordionTrigger>
             <AccordionContent className="px-4">{children}</AccordionContent>
