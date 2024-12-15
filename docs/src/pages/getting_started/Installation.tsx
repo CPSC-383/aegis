@@ -1,11 +1,18 @@
 import Admonition from "@/components/Admonition";
 import CodeBlock from "@/components/CodeBlock";
 import DocPage from "@/components/DocPage";
-import FileTree from "@/components/FileTree";
-import OrderedList from "@/components/OrderedList";
-import SystemSwitcher from "@/components/SystemSwitcher";
+import List from "@/components/List";
 import { Download } from "lucide-react";
 import { Link } from "react-router";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FileTree, FileTreeItem } from "@/components/ui/file-tree";
 
 function Installation() {
   return (
@@ -24,21 +31,45 @@ function Installation() {
                 To check if you have the correct Python version installed, run
                 the following command in your terminal:
               </p>
-              <SystemSwitcher
-                children={{
-                  macLinux: (
-                    <>
-                      <CodeBlock language="bash">{`python3 --version`}</CodeBlock>
-                    </>
-                  ),
-                  windows: (
-                    <>
-                      <CodeBlock language="bash">{`python --version`}</CodeBlock>
-                    </>
-                  ),
-                }}
-              />
-              <p>
+              <Tabs defaultValue="maclinux" className="w-[400px] mt-4">
+                <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <TabsTrigger value="maclinux">Mac/Linux</TabsTrigger>
+                  <TabsTrigger value="windows">Windows</TabsTrigger>
+                </TabsList>
+                <TabsContent value="maclinux">
+                  <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+                    <CardHeader className="pb-2">
+                      <CardTitle>Verify Python Installation</CardTitle>
+                      <CardDescription>
+                        Use this command to check the installed Python version
+                        and ensure it's properly set up.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-2">
+                      <CodeBlock language="bash">
+                        {`python3 --version`}
+                      </CodeBlock>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="windows">
+                  <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+                    <CardHeader className="pb-2">
+                      <CardTitle>Verify Python Installation</CardTitle>
+                      <CardDescription>
+                        Use this command to check the installed Python version
+                        and ensure it's properly set up.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-2">
+                      <CodeBlock language="bash">
+                        {`python --version`}
+                      </CodeBlock>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+              <p className="mt-2">
                 This should return <strong>Python 3.12.x</strong>.
               </p>
             </div>
@@ -51,10 +82,11 @@ function Installation() {
           Installation
         </h2>
 
-        <OrderedList
+        <List
+          type="ordered"
           items={[
             {
-              title: "Download the project",
+              title: "Download the assignment",
               description: (
                 <p>
                   Download the ZIP file and unzip it with your preferred method.
@@ -65,11 +97,11 @@ function Installation() {
               ),
             },
             {
-              title: "Navigate to the project directory",
+              title: "Navigate to the assignment directory",
               description: <CodeBlock language="bash">{`cd aegis`}</CodeBlock>,
             },
             {
-              title: "Setting up the project",
+              title: "Setting up the assignment",
               description: (
                 <div>
                   <p>
@@ -80,25 +112,51 @@ function Installation() {
                   </p>
                   <div className="mt-4">
                     <p>Run the setup script:</p>
-                    <SystemSwitcher
-                      children={{
-                        macLinux: (
-                          <CodeBlock language="bash">
-                            {`python3 setup.py 
-source .venv/bin/activate
-`}
-                          </CodeBlock>
-                        ),
-                        windows: (
-                          <CodeBlock language="bash">
-                            {`python setup.py 
-.venv\\Scripts\\activate
-`}
-                          </CodeBlock>
-                        ),
-                      }}
-                    />
-                    <p>
+                    <Tabs defaultValue="maclinux" className="w-[400px] mt-4">
+                      <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
+                        <TabsTrigger value="maclinux">Mac/Linux</TabsTrigger>
+                        <TabsTrigger value="windows">Windows</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="maclinux">
+                        <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+                          <CardHeader className="pb-2">
+                            <CardTitle>
+                              Setup and Activate Virtual Environment
+                            </CardTitle>
+                            <CardDescription>
+                              Use these commands to set up and activate the
+                              virtual environment for your assignment.
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="pt-2">
+                            <CodeBlock language="bash">
+                              {`python3 setup.py 
+source .venv/bin/activate`}
+                            </CodeBlock>
+                          </CardContent>
+                        </Card>
+                      </TabsContent>
+                      <TabsContent value="windows">
+                        <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+                          <CardHeader className="pb-2">
+                            <CardTitle>
+                              Setup and Activate Virtual Environment
+                            </CardTitle>
+                            <CardDescription>
+                              Use these commands to set up and activate the
+                              virtual environment for your assignment.
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="pt-2">
+                            <CodeBlock language="bash">
+                              {`python setup.py 
+.venv\\Scripts\\activate`}
+                            </CodeBlock>
+                          </CardContent>
+                        </Card>
+                      </TabsContent>
+                    </Tabs>
+                    <p className="mt-2">
                       If the script was successful, a virtual environment named{" "}
                       <code>.venv</code> should have been created, the required
                       packages installed within it and the client for your
@@ -107,27 +165,53 @@ source .venv/bin/activate
                   </div>
                   <div className="mt-4">
                     <p>Steps do to it manually if the setup script failed:</p>
-                    <SystemSwitcher
-                      children={{
-                        macLinux: (
-                          <CodeBlock language="bash">
-                            {`python3 -m venv .venv
+                    <Tabs defaultValue="maclinux" className="w-[400px] mt-4">
+                      <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
+                        <TabsTrigger value="maclinux">Mac/Linux</TabsTrigger>
+                        <TabsTrigger value="windows">Windows</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="maclinux">
+                        <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+                          <CardHeader className="pb-2">
+                            <CardTitle>
+                              Setup and Activate Virtual Environment
+                            </CardTitle>
+                            <CardDescription>
+                              Use these commands to set up and activate the
+                              virtual environment for your assignment.
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="pt-2">
+                            <CodeBlock language="bash">
+                              {`python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements
-`}
-                          </CodeBlock>
-                        ),
-                        windows: (
-                          <CodeBlock language="bash">
-                            {`python -m venv .venv
+pip install -r requirements`}
+                            </CodeBlock>
+                          </CardContent>
+                        </Card>
+                      </TabsContent>
+                      <TabsContent value="windows">
+                        <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+                          <CardHeader className="pb-2">
+                            <CardTitle>
+                              Setup and Activate Virtual Environment
+                            </CardTitle>
+                            <CardDescription>
+                              Use these commands to set up and activate the
+                              virtual environment for your assignment.
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="pt-2">
+                            <CodeBlock language="bash">
+                              {`python -m venv .venv
 .venv\\Scripts\\activate
-pip install -r requirements
-`}
-                          </CodeBlock>
-                        ),
-                      }}
-                    />
-                    <p>
+pip install -r requirements`}
+                            </CodeBlock>
+                          </CardContent>
+                        </Card>
+                      </TabsContent>
+                    </Tabs>
+                    <p className="mt-2">
                       Unzip your platform client in the client folder with your
                       preferred method.
                     </p>
@@ -164,15 +248,8 @@ pip install -r requirements
             <CodeBlock language="bash">{`deactivate`}</CodeBlock>
             <p>
               You must reactivate the virtual environment every time you work on
-              the project. If you're not inside the environment, you may
+              the assignment. If you're not inside the environment, you may
               encounter missing dependency errors.
-            </p>
-            <p>
-              <strong>Note:</strong> For Assignment 1, activating the virtual
-              environment is optional, as the client and script directly use the
-              Python executable from the virtual environment. However, for
-              consistency and future assignments, it's good practice to activate
-              it.
             </p>
           </div>
         </Admonition>
@@ -190,31 +267,18 @@ pip install -r requirements
         <h3 className="mt-4 text-xl font-semibold mb-4 dark:text-white">
           Agent Structure
         </h3>
-
-        <FileTree
-          data={[
-            {
-              name: "src",
-              type: "folder",
-              children: [
-                {
-                  name: "agents",
-                  type: "folder",
-                  children: [
-                    {
-                      name: "example_agent",
-                      type: "folder",
-                      children: [
-                        { name: "example_agent.py", type: "file" },
-                        { name: "main.py", type: "file" },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ]}
-        />
+        <FileTree>
+          <FileTreeItem name="aegis" type="folder">
+            <FileTreeItem name="src" type="folder">
+              <FileTreeItem name="agents" type="folder">
+                <FileTreeItem name="example_agent" type="folder">
+                  <FileTreeItem name="example_agent.py" />
+                  <FileTreeItem name="main.py" />
+                </FileTreeItem>
+              </FileTreeItem>
+            </FileTreeItem>
+          </FileTreeItem>
+        </FileTree>
         <p className="text-gray-600 dark:text-gray-300 mt-2">
           Place new agents in the <code>src/agents</code> directory.
           <br />
@@ -225,26 +289,13 @@ pip install -r requirements
           World Structure
         </h3>
 
-        <FileTree
-          data={[
-            {
-              name: ".",
-              type: "folder",
-              children: [
-                {
-                  name: "worlds",
-                  type: "folder",
-                  children: [
-                    {
-                      name: "ExampleWorld.world",
-                      type: "file",
-                    },
-                  ],
-                },
-              ],
-            },
-          ]}
-        />
+        <FileTree>
+          <FileTreeItem name="aegis" type="folder">
+            <FileTreeItem name="worlds" type="folder">
+              <FileTreeItem name="ExampleWorld.world" />
+            </FileTreeItem>
+          </FileTreeItem>
+        </FileTree>
         <p className="text-gray-600 dark:text-gray-300 mt-2">
           Place new worlds in the <code>worlds</code> directory.
           <br />

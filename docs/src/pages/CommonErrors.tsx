@@ -1,9 +1,16 @@
 import Admonition from "@/components/Admonition";
 import CodeBlock from "@/components/CodeBlock";
 import DocPage from "@/components/DocPage";
-import OrderedList from "@/components/OrderedList";
-import UnorderedList from "@/components/UnorderedList";
+import List from "@/components/List";
 import { TriangleAlert } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 function CommonErrors() {
   return (
@@ -35,7 +42,7 @@ function CommonErrors() {
           Setup and Runtime Issues
         </h2>
 
-        <UnorderedList
+        <List
           items={[
             {
               title:
@@ -54,7 +61,8 @@ function CommonErrors() {
                     <strong>Steps:</strong>
                   </p>
                   <div className="ml-4">
-                    <OrderedList
+                    <List
+                      type="ordered"
                       items={[
                         {
                           title: "Type 'powershell' into the start menu",
@@ -101,7 +109,8 @@ function CommonErrors() {
                     <strong>Steps:</strong>
                   </p>
                   <div className="ml-4">
-                    <OrderedList
+                    <List
+                      type="ordered"
                       items={[
                         {
                           title:
@@ -136,7 +145,8 @@ function CommonErrors() {
                     <strong>Steps:</strong>
                   </p>
                   <div className="ml-4">
-                    <OrderedList
+                    <List
+                      type="ordered"
                       items={[
                         {
                           title: "Delete old Python versions",
@@ -147,9 +157,51 @@ function CommonErrors() {
                         {
                           title: "Recreate the virtual environment",
                           description: (
-                            <CodeBlock language="bash">
-                              python setup.py --no-client
-                            </CodeBlock>
+                            <Tabs
+                              defaultValue="maclinux"
+                              className="w-[400px] mt-4"
+                            >
+                              <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
+                                <TabsTrigger value="maclinux">
+                                  Mac/Linux
+                                </TabsTrigger>
+                                <TabsTrigger value="windows">
+                                  Windows
+                                </TabsTrigger>
+                              </TabsList>
+                              <TabsContent value="maclinux">
+                                <Card className="border border-gray-200 dark:border-gray-800 shadow-sm">
+                                  <CardHeader className="pb-2">
+                                    <CardTitle>Setup Command</CardTitle>
+                                    <CardDescription>
+                                      Run this command to set up your virutal
+                                      environment.
+                                    </CardDescription>
+                                  </CardHeader>
+                                  <CardContent className="pt-2">
+                                    <CodeBlock language="bash">
+                                      {`python3 setup.py --no-client`}
+                                    </CodeBlock>
+                                  </CardContent>
+                                </Card>
+                              </TabsContent>
+                              <TabsContent value="windows">
+                                <Card className="border border-gray-200 dark:border-gray-800 shadow-sm">
+                                  <CardHeader className="pb-2">
+                                    <CardTitle>Setup Command</CardTitle>
+                                    <CardDescription>
+                                      Run this command to set up your virutal
+                                      environment.
+                                    </CardDescription>
+                                  </CardHeader>
+                                  <CardContent className="pt-2">
+                                    <CodeBlock language="bash">
+                                      {`python setup.py --no-client`}
+                                    </CodeBlock>
+                                  </CardContent>
+                                </Card>
+                              </TabsContent>
+                            </Tabs>
                           ),
                         },
                       ]}
@@ -171,7 +223,7 @@ function CommonErrors() {
                     of these should fix the issue:
                   </p>
                   <div className="ml-4">
-                    <UnorderedList
+                    <List
                       items={[
                         {
                           title: "Install with setup script",
@@ -215,7 +267,7 @@ function CommonErrors() {
           Simulation and Client Issues
         </h2>
 
-        <UnorderedList
+        <List
           items={[
             {
               title:
@@ -234,7 +286,8 @@ function CommonErrors() {
                   <p>
                     <strong>Steps:</strong>
                   </p>
-                  <OrderedList
+                  <List
+                    type="ordered"
                     items={[
                       {
                         title:
@@ -248,7 +301,8 @@ function CommonErrors() {
                         title:
                           "If not, manually set your IDE to use the venv's Python interpreter: ",
                         description: (
-                          <OrderedList
+                          <List
+                            type="ordered"
                             items={[
                               {
                                 title:

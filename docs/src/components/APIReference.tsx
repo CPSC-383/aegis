@@ -2,6 +2,13 @@ import { ReactNode, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
+import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface Props {
   name?: string;
@@ -38,15 +45,11 @@ function APIReference({
             </h5>
           )}
           {type && (
-            <span className="text-sm px-2 py-0.5 rounded-md bg-gray-100/50 dark:bg-white/5 text-gray-600 dark:text-gray-200">
+            <Badge variant="secondary">
               {link ? <Link to={link}>{type}</Link> : <div>{type}</div>}
-            </span>
+            </Badge>
           )}
-          {required && (
-            <span className="text-sm px-2 py-0.5 rounded-md bg-red-100/50 dark:bg-red-400/10 text-red-600 dark:text-red-300">
-              required
-            </span>
-          )}
+          {required && <Badge variant="destructive">required</Badge>}
         </div>
         {defaultValue !== null && (
           <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -59,35 +62,17 @@ function APIReference({
       )}
 
       {children && (
-        <div className="mt-4 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
-          <div className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-200 cursor-pointer">
-            <button onClick={toggleChildren} className="flex items-center">
-              <motion.div
-                animate={{ rotate: showChildren ? 90 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </motion.div>
-              <div className="ml-3">
-                {showChildren
-                  ? "Hide Child Attributes"
-                  : "Show Child Attributes"}
-              </div>
-            </button>
-          </div>
-
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{
-              height: showChildren ? "auto" : 0,
-              opacity: showChildren ? 1 : 0,
-            }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
+        <Accordion type="single" collapsible>
+          <AccordionItem
+            value="child-attributes"
+            className="border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 border rounded-lg mt-2"
           >
-            {children}
-          </motion.div>
-        </div>
+            <AccordionTrigger className="px-4 hover:no-underline">
+              Child Attributes
+            </AccordionTrigger>
+            <AccordionContent className="px-4">{children}</AccordionContent>
+          </AccordionItem>
+        </Accordion>
       )}
     </div>
   );

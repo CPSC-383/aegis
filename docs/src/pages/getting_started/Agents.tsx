@@ -1,7 +1,6 @@
 import APIReference from "@/components/APIReference";
 import DocPage from "@/components/DocPage";
-import OrderedList from "@/components/OrderedList";
-import UnorderedList from "@/components/UnorderedList";
+import List from "@/components/List";
 import { Users } from "lucide-react";
 
 function Agents() {
@@ -19,7 +18,7 @@ function Agents() {
           In the Aegis simulation, agents are members of the elite space force.
           Here’s what you need to know:
         </p>
-        <OrderedList
+        <List
           items={[
             {
               title: "Communication",
@@ -48,7 +47,7 @@ function Agents() {
                   <p>
                     The world is a 2D grid of cells of squares. Each square has:
                   </p>
-                  <UnorderedList
+                  <List
                     items={[
                       {
                         title: "Stack of objects",
@@ -89,7 +88,7 @@ function Agents() {
               description: (
                 <>
                   <p>Agents can only see:</p>
-                  <UnorderedList
+                  <List
                     items={[
                       {
                         title: "Current Square with Life Signals",
@@ -155,7 +154,8 @@ function Agents() {
         <p className="text-gray-600 dark:text-gray-300 mt-2">
           Each round involves four main states for an agent:
         </p>
-        <OrderedList
+        <List
+          type="ordered"
           items={[
             {
               title: "IDLE",

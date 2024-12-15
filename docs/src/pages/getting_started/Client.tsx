@@ -1,6 +1,6 @@
 import DocPage from "@/components/DocPage";
 import { Monitor } from "lucide-react";
-import UnorderedList from "@/components/UnorderedList";
+import List from "@/components/List";
 import Admonition from "@/components/Admonition";
 import WorldTypes from "/world_types.png";
 
@@ -33,7 +33,7 @@ function Client() {
           Client Tabs
         </h2>
 
-        <UnorderedList
+        <List
           items={[
             {
               title: "Aegis Tab",
@@ -66,7 +66,7 @@ function Client() {
           World Editor Brushes
         </h2>
 
-        <UnorderedList
+        <List
           items={[
             {
               title: "Special Cells Brush",
@@ -105,7 +105,7 @@ function Client() {
           Client UI Components
         </h2>
 
-        <UnorderedList
+        <List
           items={[
             {
               title: "World Objects",
@@ -138,7 +138,7 @@ function Client() {
               description: (
                 <>
                   <p>Navigation and control for simulation playback.</p>
-                  <UnorderedList
+                  <List
                     items={[
                       {
                         title: "Jump Between Rounds",
@@ -186,7 +186,7 @@ function Client() {
             {
               title: "Info Panels",
               description: (
-                <UnorderedList
+                <List
                   items={[
                     {
                       title: "Cell Panel",

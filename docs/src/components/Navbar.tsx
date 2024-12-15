@@ -3,6 +3,9 @@ import { Menu, Moon, Sun } from "lucide-react";
 import { Link, useLocation } from "react-router";
 import LogoWhite from "@/assets/logo-white.png";
 import LogoBlack from "@/assets/logo-black.png";
+import { docsRoutes } from "@/router/routes/docs";
+import { gettingStartedRoutes } from "@/router/routes/getting-started";
+import DocsSearch from "./DocsSearch";
 
 interface Props {
   onMobileSidebarToggle: () => void;
@@ -52,6 +55,10 @@ function Navbar({ onMobileSidebarToggle, isMobileSidebarOpen }: Props) {
       </div>
 
       <div className="flex items-center">
+        <DocsSearch
+          docsRoutes={docsRoutes}
+          gettingStartedRoutes={gettingStartedRoutes}
+        />
         <button onClick={toggleDarkMode} className="p-2 rounded-full">
           {isDarkMode ? (
             <Sun className="text-yellow-500 hover:text-yellow-300" />

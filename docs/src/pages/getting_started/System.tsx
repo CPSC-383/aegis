@@ -1,6 +1,6 @@
 import Admonition from "@/components/Admonition";
 import DocPage from "@/components/DocPage";
-import OrderedList from "@/components/OrderedList";
+import List from "@/components/List";
 import { BookOpenText } from "lucide-react";
 
 function System() {
@@ -42,7 +42,8 @@ function System() {
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             Aegis operates in four main phases:
           </p>
-          <OrderedList
+          <List
+            type="ordered"
             items={[
               {
                 title: "Start Up",
@@ -84,7 +85,8 @@ function System() {
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             To Run a simulation:
           </p>
-          <OrderedList
+          <List
+            type="ordered"
             items={[
               {
                 title: "Start Aegis",
@@ -106,7 +108,7 @@ function System() {
             Aegis consists of two separate processes, each handling different
             aspects of the simulation:
           </p>
-          <OrderedList
+          <List
             items={[
               {
                 title: "The Controller",

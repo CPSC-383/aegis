@@ -1,10 +1,17 @@
 import CodeBlock from "@/components/CodeBlock";
 import DocPage from "@/components/DocPage";
-import SystemSwitcher from "@/components/SystemSwitcher";
 import { CirclePlay } from "lucide-react";
 import MacError from "/mac_error.png";
 import { Link } from "react-router-dom";
-import OrderedList from "@/components/OrderedList";
+import List from "@/components/List";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 function RunningAegis() {
   return (
@@ -64,10 +71,23 @@ function RunningAegis() {
           use the command line:
         </p>
         <CodeBlock language="bash">{`cd client`}</CodeBlock>
-        <SystemSwitcher
-          children={{
-            macLinux: (
-              <>
+
+        <Tabs defaultValue="mac" className="w-[400px] mt-4">
+          <TabsList className="bg-light-main-background dark:bg-dark-main-background border border-gray-200 dark:border-gray-800 shadow-sm">
+            <TabsTrigger value="mac">Mac</TabsTrigger>
+            <TabsTrigger value="windows">Windows</TabsTrigger>
+            <TabsTrigger value="linux">Linux</TabsTrigger>
+          </TabsList>
+          <TabsContent value="mac">
+            <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+              <CardHeader className="pb-2">
+                <CardTitle>Run Aegis on macOS</CardTitle>
+                <CardDescription>
+                  Follow these steps to launch the Aegis client on macOS command
+                  line and resolve potential errors.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-2">
                 <CodeBlock language="bash">{`open Aegis.app`}</CodeBlock>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">
                   If you get the following error, click{" "}
@@ -80,20 +100,43 @@ function RunningAegis() {
                   for a step-by-step solution.
                 </p>
                 <img src={MacError} className="w-64" />
-              </>
-            ),
-            windows: (
-              <CodeBlock language="bash">{`.\\aegis-client.exe`}</CodeBlock>
-            ),
-            linux: (
-              <CodeBlock language="bash">{`./aegis-client.AppImage`}</CodeBlock>
-            ),
-          }}
-        />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="windows">
+            <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+              <CardHeader className="pb-2">
+                <CardTitle>Run Aegis on windows</CardTitle>
+                <CardDescription>
+                  Follow these steps to launch the Aegis client on windows
+                  command line.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-2">
+                <CodeBlock language="bash">{`.\\aegis-client.exe`}</CodeBlock>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="linux">
+            <Card className="border border-gray-200 dark:border-gray-800 shadow-sm rounded-lg">
+              <CardHeader className="pb-2">
+                <CardTitle>Run Aegis on linux</CardTitle>
+                <CardDescription>
+                  Follow these steps to launch the Aegis client on linux command
+                  line.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-2">
+                <CodeBlock language="bash">{`./aegis-client.AppImage`}</CodeBlock>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
         <p className="text-gray-600 dark:text-gray-300 mt-2">
           Once the client opens, follow the steps below to run a game.
         </p>
-        <OrderedList
+        <List
+          type="ordered"
           items={[
             {
               title: "Setting Up Aegis",

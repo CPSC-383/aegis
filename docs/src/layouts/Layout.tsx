@@ -23,7 +23,7 @@ function Layout() {
       className={`dark:bg-dark-main-background bg-light-main-background ${isDarkMode ? "dark" : ""} h-screen`}
       style={{
         backgroundImage: isDarkMode
-          ? "radial-gradient(49.63% 57.02% at 58.99% -7.2%, rgba(33, 67, 96, 0.2) 39.4%, rgba(0, 0, 0, 0) 100%)"
+          ? "radial-gradient(49.63% 57.02% at 58.99% -7.2%, rgba(60, 128, 183, 0.2) 39.4%, rgba(0, 0, 0, 0) 100%)"
           : "radial-gradient(49.63% 57.02% at 58.99% -7.2%, rgba(84, 154, 211, 0.2) 39.4%, rgba(0, 0, 0, 0) 100%)",
         backgroundAttachment: "fixed",
       }}
