@@ -2,6 +2,7 @@ import { Simulation } from '@/simulation/simulation'
 import { drawAgent } from '@/utils/renderUtils'
 import { AgentInfoDict, CellDict } from '@/utils/types'
 import { useCallback, useEffect, useRef } from 'react'
+import { Badge } from '@/components/ui/badge'
 
 type Props = {
     selectedCell: { x: number; y: number }
@@ -85,7 +86,7 @@ function CellPanel({ selectedCell, setSelectedAgent, cellInfo, agents, simulatio
                 const y = Math.floor((e.clientY - rect.top) / agentSize)
 
                 const agents = groupedAgents[i + 1]
-                const id = x + y
+                const id = x + y * Math.floor(canvas.width / agentSize)
 
                 if (id >= agents.length) return
 
@@ -95,46 +96,47 @@ function CellPanel({ selectedCell, setSelectedAgent, cellInfo, agents, simulatio
             }
         })
     }
+
     return (
         <div>
-            <h2 className="text-xl font-bold text-center mb-4">
+            <h2 className="font-bold text-center mb-4">
                 Location: ({selectedCell.x}, {selectedCell.y})
             </h2>
 
             <section className="m-2">
                 <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Cell Info</h3>
-                <div className="py-2">
-                    {cellInfo ? (
-                        <div className="space-y-2">
-                            <div>Cell Type: {cellInfo.cell_type.replace(/\w*\./, '')}</div>
-                            <div>Move Cost: {cellInfo.stack.move_cost}</div>
+                {cellInfo ? (
+                    <div className="space-y-2">
+                        <div>
+                            Cell Type: <Badge variant="secondary">{cellInfo.cell_type.replace(/\w*\./, '')}</Badge>
                         </div>
-                    ) : (
-                        <p className="text-gray-500">No cell information available.</p>
-                    )}
-                </div>
+                        <div>
+                            Move Cost: <Badge variant="secondary">{cellInfo.stack.move_cost}</Badge>
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-muted-foreground">No cell information available.</p>
+                )}
             </section>
 
             <section className="m-2">
                 <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Agents</h3>
-                <div className="py-2">
-                    {agents.length === 0 ? (
-                        <p className="text-gray-500">No agents in this cell.</p>
-                    ) : (
-                        <div ref={containerRef} className="space-y-2">
-                            {Object.keys(groupedAgents).map((gid) => (
-                                <div key={gid} className="flex items-center">
-                                    <span className="mr-2">{gid}:</span>
-                                    <canvas
-                                        ref={(el) => (canvasRefs.current[parseInt(gid)] = el)}
-                                        onClick={handleAgentCanvasClick}
-                                        className="hover:cursor-pointer"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                {agents.length === 0 ? (
+                    <p className="text-muted-foreground">No agents in this cell.</p>
+                ) : (
+                    <div ref={containerRef} className="space-y-2">
+                        {Object.keys(groupedAgents).map((gid) => (
+                            <div key={gid} className="flex items-center space-x-2">
+                                <Badge variant="secondary">{gid}:</Badge>
+                                <canvas
+                                    ref={(el) => (canvasRefs.current[parseInt(gid)] = el)}
+                                    onClick={handleAgentCanvasClick}
+                                    className="cursor-pointer"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
             </section>
         </div>
     )

@@ -1,35 +1,28 @@
-import { useEffect, useState } from 'react'
-import { aegisAPI } from '@/aegis-api'
-import Button from '@/components/Button'
-import Input from '../inputs/Input'
-import NumberInput from '../inputs/NumberInput'
-import { useAppContext } from '@/context'
-import Dropdown from '../Dropdown'
-import { User } from 'lucide-react'
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 
-interface AgentsProps {
-    isOpen: boolean
+import { aegisAPI } from '@/aegis-api'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
+interface Props {
     aegisPath: string
     numAgentsAegis: number
     agents: string[]
+    agent: string
+    setAgent: (value: string) => void
+    groupName: string
+    setGroupName: (value: string) => void
 }
 
-function Agents({ isOpen, aegisPath, numAgentsAegis, agents }: AgentsProps) {
-    const { appState } = useAppContext()
-    const [groupName, setGroupName] = useState<string>('')
-    const [numAgents, setNumAgents] = useState<number>(0)
-    const [maxAgents, setMaxAgents] = useState<number>(0)
-    const [agent, setAgent] = useState<string>('')
-    const isButtonDisabled = !groupName || !numAgents || !agent
-
-    useEffect(() => {
-        setMaxAgents(numAgentsAegis)
-    }, [numAgentsAegis, appState.simulation])
+function Agents({ aegisPath, agents, agent, setAgent, groupName, setGroupName }: Props) {
+    const isButtonDisabled = useMemo(() => !groupName || !agent, [groupName, agent])
 
     const handleGroupName = (value: string) => {
-        // dont allow space characters and dont allow longer than 10 characters
-        setGroupName(value.replace(/\s/g, '').slice(0, 10))
+        // don't allow space characters
+        setGroupName(value.replace(/\s/g, ''))
     }
 
     const handleConnectAgents = async () => {
@@ -46,40 +39,41 @@ function Agents({ isOpen, aegisPath, numAgentsAegis, agents }: AgentsProps) {
 
     if (!isOpen) return null
     return (
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <div className="h-fit flex flex-col justify-between">
-                <div className="space-y-2">
-                    <Dropdown
-                        items={agents}
-                        selectedItem={agent}
-                        onSelect={(item) => setAgent(item)}
-                        label={'Select an agent'}
-                        placeholder={'Select an agent'}
-                        icon={User}
-                    />
+        <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="w-full"
+        >
+            <div className="space-y-4">
+                <div>
+                    <Label>Select an Agent</Label>
+                    <Select value={agent} onValueChange={(value) => setAgent(value)}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Choose an agent">{agent || 'Select an agent'}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                            {agents.map((agentName) => (
+                                <SelectItem key={agentName} value={agentName}>
+                                    {agentName}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div>
+                    <Label>Group Name</Label>
                     <Input
                         value={groupName}
-                        onChange={(value) => handleGroupName(value)}
-                        placeholder="Group Name"
-                        label={'Group Name:'}
-                    />
-                    <NumberInput
-                        value={numAgents}
-                        onChange={(value) => setNumAgents(value)}
-                        max={maxAgents}
-                        min={0}
-                        placeholder="Number of Agents"
-                        extraStyles="w-full"
-                        label={'Number of Agents to Connect:'}
-                    />
-                    {maxAgents ? <p className="text-xs">{maxAgents} agents left to connect.</p> : null}
-                    <Button
-                        onClick={handleConnectAgents}
-                        label={'Connect Agents'}
-                        styles="bg-primary"
-                        disabled={isButtonDisabled}
+                        onChange={(e) => handleGroupName(e.target.value)}
+                        placeholder="Enter group name"
                     />
                 </div>
+
+                <Button onClick={handleConnectAgents} disabled={isButtonDisabled} className="w-full">
+                    Connect Agents
+                </Button>
             </div>
         </motion.div>
     )

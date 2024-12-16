@@ -1,11 +1,26 @@
+import React, { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
+import { Grid3x3, Zap, Download, Upload, AlertCircle } from 'lucide-react'
+
 import { useAppContext } from '@/context'
 import { Simulation } from '@/simulation/simulation'
 import { WorldMap } from '@/simulation/world-map'
 import { WorldParams } from '@/utils/types'
-import { useEffect, useRef, useState } from 'react'
-import NumberInput from '../inputs/NumberInput'
-import Button from '../Button'
-import Input from '../inputs/Input'
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogFooter,
+    DialogTitle,
+    DialogDescription
+} from '@/components/ui/dialog'
+import { Alert } from '@/components/ui/alert'
 import { exportWorld, importWorld } from './MapGenerator'
 import MapBrushes from './Map-brushes'
 import { motion } from 'framer-motion'
@@ -87,122 +102,172 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="space-y-4 overflow-auto pb-4 scrollbar"
+            className="space-y-4 overflow-auto h-full pb-4 scrollbar"
         >
             <MapBrushes />
-
-            <div className="space-y-3 p-4 bg-gray-50 rounded-lg shadow-sm">
-                <div className="flex items-center space-x-2 mb-4">
-                    <motion.h2
-                        className="text-lg font-semibold text-gray-800 flex items-center space-x-2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                    >
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
                         <Grid3x3 className="w-5 h-5" />
                         <span>World Configuration</span>
-                    </motion.h2>
-                </div>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label className="flex items-center">
+                                <Grid3x3 className="w-4 h-4 mr-2 text-muted-foreground" />
+                                Width
+                            </Label>
+                            <Input
+                                type="number"
+                                value={worldParams.width === 0 ? '' : worldParams.width}
+                                onChange={(e) => {
+                                    const value = e.target.value === '' ? 0 : Number(e.target.value)
+                                    handleParamChange('width', value)
+                                }}
+                                onBlur={(e) => {
+                                    let value = e.target.value === '' ? 0 : Number(e.target.value)
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <NumberInput
-                            value={worldParams.width}
-                            onChange={(width: number) => {
-                                setWorldParams({ ...worldParams, width, isInitialized: false })
-                            }}
-                            max={MAP_MAX}
-                            min={MAP_MIN}
-                            extraStyles="w-full"
-                            disabled={!isWorldEmpty}
-                            label={'Width'}
-                            icon={Grid3x3}
-                        />
+                                    if (value < MAP_MIN) value = MAP_MIN
+                                    if (value > MAP_MAX) value = MAP_MAX
+
+                                    handleParamChange('width', value)
+                                }}
+                                max={MAP_MAX}
+                                min={MAP_MIN}
+                                className="w-full"
+                                disabled={!isWorldEmpty}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="flex items-center">
+                                <Grid3x3 className="w-4 h-4 mr-2 text-muted-foreground" />
+                                Height
+                            </Label>
+                            <Input
+                                type="number"
+                                value={worldParams.height === 0 ? '' : worldParams.height}
+                                onChange={(e) => {
+                                    const value = e.target.value === '' ? 0 : Number(e.target.value)
+                                    handleParamChange('height', value)
+                                }}
+                                onBlur={(e) => {
+                                    let value = e.target.value === '' ? 0 : Number(e.target.value)
+
+                                    if (value < MAP_MIN) value = MAP_MIN
+                                    if (value > MAP_MAX) value = MAP_MAX
+
+                                    handleParamChange('height', value)
+                                }}
+                                max={MAP_MAX}
+                                min={MAP_MIN}
+                                className="w-full"
+                                disabled={!isWorldEmpty}
+                            />
+                        </div>
                     </div>
 
                     <div className="space-y-2">
-                        <NumberInput
-                            value={worldParams.height}
-                            onChange={(height: number) => {
-                                setWorldParams({ ...worldParams, height, isInitialized: false })
+                        <Label className="flex items-center">
+                            <Zap className="w-4 h-4 mr-2 text-muted-foreground" />
+                            Initial Agent Energy
+                        </Label>
+                        <Input
+                            type="number"
+                            value={worldParams.initialEnergy === 0 ? '' : worldParams.initialEnergy}
+                            onChange={(e) => {
+                                const value = e.target.value === '' ? 0 : Number(e.target.value)
+                                handleParamChange('initialEnergy', value)
                             }}
-                            max={MAP_MAX}
-                            min={MAP_MIN}
-                            extraStyles="w-full"
+                            onBlur={(e) => {
+                                let value = e.target.value === '' ? 0 : Number(e.target.value)
+
+                                if (value < 1) value = 1
+
+                                handleParamChange('initialEnergy', value)
+                            }}
+                            min={1}
+                            className="w-full"
                             disabled={!isWorldEmpty}
                             label={'Height'}
                             icon={Grid3x3}
                         />
+
+                        {!isWorldEmpty && (
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="destructive" className="mt-2">
+                                        Reset to Change Settings
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Reset World Settings?</DialogTitle>
+                                        <DialogDescription>
+                                            This will clear the current world and allow you to modify its settings. Are
+                                            you sure?
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter>
+                                        <Button variant="secondary" onClick={() => null}>
+                                            Cancel
+                                        </Button>
+                                        <Button variant="destructive" onClick={handleReset}>
+                                            Reset Settings
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
+                        )}
                     </div>
-                </div>
+                </CardContent>
+            </Card>
 
-                <div className="space-y-2 mt-4">
-                    <NumberInput
-                        value={worldParams.initialEnergy}
-                        onChange={(initialEnergy: number) => {
-                            setWorldParams({ ...worldParams, initialEnergy, isInitialized: false })
-                        }}
-                        max={MAP_MAX}
-                        min={1}
-                        extraStyles="w-full"
-                        disabled={!isWorldEmpty}
-                        label={'Initial Agent Energy'}
-                        icon={Zap}
-                    />
-
-                    {!isWorldEmpty && (
-                        <Button
-                            onClick={handleReset}
-                            label={'Reset to change settings'}
-                            styles="text-sm bg-secondary mt-2 hover:bg-[#e9505b] transition-colors duration-200"
-                        />
-                    )}
-                </div>
-            </div>
-
-            <div className="space-y-3 p-4 bg-gray-50 rounded-lg shadow-sm">
-                <div className="flex items-center space-x-2 mb-4">
-                    <motion.h2
-                        className="text-lg font-semibold text-gray-800 flex items-center space-x-2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                    >
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
                         <Download className="w-5 h-5" />
                         <span>World Management</span>
-                    </motion.h2>
-                </div>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div>
+                        <Label>World Name</Label>
+                        <Input
+                            placeholder="Enter world name"
+                            value={worldName}
+                            onChange={(e) => setWorldName(e.target.value)}
+                        />
+                    </div>
 
-                <div className="space-y-3">
-                    <Input placeholder="World Name" value={worldName} onChange={setWorldName} />
-
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid md:grid-cols-2 gap-3">
                         <Button
                             onClick={handleExport}
                             disabled={!worldName}
-                            label={'Export'}
-                            styles="bg-primary mt-2 hover:bg-[#71c3c6] transition-colors duration-200"
-                        />
+                            className={`${!worldName ? 'cursor-not-allowed' : ''} w-full`}
+                        >
+                            <Download className="mr-2 h-4 w-4" />
+                            Export
+                        </Button>
 
-                        <Button
-                            onClick={() => fileInputRef.current?.click()}
-                            label={'Import'}
-                            styles="bg-primary mt-2 hover:bg-[#71c3c6] transition-colors duration-200"
-                        />
+                        <Button onClick={() => fileInputRef.current?.click()} variant="secondary" className="w-full">
+                            <Upload className="mr-2 h-4 w-4" />
+                            Import
+                        </Button>
                     </div>
 
                     <input type="file" accept=".world" ref={fileInputRef} onChange={handleImport} className="hidden" />
 
                     {errMsg && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-red-500 text-sm flex items-center bg-red-50 p-2 rounded-md border border-red-200"
-                        >
-                            <AlertCircle className="w-5 h-5 mr-2" />
-                            {errMsg}
-                        </motion.div>
+                        <Alert variant="destructive" className="mt-4">
+                            <AlertCircle className="h-4 w-4" />
+                            <span>{errMsg}</span>
+                        </Alert>
                     )}
-                </div>
-            </div>
+                </CardContent>
+            </Card>
         </motion.div>
     )
 }

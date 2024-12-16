@@ -4,16 +4,10 @@ import { useForceUpdate } from '@/utils/util'
 import { motion } from 'framer-motion'
 import { AlertTriangle, Trophy } from 'lucide-react'
 
-type Props = {
-    isOpen: boolean
-}
-
-function Game({ isOpen }: Props) {
+function Game() {
     const { appState } = useAppContext()
     const forceUpdate = useForceUpdate()
     listenEvent(EventType.RENDER, forceUpdate)
-
-    if (!isOpen) return null
 
     if (!appState.simulation) {
         return (

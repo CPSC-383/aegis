@@ -65,13 +65,13 @@ function InfoPanel() {
                         {cellLayers.length === 0 ? (
                             <p className="text-gray-500">Nothing at this location.</p>
                         ) : (
-                            <div className="relative border-s border-accent">
+                            <div className="relative border-s border-gray-600">
                                 {cellLayers
                                     .slice()
                                     .reverse()
                                     .map((layer, index) => (
                                         <div key={index} className="flex items-center mb-10 ms-6">
-                                            <div className="absolute flex items-center justify-center w-8 h-8 bg-primary rounded-full -start-4 ring-4 ring-white">
+                                            <div className="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -start-4 ring-4 ring-white">
                                                 {index + 1}
                                             </div>
                                             <div>

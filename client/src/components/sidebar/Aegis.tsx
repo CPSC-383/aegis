@@ -1,64 +1,72 @@
-import { useState } from 'react'
-import Button from '@/components/Button'
-import NumberInput from '../inputs/NumberInput'
-import { Scaffold } from '@/scaffold'
-import Dropdown from '../Dropdown'
-import { Globe } from 'lucide-react'
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Scaffold } from '@/scaffold'
+
 interface Props {
-    isOpen: boolean
-    numAgentsAegis: number
-    setNumAgentsAegis: (value: number) => void
     scaffold: Scaffold
+    worldFile: string
+    setWorldFile: (value: string) => void
+    numRounds: number
+    setNumRounds: (value: number) => void
 }
 
-function Aegis({ isOpen, numAgentsAegis, setNumAgentsAegis, scaffold }: Props) {
+function Aegis({ scaffold, worldFile, setWorldFile, numRounds, setNumRounds }: Props) {
     const { worlds, startSimulation, killSim } = scaffold
-    const [worldFile, setWorldFile] = useState<string>('')
-    const [numRounds, setNumRounds] = useState<number>(0)
-    const isButtonDisabled = !worldFile || !numRounds || !numAgentsAegis
 
-    if (!isOpen) return null
+    const isButtonDisabled = useMemo(() => !worldFile || !numRounds, [worldFile, numRounds])
+
     return (
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <div className="h-fit flex flex-col justify-between">
-                <div className="space-y-2">
-                    <Dropdown
-                        items={worlds.filter((world) => world.endsWith('.world'))}
-                        selectedItem={worldFile}
-                        onSelect={(item) => setWorldFile(item)}
-                        label={'Select a world'}
-                        placeholder={'Select a world'}
-                        icon={Globe}
-                    />
-                    <NumberInput
-                        value={numAgentsAegis}
-                        onChange={(value) => setNumAgentsAegis(value)}
-                        min={0}
-                        placeholder="Number of Agents"
-                        extraStyles="w-full"
-                        label={'Number of Agents:'}
-                    />
-                    <NumberInput
-                        value={numRounds}
-                        onChange={(value) => setNumRounds(value)}
-                        min={0}
-                        placeholder="Number of Rounds"
-                        extraStyles="w-full"
-                        label={'Number of Rounds:'}
-                    />
-                    {killSim ? (
-                        <Button onClick={killSim} label="Kill Game" styles="bg-secondary" />
-                    ) : (
-                        <Button
-                            onClick={() => startSimulation(numRounds, numAgentsAegis, worldFile)}
-                            label="Start Up Game"
-                            styles="bg-primary"
-                            disabled={isButtonDisabled}
-                        />
-                    )}
-                </div>
+            <div>
+                <Label>Select a World</Label>
+                <Select value={worldFile} onValueChange={(value) => setWorldFile(value)}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Choose a world">{worldFile || 'Select a world'}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                        {worlds.map((world) => (
+                            <SelectItem key={world} value={world}>
+                                {world}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div className="mt-4">
+                <Label>Number of Rounds</Label>
+                <Input
+                    type="number"
+                    value={numRounds === 0 ? '' : numRounds}
+                    onChange={(e) => {
+                        const value = e.target.value === '' ? 0 : Number(e.target.value)
+                        setNumRounds(value)
+                    }}
+                    min={0}
+                    placeholder="Enter number of rounds"
+                    className="w-full"
+                />
+            </div>
+
+            <div className="flex flex-col mt-4">
+                {killSim ? (
+                    <Button variant="destructive" onClick={killSim}>
+                        Kill Game
+                    </Button>
+                ) : (
+                    <Button
+                        onClick={() => startSimulation(numRounds, 1, worldFile)}
+                        disabled={isButtonDisabled}
+                        className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}
+                    >
+                        Start Up Game
+                    </Button>
+                )}
             </div>
         </motion.div>
     )

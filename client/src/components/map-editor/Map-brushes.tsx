@@ -1,4 +1,5 @@
 import { useAppContext } from '@/context'
+import { useState } from 'react'
 import { EventType, listenEvent, dispatchEvent } from '@/events'
 import {
     BrushType,

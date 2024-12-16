@@ -22,7 +22,7 @@ function AgentPanel({ selectedAgent, setSelectedAgent, setCellLayers, simulation
 
     return (
         <div className="m-2">
-            <h2 className="text-xl font-bold text-center mb-4">
+            <h2 className="font-bold text-center mb-4">
                 Agent - ID: {selectedAgent.id}, GID: {selectedAgent.gid}
             </h2>
             <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Agent Info</h3>

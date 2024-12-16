@@ -1,14 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Maximize2 } from 'lucide-react'
 import { ConsoleLine } from '@/utils/types'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 
-interface ConsoleProps {
+interface Props {
     output: ConsoleLine[]
-    isPopupOpen: boolean
-    setIsPopupOpen: (isOpen: boolean) => void
 }
 
-function Console({ output, isPopupOpen, setIsPopupOpen }: ConsoleProps) {
+function Console({ output }: Props) {
+    const [isPopupOpen, setIsPopupOpen] = useState(false)
+
     useEffect(() => {
         const handleEscapeKey = (event: KeyboardEvent) => {
             if (event.key === 'Escape' && isPopupOpen) {
@@ -25,22 +27,39 @@ function Console({ output, isPopupOpen, setIsPopupOpen }: ConsoleProps) {
         }
     }, [isPopupOpen])
 
-    return (
-        <div className="w-full h-full mt-4 flex flex-col overflow-auto">
-            <div className="flex justify-between items-center mb-2">
-                <h2 className="font-bold text-accent">Console</h2>
-                <button onClick={() => setIsPopupOpen(true)} className="outline-none">
-                    <Maximize2 />
-                </button>
-            </div>
+    const renderOutput = () => {
+        return (
             <div className="h-full p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
                 {output.map((line, id) => (
-                    <div key={id} className={line.has_error ? 'text-secondary' : ''}>
+                    <div key={id} className={line.has_error ? 'text-destructive' : ''}>
                         {line.message}
                     </div>
                 ))}
             </div>
-        </div>
+        )
+    }
+
+    return (
+        <>
+            <div className="w-full h-full mt-8 flex flex-col overflow-auto">
+                <div className="flex justify-between items-center">
+                    <h2 className="font-bold">Console</h2>
+                    <Button variant="ghost" size="icon" onClick={() => setIsPopupOpen(true)}>
+                        <Maximize2 className="h-4 w-4" />
+                    </Button>
+                </div>
+                {renderOutput()}
+            </div>
+            <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
+                <DialogContent className="min-w-[90vw] h-[90vh] flex flex-col">
+                    <DialogHeader>
+                        <DialogTitle>Console</DialogTitle>
+                        <DialogDescription>Press ESC to close</DialogDescription>
+                    </DialogHeader>
+                    {renderOutput()}
+                </DialogContent>
+            </Dialog>
+        </>
     )
 }
 
