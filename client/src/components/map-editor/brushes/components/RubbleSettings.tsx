@@ -42,7 +42,6 @@ function RubbleSettings({ rubbleInfo, setRubbleInfo }: Props) {
                 <Input
                     id="remove-energy"
                     type="number"
-                    min={0}
                     value={rubbleInfo.remove_energy}
                     onChange={(e) => {
                         const value = e.target.value === '' ? 0 : Number(e.target.value)
@@ -64,7 +63,6 @@ function RubbleSettings({ rubbleInfo, setRubbleInfo }: Props) {
                 <Input
                     id="remove-agents"
                     type="number"
-                    min={0}
                     value={rubbleInfo.remove_agents}
                     onChange={(e) => {
                         const value = e.target.value === '' ? 0 : Number(e.target.value)

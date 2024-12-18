@@ -33,13 +33,15 @@ function MoveCostBrush({ moveCost, setMoveCost }: Props) {
                         type="number"
                         value={moveCost === 0 ? '' : moveCost}
                         onChange={(e) => {
-                            const value = e.target.value
-                            if (value === '' || (/^\d+$/.test(value) && Number(value) > 1)) {
-                                setMoveCost(value === '' ? 0 : Number(value))
-                            }
+                            const value = e.target.value === '' ? 0 : Number(e.target.value)
+                            setMoveCost(value)
+                        }}
+                        onBlur={(e) => {
+                            let value = e.target.value === '' ? 0 : Number(e.target.value)
+                            if (value < 2) value = 2
+                            setMoveCost(value)
                         }}
                         className="w-20"
-                        min={2}
                     />
                 </div>
             </CardContent>
