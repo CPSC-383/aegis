@@ -1,5 +1,4 @@
 import { useAppContext } from '@/context'
-import { useState } from 'react'
 import { EventType, listenEvent, dispatchEvent } from '@/events'
 import {
     BrushType,
@@ -18,8 +17,9 @@ import SpecialCellsHandler from './brushes/handlers/SpecialCellsHandler'
 import MoveCostHandler from './brushes/handlers/MoveCostHandler'
 import StackContentHandler from './brushes/handlers/StackContentHandler'
 import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
-import Dropdown from '../Dropdown'
-import { motion } from 'framer-motion'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { formatDisplayText } from '@/utils/util'
 
 function MapBrushes() {
     const { appState } = useAppContext()
@@ -111,22 +111,35 @@ function MapBrushes() {
     }
 
     return (
-        <div className="space-y-3 p-4 bg-gray-50 rounded-lg shadow-sm">
-            <motion.h2
-                className="text-lg font-semibold text-gray-800 flex items-center space-x-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-            >
-                <Brush className="w-6 h-6" />
-                <span>Map Brushes</span>
-            </motion.h2>
-            <Dropdown
-                items={brushTypeItems}
-                selectedItem={brushType}
-                onSelect={(item) => setBrushType(item as BrushType)}
-            />
-            {renderBrushContent()}
-        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                    <Brush className="w-5 h-5" />
+                    <span>Map Brushes</span>
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+                <Select value={brushType} onValueChange={(value) => setBrushType(value as BrushType)}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select Brush Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.values(BrushType).map((type) => (
+                            <SelectItem key={type} value={type}>
+                                <div className="flex items-center space-x-2">
+                                    {type === BrushType.SpecialCells && <Target className="w-4 h-4" />}
+                                    {type === BrushType.MoveCost && <Zap className="w-4 h-4" />}
+                                    {type === BrushType.StackContents && <PlusSquare className="w-4 h-4" />}
+                                    {type === BrushType.View && <MousePointerClick className="w-4 h-4" />}
+                                    <span>{formatDisplayText(type)}</span>
+                                </div>
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                {renderBrushContent()}
+            </CardContent>
+        </Card>
     )
 }
 

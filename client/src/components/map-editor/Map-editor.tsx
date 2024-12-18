@@ -23,8 +23,6 @@ import {
 import { Alert } from '@/components/ui/alert'
 import { exportWorld, importWorld } from './MapGenerator'
 import MapBrushes from './Map-brushes'
-import { motion } from 'framer-motion'
-import { AlertCircle, Download, Grid3x3, Zap } from 'lucide-react'
 
 function MapEditor({ isOpen }: { isOpen: boolean }) {
     const MAP_MAX = 30
@@ -43,6 +41,14 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const isWorldEmpty = !appState.simulation || appState.simulation.worldMap.isEmpty()
+
+    const handleParamChange = (key: keyof WorldParams, value: number) => {
+        setWorldParams({
+            ...worldParams,
+            [key]: value,
+            isInitialized: false
+        })
+    }
 
     const handleExport = async () => {
         const err = await exportWorld(appState.simulation!.worldMap, worldName)
@@ -191,8 +197,6 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
                             min={1}
                             className="w-full"
                             disabled={!isWorldEmpty}
-                            label={'Height'}
-                            icon={Grid3x3}
                         />
 
                         {!isWorldEmpty && (

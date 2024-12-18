@@ -44,20 +44,22 @@ function Game() {
     }
 
     const stats = appState.simulation.getStats()
+    console.log(stats.worldStats)
 
     return (
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
             <div className="p-2 max-h-60 scrollbar overflow-auto">
                 <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                    {Object.entries(stats.worldStats).map(([key, value]) => (
+                    {Object.entries(stats.worldStats).map(([key, stat]) => (
                         <div key={key} className="flex">
-                            <div className="w-1 h-full bg-accent-light"></div>
-                            <div className="flex-1 p-2 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
+                            <div className="w-1 h-full bg-foreground"></div>
+                            <div className="flex-1 p-4 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
+                                <div className="mr-4">{stat.icon && <stat.icon />}</div>
                                 <div className="flex-grow">
                                     <p className="text-xs font-medium text-black">
                                         {key.replace(/([A-Z])/g, ' $1').trim()}
                                     </p>
-                                    <p className="text-lg font-bold text-black">{value}</p>
+                                    <p className="text-lg font-bold text-black">{stat.value}</p>
                                 </div>
                             </div>
                         </div>

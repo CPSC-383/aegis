@@ -11,6 +11,7 @@ import {
     StackContent,
     SpawnZoneTypes
 } from '@/utils/types'
+import { Heart, PersonStanding, Skull, Users } from 'lucide-react'
 
 export class Simulation {
     private rounds: Round[] = []
@@ -81,12 +82,24 @@ export class Simulation {
     public getStats() {
         const stats = {
             worldStats: {
-                AgentsAlive: this.currentRoundData?.number_of_alive_agents ?? 0,
-                AgentsDead: this.currentRoundData?.number_of_dead_agents ?? 0,
-                TotalSurvivors: this.currentRoundData?.number_of_survivors ?? 0,
-                SurvivorsSaved:
-                    (this.currentRoundData?.number_of_survivors_saved_alive ?? 0) +
-                    (this.currentRoundData?.number_of_survivors_saved_dead ?? 0)
+                AgentsAlive: {
+                    value: this.currentRoundData?.number_of_alive_agents ?? 0,
+                    icon: Users
+                },
+                AgentsDead: {
+                    value: this.currentRoundData?.number_of_dead_agents ?? 0,
+                    icon: Skull
+                },
+                TotalSurvivors: {
+                    value: this.currentRoundData?.number_of_survivors ?? 0,
+                    icon: PersonStanding
+                },
+                SurvivorsSaved: {
+                    value:
+                        (this.currentRoundData?.number_of_survivors_saved_alive ?? 0) +
+                        (this.currentRoundData?.number_of_survivors_saved_dead ?? 0),
+                    icon: Heart
+                }
             },
             groupStats: [] as GroupStats[]
         }

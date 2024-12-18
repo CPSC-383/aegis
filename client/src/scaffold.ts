@@ -144,7 +144,8 @@ const getWorlds = async (aegisPath: string) => {
     if (!(await fs.existsSync(worldsPath))) return []
 
     const worlds = await fs.readdirSync(worldsPath)
-    return worlds
+    const filtered_worlds = worlds.filter((world) => world.endsWith('.world'))
+    return filtered_worlds
 }
 
 const getAgents = async (aegisPath: string) => {

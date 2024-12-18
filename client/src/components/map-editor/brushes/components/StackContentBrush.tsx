@@ -1,7 +1,7 @@
 import { RubbleInfo, StackContentBrushTypes } from '@/utils/types'
 import RubbleSettings from './RubbleSettings'
 import { Mountain, User } from 'lucide-react'
-import Dropdown from '@/components/Dropdown'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface Props {
     stackType: StackContentBrushTypes
@@ -11,20 +11,24 @@ interface Props {
 }
 
 function StackContentBrush({ stackType, setStackType, rubbleInfo, setRubbleInfo }: Props) {
-    const stackItems = Object.values(StackContentBrushTypes).map((type) => ({
-        value: type,
-        icon: {
-            [StackContentBrushTypes.Survivor]: User,
-            [StackContentBrushTypes.Rubble]: Mountain
-        }[type]
-    }))
     return (
         <>
-            <Dropdown
-                items={stackItems}
-                selectedItem={stackType}
-                onSelect={(item) => setStackType(item as StackContentBrushTypes)}
-            />
+            <Select value={stackType} onValueChange={(value) => setStackType(value as StackContentBrushTypes)}>
+                <SelectTrigger>
+                    <SelectValue placeholder="Choose stack item" />
+                </SelectTrigger>
+                <SelectContent>
+                    {Object.values(StackContentBrushTypes).map((type) => (
+                        <SelectItem key={type} value={type}>
+                            <div className="flex items-center space-x-2">
+                                {type === StackContentBrushTypes.Survivor && <User className="w-4 h-4" />}
+                                {type === StackContentBrushTypes.Rubble && <Mountain className="w-4 h-4" />}
+                                <span>{type}</span>
+                            </div>
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
             {stackType === StackContentBrushTypes.Rubble && (
                 <RubbleSettings rubbleInfo={rubbleInfo} setRubbleInfo={setRubbleInfo} />
             )}

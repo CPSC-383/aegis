@@ -20,6 +20,14 @@ function Aegis({ scaffold, worldFile, setWorldFile, numRounds, setNumRounds }: P
 
     const isButtonDisabled = useMemo(() => !worldFile || !numRounds, [worldFile, numRounds])
 
+    const handleRoundBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value)
+        if (!isNaN(value)) {
+            const newValue = Math.max(1, value)
+            setNumRounds(newValue)
+        }
+    }
+
     return (
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
             <div>
@@ -47,7 +55,7 @@ function Aegis({ scaffold, worldFile, setWorldFile, numRounds, setNumRounds }: P
                         const value = e.target.value === '' ? 0 : Number(e.target.value)
                         setNumRounds(value)
                     }}
-                    min={0}
+                    onBlur={handleRoundBlur}
                     placeholder="Enter number of rounds"
                     className="w-full"
                 />
@@ -60,7 +68,7 @@ function Aegis({ scaffold, worldFile, setWorldFile, numRounds, setNumRounds }: P
                     </Button>
                 ) : (
                     <Button
-                        onClick={() => startSimulation(numRounds, 1, worldFile)}
+                        onClick={() => startSimulation(numRounds, 7, worldFile)}
                         disabled={isButtonDisabled}
                         className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}
                     >

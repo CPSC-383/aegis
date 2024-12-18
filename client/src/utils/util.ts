@@ -53,3 +53,11 @@ export function whatBucket(min: number, max: number, value: number, numOfBuckets
 
     return bucket
 }
+
+// Format display of types
+export function formatDisplayText(text: string): string {
+    const stringText = String(text)
+    const words = stringText.replace(/_/g, ' ').split(' ')
+    const formattedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    return formattedWords.join(' ')
+}

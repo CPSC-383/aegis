@@ -1,7 +1,9 @@
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
-import NumberInput from '@/components/inputs/NumberInput'
+import { formatDisplayText } from '@/utils/util'
 import { Flame, PlusCircle, Zap, Users, User, Tag, Skull } from 'lucide-react'
-import Dropdown from '@/components/Dropdown'
 
 interface Props {
     specialCellType: SpecialCellBrushTypes
@@ -20,48 +22,74 @@ function SpecialCellsBrush({
     gid,
     setGid
 }: Props) {
-    const specialCellItems = Object.values(SpecialCellBrushTypes).map((type) => ({
-        value: type,
-        icon: {
-            [SpecialCellBrushTypes.Killer]: Skull,
-            [SpecialCellBrushTypes.Fire]: Flame,
-            [SpecialCellBrushTypes.Charging]: Zap,
-            [SpecialCellBrushTypes.Spawn]: PlusCircle
-        }[type]
-    }))
-
-    const spawnZoneItems = Object.values(SpawnZoneTypes).map((type) => ({
-        value: type,
-        icon: {
-            [SpawnZoneTypes.Any]: Users,
-            [SpawnZoneTypes.Group]: User
-        }[type]
-    }))
+    const handleGidBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value)
+        if (!isNaN(value)) {
+            const newValue = Math.max(0, value)
+            setGid(newValue)
+        }
+    }
 
     return (
         <>
-            <Dropdown
-                items={specialCellItems}
-                selectedItem={specialCellType}
-                onSelect={(item) => setSpecialCellType(item as SpecialCellBrushTypes)}
-            />
+            <Select
+                value={specialCellType}
+                onValueChange={(value) => setSpecialCellType(value as SpecialCellBrushTypes)}
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder="Select Special Cell Type" />
+                </SelectTrigger>
+                <SelectContent>
+                    {Object.values(SpecialCellBrushTypes).map((type) => (
+                        <SelectItem key={type} value={type}>
+                            <div className="flex items-center space-x-2">
+                                {type === SpecialCellBrushTypes.Killer && <Skull className="w-4 h-4" />}
+                                {type === SpecialCellBrushTypes.Fire && <Flame className="w-4 h-4" />}
+                                {type === SpecialCellBrushTypes.Charging && <Zap className="w-4 h-4" />}
+                                {type === SpecialCellBrushTypes.Spawn && <PlusCircle className="w-4 h-4" />}
+                                <span>{formatDisplayText(type)}</span>
+                            </div>
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
             {specialCellType === SpecialCellBrushTypes.Spawn && (
                 <>
-                    <Dropdown
-                        items={spawnZoneItems}
-                        onSelect={(item) => setSpawnZoneType(item as SpawnZoneTypes)}
-                        selectedItem={spawnZoneType}
-                        label={'Type:'}
-                    />
+                    <Select value={spawnZoneType} onValueChange={(value) => setSpawnZoneType(value as SpawnZoneTypes)}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select Spawn Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(SpawnZoneTypes).map((type) => (
+                                <SelectItem key={type} value={type}>
+                                    <div className="flex items-center space-x-2">
+                                        {type === SpawnZoneTypes.Any && <Users className="w-4 h-4" />}
+                                        {type === SpawnZoneTypes.Group && <User className="w-4 h-4" />}
+                                        <span>{type === SpawnZoneTypes.Group ? 'Single' : 'Any'}</span>
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                     {spawnZoneType === SpawnZoneTypes.Group && (
-                        <NumberInput
-                            value={gid}
-                            onChange={(newGid) => setGid(newGid)}
-                            min={0}
-                            extraStyles="w-full"
-                            label={'GID:'}
-                            icon={Tag}
-                        />
+                        <>
+                            <Label htmlFor="gid" className="flex items-center gap-2">
+                                <Tag className="h-4 w-4 text-muted-foreground" />
+                                Group Id:
+                            </Label>
+                            <Input
+                                id="gid"
+                                type="number"
+                                value={gid === 0 ? '' : gid}
+                                onChange={(e) => {
+                                    const value = e.target.value === '' ? 0 : Number(e.target.value)
+                                    setGid(value)
+                                }}
+                                onBlur={handleGidBlur}
+                                placeholder="Enter gid of the group to spawn 1 agent for"
+                                className="w-full"
+                            />
+                        </>
                     )}
                 </>
             )}

@@ -31,13 +31,12 @@ function Agents({ aegisPath, agents, agent, setAgent, groupName, setGroupName }:
         }
 
         // Update max and reset input
-        setMaxAgents((prev) => Math.max(0, prev - numAgents))
-        setNumAgents(0)
+        // setMaxAgents((prev) => Math.max(0, prev - numAgents))
+        // setNumAgents(0)
 
-        await aegisAPI.agent_child_process.spawn(aegisPath, groupName.toString(), numAgents.toString(), agent)
+        await aegisAPI.agent_child_process.spawn(aegisPath, groupName.toString(), '7', agent)
     }
 
-    if (!isOpen) return null
     return (
         <motion.div
             initial={{ opacity: 0, x: -20 }}
