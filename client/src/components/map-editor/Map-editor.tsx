@@ -140,6 +140,8 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
 
                                     handleParamChange('width', value)
                                 }}
+                                max={MAP_MAX}
+                                min={MAP_MIN}
                                 className="w-full"
                                 disabled={!isWorldEmpty}
                             />
@@ -165,6 +167,8 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
 
                                     handleParamChange('height', value)
                                 }}
+                                max={MAP_MAX}
+                                min={MAP_MIN}
                                 className="w-full"
                                 disabled={!isWorldEmpty}
                             />
@@ -190,6 +194,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
 
                                 handleParamChange('initialEnergy', value)
                             }}
+                            min={1}
                             className="w-full"
                             disabled={!isWorldEmpty}
                         />
