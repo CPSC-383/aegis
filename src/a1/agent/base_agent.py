@@ -1,12 +1,7 @@
-# pyright: reportImportCycles = false
-# pyright: reportMissingTypeStubs = false
-# pyright: reportUnknownMemberType = false
 from __future__ import annotations
 
 import sys
-from collections import deque
 
-import numpy as np
 from aegis import (
     END_TURN,
     AgentCommand,
@@ -15,17 +10,16 @@ from aegis import (
     SurroundInfo,
 )
 from aegis.api import Location
-from aegis.common.commands.agent_commands import CONNECT
 from aegis.common.location import InternalLocation
+from aegis.common.world.world import InternalWorld
+from aegis.common.commands.agent_commands import CONNECT
 from aegis.common.network.aegis_socket import AegisSocket
 from aegis.common.network.aegis_socket_exception import AegisSocketException
 from aegis.common.parsers.aegis_parser import AegisParser
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
-from aegis.common.world.world import InternalWorld
-from numpy.typing import NDArray
 
-import agent.brain
-from agent.agent_states import AgentStates
+import a1.agent.brain
+from a1.agent.agent_states import AgentStates
 
 
 class BaseAgent:
@@ -40,12 +34,9 @@ class BaseAgent:
         self._agent_state: AgentStates = AgentStates.CONNECTING
         self._id: AgentID = AgentID(-1, -1)
         self._location: InternalLocation = InternalLocation(-1, -1)
-        self._brain: agent.brain.Brain | None = None
+        self._brain: a1.agent.brain.Brain | None = None
         self._energy_level: int = -1
         self._aegis_socket: AegisSocket | None = None
-        self._prediction_info: deque[
-            tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]
-        ] = deque()
         self._did_end_turn: bool = False
 
     @staticmethod
@@ -74,10 +65,6 @@ class BaseAgent:
 
     def set_agent_state(self, agent_state: AgentStates) -> None:
         self._agent_state = agent_state
-
-        if agent_state == AgentStates.READ_MAIL:
-            self._round += 1
-
         self.log(f"New State: {self._agent_state}")
 
     def get_agent_state(self) -> AgentStates:
@@ -88,7 +75,6 @@ class BaseAgent:
         return self._round
 
     def get_agent_id(self) -> AgentID:
-        """Returns the ID of the base agent."""
         return self._id
 
     def set_agent_id(self, id: AgentID) -> None:
@@ -111,46 +97,22 @@ class BaseAgent:
         self._energy_level = energy_level
         self.log(f"New Energy: {self._energy_level}")
 
-    def get_prediction_info_size(self) -> int:
-        """Returns the size of the prediction info queue."""
-        return len(self._prediction_info)
-
-    def get_prediction_info(
-        self,
-    ) -> tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]:
-        """Returns a prediction info from the queue."""
-
-        if len(self._prediction_info) == 0:
-            return -1, None, None
-        return self._prediction_info.popleft()
-
-    def add_prediction_info(
-        self,
-        prediction_info: tuple[
-            int, NDArray[np.float32] | None, NDArray[np.int64] | None
-        ],
-    ) -> None:
-        self._prediction_info.append(prediction_info)
-        self.log("New Prediction Info!")
-
-    def clear_prediction_info(self) -> None:
-        self._prediction_info.clear()
-        self.log("Cleared Prediction Info")
-
-    def get_brain(self) -> agent.brain.Brain | None:
+    def get_brain(self) -> a1.agent.brain.Brain | None:
         return self._brain
 
-    def set_brain(self, brain: agent.brain.Brain) -> None:
+    def set_brain(self, brain: a1.agent.brain.Brain) -> None:
         self._brain = brain
         self.log("New Brain")
 
-    def start_test(self, brain: agent.brain.Brain) -> None:
+    def start_test(self, brain: a1.agent.brain.Brain) -> None:
         self.start("localhost", "test", brain)
 
-    def start_with_group_name(self, group_name: str, brain: agent.brain.Brain) -> None:
+    def start_with_group_name(
+        self, group_name: str, brain: a1.agent.brain.Brain
+    ) -> None:
         self.start("localhost", group_name, brain)
 
-    def start(self, host: str, group_name: str, brain: agent.brain.Brain) -> None:
+    def start(self, host: str, group_name: str, brain: a1.agent.brain.Brain) -> None:
         if self._agent_state == AgentStates.CONNECTING:
             self._brain = brain
             if self._connect_to_aegis(host, group_name):
@@ -204,6 +166,7 @@ class BaseAgent:
                                 self._brain.handle_aegis_command(aegis_command)
                                 agent_state = self._agent_state
                                 if agent_state == AgentStates.THINK:
+                                    self._round += 1
                                     self._brain.think()
                                     self._did_end_turn = False
                                 elif agent_state == AgentStates.SHUTTING_DOWN:

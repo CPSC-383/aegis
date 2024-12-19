@@ -20,7 +20,7 @@ from aegis import (
     Rubble,
     Survivor,
 )
-from agent import BaseAgent, Brain, AgentController
+from a3.agent import BaseAgent, Brain, AgentController
 
 
 class ExampleAgent(Brain):

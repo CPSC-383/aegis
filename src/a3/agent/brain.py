@@ -25,8 +25,8 @@ from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.world import InternalWorld
 from aegis.api import World
 
-import agent.base_agent
-from agent.agent_states import AgentStates
+import a3.agent.base_agent
+from a3.agent.agent_states import AgentStates
 
 
 class Brain(ABC):
@@ -139,7 +139,7 @@ class Brain(ABC):
         Args:
             aegis_command: The command received from AEGIS.
         """
-        base_agent = agent.base_agent.BaseAgent.get_agent()
+        base_agent = a3.agent.base_agent.BaseAgent.get_agent()
         if isinstance(aegis_command, CONNECT_OK):
             connect_ok: CONNECT_OK = aegis_command
             base_agent.set_agent_id(connect_ok.new_agent_id)

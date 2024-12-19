@@ -24,7 +24,7 @@ from aegis import (
     World,
     create_location,
 )
-from agent import AgentController, BaseAgent, Brain
+from a3.agent import AgentController, BaseAgent, Brain
 
 LOC_UPDATE_IDENTIFIER = "loc_update:"
 

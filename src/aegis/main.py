@@ -1,6 +1,6 @@
 import sys
 
-from aegis.aegis_main import Aegis
+from a3.aegis_main import Aegis
 
 
 def main() -> None:

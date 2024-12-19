@@ -74,9 +74,6 @@ jobs:
       - name: Clean client
         run: rm -rf client/*
 
-      - name: Remove Docs
-        run: rm -rf ./docs
-
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
@@ -91,13 +88,26 @@ jobs:
           fi
           rm requirements-a1.txt requirements-a3.txt
 
+      - name: Update imports
+        run: |
+          if [[ "${github.ref_name}" == *"-a1" ]]; then
+            sed -i 's/a3/a1' ./src/aegis/main.py
+            sed -i 's/a3/a1' ./src/aegis/common/commands/aegis_commands/__init__.py 
+          fi
+
       - name: Remove extra files and folders
         run: |
+          if [[ "${github.ref_name}" == *"-a1" ]]; then
+            rm -rf ./src/a3
+          elif [[ "${github.ref_name}" == *"-a3" ]]; then
+            rm -rf ./src/a1
+          fi
+
           rm -rf .git
           rm -rf .github
-          rm .gitignore
-          rm mkdocs.yml
+          rm -rf ./docs
           rm -rf scripts
+          rm .gitignore
           rm README.md
           rm replay.txt
 
