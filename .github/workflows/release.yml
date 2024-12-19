@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*.*.*-*"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -31,12 +32,12 @@ jobs:
         working-directory: ./client
 
       - name: Build app for A1
-        if: contains(github.ref, '-a1')
+        if: contains(github.ref_name, '-a1')
         run: npm run build:pack:a1
         working-directory: ./client
 
       - name: Build app
-        if: !contains(github.ref , '-a1')
+        if: contains(github.ref_name, '-a3')
         run: npm run build:pack
         working-directory: ./client
 
