@@ -11,6 +11,7 @@
         "build": "electron-vite build",
         "build:a1": "VITE_CURRENT_ASSIGNMENT=a1 electron-vite build",
         "build:pack": "npm run build && electron-builder build --publish never",
+        "build:pack:a1": "npm run build:a1 && electron-builder build --publish never",
         "build:pack:win": "npm run build && electron-builder build --win --publish never",
         "build:pack:mac": "npm run build && electron-builder build --mac --publish never",
         "build:pack:linux": "npm run build && electron-builder build --linux --publish never"
