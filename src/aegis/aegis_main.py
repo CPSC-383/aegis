@@ -683,6 +683,7 @@ class Aegis:
                 agent.remove_energy(dest_cell.move_cost)
                 self._aegis_world.move_agent(agent.agent_id, dest_location)
                 agent.orientation = move.direction
+                agent.add_step_taken()
             else:
                 agent.remove_energy(self._parameters.MOVE_ENERGY_COST)
             self._MOVE_RESULT_list.add(move.get_agent_id())

@@ -58,6 +58,7 @@ class AgentInfoDict(TypedDict):
     y: int
     energy_level: int
     command_sent: str
+    steps_taken: int
 
 
 class WorldDict(TypedDict):
@@ -84,7 +85,7 @@ class AegisWorld:
         self.install_object_handler(RubbleHandler())
         self.install_object_handler(SurvivorGroupHandler())
         self.install_object_handler(SurvivorHandler())
-        self._agent_locations: dict[AgentID, Location] = {}
+        self._agent_locations: dict[AgentID, InternalLocation] = {}
         self._spawn_manager: SpawnManger = SpawnManger()
         self._low_survivor_level: int = 0
         self._mid_survivor_level: int = 0
@@ -496,6 +497,7 @@ class AegisWorld:
                             "y": y,
                             "energy_level": agent.get_energy_level(),
                             "command_sent": agent.command_sent,
+                            "steps_taken": agent.steps_taken,
                         }
                         agent_data.append(agent_dict)
 
