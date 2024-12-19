@@ -34,8 +34,3 @@ dist-ssr
 *.sw?
 packed-client
 WorldInfoFile.out
-src/agent/training_data/x_train.npy
-src/agent/training_data/y_train.npy
-src/ares/testing_data/x_test.npy
-src/ares/testing_data/y_test.npy
-aegis-documentation/

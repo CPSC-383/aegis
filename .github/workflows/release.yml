@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - "v*.*.*-*"
-  workflow_dispatch:
 
 jobs:
   build:
@@ -83,12 +82,24 @@ jobs:
         with:
           path: ./client/
 
+      - name: Choose correct requirements.txt
+        run: |
+          if [[ "${github.ref_name}" == *"-a1" ]]; then
+            cp requirements-a1.txt requirements.txt
+          elif [[ "${github.ref_name}" == *"-a3" ]]; then
+            cp requirements-a3.txt requirements.txt
+          fi
+          rm requirements-a1.txt requirements-a3.txt
+
       - name: Remove extra files and folders
         run: |
           rm -rf .git
           rm -rf .github
           rm .gitignore
           rm mkdocs.yml
+          rm -rf scripts
+          rm README.md
+          rm replay.txt
 
       - name: Zip repo
         run: |
