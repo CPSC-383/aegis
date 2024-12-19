@@ -11,7 +11,7 @@ import {
     StackContent,
     SpawnZoneTypes
 } from '@/utils/types'
-import { Footprints, Heart, PersonStanding, Save, Skull, Users } from 'lucide-react'
+import { Footprints, Heart, PersonStanding, Skull, Users } from 'lucide-react'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 export class Simulation {
@@ -92,7 +92,7 @@ export class Simulation {
                         value:
                             (this.currentRoundData?.number_of_survivors_saved_alive ?? 0) +
                             (this.currentRoundData?.number_of_survivors_saved_dead ?? 0),
-                        icon: Save
+                        icon: Heart
                     },
                     StepsTaken: {
                         value: steps_taken,
