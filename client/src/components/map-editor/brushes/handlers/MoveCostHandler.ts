@@ -13,6 +13,7 @@ class MoveCostHandler extends BrushHandler {
         const stack = this.getStack(tile)
         if (stack) {
             stack.move_cost = rightClicked ? 1 : this.moveCost
+            this.worldMap.updateMinMaxMoveCosts()
         }
     }
 }

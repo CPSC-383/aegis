@@ -1,5 +1,6 @@
 type AegisAPI = {
     openAegisDirectory: () => Promise<string | undefined>
+    toggleMoveCost: (config_path: string, value: boolean) => void
     getAppPath: () => Promise<string>
     exportWorld: (name: string, world: string) => Promise<void>
     path: {

@@ -1,15 +1,41 @@
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { SettingsIcon, Folder } from 'lucide-react'
 
 import { Scaffold } from '@/scaffold'
 import { Button } from '@/components/ui/button'
-import { Folder } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { Config } from '@/utils/types'
+import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 type Props = {
     scaffold: Scaffold
 }
 
 function Settings({ scaffold }: Props) {
-    const { aegisPath, setupAegisPath } = scaffold
+    const [moveCostToggle, setMoveCostToggle] = useState(true)
+    const { aegisPath, setupAegisPath, toggleMoveCost, readAegisConfig } = scaffold
+
+    const fetchMoveCostConfig = async () => {
+        const config = await readAegisConfig()
+        const { Enable_Move_Cost } = JSON.parse(config) as Config
+        return Enable_Move_Cost
+    }
+
+    // Initialize default move cost toggle value when the settings load
+    useEffect(() => {
+        const initToggle = async () => {
+            const value = await fetchMoveCostConfig()
+            setMoveCostToggle(value)
+        }
+        initToggle()
+    }, [])
+
+    const handleToggle = (checked: boolean) => {
+        toggleMoveCost(checked)
+        setMoveCostToggle(checked)
+    }
 
     return (
         <motion.div
@@ -33,6 +59,25 @@ function Settings({ scaffold }: Props) {
                         Reconfigure Aegis Path
                     </Button>
                 </div>
+
+                {getCurrentAssignment() === ASSIGNMENT_A1 && (
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                            <SettingsIcon className="w-6 h-6" />
+                            <h2 className="text-lg font-semibold">Config Settings</h2>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <Label>Move Cost</Label>
+                                <p className="text-xs text-muted-foreground">
+                                    Know all move costs at the start of the game
+                                </p>
+                            </div>
+                            <Switch checked={moveCostToggle} onCheckedChange={handleToggle} />
+                        </div>
+                    </div>
+                )}
             </div>
         </motion.div>
     )

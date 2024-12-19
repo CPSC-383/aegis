@@ -3,7 +3,7 @@ name: Build and Release Aegis
 on:
   push:
     tags:
-      - "v*"
+      - "v*.*.*-*"
 
 jobs:
   build:

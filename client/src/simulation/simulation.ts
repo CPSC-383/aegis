@@ -11,7 +11,8 @@ import {
     StackContent,
     SpawnZoneTypes
 } from '@/utils/types'
-import { Heart, PersonStanding, Skull, Users } from 'lucide-react'
+import { Footprints, Heart, PersonStanding, Save, Skull, Users } from 'lucide-react'
+import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 export class Simulation {
     private rounds: Round[] = []
@@ -80,41 +81,62 @@ export class Simulation {
     }
 
     public getStats() {
-        const stats = {
-            worldStats: {
-                AgentsAlive: {
-                    value: this.currentRoundData?.number_of_alive_agents ?? 0,
-                    icon: Users
-                },
-                AgentsDead: {
-                    value: this.currentRoundData?.number_of_dead_agents ?? 0,
-                    icon: Skull
-                },
-                TotalSurvivors: {
-                    value: this.currentRoundData?.number_of_survivors ?? 0,
-                    icon: PersonStanding
-                },
-                SurvivorsSaved: {
-                    value:
-                        (this.currentRoundData?.number_of_survivors_saved_alive ?? 0) +
-                        (this.currentRoundData?.number_of_survivors_saved_dead ?? 0),
-                    icon: Heart
-                }
-            },
-            groupStats: [] as GroupStats[]
-        }
+        let stats
 
-        if (this.currentGroupsData) {
-            for (const group of this.currentGroupsData) {
-                const groupStat = {
-                    gid: group.gid,
-                    name: group.name,
-                    score: group.score,
-                    SurvivorsSaved: group.number_saved ?? 0,
-                    CorrectPredictions: group.number_predicted_right ?? 0,
-                    IncorrectPredictions: group.number_predicted_wrong ?? 0
+        if (getCurrentAssignment() === ASSIGNMENT_A1) {
+            let agent: AgentInfoDict = this.currentRoundData?.agent_data.values().next().value ?? 0
+            let steps_taken = agent?.steps_taken ?? 0
+            stats = {
+                worldStats: {
+                    SurvivorsSaved: {
+                        value:
+                            (this.currentRoundData?.number_of_survivors_saved_alive ?? 0) +
+                            (this.currentRoundData?.number_of_survivors_saved_dead ?? 0),
+                        icon: Save
+                    },
+                    StepsTaken: {
+                        value: steps_taken,
+                        icon: Footprints
+                    }
                 }
-                stats.groupStats.push(groupStat)
+            }
+        } else {
+            stats = {
+                worldStats: {
+                    AgentsAlive: {
+                        value: this.currentRoundData?.number_of_alive_agents ?? 0,
+                        icon: Users
+                    },
+                    AgentsDead: {
+                        value: this.currentRoundData?.number_of_dead_agents ?? 0,
+                        icon: Skull
+                    },
+                    TotalSurvivors: {
+                        value: this.currentRoundData?.number_of_survivors ?? 0,
+                        icon: PersonStanding
+                    },
+                    SurvivorsSaved: {
+                        value:
+                            (this.currentRoundData?.number_of_survivors_saved_alive ?? 0) +
+                            (this.currentRoundData?.number_of_survivors_saved_dead ?? 0),
+                        icon: Heart
+                    }
+                },
+                groupStats: [] as GroupStats[]
+            }
+
+            if (this.currentGroupsData) {
+                for (const group of this.currentGroupsData) {
+                    const groupStat = {
+                        gid: group.gid,
+                        name: group.name,
+                        score: group.score,
+                        SurvivorsSaved: group.number_saved ?? 0,
+                        CorrectPredictions: group.number_predicted_right ?? 0,
+                        IncorrectPredictions: group.number_predicted_wrong ?? 0
+                    }
+                    stats.groupStats.push(groupStat)
+                }
             }
         }
 

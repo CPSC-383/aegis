@@ -7,7 +7,9 @@
     "scripts": {
         "start": "electron-vite preview",
         "dev": "electron-vite dev",
+        "dev:a1": "VITE_CURRENT_ASSIGNMENT=a1 electron-vite dev",
         "build": "electron-vite build",
+        "build:a1": "VITE_CURRENT_ASSIGNMENT=a1 electron-vite build",
         "build:pack": "npm run build && electron-builder build --publish never",
         "build:pack:win": "npm run build && electron-builder build --win --publish never",
         "build:pack:mac": "npm run build && electron-builder build --mac --publish never",

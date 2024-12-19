@@ -14,6 +14,7 @@ abstract class BrushHandler {
             cells.some((cell) => cell.x === tile.x && cell.y === tile.y)
         )
     }
+
     protected getStack(tile: Location): Stack | undefined {
         return this.worldMap.stacks.find((stack) => stack.cell_loc.x === tile.x && stack.cell_loc.y === tile.y)
     }

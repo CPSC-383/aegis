@@ -8,6 +8,13 @@ export default defineConfig({
             rollupOptions: {
                 input: {
                     index: path.resolve(__dirname, 'src-electron/main.ts')
+                },
+                output: {
+                    manualChunks(id) {
+                        if (id.includes('node_modules')) {
+                            return id.toString().split('node_modules/')[1].split('/')[0].toString()
+                        }
+                    }
                 }
             },
             outDir: 'dist/main'
@@ -19,6 +26,13 @@ export default defineConfig({
             rollupOptions: {
                 input: {
                     index: path.resolve(__dirname, 'src-electron/preload.ts')
+                },
+                output: {
+                    manualChunks(id) {
+                        if (id.includes('node_modules')) {
+                            return id.toString().split('node_modules/')[1].split('/')[0].toString()
+                        }
+                    }
                 }
             },
             outDir: 'dist/preload'
@@ -31,6 +45,13 @@ export default defineConfig({
             rollupOptions: {
                 input: {
                     index: path.resolve(__dirname, 'index.html')
+                },
+                output: {
+                    manualChunks(id) {
+                        if (id.includes('node_modules')) {
+                            return id.toString().split('node_modules/')[1].split('/')[0].toString()
+                        }
+                    }
                 }
             },
             outDir: 'dist/renderer'

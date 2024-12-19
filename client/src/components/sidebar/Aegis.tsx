@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Scaffold } from '@/scaffold'
+import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 interface Props {
     scaffold: Scaffold
@@ -68,7 +69,9 @@ function Aegis({ scaffold, worldFile, setWorldFile, numRounds, setNumRounds }: P
                     </Button>
                 ) : (
                     <Button
-                        onClick={() => startSimulation(numRounds, 7, worldFile)}
+                        onClick={() =>
+                            startSimulation(numRounds, getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : 7, worldFile)
+                        }
                         disabled={isButtonDisabled}
                         className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}
                     >

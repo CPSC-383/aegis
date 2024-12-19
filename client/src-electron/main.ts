@@ -70,6 +70,10 @@ class ElectronApp {
         switch (command) {
             case 'openAegisDirectory':
                 return this.openAegisDirectory()
+            case 'toggleMoveCost':
+                const updates = { Enable_Move_Cost: args[1] }
+                this.updateConfig(args[0], updates)
+                return
             case 'getAppPath':
                 return app.getAppPath()
             case 'path.join':
@@ -127,6 +131,29 @@ class ElectronApp {
         const isWindows = process.platform === 'win32'
         const venvSubpath = isWindows ? path.join('.venv', 'Scripts', 'python') : path.join('.venv', 'bin', 'python')
         return path.join(rootPath, venvSubpath)
+    }
+
+    private readConfig(filePath: string) {
+        try {
+            const fileContent = fs.readFileSync(filePath, 'utf8')
+            const config = JSON.parse(fileContent)
+            return config
+        } catch (error) {
+            // @ts-ignore: error type
+            console.error(`Error reading the config file: ${error.message}`)
+            throw error
+        }
+    }
+    private updateConfig(filePath: string, updates: any) {
+        try {
+            const config = this.readConfig(filePath)
+            Object.assign(config, updates)
+            fs.writeFileSync(filePath, JSON.stringify(config, null, 2))
+        } catch (error) {
+            // @ts-ignore: error type
+            console.error(`Error updating the config file: ${error.message}`)
+            throw error
+        }
     }
 
     private spawnAegisProcess(rootPath: string, numOfRounds: string, numOfAgents: string, worldFile: string) {

@@ -13,7 +13,9 @@ export type Scaffold = {
     agents: string[]
     output: ConsoleLine[]
     startSimulation: (numRounds: number, numAgentsAegis: number, worldFile: string) => void
+    toggleMoveCost: (value: boolean) => void
     killSim: (() => void) | undefined
+    readAegisConfig: () => Promise<string>
 }
 
 function createScaffold(): Scaffold {
@@ -52,6 +54,30 @@ function createScaffold(): Scaffold {
         )
         aegisPid.current = pid
         forceUpdate()
+    }
+
+    const toggleMoveCost = async (value: boolean) => {
+        if (!aegisPath) {
+            throw new Error("Can't find AEGIS path!")
+        }
+
+        const path = aegisAPI.path
+
+        const config_path = await path.join(aegisPath, 'sys_files', 'aegis_config.json')
+        aegisAPI.toggleMoveCost(config_path, value)
+    }
+
+    const readAegisConfig = async () => {
+        if (!aegisPath) {
+            throw new Error("Can't find AEGIS path!")
+        }
+
+        const fs = aegisAPI.fs
+        const path = aegisAPI.path
+
+        const config_path = await path.join(aegisPath, 'sys_files', 'aegis_config.json')
+        const config = await fs.readFileSync(config_path)
+        return config
     }
 
     const killSimulation = () => {
@@ -111,7 +137,17 @@ function createScaffold(): Scaffold {
     }, [aegisPath])
 
     const killSim = aegisPid.current ? killSimulation : undefined
-    return { aegisPath, setupAegisPath, worlds, agents, output, startSimulation, killSim }
+    return {
+        aegisPath,
+        setupAegisPath,
+        worlds,
+        agents,
+        output,
+        startSimulation,
+        toggleMoveCost,
+        killSim,
+        readAegisConfig
+    }
 }
 
 const getAegisPath = async () => {

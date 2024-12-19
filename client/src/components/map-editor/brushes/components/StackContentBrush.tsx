@@ -2,6 +2,7 @@ import { RubbleInfo, StackContentBrushTypes } from '@/utils/types'
 import RubbleSettings from './RubbleSettings'
 import { Mountain, User } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 interface Props {
     stackType: StackContentBrushTypes
@@ -18,15 +19,19 @@ function StackContentBrush({ stackType, setStackType, rubbleInfo, setRubbleInfo 
                     <SelectValue placeholder="Choose stack item" />
                 </SelectTrigger>
                 <SelectContent>
-                    {Object.values(StackContentBrushTypes).map((type) => (
-                        <SelectItem key={type} value={type}>
-                            <div className="flex items-center space-x-2">
-                                {type === StackContentBrushTypes.Survivor && <User className="w-4 h-4" />}
-                                {type === StackContentBrushTypes.Rubble && <Mountain className="w-4 h-4" />}
-                                <span>{type}</span>
-                            </div>
-                        </SelectItem>
-                    ))}
+                    {Object.values(StackContentBrushTypes)
+                        .filter((type) =>
+                            getCurrentAssignment() === ASSIGNMENT_A1 ? type === StackContentBrushTypes.Survivor : true
+                        )
+                        .map((type) => (
+                            <SelectItem key={type} value={type}>
+                                <div className="flex items-center space-x-2">
+                                    {type === StackContentBrushTypes.Survivor && <User className="w-4 h-4" />}
+                                    {type === StackContentBrushTypes.Rubble && <Mountain className="w-4 h-4" />}
+                                    <span>{type}</span>
+                                </div>
+                            </SelectItem>
+                        ))}
                 </SelectContent>
             </Select>
             {stackType === StackContentBrushTypes.Rubble && (

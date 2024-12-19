@@ -71,16 +71,6 @@ function MapBrushes() {
 
     listenEvent(EventType.TILE_CLICK, handleBrush)
 
-    const brushTypeItems = Object.values(BrushType).map((type) => ({
-        value: type,
-        icon: {
-            [BrushType.SpecialCells]: Target,
-            [BrushType.MoveCost]: Zap,
-            [BrushType.StackContents]: PlusSquare,
-            [BrushType.View]: MousePointerClick
-        }[type]
-    }))
-
     const renderBrushContent = () => {
         switch (brushType) {
             case BrushType.SpecialCells:
