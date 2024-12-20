@@ -98,14 +98,14 @@ jobs:
 
       - name: Update worlds
         run: |
-          if [[ "${github.ref_name}" == *"-a1" ]]; then
+          if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             find ./worlds -mindepth 1 \
               -not -path '*/a1-assignment-worlds/*' \
               -not -path '*/a1-assignment-worlds' \
               -delete
             mv ./worlds/a1-assignment-worlds/* ./worlds
             rm -rf ./worlds/a1-assignment-worlds
-          elif [[ "${github.ref_name}" == *"-a3" ]]; then
+          elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
             find ./worlds -mindepth 1 \
               -not -path '*/a3-assignment-worlds/*' \
               -not -path '*/a3-assignment-worlds' \
@@ -116,12 +116,12 @@ jobs:
 
       - name: Update agents
         run: |
-          if [[ "${github.ref_name}" == *"-a1" ]]; then
+          if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             find ./src/agents -mindepth 1 \
               -not -path '*/example_agent_a1/*' \
               -not -path '*/example_agent_a1' \
               -delete
-          elif [[ "${github.ref_name}" == *"-a3" ]]; then
+          elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
             find ./worlds -mindepth 1 \
               -not -path '*/example_agent_a3/*' \
               -not -path '*/example_agent_a3' \
@@ -130,9 +130,9 @@ jobs:
 
       - name: Remove extra files and folders
         run: |
-          if [[ "${github.ref_name}" == *"-a1" ]]; then
+          if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             rm -rf ./src/a3
-          elif [[ "${github.ref_name}" == *"-a3" ]]; then
+          elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
             rm -rf ./src/a1
           fi
 
