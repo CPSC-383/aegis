@@ -5,18 +5,27 @@ on:
     tags:
       - "v*.*.*-*"
 
+env:
+  NODE_VERSION: "20"
+  WORKING_DIR: ./client
+
 jobs:
   build:
     strategy:
       matrix:
         include:
-          - os: "macos-latest"
-            platform: "mac"
-          - os: "ubuntu-latest"
-            platform: "linux"
-          - os: "windows-latest"
-            platform: "win"
+          - os: macos-latest
+            platform: mac
+            artifact_path: ./packed-client/mac-universal/*.app
+          - os: ubuntu-latest
+            platform: linux
+            artifact_path: ./packed-client/*.AppImage
+          - os: windows-latest
+            platform: win
+            artifact_path: ./packed-client/*.exe
+
     runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,54 +33,43 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
+        working-directory: ${{ env.WORKING_DIR }}
         run: npm install
-        working-directory: ./client
-
-      - name: Build app for A1
-        if: contains(github.ref_name, '-a1')
-        run: npm run build:pack:a1
-        working-directory: ./client
 
       - name: Build app
-        if: contains(github.ref_name, '-a3')
-        run: npm run build:pack
-        working-directory: ./client
+        working-directory: ${{ env.WORKING_DIR }}
+        run: |
+          if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
+            npm run build:pack:a1
+          else
+            npm run build:pack
+          fi
+        shell: bash
 
-      - name: Zip Linux
-        if: startsWith(matrix.os, 'ubuntu')
-        run: 7z a packed-client/linux-client.zip ./packed-client/*.AppImage
-        working-directory: ./client
-
-      - name: Zip Mac
-        if: startsWith(matrix.os, 'macos')
-        run: 7z a packed-client/mac-client.zip ./packed-client/mac-universal/*.app
-        working-directory: ./client
-
-      - name: Zip Windows
-        if: startsWith(matrix.os, 'windows')
-        run: 7z a packed-client/win-client.zip ./packed-client/*.exe
-        working-directory: ./client
+      - name: Create ZIP archive
+        working-directory: ${{ env.WORKING_DIR }}
+        run: 7z a packed-client/${{ matrix.platform }}-client.zip ${{ matrix.artifact_path }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-client
-          path: |
-            ./client/packed-client/*.zip
+          path: ${{ env.WORKING_DIR }}/packed-client/*.zip
 
   release:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Clean client
+      - name: Clean client directory
         run: rm -rf client/*
 
       - name: Download artifacts
@@ -79,73 +77,62 @@ jobs:
         with:
           path: ./client/
 
-      - name: Choose correct requirements.txt
+      - name: Setup version-specific files
         run: |
+          # Select correct requirements file
           if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             cp requirements-a1.txt requirements.txt
-          elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
+          else
             cp requirements-a3.txt requirements.txt
           fi
           rm requirements-a1.txt requirements-a3.txt
 
-      - name: Update imports (A1)
-        if: contains(github.ref_name, '-a1')
-        run: |
-          find ./src/aegis -type f \
-            -not -path "*/__pycache__/*" \
-            -not -path "*/agent_predictions/*" \
-            -exec grep -l "a3" {} + | xargs sed -i 's/a3/a1/g'
-          grep -lrw "PREDICT" ./src/aegis --include="__init__.py" | xargs sed -i '/PREDICT/d'
-
-      - name: Update worlds
-        run: |
+          # Update imports for A1 if needed
           if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
-            find ./worlds -mindepth 1 \
-              -not -path '*/a1-assignment-worlds/*' \
-              -not -path '*/a1-assignment-worlds' \
-              -delete
-            mv ./worlds/a1-assignment-worlds/* ./worlds
-            rm -rf ./worlds/a1-assignment-worlds
-          elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
-            find ./worlds -mindepth 1 \
-              -not -path '*/a3-assignment-worlds/*' \
-              -not -path '*/a3-assignment-worlds' \
-              -delete
-            mv ./worlds/a3-assignment-worlds/* ./worlds
-            rm -rf ./worlds/a3-assignment-worlds
+            find ./src/aegis -type f \
+              -not -path "*/__pycache__/*" \
+              -not -path "*/agent_predictions/*" \
+              -exec grep -l "a3" {} + | xargs sed -i 's/a3/a1/g'
+            grep -lrw "PREDICT" ./src/aegis --include="__init__.py" | xargs sed -i '/PREDICT/d'
           fi
 
-      - name: Update agents
+      - name: Update world files
         run: |
-          if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
-            find ./src/agents -mindepth 1 \
-              -not -path '*/example_agent_a1/*' \
-              -not -path '*/example_agent_a1' \
-              -delete
-          elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
-            find ./worlds -mindepth 1 \
-              -not -path '*/example_agent_a3/*' \
-              -not -path '*/example_agent_a3' \
-              -delete
-          fi
+          VERSION=$(if [[ "${{ github.ref_name }}" == *"-a1" ]]; then echo "a1"; else echo "a3"; fi)
+          find ./worlds -mindepth 1 \
+            -not -path "*/${VERSION}-assignment-worlds/*" \
+            -not -path "*/${VERSION}-assignment-worlds" \
+            -delete
+          mv ./worlds/${VERSION}-assignment-worlds/* ./worlds/
+          rm -rf ./worlds/${VERSION}-assignment-worlds
 
-      - name: Remove extra files and folders
+      - name: Update agent files
         run: |
+          VERSION=$(if [[ "${{ github.ref_name }}" == *"-a1" ]]; then echo "a1"; else echo "a3"; fi)
+          find ./src/agents -mindepth 1 \
+            -not -path "*/example_agent_${VERSION}/*" \
+            -not -path "*/example_agent_${VERSION}" \
+            -delete
+
+      - name: Cleanup extra files
+        run: |
+          # Remove version-specific directories
           if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             rm -rf ./src/a3
             rm sys_files/*.npy
-          elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
+          else
             rm -rf ./src/a1
           fi
 
+          # Remove development files
           rm -rf .git .github ./docs scripts .gitignore README.md
 
-      - name: Zip repo
+      - name: Create release archive
         run: |
           cd ..
           zip -r aegis.zip $(basename $GITHUB_WORKSPACE)
 
-      - name: Create release
+      - name: Upload release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
