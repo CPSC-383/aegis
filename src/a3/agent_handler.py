@@ -20,7 +20,7 @@ from aegis.common.commands.aegis_commands import (
 )
 from aegis.common.constants import Constants
 from aegis.common.network.aegis_socket_exception import AegisSocketException
-from aegis.common.parsers.aegis_parser import AegisParser
+from a3.aegis_parser import AegisParser
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
 
 import numpy as np

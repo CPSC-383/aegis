@@ -19,7 +19,7 @@ from aegis.common.commands.agent_commands import CONNECT
 from aegis.common.location import InternalLocation
 from aegis.common.network.aegis_socket import AegisSocket
 from aegis.common.network.aegis_socket_exception import AegisSocketException
-from aegis.common.parsers.aegis_parser import AegisParser
+from a3.aegis_parser import AegisParser
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
 from aegis.common.world.world import InternalWorld
 from numpy.typing import NDArray

@@ -15,7 +15,7 @@ from aegis.common.world.world import InternalWorld
 from aegis.common.commands.agent_commands import CONNECT
 from aegis.common.network.aegis_socket import AegisSocket
 from aegis.common.network.aegis_socket_exception import AegisSocketException
-from aegis.common.parsers.aegis_parser import AegisParser
+from a1.aegis_parser import AegisParser
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
 
 import a1.agent.brain

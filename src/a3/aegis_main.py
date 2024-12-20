@@ -5,7 +5,7 @@ import sys
 import time
 from datetime import datetime
 
-from aegis.agent_control.agent_handler import AgentHandler
+from a3.agent_handler import AgentHandler
 from aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
 from aegis.assist.config_settings import ConfigSettings
 from aegis.assist.parameters import Parameters

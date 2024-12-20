@@ -14,7 +14,7 @@ from aegis.common.commands.aegis_commands import (
     ROUND_END,
     ROUND_START,
 )
-from aegis.common.parsers.aegis_parser import AegisParser
+from a3.aegis_parser import AegisParser
 from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.world import InternalWorld
 from aegis.api import World
