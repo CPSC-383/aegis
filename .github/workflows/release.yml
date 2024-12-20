@@ -114,6 +114,20 @@ jobs:
             rm -rf ./worlds/a3-assignment-worlds
           fi
 
+      - name: Update agents
+        run: |
+          if [[ "${github.ref_name}" == *"-a1" ]]; then
+            find ./src/agents -mindepth 1 \
+              -not -path '*/example_agent_a1/*' \
+              -not -path '*/example_agent_a1' \
+              -delete
+          elif [[ "${github.ref_name}" == *"-a3" ]]; then
+            find ./worlds -mindepth 1 \
+              -not -path '*/example_agent_a3/*' \
+              -not -path '*/example_agent_a3' \
+              -delete
+          fi
+
       - name: Remove extra files and folders
         run: |
           if [[ "${github.ref_name}" == *"-a1" ]]; then

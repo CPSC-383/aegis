@@ -1,5 +1,6 @@
 from typing import override
 
+# If you need to import anything, add it to the import below.
 from aegis import (
     CONNECT_OK,
     END_TURN,
