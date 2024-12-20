@@ -133,6 +133,7 @@ jobs:
         run: |
           if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             rm -rf ./src/a3
+            rm sys_files/*.npy
           elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
             rm -rf ./src/a1
           fi
