@@ -88,21 +88,30 @@ jobs:
           fi
           rm requirements-a1.txt requirements-a3.txt
 
-      - name: Update imports
+      - name: Update imports (A1)
+        if: contains(github.ref_name, '-a1')
         run: |
-          if [[ "${github.ref_name}" == *"-a1" ]]; then
-            find ./src/aegis -type f \
-              -not -path "*/__pycache__/*" \
-              -not -path "*/agent_predictions/*" \
-              -exec grep -l "a3" {} + | xargs sed -i '' 's/a3/a1/g'
-          fi
+          find ./src/aegis -type f \
+            -not -path "*/__pycache__/*" \
+            -not -path "*/agent_predictions/*" \
+            -exec grep -l "a3" {} + | xargs sed -i 's/a3/a1/g'
 
       - name: Update worlds
         run: |
           if [[ "${github.ref_name}" == *"-a1" ]]; then
-            rm -rf ./src/a3
+            find ./worlds -mindepth 1 \
+              -not -path '*/a1-assignment-worlds/*' \
+              -not -path '*/a1-assignment-worlds' \
+              -delete
+            mv ./worlds/a1-assignment-worlds/* ./worlds
+            rm -rf ./worlds/a1-assignment-worlds
           elif [[ "${github.ref_name}" == *"-a3" ]]; then
-            rm -rf ./src/a1
+            find ./worlds -mindepth 1 \
+              -not -path '*/a3-assignment-worlds/*' \
+              -not -path '*/a3-assignment-worlds' \
+              -delete
+            mv ./worlds/a3-assignment-worlds/* ./worlds
+            rm -rf ./worlds/a3-assignment-worlds
           fi
 
       - name: Remove extra files and folders
@@ -113,13 +122,7 @@ jobs:
             rm -rf ./src/a1
           fi
 
-          rm -rf .git
-          rm -rf .github
-          rm -rf ./docs
-          rm -rf scripts
-          rm .gitignore
-          rm README.md
-          rm replay.txt
+          rm -rf .git .github ./docs scripts .gitignore README
 
       - name: Zip repo
         run: |
