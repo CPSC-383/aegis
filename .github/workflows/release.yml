@@ -81,9 +81,9 @@ jobs:
 
       - name: Choose correct requirements.txt
         run: |
-          if [[ "${github.ref_name}" == *"-a1" ]]; then
+          if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             cp requirements-a1.txt requirements.txt
-          elif [[ "${github.ref_name}" == *"-a3" ]]; then
+          elif [[ "${{ github.ref_name }}" == *"-a3" ]]; then
             cp requirements-a3.txt requirements.txt
           fi
           rm requirements-a1.txt requirements-a3.txt
