@@ -95,6 +95,7 @@ jobs:
             -not -path "*/__pycache__/*" \
             -not -path "*/agent_predictions/*" \
             -exec grep -l "a3" {} + | xargs sed -i 's/a3/a1/g'
+          grep -lrw "PREDICT" ./src/aegis --include="__init__.py" | xargs sed -i '/PREDICT/d'
 
       - name: Update worlds
         run: |
