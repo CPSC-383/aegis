@@ -20,7 +20,7 @@ from aegis.common.commands.aegis_commands import (
     SLEEP_RESULT,
     TEAM_DIG_RESULT,
 )
-from aegis.common.parsers.aegis_parser import AegisParser
+from a3.aegis_parser import AegisParser
 from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.world import InternalWorld
 from aegis.api import World
