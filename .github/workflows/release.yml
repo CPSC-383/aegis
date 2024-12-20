@@ -136,7 +136,7 @@ jobs:
             rm -rf ./src/a1
           fi
 
-          rm -rf .git .github ./docs scripts .gitignore README
+          rm -rf .git .github ./docs scripts .gitignore README.md
 
       - name: Zip repo
         run: |
