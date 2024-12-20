@@ -91,8 +91,18 @@ jobs:
       - name: Update imports
         run: |
           if [[ "${github.ref_name}" == *"-a1" ]]; then
-            sed -i 's/a3/a1' ./src/aegis/main.py
-            sed -i 's/a3/a1' ./src/aegis/common/commands/aegis_commands/__init__.py 
+            find ./src/aegis -type f \
+              -not -path "*/__pycache__/*" \
+              -not -path "*/agent_predictions/*" \
+              -exec grep -l "a3" {} + | xargs sed -i '' 's/a3/a1/g'
+          fi
+
+      - name: Update worlds
+        run: |
+          if [[ "${github.ref_name}" == *"-a1" ]]; then
+            rm -rf ./src/a3
+          elif [[ "${github.ref_name}" == *"-a3" ]]; then
+            rm -rf ./src/a1
           fi
 
       - name: Remove extra files and folders
