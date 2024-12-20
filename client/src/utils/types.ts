@@ -101,6 +101,7 @@ export type AgentInfoDict = {
     y: number
     energy_level: number
     command_sent: string
+    steps_taken: number
 }
 
 export type World = {
@@ -170,6 +171,19 @@ export const shadesOfBlue = [
     [0, 0, 191],
     [0, 0, 171] // Dark Blue
 ]
+
+export type Config = {
+    Send_Message: {
+        enabled: boolean
+        target: string
+    }
+    Sleep_On_Every: boolean
+    Save_Surv: {
+        strategy: string
+        tie_strategy: string
+    }
+    Enable_Move_Cost: boolean
+}
 
 export type ConsoleLine = {
     has_error: boolean

@@ -3,7 +3,16 @@ import { whatBucket } from '@/utils/util'
 import { shadesOfBrown, shadesOfBlue } from '@/utils/types'
 import { renderCoords } from '@/utils/renderUtils'
 
+interface CellTypeMap {
+    [key: string]: {
+        color: string
+        cells: Location[]
+    }
+}
+
 export class WorldMap {
+    private readonly cellTypes: CellTypeMap
+
     constructor(
         public readonly width: number,
         public readonly height: number,
@@ -17,53 +26,55 @@ export class WorldMap {
         public readonly spawnCells: Map<string, { type: SpawnZoneTypes; groups: number[] }>,
         public readonly stacks: Stack[],
         public readonly initialAgentEnergy: number,
-        public readonly minMoveCost: number,
-        public readonly maxMoveCost: number
-    ) {}
+        public minMoveCost: number,
+        public maxMoveCost: number
+    ) {
+        this.cellTypes = {
+            fire: { color: '#ff9900', cells: fireCells },
+            killer: { color: '#cc0000', cells: killerCells },
+            charging: { color: '', cells: chargingCells } // Color determined dynamically
+        }
+    }
 
-    static fromData(data: any) {
-        const width: number = data.settings.world_info.size.width
-        const height: number = data.settings.world_info.size.height
+    static fromData(data: any): WorldMap {
+        const { world_info, agent_energy } = data.settings
+        const { size, seed, world_file_levels } = world_info
 
-        const initialAgentEnergy: number = data.settings.world_info.agent_energy
-        const seed: number = data.settings.world_info.seed
-        const low: number = data.settings.world_info.world_file_levels.low
-        const mid: number = data.settings.world_info.world_file_levels.mid
-        const high: number = data.settings.world_info.world_file_levels.high
-
-        const fireCells: Location[] = data.cell_types.fire_cells
-        const killerCells: Location[] = data.cell_types.killer_cells
-        const chargingCells: Location[] = data.cell_types.charging_cells
-        const spawnCells: Map<string, { type: SpawnZoneTypes; groups: number[] }> = new Map()
-        data.spawn_locs.forEach((spawn: Spawn) => {
-            const key = JSON.stringify({ x: spawn.x, y: spawn.y })
-            if (!spawnCells.has(key)) spawnCells.set(key, { type: spawn.type as SpawnZoneTypes, groups: [] })
-            if (spawn.gid) spawnCells.get(key)?.groups.push(spawn.gid)
-        })
+        const spawnCells = new Map<string, { type: SpawnZoneTypes; groups: number[] }>(
+            data.spawn_locs.map((spawn: Spawn) => {
+                const key = JSON.stringify({ x: spawn.x, y: spawn.y })
+                return [
+                    key,
+                    {
+                        type: spawn.type as SpawnZoneTypes,
+                        groups: spawn.gid ? [spawn.gid] : []
+                    }
+                ]
+            })
+        )
 
         const stacks: Stack[] = data.stacks
-        const minMoveCost: number = Math.min(...stacks.map((stack) => stack.move_cost))
-        const maxMoveCost: number = Math.max(...stacks.map((stack) => stack.move_cost))
+        const moveCosts = stacks.map((stack) => stack.move_cost)
 
         return new WorldMap(
-            width,
-            height,
+            size.width,
+            size.height,
             seed,
-            low,
-            mid,
-            high,
-            fireCells,
-            killerCells,
-            chargingCells,
+            world_file_levels.low,
+            world_file_levels.mid,
+            world_file_levels.high,
+            data.cell_types.fire_cells,
+            data.cell_types.killer_cells,
+            data.cell_types.charging_cells,
             spawnCells,
             stacks,
-            initialAgentEnergy,
-            minMoveCost,
-            maxMoveCost
+            agent_energy,
+            Math.min(...moveCosts),
+            Math.max(...moveCosts)
         )
     }
 
-    static fromParams(width: number, height: number, initialEnergy: number) {
+    static fromParams(width: number, height: number, initialEnergy: number): WorldMap {
         const stacks: Stack[] = []
 
         for (let x = 0; x < width; x++) {
@@ -75,54 +86,24 @@ export class WorldMap {
                 })
             }
         }
-        const minMoveCost = Math.min(...stacks.map((stack) => stack.move_cost))
-        const maxMoveCost = Math.max(...stacks.map((stack) => stack.move_cost))
 
-        return new WorldMap(
-            width,
-            height,
-            0,
-            0,
-            0,
-            0,
-            [],
-            [],
-            [],
-            new Map(),
-            stacks,
-            initialEnergy,
-            minMoveCost,
-            maxMoveCost
-        )
+        return new WorldMap(width, height, 0, 0, 0, 0, [], [], [], new Map(), stacks, initialEnergy, 1, 1)
     }
 
     getCellType(x: number, y: number): string {
-        if (this.fireCells.some((cell) => cell.x === x && cell.y === y)) {
-            return 'CellType.FIRE_CELL'
-        }
+        const matchLocation = (cell: Location) => cell.x === x && cell.y === y
 
-        if (this.killerCells.some((cell) => cell.x === x && cell.y === y)) {
-            return 'CellType.KILLER_CELL'
-        }
-
-        if (this.chargingCells.some((cell) => cell.x === x && cell.y === y)) {
-            return 'CellType.CHARGING_CELL'
-        }
-
+        if (this.fireCells.some(matchLocation)) return 'CellType.FIRE_CELL'
+        if (this.killerCells.some(matchLocation)) return 'CellType.KILLER_CELL'
+        if (this.chargingCells.some(matchLocation)) return 'CellType.CHARGING_CELL'
         return 'CellType.NORMAL_CELL'
     }
 
     isEmpty(): boolean {
-        const areStacksEmpty = this.stacks.every((s) => s.contents.length === 0)
-        const areMoveCostsDefault = this.stacks.every((s) => s.move_cost === 1)
-
         return (
-            this.fireCells.length === 0 &&
-            this.killerCells.length === 0 &&
-            this.chargingCells.length === 0 &&
+            Object.values(this.cellTypes).every((type) => type.cells.length === 0) &&
             this.spawnCells.size === 0 &&
-            areStacksEmpty &&
-            areMoveCostsDefault
+            this.stacks.every((stack) => stack.contents.length === 0 && stack.move_cost === 1)
         )
     }
 
@@ -130,79 +111,101 @@ export class WorldMap {
         return { width: this.width, height: this.height }
     }
 
-    draw(ctx: CanvasRenderingContext2D) {
+    updateMinMaxMoveCosts(): void {
+        const moveCosts = this.stacks.map((stack) => stack.move_cost)
+        this.minMoveCost = Math.min(...moveCosts)
+        this.maxMoveCost = Math.max(...moveCosts)
+    }
+
+    draw(ctx: CanvasRenderingContext2D): void {
         const thickness = 0.04
         ctx.strokeStyle = 'black'
         ctx.lineWidth = thickness
 
-        // fill entire canvas with dark grey
         ctx.fillStyle = '#000000'
         ctx.fillRect(0, 0, this.width, this.height)
 
         this.drawCells(ctx, thickness)
     }
 
-    private drawCells(ctx: CanvasRenderingContext2D, thickness: number) {
-        const moveCosts = this.stacks.map((cell) => cell.move_cost)
-        const maxMoveCost = Math.max(...moveCosts)
-        const minMoveCost = Math.min(...moveCosts)
+    private drawCells(ctx: CanvasRenderingContext2D, thickness: number): void {
+        this.drawTerrain(ctx, thickness)
+        this.drawSpecialCells(ctx, thickness)
+        this.drawSpawnZones(ctx)
+    }
 
+    private drawTerrain(ctx: CanvasRenderingContext2D, thickness: number): void {
         for (let x = 0; x < this.width; x++) {
             for (let y = 0; y < this.height; y++) {
                 const cell = this.stacks.find((cell) => cell.cell_loc.x === x && cell.cell_loc.y === y)
                 if (!cell) continue
 
-                const whichOpacity = whatBucket(minMoveCost, maxMoveCost, cell.move_cost, shadesOfBrown.length)
-                const cellFillStyle = `rgb(${shadesOfBrown[whichOpacity][0]}, ${shadesOfBrown[whichOpacity][1]}, ${shadesOfBrown[whichOpacity][2]})`
+                const opacity = whatBucket(this.minMoveCost, this.maxMoveCost, cell.move_cost, shadesOfBrown.length)
+
+                const [r, g, b] = shadesOfBrown[opacity]
+                ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
 
                 const coords = renderCoords(x, y, this.size)
-                ctx.fillStyle = cellFillStyle
                 ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
             }
         }
+    }
 
+    private drawSpecialCells(ctx: CanvasRenderingContext2D, thickness: number): void {
         for (const loc of this.chargingCells) {
             const cell = this.stacks.find((cell) => cell.cell_loc.x === loc.x && cell.cell_loc.y === loc.y)
             if (!cell) continue
 
-            const whichOpacity = whatBucket(minMoveCost, maxMoveCost, cell.move_cost, shadesOfBlue.length)
-            const cellFillStyle = `rgb(${shadesOfBlue[whichOpacity][0]}, ${shadesOfBlue[whichOpacity][1]}, ${shadesOfBlue[whichOpacity][2]})`
+            const opacity = whatBucket(this.minMoveCost, this.maxMoveCost, cell.move_cost, shadesOfBlue.length)
+
+            const [r, g, b] = shadesOfBlue[opacity]
+            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
 
             const coords = renderCoords(loc.x, loc.y, this.size)
-            ctx.fillStyle = cellFillStyle
             ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
         }
 
-        for (const loc of this.fireCells) {
-            const coords = renderCoords(loc.x, loc.y, this.size)
-            ctx.fillStyle = '#ff9900'
-            ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
-        }
+        for (const [type, { color, cells }] of Object.entries(this.cellTypes)) {
+            if (type === 'charging') continue
 
-        for (const loc of this.killerCells) {
-            const coords = renderCoords(loc.x, loc.y, this.size)
-            ctx.fillStyle = '#cc0000'
-            ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
+            ctx.fillStyle = color
+            for (const loc of cells) {
+                const coords = renderCoords(loc.x, loc.y, this.size)
+                ctx.fillRect(coords.x + thickness / 2, coords.y + thickness / 2, 1 - thickness, 1 - thickness)
+            }
         }
+    }
 
-        for (const [spawn, _] of this.spawnCells) {
-            const { x, y } = JSON.parse(spawn)
+    private drawSpawnZones(ctx: CanvasRenderingContext2D): void {
+        for (const [spawnPoint] of this.spawnCells) {
+            const { x, y } = JSON.parse(spawnPoint)
             const coords = renderCoords(x, y, this.size)
-            const x1 = coords.x
-            const y1 = coords.y
-            const x2 = coords.x + 1 - thickness
-            const y2 = coords.y + 1 - thickness
+
+            ctx.save()
 
             ctx.beginPath()
-            ctx.strokeStyle = '#000000'
-            ctx.moveTo(x1, y1)
-            ctx.lineTo(x2, y2)
-            ctx.stroke()
+            ctx.rect(coords.x, coords.y, 1, 1)
+            ctx.clip()
 
-            ctx.beginPath()
-            ctx.moveTo(x1, y2)
-            ctx.lineTo(x2, y1)
-            ctx.stroke()
+            const stripeWidth = 0.125
+            const numStripes = 8
+
+            for (let i = -numStripes; i < numStripes * 2; i++) {
+                ctx.beginPath()
+                ctx.fillStyle = i % 2 === 0 ? '#ffff00' : '#000000'
+
+                const startPointX = coords.x + i * stripeWidth
+                const endPointX = startPointX + stripeWidth
+
+                ctx.beginPath()
+                ctx.moveTo(startPointX, coords.y)
+                ctx.lineTo(endPointX, coords.y)
+                ctx.lineTo(endPointX - 1, coords.y + 1)
+                ctx.lineTo(startPointX - 1, coords.y + 1)
+                ctx.closePath()
+                ctx.fill()
+            }
+            ctx.restore()
         }
     }
 }

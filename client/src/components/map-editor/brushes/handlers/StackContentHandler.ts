@@ -1,5 +1,6 @@
 import { Location, RubbleInfo, Stack, StackContentBrushTypes, SurvivorInfo } from '@/utils/types'
 import BrushHandler from './BrushHandler'
+import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 class StackContentHandler extends BrushHandler {
     constructor(
@@ -30,6 +31,13 @@ class StackContentHandler extends BrushHandler {
         const key = JSON.stringify(stack.cell_loc)
 
         if (spawnCells.get(key)) return
+        if (getCurrentAssignment() === ASSIGNMENT_A1) {
+            const hasSurvivorOnMap = this.worldMap.stacks.some((stack) =>
+                stack.contents.some((content) => content.type.toLowerCase() === 'sv')
+            )
+
+            if (hasSurvivorOnMap) return
+        }
 
         const content = {
             [StackContentBrushTypes.Rubble]: {

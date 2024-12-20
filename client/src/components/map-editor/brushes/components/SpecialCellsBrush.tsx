@@ -2,7 +2,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
-import { formatDisplayText } from '@/utils/util'
+import { ASSIGNMENT_A1, formatDisplayText, getCurrentAssignment } from '@/utils/util'
 import { Flame, PlusCircle, Zap, Users, User, Tag, Skull } from 'lucide-react'
 
 interface Props {
@@ -60,15 +60,19 @@ function SpecialCellsBrush({
                             <SelectValue placeholder="Select Spawn Type" />
                         </SelectTrigger>
                         <SelectContent>
-                            {Object.values(SpawnZoneTypes).map((type) => (
-                                <SelectItem key={type} value={type}>
-                                    <div className="flex items-center space-x-2">
-                                        {type === SpawnZoneTypes.Any && <Users className="w-4 h-4" />}
-                                        {type === SpawnZoneTypes.Group && <User className="w-4 h-4" />}
-                                        <span>{type === SpawnZoneTypes.Group ? 'Single' : 'Any'}</span>
-                                    </div>
-                                </SelectItem>
-                            ))}
+                            {Object.values(SpawnZoneTypes)
+                                .filter((type) =>
+                                    getCurrentAssignment() === ASSIGNMENT_A1 ? type === SpawnZoneTypes.Any : true
+                                )
+                                .map((type) => (
+                                    <SelectItem key={type} value={type}>
+                                        <div className="flex items-center space-x-2">
+                                            {type === SpawnZoneTypes.Any && <Users className="w-4 h-4" />}
+                                            {type === SpawnZoneTypes.Group && <User className="w-4 h-4" />}
+                                            <span>{type === SpawnZoneTypes.Group ? 'Single' : 'Any'}</span>
+                                        </div>
+                                    </SelectItem>
+                                ))}
                         </SelectContent>
                     </Select>
                     {spawnZoneType === SpawnZoneTypes.Group && (

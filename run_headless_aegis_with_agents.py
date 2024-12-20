@@ -190,8 +190,8 @@ def main():
     _ = parser.add_argument(
         "--agent-amount",
         type=int,
-        required=True,
-        help="Number of agent instances to run",
+        default=1,
+        help="Number of agent instances to run (default: 1)",
     )
     _ = parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose logging"

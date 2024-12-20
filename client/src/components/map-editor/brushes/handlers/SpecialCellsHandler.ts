@@ -1,5 +1,6 @@
 import { Location, SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
 import BrushHandler from './BrushHandler'
+import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 class SpecialCellsHandler extends BrushHandler {
     constructor(
@@ -71,6 +72,7 @@ class SpecialCellsHandler extends BrushHandler {
 
     private handleSpawnCells(tile: Location): void {
         const { spawnCells } = this.worldMap
+        if (getCurrentAssignment() === ASSIGNMENT_A1 && spawnCells.size === 1) return
         const key = JSON.stringify(tile)
         const spawn = spawnCells.get(key)
         const existingGids = spawn?.groups || []

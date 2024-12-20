@@ -1,6 +1,6 @@
 import sys
 
-from agent.base_agent import BaseAgent
+from a3.agent.base_agent import BaseAgent
 from agents.coolest_agent_2.coolest_agent_2 import CoolestAgent2
 
 

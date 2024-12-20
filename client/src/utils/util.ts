@@ -61,3 +61,12 @@ export function formatDisplayText(text: string): string {
     const formattedWords = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     return formattedWords.join(' ')
 }
+
+// Assignment stuff
+export const ASSIGNMENT_A1 = 'a1'
+export const ASSIGNMENT_A3 = 'a3'
+
+export const getCurrentAssignment = (): string => {
+    // @ts-ignore: module
+    return import.meta.env.VITE_CURRENT_ASSIGNMENT || ASSIGNMENT_A3 // Default to 'a3' if not set
+}

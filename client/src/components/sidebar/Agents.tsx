@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 interface Props {
     aegisPath: string
@@ -30,11 +31,12 @@ function Agents({ aegisPath, agents, agent, setAgent, groupName, setGroupName }:
             throw new Error("Can't find AEGIS path!")
         }
 
-        // Update max and reset input
-        // setMaxAgents((prev) => Math.max(0, prev - numAgents))
-        // setNumAgents(0)
-
-        await aegisAPI.agent_child_process.spawn(aegisPath, groupName.toString(), '7', agent)
+        await aegisAPI.agent_child_process.spawn(
+            aegisPath,
+            groupName.toString(),
+            getCurrentAssignment() === ASSIGNMENT_A1 ? '1' : '7',
+            agent
+        )
     }
 
     return (

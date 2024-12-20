@@ -81,6 +81,10 @@ class Agent:
         else:
             self._energy_level = 0
 
+    def add_step_taken(self) -> None:
+        """Increments the number of steps taken by the agent."""
+        self.steps_taken += 1
+
     @override
     def __str__(self) -> str:
         return str(self.agent_id)

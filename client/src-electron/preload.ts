@@ -13,6 +13,7 @@ const invoke = (command: string, ...args: any[]) => {
 
 const electronAPI = {
     openAegisDirectory: () => invoke('openAegisDirectory'),
+    toggleMoveCost: (...args: any[]) => invoke('toggleMoveCost', ...args),
     getAppPath: (...args: any[]) => invoke('getAppPath', ...args),
     exportWorld: (...args: any[]) => invoke('exportWorld', ...args),
     path: {
