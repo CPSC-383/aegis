@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useAppContext } from '@/context'
 import { EventType, listenEvent } from '@/events'
-import { AgentInfoDict, CellDict, SpawnZoneTypes, StackContent } from '@/utils/types'
 import AgentPanel from './Agent-panel'
 import CellPanel from './Cell-panel'
+import { AgentInfoDict, CellDict } from '@/core/simulation'
+import { SpawnZoneTypes, StackContent } from '@/core/world'
 
 function InfoPanel() {
     const { appState } = useAppContext()

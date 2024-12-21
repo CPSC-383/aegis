@@ -1,14 +1,6 @@
 import { useAppContext } from '@/context'
 import { EventType, listenEvent, dispatchEvent } from '@/events'
-import {
-    BrushType,
-    Location,
-    RubbleInfo,
-    SpecialCellBrushTypes,
-    StackContentBrushTypes,
-    SurvivorInfo,
-    SpawnZoneTypes
-} from '@/utils/types'
+import { BrushType, SpecialCellBrushTypes, StackContentBrushTypes } from '@/utils/types'
 import { useCallback, useState } from 'react'
 import SpecialCellsBrush from './brushes/components/SpecialCellsBrush'
 import MoveCostBrush from './brushes/components/MoveCostBrush'
@@ -20,6 +12,7 @@ import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatDisplayText } from '@/utils/util'
+import { RubbleInfo, SpawnZoneTypes, SurvivorInfo, Location } from '@/core/world'
 
 function MapBrushes() {
     const { appState } = useAppContext()

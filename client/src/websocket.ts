@@ -1,6 +1,6 @@
-import { Simulation } from './simulation/simulation'
+import { Simulation } from '@/core/simulation'
+import { WorldMap } from '@/core/world'
 import pako from 'pako'
-import { WorldMap } from './simulation/world-map'
 
 export class ClientWebSocket {
     private url: string = 'ws://localhost:6003'

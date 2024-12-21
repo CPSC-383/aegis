@@ -1,7 +1,8 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
+import { SpawnZoneTypes } from '@/core/world'
+import { SpecialCellBrushTypes } from '@/utils/types'
 import { ASSIGNMENT_A1, formatDisplayText, getCurrentAssignment } from '@/utils/util'
 import { Flame, PlusCircle, Zap, Users, User, Tag, Skull } from 'lucide-react'
 

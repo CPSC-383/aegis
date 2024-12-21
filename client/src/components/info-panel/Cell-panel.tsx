@@ -1,6 +1,5 @@
-import { Simulation } from '@/simulation/simulation'
+import { Simulation, AgentInfoDict, CellDict } from '@/core/simulation'
 import { drawAgent } from '@/utils/renderUtils'
-import { AgentInfoDict, CellDict } from '@/utils/types'
 import { useCallback, useEffect, useRef } from 'react'
 import { Badge } from '@/components/ui/badge'
 

@@ -1,14 +1,7 @@
-import { Location, Stack, Size, Spawn, SpawnZoneTypes } from '@/utils/types'
+import { Location, Stack, Size, Spawn, SpawnZoneTypes, CellTypeMap } from '@/core/world'
 import { whatBucket } from '@/utils/util'
 import { shadesOfBrown, shadesOfBlue } from '@/utils/types'
 import { renderCoords } from '@/utils/renderUtils'
-
-interface CellTypeMap {
-    [key: string]: {
-        color: string
-        cells: Location[]
-    }
-}
 
 export class WorldMap {
     private readonly cellTypes: CellTypeMap

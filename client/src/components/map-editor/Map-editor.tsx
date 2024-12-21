@@ -3,8 +3,8 @@ import { motion } from 'framer-motion'
 import { Grid3x3, Zap, Download, Upload, AlertCircle } from 'lucide-react'
 
 import { useAppContext } from '@/context'
-import { Simulation } from '@/simulation/simulation'
-import { WorldMap } from '@/simulation/world-map'
+import { Simulation } from '@/core/simulation'
+import { WorldMap } from '@/core/world'
 import { WorldParams } from '@/utils/types'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

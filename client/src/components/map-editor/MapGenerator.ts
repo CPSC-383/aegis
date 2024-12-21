@@ -1,7 +1,6 @@
 import { aegisAPI } from '@/aegis-api'
-import { Simulation } from '@/simulation/simulation'
-import { WorldMap } from '@/simulation/world-map'
-import { SpawnZoneTypes, Location, Stack, Spawn } from '@/utils/types'
+import { Simulation } from '@/core/simulation'
+import { Spawn, SpawnZoneTypes, Stack, WorldMap, Location } from '@/core/world'
 
 interface WorldFileData {
     settings: {

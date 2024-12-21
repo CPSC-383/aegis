@@ -2,7 +2,7 @@ import { aegisAPI } from '@/aegis-api'
 import { useEffect, useRef, useState } from 'react'
 import { ClientWebSocket } from './websocket'
 import { useAppContext } from './context'
-import { Simulation } from './simulation/simulation'
+import { Simulation } from '@/core/simulation'
 import { useForceUpdate } from './utils/util'
 import { ConsoleLine } from './utils/types'
 
