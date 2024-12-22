@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Maximize2 } from 'lucide-react'
-import { ConsoleLine } from '@/utils/types'
+import { ConsoleLine } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 

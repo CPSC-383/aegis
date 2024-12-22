@@ -5,7 +5,7 @@ import { Grid3x3, Zap, Download, Upload, AlertCircle } from 'lucide-react'
 import { useAppContext } from '@/context'
 import { Simulation } from '@/core/simulation'
 import { WorldMap } from '@/core/world'
-import { WorldParams } from '@/utils/types'
+import { WorldParams } from '@/types'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'

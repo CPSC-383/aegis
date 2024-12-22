@@ -1,10 +1,10 @@
 import { aegisAPI } from '@/aegis-api'
 import { useEffect, useRef, useState } from 'react'
-import { ClientWebSocket } from './websocket'
-import { useAppContext } from './context'
+import { ClientWebSocket } from '@/websocket'
+import { useAppContext } from '@/context'
 import { Simulation } from '@/core/simulation'
-import { useForceUpdate } from './utils/util'
-import { ConsoleLine } from './utils/types'
+import { useForceUpdate } from '@/utils/util'
+import { ConsoleLine } from '@/types'
 
 export type Scaffold = {
     aegisPath: string | undefined

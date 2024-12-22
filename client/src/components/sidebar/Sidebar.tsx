@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { useAppContext } from '@/context'
-import { TabNames } from '@/utils/types'
+import { TabNames } from '@/types'
 import { ChevronRight } from 'lucide-react'
 
 import Aegis from './Aegis'

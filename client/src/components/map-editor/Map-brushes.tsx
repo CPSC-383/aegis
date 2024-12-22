@@ -1,6 +1,6 @@
 import { useAppContext } from '@/context'
 import { EventType, listenEvent, dispatchEvent } from '@/events'
-import { BrushType, SpecialCellBrushTypes, StackContentBrushTypes } from '@/utils/types'
+import { BrushType, SpecialCellBrushTypes, StackContentBrushTypes } from '@/types'
 import { useCallback, useState } from 'react'
 import SpecialCellsBrush from './brushes/components/SpecialCellsBrush'
 import MoveCostBrush from './brushes/components/MoveCostBrush'

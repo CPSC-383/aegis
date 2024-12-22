@@ -10,7 +10,6 @@ import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 interface Props {
     aegisPath: string
-    numAgentsAegis: number
     agents: string[]
     agent: string
     setAgent: (value: string) => void

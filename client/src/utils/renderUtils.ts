@@ -1,4 +1,4 @@
-import { Size } from './types'
+import { Size } from '@/core/world'
 import { getImage } from './util'
 import goobSpriteSheetSrc from '@/assets/goobs/goob-sprite-Sheet.png'
 

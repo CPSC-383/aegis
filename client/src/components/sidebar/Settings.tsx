@@ -6,7 +6,7 @@ import { Scaffold } from '@/scaffold'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-import { Config } from '@/utils/types'
+import { Config } from '@/types'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 type Props = {

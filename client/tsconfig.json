@@ -9,6 +9,8 @@
     "baseUrl": ".",
     "paths": {
         "@/*": ["./src/*"],
+        // https://github.com/rollup/rollup/issues/5199
+        "rollup/parseAst": ["./node_modules/rollup/dist/parseAst"]
     }
   },
   "exclude": [
