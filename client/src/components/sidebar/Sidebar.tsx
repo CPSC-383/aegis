@@ -13,7 +13,7 @@ import InfoPanel from '../info-panel/Info-panel'
 import MapEditor from '../map-editor/Map-editor'
 import Game from './Game'
 import Settings from './Settings'
-import createScaffold from '@/scaffold'
+import { createScaffold } from '@/services'
 
 function Sidebar() {
     const scaffold = createScaffold()

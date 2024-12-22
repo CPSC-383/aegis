@@ -1,4 +1,4 @@
-import { aegisAPI } from '@/aegis-api'
+import { aegisAPI } from '@/services'
 import { Simulation } from '@/core/simulation'
 import { Spawn, SpawnZoneTypes, Stack, WorldMap, Location } from '@/core/world'
 
