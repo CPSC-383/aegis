@@ -1,4 +1,4 @@
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { EventType, listenEvent } from '@/events'
 import { ASSIGNMENT_A3, getCurrentAssignment, useForceUpdate } from '@/utils/util'
 import { motion } from 'framer-motion'

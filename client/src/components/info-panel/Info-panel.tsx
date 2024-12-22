@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { EventType, listenEvent } from '@/events'
 import AgentPanel from './Agent-panel'
 import CellPanel from './Cell-panel'

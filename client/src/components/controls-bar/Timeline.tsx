@@ -1,5 +1,5 @@
 import { MouseEvent } from 'react'
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Progress } from '@/components/ui/progress'
 

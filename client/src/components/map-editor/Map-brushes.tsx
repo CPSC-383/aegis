@@ -1,4 +1,4 @@
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { EventType, listenEvent, dispatchEvent } from '@/events'
 import { BrushType, SpecialCellBrushTypes, StackContentBrushTypes } from '@/types'
 import { useCallback, useState } from 'react'

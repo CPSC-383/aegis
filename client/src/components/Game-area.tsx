@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { EventType, dispatchEvent, listenEvent } from '@/events'
 import { getImage, whatBucket } from '@/utils/util'
 import { shadesOfBrown } from '@/types'

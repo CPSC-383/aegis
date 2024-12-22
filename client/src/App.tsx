@@ -1,5 +1,5 @@
-import { AppContextProvider } from './context'
-import MainPage from './main-page'
+import { AppContextProvider } from '@/contexts/AppContext'
+import MainPage from '@/main-page'
 
 function App() {
     return (

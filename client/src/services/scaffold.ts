@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ClientWebSocket, aegisAPI } from '@/services'
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { Simulation } from '@/core/simulation'
 import { useForceUpdate } from '@/utils/util'
 import { ConsoleLine } from '@/types'

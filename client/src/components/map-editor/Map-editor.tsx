@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Grid3x3, Zap, Download, Upload, AlertCircle } from 'lucide-react'
 
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { Simulation } from '@/core/simulation'
 import { WorldMap } from '@/core/world'
 import { WorldParams } from '@/types'
