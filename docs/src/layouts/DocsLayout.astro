@@ -4,6 +4,7 @@ import type { MarkdownHeading } from "astro";
 import MainLayout from "./MainLayout.astro";
 import TableOfContent from "@/components/TableOfContent";
 import TopOverlay from "@/components/TopOverlay";
+import ScrollProgress from "@/components/ui/scroll-progress";
 
 interface Props extends InferEntrySchema<"docs"> {
   headings: MarkdownHeading[];
@@ -13,6 +14,7 @@ const { title, description, headings } = Astro.props;
 ---
 
 <MainLayout>
+  <ScrollProgress client:only="react" />
   <TopOverlay />
   <div class="max-w-[872px]">
     <section class="mt-16 sm:mt-24 sm:font-light lg:mt-32">
