@@ -6,24 +6,36 @@ interface Props {
   className?: string;
 }
 
+const paddingMap: Record<number, string> = {
+  1: "",
+  2: "",
+  3: "pl-4",
+  4: "pl-8",
+};
+
 export default function TableOfContent({ headings, className }: Props) {
   return (
     <div className={cn("font-secondary", className)}>
       <p className="mb-4 text-lg font-semibold text-zinc-300">On This Page</p>
-      <ul className="text-sm space-y-2.5">
-        {headings.map((heading) => (
-          <li
-            key={heading.slug}
-            className={`text-zinc-600 ${heading.depth === 3 ? "pl-4" : ""}`}
-          >
-            <a
-              href={`#${heading.slug}`}
-              className="hover:text-zinc-400 transition-colors"
+      <ul className="text-sm space-y-1.5">
+        {headings.map((heading) => {
+          const cleanText = heading.text.split("(")[0].trim();
+          if (cleanText.toLowerCase() === "example") return null;
+
+          return (
+            <li
+              key={heading.slug}
+              className={`text-zinc-600 ${paddingMap[heading.depth] || ""}`}
             >
-              {heading.text}
-            </a>
-          </li>
-        ))}
+              <a
+                href={`#${heading.slug}`}
+                className="hover:text-zinc-400 transition-colors"
+              >
+                {cleanText}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

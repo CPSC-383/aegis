@@ -1,0 +1,28 @@
+---
+title: "Move"
+description: "Represents a command for an agent to move in a specified direction."
+---
+
+import Attribute from '@/components/Attribute';
+
+## Overview
+
+The `MOVE` command allows an agent to change its position by specifying a direction.
+This action is essential for navigating through the world. By sending this command,
+the agent updates its coordinates and updates information about the world.
+
+## Params
+
+<Attribute
+  name="direction"
+  type="Direction"
+  description="The direction to move."
+  required
+/>
+
+#### Example
+
+```py
+# Moving east 
+self._agent.send(MOVE(Direction.EAST))
+```

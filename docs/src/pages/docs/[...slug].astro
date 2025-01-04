@@ -9,6 +9,7 @@ interface Props {
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
+
   return docs.map((doc) => ({
     params: { slug: doc.slug },
     props: { doc },
@@ -17,8 +18,25 @@ export async function getStaticPaths() {
 
 const { doc } = Astro.props;
 const { Content, headings } = await doc.render();
+
+const docs = await getCollection("docs");
+
+const groupedDocs = docs.reduce(
+  (acc, doc) => {
+    const section = doc.slug.split("/")[0];
+
+    if (!acc[section]) {
+      acc[section] = [];
+    }
+
+    acc[section].push(doc);
+
+    return acc;
+  },
+  {} as Record<string, CollectionEntry<"docs">[]>,
+);
 ---
 
-<DocsLayout headings={headings} {...doc.data}>
+<DocsLayout headings={headings} groupedDocs={groupedDocs} {...doc.data}>
   <Content />
 </DocsLayout>

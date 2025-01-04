@@ -1,0 +1,124 @@
+---
+title: "Location" 
+description: "A comprehensive coordinate management system."
+---
+
+import Attribute from '@/components/Attribute';
+import Method from '@/components/Method'
+
+## Overview
+
+The Location class provides a robust interface for managing two-dimensional
+coordinates.
+
+## Attributes
+
+<Attribute
+  name="x"
+  type="int"
+  description="Horizontal coordinate representing the x-axis position."
+/>
+<Attribute
+  name="y"
+  type="int"
+  description="Vertical coordinate representing the y-axis position."
+/>
+
+## Methods
+
+### <div className="font-medium font-mono">add(direction: Direction)</div>
+
+<Method
+  description="Adds the given direction to the current location."
+  parameters={[
+    {
+      name: "direction",
+      type: "Direction",
+      link: "/docs/common/direction",
+      description: "The direction to add to the current location.",
+      required: true,
+    },
+  ]}
+  returns={{
+    type: "Location",
+    description:
+      "A new Location object one unit away in the given direction.",
+  }}
+/>
+
+#### Example
+
+```py
+loc = create_location(3, 2)
+north_location = loc.add(Direction.NORTH)
+# Returns location at (3, 3)
+```
+
+### <div className="font-medium font-mono">direction_to(location: Location)</div>
+
+<Method
+  description="Calculate the cardinal direction between the current location and a target location."
+  parameters={[
+    {
+      name: "location",
+      type: "Location",
+      description: "The target location.",
+      required: true,
+    },
+  ]}
+  returns={{
+    type: "Direction",
+    link: "/docs/common/direction",
+    description:
+      "A Direction enum value representing the cardinal direction between locations.",
+  }}
+/>
+
+#### Example
+
+```py
+start = create_location(0, 0)
+goal = create_location(0, 5)
+dir = start.direction_to(goal) 
+# Returns Direction.NORTH
+```
+
+## Factory Functions
+
+### <div className="font-medium font-mono">create_location(x: int, y: int)</div>
+
+<Method
+  description="Create a new Location object at the specified coordinates."
+  parameters={[
+    {
+      name: "x",
+      type: "int",
+      description: "The x-coordinate of the location.",
+      required: true,
+    },
+    {
+      name: "y",
+      type: "int",
+      description: "The y-coordinate of the location.",
+      required: true,
+    },
+  ]}
+  returns={{
+    type: "Location",
+    description: "A new Location object at the specified coordinates.",
+  }}
+/>
+
+#### Example
+
+```py
+loc = create_location(5, 4)
+# Returns a Location object with the coordinates (5, 4)
+```
+
+## Additional Notes
+
+The `Location` class is designed to support comparison operations. Locations can be
+compared using standard operators such as `==`, `!=`, `<`, `>`, `<=`, and `>=`.
+This allows for easy sorting and comparison of locations. For example, locations can
+be stored in sorted containers like lists, sets, and heaps.

@@ -8,7 +8,6 @@ interface Parameter {
 }
 
 interface Props {
-  name: string;
   description: string;
   parameters?: Parameter[];
   returns?: {
@@ -18,14 +17,12 @@ interface Props {
 }
 
 export default function Method({
-  name,
   description,
   parameters = [],
   returns,
 }: Props) {
   return (
-    <div className="my-6">
-      <h3 className="font-semibold">{name}</h3>
+    <div className="mb-6 -mt-4">
       <p className="text-white mb-6">{description}</p>
 
       {parameters.length > 0 && (

@@ -1,50 +1,64 @@
 ---
-import type { InferEntrySchema } from "astro:content";
+import type { CollectionEntry, InferEntrySchema } from "astro:content";
 import type { MarkdownHeading } from "astro";
 import MainLayout from "./MainLayout.astro";
 import TableOfContent from "@/components/TableOfContent";
 import TopOverlay from "@/components/TopOverlay";
 import ScrollProgress from "@/components/ui/scroll-progress";
+import Sidebar from "@/components/Sidebar.astro";
 
 interface Props extends InferEntrySchema<"docs"> {
   headings: MarkdownHeading[];
+  groupedDocs: Record<string, CollectionEntry<"docs">[]>;
 }
 
-const { title, description, headings } = Astro.props;
+const { title, description, headings, groupedDocs } = Astro.props;
 ---
 
 <MainLayout>
   <ScrollProgress client:only="react" />
   <TopOverlay />
-  <div class="max-w-[872px]">
-    <section class="mt-16 sm:mt-24 sm:font-light lg:mt-32">
-      <h1 class="text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
-        {title}
-      </h1>
-      <h3 class="mt-2 text-zinc-400 max-sm:text-sm">
-        {description}
-      </h3>
-    </section>
-    <section class="flex mt-8 gap-16">
-      <article
-        id="article"
-        class:list={[
-          "prose prose-invert max-w-none max-sm:prose-sm",
-          "prose-headings:font-display prose-headings:scroll-m-16 sm:prose-headings:scroll-m-24",
-        ]}
+
+  <div class="max-w-[1200px] flex my-16 overflow-hidden">
+    <Sidebar groupedDocs={groupedDocs} />
+
+    <section class="flex-1 overflow-auto">
+      <div class="mt-8 sm:mt-12 sm:font-light">
+        <h1 class="text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
+          {title}
+        </h1>
+        <h3 class="mt-2 text-zinc-400 max-sm:text-sm">
+          {description}
+        </h3>
+      </div>
+
+      <div
+        class="mt-8 h-[2px] w-full bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900"
       >
-        <slot />
-      </article>
-      <aside class="w-60 shrink-0 max-lg:hidden">
-        <TableOfContent headings={headings} className="sticky top-32" />
-      </aside>
+      </div>
+
+      <section class="flex mt-8 gap-16">
+        <article
+          id="article"
+          class:list={[
+            "prose prose-invert max-w-none max-sm:prose-sm",
+            "prose-headings:scroll-m-16 sm:prose-headings:scroll-m-24",
+            "prose-code:before:hidden prose-code:after:hidden",
+          ]}
+        >
+          <slot />
+        </article>
+
+        <aside class="w-60 shrink-0 max-lg:hidden">
+          <TableOfContent headings={headings} className="sticky top-24" />
+        </aside>
+      </section>
     </section>
   </div>
 </MainLayout>
 
 <script>
   const handleHeadingIntersection = () => {
-    console.log("in handle heading");
     const observerOptions: IntersectionObserverInit = {
       root: null,
       rootMargin: "0px 0px -85% 0px",
@@ -64,7 +78,6 @@ const { title, description, headings } = Astro.props;
           .forEach((item) => item.classList.remove(textStyle));
 
         link?.classList.add(textStyle);
-        console.log(link);
       });
     }, observerOptions);
 

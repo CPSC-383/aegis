@@ -6,6 +6,7 @@ interface Props {
   type: string;
   description: string;
   defaultValue?: string | number;
+  required?: boolean;
   children?: ReactNode;
 }
 
@@ -14,15 +15,21 @@ export default function Attribute({
   type,
   description,
   defaultValue,
+  required,
   children,
 }: Props) {
   return (
-    <div className="">
+    <div className="flex flex-col justify-start">
       <div className="flex items-center space-x-2">
-        <h3 className="font-semibold text-white">{name}</h3>
-        <Badge variant="secondary" className="font-mono mt-5">
+        <h3 className="font-semibold text-white my-0">{name}</h3>
+        <Badge variant="secondary" className="font-mono">
           {type}
         </Badge>
+        {required && (
+          <Badge variant="destructive" className="text-xs">
+            required
+          </Badge>
+        )}
       </div>
       <p className="text-sm text-muted-foreground mt-1.5">{description}</p>
       {defaultValue !== undefined && (

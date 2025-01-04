@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  groupedDocs: Record<string, CollectionEntry<"docs">[]>;
+}
+
+const { groupedDocs } = Astro.props;
+
+const capitalizeSection = (section: string) => {
+  return section
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
+const currentUrl = Astro.url.pathname;
+---
+
+<div class="w-64 p-4 overflow-y-auto sticky top-24">
+  {
+    Object.keys(groupedDocs).map((section) => (
+      <div class="mt-8">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold text-zinc-200 pl-4 mb-3 text-xl">
+            {capitalizeSection(section)}
+          </span>
+        </div>
+
+        {groupedDocs[section] && (
+          <div>
+            {groupedDocs[section].map((doc) => (
+              <a
+                href={`/docs/${doc.slug}`}
+                class={`block py-2 rounded-md pl-4
+                ${
+                  currentUrl === `/docs/${doc.slug}`
+                    ? "font-semibold"
+                    : "text-zinc-400 hover:bg-zinc-200/5 dark:hover:text-zinc-300"
+                }
+              `}
+              >
+                {doc.data.title}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    ))
+  }
+</div>

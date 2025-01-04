@@ -1,0 +1,16 @@
+---
+title: "End Turn"
+description: "Represents a command that allows an agent to tell the server it is done with its turn."
+---
+
+## Overview
+
+The `END_TURN` command signifies that an agent has finished its actions for the current
+round. By sending this command, the agent informs the server that it is no longer active
+in the current round, allowing simulation to progress to the next turn.
+
+#### Example
+
+```py
+self._agent.send(END_TURN())
+```
