@@ -3,8 +3,6 @@ import type { CollectionEntry, InferEntrySchema } from "astro:content";
 import type { MarkdownHeading } from "astro";
 import MainLayout from "./MainLayout.astro";
 import TableOfContent from "@/components/TableOfContent";
-import TopOverlay from "@/components/TopOverlay";
-import ScrollProgress from "@/components/ui/scroll-progress";
 import Sidebar from "@/components/Sidebar.astro";
 
 interface Props extends InferEntrySchema<"docs"> {
@@ -16,9 +14,6 @@ const { title, description, headings, groupedDocs } = Astro.props;
 ---
 
 <MainLayout>
-  <ScrollProgress client:only="react" />
-  <TopOverlay />
-
   <div class="max-w-[1200px] flex my-16 overflow-hidden">
     <Sidebar groupedDocs={groupedDocs} />
 

@@ -22,8 +22,10 @@ const currentUrl = Astro.url.pathname;
     Object.keys(groupedDocs).map((section) => (
       <div class="mt-8">
         <div class="flex justify-between items-center">
-          <span class="font-semibold text-zinc-200 pl-4 mb-3 text-xl">
+          <span class="font-semibold text-zinc-200 pl-4 mb-3 text-lg">
+            <span class="text-red-500 mr-1">[</span>
             {capitalizeSection(section)}
+            <span class="text-red-500 ml-1">]</span>
           </span>
         </div>
 

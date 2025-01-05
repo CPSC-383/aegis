@@ -16,7 +16,11 @@ const paddingMap: Record<number, string> = {
 export default function TableOfContent({ headings, className }: Props) {
   return (
     <div className={cn("font-secondary", className)}>
-      <p className="mb-4 text-lg font-semibold text-zinc-300">On This Page</p>
+      <p className="mb-4 text-lg font-semibold text-zinc-300 flex items-center">
+        <span className="text-red-500 mr-2">[</span>
+        On This Page
+        <span className="text-red-500 ml-2">]</span>
+      </p>
       <ul className="text-sm space-y-1.5">
         {headings.map((heading) => {
           const cleanText = heading.text.split("(")[0].trim();

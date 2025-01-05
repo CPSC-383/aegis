@@ -1,12 +1,11 @@
 ---
-import "@/styles/globals.css";
+import CommonHead from "@/components/CommonHead.astro";
 ---
 
 <!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <CommonHead />
   </head>
   <body
     class="flex h-screen min-w-screen flex-col items-center bg-zinc-950 text-white"
@@ -14,3 +13,26 @@ import "@/styles/globals.css";
     <slot />
   </body>
 </html>
+
+<script>
+  const scrollOptions: ScrollIntoViewOptions = {
+    behavior: "smooth",
+    block: "start",
+  };
+
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const currentTarget = event.currentTarget as HTMLAnchorElement;
+      const targetId = currentTarget.getAttribute("href")?.substring(1);
+
+      if (!targetId) return;
+
+      const targetElement = document.getElementById(targetId);
+      const block = currentTarget.dataset["block"] as ScrollLogicalPosition;
+      targetElement?.scrollIntoView({ ...scrollOptions, block });
+      history.pushState(null, "", `#${targetId}`);
+    });
+  });
+</script>
