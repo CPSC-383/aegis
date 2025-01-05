@@ -24,7 +24,6 @@ export default function TableOfContent({ headings, className }: Props) {
       <ul className="text-sm space-y-1.5">
         {headings.map((heading) => {
           const cleanText = heading.text.split("(")[0].trim();
-          if (cleanText.toLowerCase() === "example") return null;
 
           return (
             <li

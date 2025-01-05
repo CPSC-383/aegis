@@ -26,7 +26,7 @@ out specific tasks, such as rescuing survivors and navigating the environment.
   }}
 />
 
-#### Example
+**Example:**
 
 ```py
 energy = self._agent.get_energy_level()
@@ -45,7 +45,7 @@ print(energy)
   }}
 />
 
-#### Example
+**Example:**
 
 ```py
 loc = self._agent.get_location()
@@ -63,7 +63,7 @@ print(loc)
   }}
 />
 
-#### Example
+**Example:**
 
 ```py
 round = self._agent.get_round_number()
@@ -86,7 +86,7 @@ print(round)
   ]}
 />
 
-#### Example
+**Example:**
 
 ```py
 # Sending a command to save a survivor
@@ -107,10 +107,10 @@ self._agent.send(SAVE_SURV())
   ]}
 />
 
-#### Example
+**Example:**
 
 ```py
-# Example usage: Logging a message on round 4 for agent 1 in group 1
+# Logging a message on round 4 for agent 1 in group 1
 self._agent.log(f"My location is {self._agent.get_location()}")
 # Output: [Agent#(1:1)]@4: My location is (17, 15)
 ```
