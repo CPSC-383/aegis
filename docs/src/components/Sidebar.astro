@@ -2,10 +2,11 @@
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
-  groupedDocs: Record<string, CollectionEntry<"docs">[]>;
+  groupedDocs: Record<string, CollectionEntry<"docs" | "getting-started">[]>;
+  collection: string;
 }
 
-const { groupedDocs } = Astro.props;
+const { groupedDocs, collection } = Astro.props;
 
 const capitalizeSection = (section: string) => {
   return section
@@ -38,10 +39,10 @@ const sortedSections = Object.keys(groupedDocs).sort((a, b) => {
           <div>
             {groupedDocs[section].map((doc) => (
               <a
-                href={`/docs/${doc.slug}`}
+                href={`/${collection}/${doc.id}`}
                 class={`block py-2 pl-4
                 ${
-                  currentUrl === `/docs/${doc.slug}`
+                  currentUrl === `/${collection}/${doc.id}`
                     ? "font-semibold border-l-2 border-red-500 text-zinc-300"
                     : "text-zinc-400 hover:bg-zinc-200/5 dark:hover:text-zinc-300"
                 }

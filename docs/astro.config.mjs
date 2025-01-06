@@ -10,6 +10,7 @@ import rehypeSlug from "rehype-slug";
 export default defineConfig({
   redirects: {
     "/docs": "/docs/getting-started/introduction",
+    "/getting-started": "/getting-started/getting-started/installation",
   },
   markdown: {
     shikiConfig: {

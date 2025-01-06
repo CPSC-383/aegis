@@ -1,7 +1,9 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import DocsLayout from "../../layouts/DocsLayout.astro";
+import DocsLayout from "@/layouts/DocsLayout.astro";
+import Method from "@/components/Method";
+import Attribute from "@/components/Attribute";
 
 interface Props {
   doc: CollectionEntry<"docs">;
@@ -11,19 +13,19 @@ export async function getStaticPaths() {
   const docs = await getCollection("docs");
 
   return docs.map((doc) => ({
-    params: { slug: doc.slug },
+    params: { id: doc.id },
     props: { doc },
   }));
 }
 
 const { doc } = Astro.props;
-const { Content, headings } = await doc.render();
+const { Content, headings } = await render(doc);
 
 const docs = await getCollection("docs");
 
 const groupedDocs = docs.reduce(
   (acc, doc) => {
-    const section = doc.slug.split("/")[0];
+    const section = doc.id.split("/")[0];
 
     if (!acc[section]) {
       acc[section] = [];
@@ -38,5 +40,5 @@ const groupedDocs = docs.reduce(
 ---
 
 <DocsLayout headings={headings} groupedDocs={groupedDocs} {...doc.data}>
-  <Content />
+  <Content components={{ Method, Attribute }} />
 </DocsLayout>

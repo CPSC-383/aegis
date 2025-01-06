@@ -1,0 +1,49 @@
+---
+import type { ComponentType } from "react";
+import { Lightbulb, TriangleAlert, Flame, Info } from "lucide-react";
+
+interface Props {
+  variant: "tip" | "caution" | "danger" | "info";
+  title?: string;
+}
+
+const { variant, title } = Astro.props as Props;
+
+type IconMap = Record<string, ComponentType<any>>;
+
+const iconMap: IconMap = {
+  tip: Lightbulb,
+  caution: TriangleAlert,
+  danger: Flame,
+  info: Info,
+};
+
+const IconComponent = iconMap[variant];
+---
+
+<div
+  class:list={[
+    "aside my-3 rounded-md border-l-4 px-4 py-3 prose-p:my-0",
+    {
+      "border-green-400 bg-green-900/30 text-green-200": variant === "tip",
+    },
+    {
+      "border-yellow-400 bg-yellow-900/30 text-yellow-200":
+        variant === "caution",
+    },
+    {
+      "border-red-400 bg-red-900/30 text-red-200": variant === "danger",
+    },
+    {
+      "border-sky-400 bg-sky-900/30 text-sky-200": variant === "info",
+    },
+  ]}
+>
+  <div class="flex items-center gap-2 pb-2">
+    <IconComponent class="h-7 w-7" aria-hidden="true" />
+    <p class="text-sm font-bold">
+      {title ? title.toUpperCase() : variant.toUpperCase()}
+    </p>
+  </div>
+  <slot />
+</div>

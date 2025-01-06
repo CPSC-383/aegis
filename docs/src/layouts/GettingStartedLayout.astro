@@ -5,21 +5,17 @@ import MainLayout from "./MainLayout.astro";
 import TableOfContent from "@/components/TableOfContent";
 import Sidebar from "@/components/Sidebar.astro";
 import {
-  Compass,
-  Gamepad2,
-  MapPin,
-  Grid3X3,
-  Square,
-  CircleStop,
-  Signpost,
-  Ambulance,
-  Book,
+  BookOpenText,
+  CirclePlay,
+  Download,
+  Monitor,
+  Users,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
-interface Props extends InferEntrySchema<"docs"> {
+interface Props extends InferEntrySchema<"getting-started"> {
   headings: MarkdownHeading[];
-  groupedDocs: Record<string, CollectionEntry<"docs">[]>;
+  groupedDocs: Record<string, CollectionEntry<"getting-started">[]>;
 }
 
 const { title, description, headings, groupedDocs } = Astro.props;
@@ -27,15 +23,11 @@ const { title, description, headings, groupedDocs } = Astro.props;
 type IconMap = Record<string, ComponentType<any>>;
 
 const iconMap: IconMap = {
-  Direction: Compass,
-  "Agent Controller": Gamepad2,
-  Location: MapPin,
-  World: Grid3X3,
-  Cell: Square,
-  "End Turn": CircleStop,
-  Move: Signpost,
-  "Save Surv": Ambulance,
-  Introduction: Book,
+  Installation: Download,
+  Agents: Users,
+  System: BookOpenText,
+  Client: Monitor,
+  "Running Aegis": CirclePlay,
 };
 
 const IconComponent = iconMap[title];
@@ -43,7 +35,7 @@ const IconComponent = iconMap[title];
 
 <MainLayout>
   <div class="flex overflow-hidden">
-    <Sidebar groupedDocs={groupedDocs} collection="docs" />
+    <Sidebar groupedDocs={groupedDocs} collection="getting-started" />
 
     <section class="flex-1 overflow-auto">
       <div class="mt-8 sm:mt-12 sm:font-light">
