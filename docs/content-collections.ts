@@ -1,17 +1,32 @@
 import { defineCollection, defineConfig } from "@content-collections/core";
+import { compileMDX } from "@content-collections/mdx";
+import rehypeSlug from "rehype-slug";
+import rehypePrettyCode, { type Options } from "rehype-pretty-code";
+
+const prettyCodeOptions: Options = {
+  theme: {
+    dark: "tokyo-night",
+    light: "catppuccin-latte",
+  },
+};
 
 const documents = defineCollection({
   name: "Doc",
-  directory: "content/getting-started",
+  directory: "src/content/getting-started",
   include: "**/*.mdx",
   schema: (z) => ({
     title: z.string(),
     description: z.string(),
   }),
-  transform: (doc) => ({
-    ...doc,
-    slugAsParams: doc._meta.path.split("/").slice(1).join("/"),
-  }),
+  transform: async (document, context) => {
+    const mdx = await compileMDX(context, document, {
+      rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+    });
+    return {
+      ...document,
+      mdx,
+    };
+  },
 });
 
 export default defineConfig({
