@@ -1,0 +1,45 @@
+---
+import CommonHead from "@/components/CommonHead.astro";
+import Navbar from "@/components/Navbar.astro";
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <CommonHead />
+  </head>
+  <body
+    class="flex h-[98vh] max-w-[1200px] mx-auto flex-col items-center bg-zinc-950 text-white font-sans antialiased"
+    style={{
+      backgroundImage:
+        "radial-gradient(49.63% 57.02% at 58.99% -7.2%, rgba(60, 128, 183, 0.2) 39.4%, rgba(0, 0, 0, 0) 100%)",
+      backgroundAttachment: "fixed",
+    }}
+  >
+    <Navbar />
+    <slot />
+  </body>
+</html>
+
+<script>
+  const scrollOptions: ScrollIntoViewOptions = {
+    behavior: "smooth",
+    block: "start",
+  };
+
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      const currentTarget = event.currentTarget as HTMLAnchorElement;
+      const targetId = currentTarget.getAttribute("href")?.substring(1);
+
+      if (!targetId) return;
+
+      const targetElement = document.getElementById(targetId);
+      const block = currentTarget.dataset["block"] as ScrollLogicalPosition;
+      targetElement?.scrollIntoView({ ...scrollOptions, block });
+      history.pushState(null, "", `#${targetId}`);
+    });
+  });
+</script>

@@ -1,0 +1,147 @@
+---
+title: "Cell"
+description: "Represents a cell in the world."
+---
+
+## Overview
+
+The Cell class is a fundamental unit within the world grid, representing individual
+tiles that agents interact with. Each cell has properties like movement cost, location,
+and whether it contains survivors. It also supports advanced features, including layered
+content and type-specific behaviors such as charging, fire, and killer properties.
+
+## Attributes
+
+<Attribute
+  name="move_cost"
+  type="int"
+  description="The movement cost associated with the cell."
+/>
+<Attribute
+  name="location"
+  type="Location"
+  link="/docs/common/location"
+  description="The location of the cell on the map."
+/>
+<Attribute
+  name="has_survivors"
+  type="bool"
+  description="If there are survivors in the cell."
+/>
+
+## Methods
+
+### <div className="font-medium font-mono">get_top_layer()</div>
+
+<Method
+  description="Returns the top layer of the cell without removing it."
+  returns={{
+    type: "WorldObject | None",
+    description:
+      "The top layer of the cell if it exists, or None if the cell has no layers.",
+  }}
+/>
+
+**Example:**
+
+```py
+# cell with survivor as top layer with default values
+top_layer = cell.get_top_layer()
+print(top_layer)
+# Output: SV(0, 0, 0, 0)
+
+# cell with no top layer 
+top_layer = cell.get_top_layer()
+print(top_layer)
+# Output: None
+```
+
+### <div className="font-medium font-mono">is_charging_cell()</div>
+
+<Method
+  description="Determines whether the cell is of type CHARGING_CELL."
+  returns={{
+    type: "bool",
+    description:
+      "True if the cell is a CHARGING_CELL, otherwise False.",
+  }}
+/>
+
+**Example:**
+
+```py
+# The cell is a CHARGING_CELL
+print(cell.is_charging_cell())
+# Output: True
+
+# The cell is not a CHARGING_CELL
+print(cell.is_charging_cell())
+# Output: False
+```
+
+### <div className="font-medium font-mono">is_fire_cell()</div>
+
+<Method
+  description="Determines whether the cell is of type FIRE_CELL."
+  returns={{
+    type: "bool",
+    description: "True if the cell is a FIRE_CELL, otherwise False.",
+  }}
+/>
+
+**Example:**
+
+```py
+# The cell is a FIRE_CELL
+print(cell.is_fire_cell())
+# Output: True
+
+# The cell is not a FIRE_CELL
+print(cell.is_fire_cell())
+# Output: False
+```
+
+### <div className="font-medium font-mono">is_killer_cell()</div>
+
+<Method
+  name="is_killer_cell()"
+  description="Determines whether the cell is of type KILLER_CELL."
+  returns={{
+    type: "bool",
+    description: "True if the cell is a KILLER_CELL, otherwise False.",
+  }}
+/>
+
+**Example:**
+
+```py
+# The cell is a KILLER_CELL
+print(cell.is_killer_cell())
+# Output: True
+
+# The cell is not a KILLER_CELL
+print(cell.is_killer_cell())
+# Output: False
+```
+
+### <div className="font-medium font-mono">is_normal_cell()</div>
+
+<Method
+  description="Determines whether the cell is of type NORMAL_CELL."
+  returns={{
+    type: "bool",
+    description: "True if the cell is a NORMAL_CELL, otherwise False.",
+  }}
+/>
+
+**Example:**
+
+```py
+# The cell is a NORMAL_CELL
+print(cell.is_normal_cell())
+# Output: True
+
+# The cell is not a NORMAL_CELL
+print(cell.is_normal_cell())
+# Output: False
+```

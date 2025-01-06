@@ -1,0 +1,113 @@
+---
+title: "Agent Controller"
+description: "Interface for controlling an agent and interacting with the Aegis system."
+---
+
+## Overview
+
+The Agent Controller interface allows users to control and direct an agent’s actions.
+Through this interface, users can send commands to Aegis, influencing the agent's movements,
+interactions, and decision-making in the world. The controller enables agents to carry
+out specific tasks, such as rescuing survivors and navigating the environment.
+
+## Methods
+
+### <div className="font-medium font-mono">get_energy_level()</div>
+
+<Method
+  name=""
+  description="Returns the current energy level of the agent."
+  returns={{
+    type: "int",
+    description: "The agent's current energy level.",
+  }}
+/>
+
+**Example:**
+
+```py
+energy = self._agent.get_energy_level()
+print(energy)
+# Output: 326
+```
+
+### <div className="font-medium font-mono">get_location()</div>
+
+<Method
+  description="Returns the current location of the agent."
+  returns={{
+    type: "Location",
+    link: "/docs/common/location",
+    description: "The agent's current location in the world.",
+  }}
+/>
+
+**Example:**
+
+```py
+loc = self._agent.get_location()
+print(loc)
+# Output: (2, 5)
+```
+
+### <div className="font-medium font-mono">get_round_number()</div>
+
+<Method
+  description="Returns the current round number of the simulation."
+  returns={{
+    type: "int",
+    description: "The current round number of the simulation.",
+  }}
+/>
+
+**Example:**
+
+```py
+round = self._agent.get_round_number()
+print(round)
+# Output: 27
+```
+
+### <div className="font-medium font-mono">send()</div>
+
+<Method
+  description="Sends an action command to the Aegis system."
+  parameters={[
+    {
+      name: "agent_action",
+      type: "AgentCommand",
+      description:
+        "The action command that specifies what the agent should do.",
+      required: true,
+    },
+  ]}
+/>
+
+**Example:**
+
+```py
+# Sending a command to save a survivor
+self._agent.send(SAVE_SURV())
+```
+
+### <div className="font-medium font-mono">log()</div>
+
+<Method
+  description="Logs a message, including the agent's ID and the current round number, for tracking or debugging purposes."
+  parameters={[
+    {
+      name: "message",
+      type: "str",
+      description: "The message to log.",
+      required: true,
+    },
+  ]}
+/>
+
+**Example:**
+
+```py
+# Logging a message on round 4 for agent 1 in group 1
+self._agent.log(f"My location is {self._agent.get_location()}")
+# Output: [Agent#(1:1)]@4: My location is (17, 15)
+```

@@ -1,0 +1,116 @@
+---
+import type { CollectionEntry, InferEntrySchema } from "astro:content";
+import type { MarkdownHeading } from "astro";
+import MainLayout from "./MainLayout.astro";
+import TableOfContent from "@/components/TableOfContent";
+import Sidebar from "@/components/Sidebar.astro";
+import {
+  Compass,
+  Gamepad2,
+  MapPin,
+  Grid3X3,
+  Square,
+  CircleStop,
+  Signpost,
+  Ambulance,
+  Book,
+} from "lucide-react";
+import type { ComponentType } from "react";
+
+interface Props extends InferEntrySchema<"docs"> {
+  headings: MarkdownHeading[];
+  groupedDocs: Record<string, CollectionEntry<"docs">[]>;
+}
+
+const { title, description, headings, groupedDocs } = Astro.props;
+
+type IconMap = Record<string, ComponentType<any>>;
+
+const iconMap: IconMap = {
+  Direction: Compass,
+  "Agent Controller": Gamepad2,
+  Location: MapPin,
+  World: Grid3X3,
+  Cell: Square,
+  "End Turn": CircleStop,
+  Move: Signpost,
+  "Save Surv": Ambulance,
+  Introduction: Book,
+};
+
+const IconComponent = iconMap[title];
+---
+
+<MainLayout>
+  <div class="flex overflow-hidden">
+    <Sidebar groupedDocs={groupedDocs} collection="docs" />
+
+    <section class="flex-1 overflow-auto">
+      <div class="mt-8 sm:mt-12 sm:font-light">
+        <h1
+          class="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold"
+        >
+          <IconComponent className="text-red-500 mr-2" />
+          {title}
+        </h1>
+        <h3 class="mt-2 text-zinc-400 max-sm:text-sm">
+          {description}
+        </h3>
+      </div>
+
+      <div
+        class="mt-8 h-[2px] w-full bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900"
+      >
+      </div>
+
+      <section class="flex mt-8 gap-16">
+        <article
+          id="article"
+          class:list={[
+            "prose prose-invert max-w-none max-sm:prose-sm",
+            "prose-headings:scroll-m-16 sm:prose-headings:scroll-m-24",
+            "prose-code:before:hidden prose-code:after:hidden",
+          ]}
+        >
+          <slot />
+        </article>
+
+        <aside class="w-60 shrink-0 max-lg:hidden">
+          <TableOfContent headings={headings} className="sticky top-8" />
+        </aside>
+      </section>
+    </section>
+  </div>
+</MainLayout>
+
+<script>
+  const handleHeadingIntersection = () => {
+    const observerOptions: IntersectionObserverInit = {
+      root: null,
+      rootMargin: "0px 0px -85% 0px",
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+
+        const id = entry.target.getAttribute("id");
+        const link = document.querySelector(`li > a[href="#${id}"]`);
+        const textStyle = "text-zinc-300";
+
+        document
+          .querySelectorAll(`.${textStyle}`)
+          .forEach((item) => item.classList.remove(textStyle));
+
+        link?.classList.add(textStyle);
+      });
+    }, observerOptions);
+
+    document.querySelectorAll("h2[id], h3[id], h4[id]").forEach((heading) => {
+      observer.observe(heading);
+    });
+  };
+
+  handleHeadingIntersection();
+</script>
