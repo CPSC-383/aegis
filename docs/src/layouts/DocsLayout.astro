@@ -4,6 +4,18 @@ import type { MarkdownHeading } from "astro";
 import MainLayout from "./MainLayout.astro";
 import TableOfContent from "@/components/TableOfContent";
 import Sidebar from "@/components/Sidebar.astro";
+import {
+  Compass,
+  Gamepad2,
+  MapPin,
+  Grid3X3,
+  Square,
+  CircleStop,
+  Signpost,
+  Ambulance,
+  Book,
+} from "lucide-react";
+import type { ComponentType } from "react";
 
 interface Props extends InferEntrySchema<"docs"> {
   headings: MarkdownHeading[];
@@ -11,15 +23,34 @@ interface Props extends InferEntrySchema<"docs"> {
 }
 
 const { title, description, headings, groupedDocs } = Astro.props;
+
+type IconMap = Record<string, ComponentType<any>>;
+
+const iconMap: IconMap = {
+  Direction: Compass,
+  "Agent Controller": Gamepad2,
+  Location: MapPin,
+  World: Grid3X3,
+  Cell: Square,
+  "End Turn": CircleStop,
+  Move: Signpost,
+  "Save Surv": Ambulance,
+  Introduction: Book,
+};
+
+const IconComponent = iconMap[title];
 ---
 
 <MainLayout>
-  <div class="max-w-[1200px] flex my-16 overflow-hidden">
+  <div class="flex overflow-hidden">
     <Sidebar groupedDocs={groupedDocs} />
 
     <section class="flex-1 overflow-auto">
       <div class="mt-8 sm:mt-12 sm:font-light">
-        <h1 class="text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
+        <h1
+          class="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold"
+        >
+          <IconComponent className="text-red-500 mr-2" />
           {title}
         </h1>
         <h3 class="mt-2 text-zinc-400 max-sm:text-sm">
@@ -45,7 +76,7 @@ const { title, description, headings, groupedDocs } = Astro.props;
         </article>
 
         <aside class="w-60 shrink-0 max-lg:hidden">
-          <TableOfContent headings={headings} className="sticky top-24" />
+          <TableOfContent headings={headings} className="sticky top-8" />
         </aside>
       </section>
     </section>

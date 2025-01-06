@@ -15,17 +15,22 @@ const capitalizeSection = (section: string) => {
 };
 
 const currentUrl = Astro.url.pathname;
+
+// Put the getting started sidebar section at the top.
+const sortedSections = Object.keys(groupedDocs).sort((a, b) => {
+  if (a === "getting-started") return -1;
+  if (b === "getting-started") return 1;
+  return a.localeCompare(b);
+});
 ---
 
-<div class="w-64 p-4 overflow-y-auto sticky top-24">
+<div class="w-64 p-4 overflow-y-auto">
   {
-    Object.keys(groupedDocs).map((section) => (
+    sortedSections.map((section) => (
       <div class="mt-8">
         <div class="flex justify-between items-center">
           <span class="font-semibold text-zinc-200 pl-4 mb-3 text-lg">
-            <span class="text-red-500 mr-1">[</span>
             {capitalizeSection(section)}
-            <span class="text-red-500 ml-1">]</span>
           </span>
         </div>
 
@@ -34,10 +39,10 @@ const currentUrl = Astro.url.pathname;
             {groupedDocs[section].map((doc) => (
               <a
                 href={`/docs/${doc.slug}`}
-                class={`block py-2 rounded-md pl-4
+                class={`block py-2 pl-4
                 ${
                   currentUrl === `/docs/${doc.slug}`
-                    ? "font-semibold"
+                    ? "font-semibold border-l-2 border-red-500 text-zinc-300"
                     : "text-zinc-400 hover:bg-zinc-200/5 dark:hover:text-zinc-300"
                 }
               `}

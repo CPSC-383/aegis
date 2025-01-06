@@ -1,5 +1,6 @@
 ---
 import CommonHead from "@/components/CommonHead.astro";
+import Navbar from "@/components/Navbar.astro";
 ---
 
 <!doctype html>
@@ -8,8 +9,14 @@ import CommonHead from "@/components/CommonHead.astro";
     <CommonHead />
   </head>
   <body
-    class="flex h-screen min-w-screen flex-col items-center bg-zinc-950 text-white"
+    class="flex h-[98vh] max-w-[1200px] mx-auto flex-col items-center bg-zinc-950 text-white"
+    style={{
+      backgroundImage:
+        "radial-gradient(49.63% 57.02% at 58.99% -7.2%, rgba(60, 128, 183, 0.2) 39.4%, rgba(0, 0, 0, 0) 100%)",
+      backgroundAttachment: "fixed",
+    }}
   >
+    <Navbar />
     <slot />
   </body>
 </html>
