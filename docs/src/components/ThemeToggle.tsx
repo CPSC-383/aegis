@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Sun, Moon } from "lucide-react";
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
@@ -23,9 +24,9 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={handleToggle}
-      style={{ padding: "10px", fontSize: "16px" }}
+      className="hover:bg-accent h-10 w-10 px-2 rounded-md"
     >
-      {theme === "dark" ? "🌙 Dark Mode" : "🌞 Light Mode"}
+      {theme === "dark" ? <Moon /> : <Sun />}
     </button>
   );
 };

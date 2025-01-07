@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -39,6 +40,7 @@ export default function Navbar() {
           );
         })}
       </div>
+      <ThemeToggle />
     </nav>
   );
 }

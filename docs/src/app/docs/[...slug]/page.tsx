@@ -1,7 +1,6 @@
 import { allDocs, Doc } from "content-collections";
 import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
-import ThemeToggle from "@/components/ThemeToggle";
 import Sidebar from "@/components/Sidebar";
 
 interface DocPageProps {
@@ -67,7 +66,6 @@ export default async function DocPage({ params }: DocPageProps) {
         <div className="pb-12 pt-8">
           <Mdx code={doc.mdx} />
         </div>
-        <ThemeToggle />
       </div>
     </main>
   );
