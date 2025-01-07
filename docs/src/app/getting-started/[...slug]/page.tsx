@@ -12,12 +12,9 @@ interface DocPageProps {
 
 async function getDocFromParams({ params }: DocPageProps) {
   const { slug } = await params;
-  const slicedSlug = slug.join("/") || "";
-  console.log("SLICED SLUG", slicedSlug);
-  allGettingStarteds.find((doc) => console.log(doc.slug));
 
   const doc = allGettingStarteds.find((doc) => {
-    return doc.slug === slicedSlug;
+    return doc.slug === slug.join("/");
   });
 
   if (!doc) {

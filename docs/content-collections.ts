@@ -30,6 +30,26 @@ const gettingStarted = defineCollection({
   },
 });
 
+const docs = defineCollection({
+  name: "Doc",
+  directory: "src/content/docs",
+  include: "**/*.mdx",
+  schema: (z) => ({
+    title: z.string(),
+    description: z.string(),
+  }),
+  transform: async (document, context) => {
+    const mdx = await compileMDX(context, document, {
+      rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+    });
+    return {
+      ...document,
+      mdx,
+      slug: document._meta.path,
+    };
+  },
+});
+
 export default defineConfig({
-  collections: [gettingStarted],
+  collections: [gettingStarted, docs],
 });
