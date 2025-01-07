@@ -37,7 +37,7 @@ export const navConfig = {
       items: [
         {
           title: "Client",
-          href: "/getting-started/client/client",
+          href: "/getting-started/client",
         },
       ],
     },

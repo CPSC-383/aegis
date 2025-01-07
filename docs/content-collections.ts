@@ -10,8 +10,8 @@ const prettyCodeOptions: Options = {
   },
 };
 
-const documents = defineCollection({
-  name: "Doc",
+const gettingStarted = defineCollection({
+  name: "GettingStarted",
   directory: "src/content/getting-started",
   include: "**/*.mdx",
   schema: (z) => ({
@@ -31,5 +31,5 @@ const documents = defineCollection({
 });
 
 export default defineConfig({
-  collections: [documents],
+  collections: [gettingStarted],
 });
