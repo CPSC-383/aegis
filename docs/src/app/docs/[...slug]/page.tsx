@@ -1,7 +1,8 @@
-import { allDocs } from "content-collections";
+import { allDocs, Doc } from "content-collections";
 import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
 import ThemeToggle from "@/components/ThemeToggle";
+import Sidebar from "@/components/Sidebar";
 
 interface DocPageProps {
   params: Promise<{
@@ -14,7 +15,7 @@ async function getDocFromParams({ params }: DocPageProps) {
   const slicedSlug = slug.slice(1).join("/") || "";
 
   const doc = allDocs.find((doc) => {
-    return doc._meta.path === slicedSlug;
+    return doc.slug === slicedSlug;
   });
 
   if (!doc) {
@@ -25,7 +26,7 @@ async function getDocFromParams({ params }: DocPageProps) {
 
 export function generateStaticParams(): { slug: string[] }[] {
   return allDocs.map((doc) => ({
-    slug: doc._meta.path.split("/"),
+    slug: doc.slug.split("/"),
   }));
 }
 
@@ -36,19 +37,37 @@ export default async function DocPage({ params }: DocPageProps) {
     return notFound();
   }
 
-  return (
-    <main>
-      <ThemeToggle />
-      <div className="mt-8 sm:mt-12 sm:font-light">
-        <h1 className="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
-          {doc.title}
-        </h1>
-        <h3 className="mt-2 max-sm:text-sm">{doc.description}</h3>
-      </div>
+  const groupedDocs = allDocs.reduce(
+    (acc, doc) => {
+      const section = doc.slug.split("/")[0];
 
-      <div className="mt-8 h-[2px] w-full bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 from-zinc-100 via-zinc-200 to-zinc-100"></div>
-      <div className="pb-12 pt-8">
-        <Mdx code={doc.mdx} />
+      if (!acc[section]) {
+        acc[section] = [];
+      }
+
+      acc[section].push(doc);
+
+      return acc;
+    },
+    {} as Record<string, Doc[]>,
+  );
+
+  return (
+    <main className="flex overflow-hidden">
+      <Sidebar groupedContent={groupedDocs} />
+      <div className="flex-1 overflow-auto no-scrollbar">
+        <div className="mt-8 sm:mt-12 sm:font-light">
+          <h1 className="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
+            {doc.title}
+          </h1>
+          <h3 className="mt-2 max-sm:text-sm">{doc.description}</h3>
+        </div>
+
+        <div className="mt-8 h-[2px] w-full bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 from-zinc-100 via-zinc-200 to-zinc-100"></div>
+        <div className="pb-12 pt-8">
+          <Mdx code={doc.mdx} />
+        </div>
+        <ThemeToggle />
       </div>
     </main>
   );

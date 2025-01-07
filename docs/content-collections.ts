@@ -25,6 +25,7 @@ const documents = defineCollection({
     return {
       ...document,
       mdx,
+      slug: document._meta.path,
     };
   },
 });

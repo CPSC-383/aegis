@@ -77,6 +77,15 @@
     @apply ml-[-50px] mt-[-4px];
     content: counter(step);
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 .steps:first-child > h3:first-child {
