@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex h-[98vh] max-w-[1200px] mx-auto flex-col items-center font-sans antialiased scroll-smooth`}
+        className={`${geistSans.variable} ${geistMono.variable} flex h-[98vh] max-w-7xl mx-auto flex-col items-center font-sans antialiased scroll-smooth`}
       >
         <ThemeProvider attribute="class" defaultTheme="light">
           <Navbar />

@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 
 import Admonition from "@/components/Admonition";
 import Attribute from "@/components/Attribute";
+import Image from "next/image";
+import Link from "next/link";
 import Method from "@/components/Method";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +14,7 @@ const components = {
   Admonition,
   Attribute,
   Badge,
+  Image,
   Method,
   Tree,
   TreeItem,
@@ -39,21 +42,57 @@ const components = {
       {...props}
     />
   ),
+  h4: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h4
+      className={cn(
+        "font-heading mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
+        className,
+      )}
+      {...props}
+    />
+  ),
+  h5: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h5
+      className={cn(
+        "mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
+        className,
+      )}
+      {...props}
+    />
+  ),
+  h6: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h6
+      className={cn(
+        "mt-8 scroll-m-20 text-base font-semibold tracking-tight",
+        className,
+      )}
+      {...props}
+    />
+  ),
+  a: ({ className, ...props }: React.ComponentProps<typeof Link>) => (
+    <Link
+      className={cn(
+        "font-medium underline underline-offset-2 hover:underline-offset-4 transition-all duration-300 dark:text-teal-400 text-teal-500",
+        className,
+      )}
+      {...props}
+    />
+  ),
   p: ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
     <p
       className={cn("leading-7 [&:not(:first-child)]:mt-6", className)}
       {...props}
     />
   ),
-  // ul: ({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
-  //   <ul className={cn("ml-6 list-disc", className)} {...props} />
-  // ),
-  // ol: ({ className, ...props }: React.HTMLAttributes<HTMLOListElement>) => (
-  //   <ol className={cn("ml-6 list-decimal", className)} {...props} />
-  // ),
-  // li: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
-  //   <li className={cn("mt-2", className)} {...props} />
-  // ),
+  ul: ({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
+    <ul className={cn("ml-6 list-disc", className)} {...props} />
+  ),
+  ol: ({ className, ...props }: React.HTMLAttributes<HTMLOListElement>) => (
+    <ol className={cn("ml-6 list-decimal", className)} {...props} />
+  ),
+  li: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
+    <li className={cn("mt-2", className)} {...props} />
+  ),
   pre: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <pre
       className={cn(

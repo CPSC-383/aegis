@@ -1,4 +1,4 @@
-import { allGettingStarteds } from "content-collections";
+import { allCommonErrors } from "content-collections";
 import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
 import Sidebar from "@/components/Sidebar";
@@ -15,7 +15,7 @@ interface Props {
 async function getDocFromParams({ params }: Props) {
   const { slug } = await params;
 
-  const entry = allGettingStarteds.find((entry) => {
+  const entry = allCommonErrors.find((entry) => {
     return entry.slug === slug.join("/");
   });
 
@@ -26,7 +26,7 @@ async function getDocFromParams({ params }: Props) {
 }
 
 export function generateStaticParams(): { slug: string[] }[] {
-  return allGettingStarteds.map((entry) => ({
+  return allCommonErrors.map((entry) => ({
     slug: entry.slug.split("/"),
   }));
 }
@@ -39,10 +39,11 @@ export default async function Page({ params }: Props) {
   }
 
   const headings = getHeadings(entry.content);
+  const filteredHeadings = headings.filter((heading) => heading.level !== 3);
 
   return (
     <main className="flex overflow-hidden">
-      <Sidebar items={navConfig.gettingStartedNav} />
+      {/* <Sidebar items={navConfig.gettingStartedNav} /> */}
       <div className="flex-1 overflow-auto no-scrollbar">
         <div className="mt-8 sm:mt-12 sm:font-light">
           <h1 className="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
@@ -57,7 +58,10 @@ export default async function Page({ params }: Props) {
             <Mdx code={entry.mdx} />
           </div>
           <div className="w-60 shrink-0 max-lg:hidden mt-8">
-            <TableOfContent headings={headings} className="sticky top-8" />
+            <TableOfContent
+              headings={filteredHeadings}
+              className="sticky top-8"
+            />
           </div>
         </div>
       </div>

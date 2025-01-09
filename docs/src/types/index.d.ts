@@ -11,3 +11,10 @@ export interface NavItemWithChildren extends NavItem {
 export interface MainNavItem extends NavItem {}
 
 export interface SidebarNavItem extends NavItemWithChildren {}
+
+export type TableOfContentsItem = {
+  level: number;
+  text: string;
+  slug: string;
+  children?: TableOfContentsItem[];
+};

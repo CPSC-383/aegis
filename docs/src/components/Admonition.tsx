@@ -30,7 +30,7 @@ export default function Admonition({ variant, title, children }: Props) {
       className={`my-3 rounded-md border-l-4 px-4 py-3 prose-p:my-0 ${alertClasses[variant]}`}
     >
       <div className="flex items-center gap-2 pb-2">
-        <IconComponent className="h-7 w-7" aria-hidden="true" />
+        <IconComponent className="h-5 w-5" aria-hidden="true" />
         <p className="text-sm font-bold">
           {title ? title.toUpperCase() : variant.toUpperCase()}
         </p>

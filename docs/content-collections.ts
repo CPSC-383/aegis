@@ -1,6 +1,6 @@
+import { rehypeSlug } from "@/lib/rehype-slug";
 import { defineCollection, defineConfig } from "@content-collections/core";
 import { compileMDX } from "@content-collections/mdx";
-import rehypeSlug from "rehype-slug";
 import rehypePrettyCode, { type Options } from "rehype-pretty-code";
 
 const prettyCodeOptions: Options = {
@@ -50,6 +50,26 @@ const docs = defineCollection({
   },
 });
 
+const commonErrors = defineCollection({
+  name: "CommonErrors",
+  directory: "src/content/common-errors",
+  include: "**/*.mdx",
+  schema: (z) => ({
+    title: z.string(),
+    description: z.string(),
+  }),
+  transform: async (document, context) => {
+    const mdx = await compileMDX(context, document, {
+      rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+    });
+    return {
+      ...document,
+      mdx,
+      slug: document._meta.path,
+    };
+  },
+});
+
 export default defineConfig({
-  collections: [gettingStarted, docs],
+  collections: [gettingStarted, docs, commonErrors],
 });

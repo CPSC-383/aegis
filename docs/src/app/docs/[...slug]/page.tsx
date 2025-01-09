@@ -1,55 +1,64 @@
 import { allDocs } from "content-collections";
-import { navConfig } from "@/config/nav";
 import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
 import Sidebar from "@/components/Sidebar";
+import { navConfig } from "@/config/nav";
+import { getHeadings } from "@/lib/toc";
+import TableOfContent from "@/components/TableOfContent";
 
-interface DocPageProps {
+interface Props {
   params: Promise<{
     slug: string[];
   }>;
 }
 
-async function getDocFromParams({ params }: DocPageProps) {
+async function getDocFromParams({ params }: Props) {
   const { slug } = await params;
 
-  const doc = allDocs.find((doc) => {
-    return doc.slug === slug.join("/");
+  const entry = allDocs.find((entry) => {
+    return entry.slug === slug.join("/");
   });
 
-  if (!doc) {
+  if (!entry) {
     return null;
   }
-  return doc;
+  return entry;
 }
 
 export function generateStaticParams(): { slug: string[] }[] {
-  return allDocs.map((doc) => ({
-    slug: doc.slug.split("/"),
+  return allDocs.map((entry) => ({
+    slug: entry.slug.split("/"),
   }));
 }
 
-export default async function DocPage({ params }: DocPageProps) {
-  const doc = await getDocFromParams({ params });
+export default async function Page({ params }: Props) {
+  const entry = await getDocFromParams({ params });
 
-  if (!doc) {
+  if (!entry) {
     return notFound();
   }
 
+  const headings = getHeadings(entry.content);
+
   return (
-    <main className="flex overflow-hidden">
+    <main className="flex overflow-hidden gap-16">
       <Sidebar items={navConfig.docsNav} />
       <div className="flex-1 overflow-auto no-scrollbar">
         <div className="mt-8 sm:mt-12 sm:font-light">
           <h1 className="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
-            {doc.title}
+            {entry.title}
           </h1>
-          <h3 className="mt-2 max-sm:text-sm">{doc.description}</h3>
+          <h3 className="mt-2 max-sm:text-sm">{entry.description}</h3>
         </div>
 
         <div className="mt-8 h-[2px] w-full bg-gradient-to-r dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 from-zinc-100 via-zinc-200 to-zinc-100"></div>
-        <div className="pb-12 pt-8">
-          <Mdx code={doc.mdx} />
+        <div className="flex gap-16">
+          <div className="pb-12 pt-8">
+            <Mdx code={entry.mdx} />
+          </div>
+          <div className="w-60 shrink-0 max-lg:hidden mt-8">
+            <TableOfContent headings={headings} className="sticky top-8" />
+          </div>
         </div>
       </div>
     </main>

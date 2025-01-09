@@ -22,7 +22,7 @@ The Location class provides a robust interface for managing two-dimensional coor
 
 ## Methods
 
-### <div className="font-medium font-mono">add(direction: Direction)</div>
+### add(direction: Direction)
 
 <Method
   description="Adds the given direction to the current location."
@@ -50,10 +50,10 @@ north_location = loc.add(Direction.NORTH)
 # Returns location at (3, 3)
 ```
 
-### <div className="font-medium font-mono">direction_to(location: Location)</div>
+### direction_to(location: Location)
 
 <Method
-  description="Calculate the cardinal direction between the current location and a target location."
+  description="Calculate the direction between the current location and a target location."
   parameters={[
     {
       name: "location",
@@ -66,7 +66,7 @@ north_location = loc.add(Direction.NORTH)
     type: "Direction",
     link: "/docs/common/direction",
     description:
-      "A Direction enum value representing the cardinal direction between locations.",
+      "A Direction enum value representing the direction between locations.",
   }}
 />
 
@@ -81,7 +81,7 @@ dir = start.direction_to(goal)
 
 ## Factory Functions
 
-### <div className="font-medium font-mono">create_location(x: int, y: int)</div>
+### create_location(x: int, y: int)
 
 <Method
   description="Create a new Location object at the specified coordinates."

@@ -5,10 +5,10 @@ description: "A step-by-step guide to install Aegis on your system."
 
 <Admonition variant="info" title="Before You Begin">
 Ensure that your system meets the following prerequisites:
-<ul className="ml-6 list-disc">
-<li className="mt-2">
-<span>**Python 3.12.x**</span>
-<p>To check if you have the correct Python version installed, run the following command in your terminal:</p>
+- **Python 3.12.x**
+
+<div className="ml-6">
+To check if you have the correct Python version installed, run the following command in your terminal:
 
 <Tabs defaultValue="mac/linux">
 
@@ -20,22 +20,27 @@ Ensure that your system meets the following prerequisites:
 </TabsList>
 
 <TabsContent value="mac/linux">
+
 ```bash
 python3 --version
 ```
+
 </TabsContent>
 
 <TabsContent value="windows">
+
 ```bash
 python --version
 ```
+
 </TabsContent>
 
 </Tabs>
 
 This should return **Python 3.12.x.**
-</li>
-</ul>
+
+</div>
+
 </Admonition>
 
 ## Installation
@@ -70,17 +75,21 @@ Run the setup script:
 </TabsList>
 
 <TabsContent value="mac/linux">
+
 ```bash
 python3 setup.py 
 source .venv/bin/activate
 ```
+
 </TabsContent>
 
 <TabsContent value="windows">
+
 ```bash
 python setup.py 
 .venv\Scripts\activate
 ```
+
 </TabsContent>
 
 </Tabs>
@@ -100,19 +109,23 @@ Steps do to it manually if the setup script failed:
 </TabsList>
 
 <TabsContent value="mac/linux">
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements
 ```
+
 </TabsContent>
 
 <TabsContent value="windows">
+
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements
 ```
+
 </TabsContent>
 
 </Tabs>

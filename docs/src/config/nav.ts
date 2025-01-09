@@ -3,7 +3,7 @@ export const navConfig = {
     { title: "Home", href: "/" },
     { title: "Getting Started", href: "/getting-started" },
     { title: "API Reference", href: "/docs" },
-    { title: "Common Errors", href: "/common-erros" },
+    { title: "Common Errors", href: "/common-errors" },
   ],
   gettingStartedNav: [
     {

@@ -10,3 +10,60 @@ This futuristic space station floats in a serene nebula, and it's the last beaco
 Equipped with powerful scanners and teleportation gates, Aegis connects distant worlds and provides
 a lifeline in the galaxy's most perilous regions. From here, they embark on their journeys, navigating
 the galaxy's dangers to rescue those in distress and tackle the most formidable dangers.
+
+## Aegis Server
+
+Aegis handles changing the simulated world over time and executing commands from agents, then sending the results back to the agents.
+Aegis runs as an independent process on the user's machine. Before the simulation begins, agents connect to Aegis from their own processes.
+Communication between Aegis and the agents is handled via sockets.
+
+Aegis operates in four main phases:
+
+<Steps>
+
+### Start up
+
+The simulated world is set up, and the protocol files for the simulation are created.
+
+### Waiting for Connections
+
+Aegis waits for incoming connections from the agents.
+
+### Running the Simulation
+
+No new connections are accepted. The simulation progresses step-by-step.
+
+### Shutdown
+
+Aegis notifies all connected agents that the system is shutting down and closes all protocol files.
+
+</Steps>
+
+## Basic Parts of Aegis
+
+Aegis consists of two separate processes, each handling different aspects of the simulation:
+
+<Steps>
+
+### The Controller
+
+This is the main process of the simulator. It manages all communication with agents, executes the simulation,
+and maintains the current state of the world. It updates the world as events happen.
+
+### The Client
+
+When used, the Client provides a graphical interface via an Electron-based GUI. It communicates with the Controller
+through a WebSocket connection, allowing it to display real-time updates of the world’s state during the simulation.
+Additionally, it allows users to create their own worlds.
+
+</Steps>
+
+## Simulation
+
+A simulation consists of multiple rounds, with each round being a single time step in the simulated world.
+During each round, each agent is given one second to decide what action to take. Aegis processes each agent
+one by one and waits for their command.
+
+<Admonition variant="info" title="Important">
+The last command received at the end of the turn is the one that will be executed for that round.
+</Admonition>

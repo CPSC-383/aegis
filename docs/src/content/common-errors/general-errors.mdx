@@ -1,0 +1,197 @@
+---
+title: "General Errors"
+description: "Troubleshoot common issues that may arise while working with Aegis."
+---
+
+<Admonition variant="caution" title="Important Notes">
+
+**Folder Path Restrictions:** Ensure the path to the folder you unzipped does not contain spaces. For example,
+if a folder is called `CPSC 383`, the space will cause some undefined behavior when running the system. To avoid this,
+rename parent folders to use underscores or hyphens, such as `CPSC_383` or `CPSC-383`.
+
+**Python Version Requirements:** Aegis requires Python version **3.12.x** to function correctly. Ensure your Python version matches this requirement.
+
+</Admonition>
+
+## Cannot import override from typing
+
+**Problem**: You encounter an error when trying to import `override` from the `typing` module,
+which occurs because `override` is only available in Python 3.12 and later versions.
+
+**Solution**:
+
+<Steps>
+
+### Ensure You Are Using Python 3.12.x
+
+Confirm that you are using Python 3.12.x by running the following command:
+
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+```bash
+python3 --version
+```
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+```bash
+python --version
+```
+
+</TabsContent>
+
+</Tabs>
+
+If the version shown is not 3.12.x, you will need to update your Python installation.
+
+### Recreate the virtual machine
+
+To ensure that your environment is properly set up, recreate your virtual environment.
+Make sure you run the command in the `aegis` directory.
+
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+```bash
+python3 setup.py --no-client
+```
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+```bash
+python setup.py --no-client
+```
+
+</TabsContent>
+
+</Tabs>
+
+</Steps>
+
+After following these steps, your Python environment should be set up correctly, and the import error should no longer appear.
+
+## Unable to import websocket-server or other required packages.
+
+**Problem**: You are encountering package import errors for `websocket-server` or other required dependencies.
+
+**Solution**:
+
+<Steps>
+
+### Ensure Virtual Environment is Activated
+
+Make sure that your virtual environment is active. Run the command in the `aegis` directory.
+
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+```bash
+source .venv/bin/activate
+```
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+```bash
+.venv\Scripts\activate
+```
+
+</TabsContent>
+
+</Tabs>
+
+### Install Dependencies Using the Setup Script
+
+With the virtual environment activated, run the Python setup script to install all necessary packages:
+
+```bash
+python setup.py --no-venv --no-client
+```
+
+This command will install all required packages, including `websocket-server`. If there are any issues with specific packages,
+you will see error messages detailing the failed installations.
+
+### Manually Install Missing Packages
+
+If you encounter specific package errors (e.g., `websocket-server`) with the script, you can manually install them with `pip`. 
+ 
+```bash
+pip install <package name>
+```
+
+Replace `<package name>` with the actual package name.
+
+For example, to install the `websocket-server` package, run:
+
+```bash
+pip install websocket-server 
+```
+
+</Steps>
+
+After running the above steps, verify that the packages are correctly installed by running a game with Aegis. If you encounter no import errors,
+then you have successfully installed all required packages.
+
+## Game runs, but example_agent.py shows import errors for aegis modules
+
+**Problem**: The game runs, but your IDE displays import errors for Aegis packages in `example_agent.py`.
+
+**Solution**:
+
+<Steps>
+
+### Check the Python Interpreter in Your IDE
+
+While editing a Python file, check the bottom right of your IDE for the currently selected Python interpreter.
+
+### Select the Correct Interpreter
+
+If the interpreter points to your virtual environment, click on it to confirm.
+
+If the interpreter is not set to the virtual environment, manually configure your IDE to use the Python interpreter from the virtual environment.
+
+### Set the Interpreter Manually
+
+In your IDE's settings, find the Python interpreter section.
+
+Set it to the Python executable within your virtual environment (e.g., `path/to/venv/bin/python` on macOS/Linux, or `path\to\venv\Scripts\python.exe` on Windows).
+
+</Steps>
+
+Once you’ve set the correct interpreter, restart your IDE, and the import errors should be resolved.
+
+## Running a game gives an AegisParserException
+
+**Problem**: Receiving an AegisParserException when running a game.
+
+**Solution**: This is most likely caused by your agent throwing an exception during the simulation. Comment out code to isolate the problematic section.
