@@ -1,8 +1,8 @@
 export const navConfig = {
   mainNav: [
     { title: "Home", href: "/" },
-    { title: "Getting Started", href: "/getting-started/installation" },
-    { title: "API Reference", href: "/docs/intro" },
+    { title: "Getting Started", href: "/getting-started" },
+    { title: "API Reference", href: "/docs" },
     { title: "Common Errors", href: "/common-erros" },
   ],
   gettingStartedNav: [

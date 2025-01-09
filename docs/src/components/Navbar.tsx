@@ -5,18 +5,29 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { navConfig } from "@/config/nav";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Fix logo hydration issue
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="w-full flex items-center justify-between px-6 py-4">
       <div className="flex items-center space-x-2">
-        <img
-          src={theme === "dark" ? "/logo-white.png" : "/logo-black.png"}
-          className="h-5"
-        />
+        {mounted ? (
+          <img
+            src={theme === "dark" ? "/logo-white.png" : "/logo-black.png"}
+            className="h-5"
+          />
+        ) : (
+          <div className="h-5 w-5" />
+        )}
       </div>
 
       <div className="hidden md:flex space-x-6 text-sm">

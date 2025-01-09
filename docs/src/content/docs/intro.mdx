@@ -7,3 +7,67 @@ description: "Explore the Aegis API, which provides structures, commands, and fu
 
 The entirety of the public API is exposed here. The following sections will help you discover
 the API's capabilities and components.
+
+### Common
+
+Contains core data structures and types used across Aegis.
+
+<Attribute 
+  name="Direction"
+  type="Enum" 
+  description="Enum representing different cardinal directions."
+/>
+
+<Attribute 
+  name="Location"
+  type="Class" 
+  description="Represents a location in the world."
+/>
+
+### World
+
+Defines the world and its cell-based structure for simulation.
+
+<Attribute 
+  name="World"
+  type="Class" 
+  description="Represents a 2D grid of cells."
+/>
+
+<Attribute 
+  name="Cell"
+  type="Class" 
+  description="Represents a cell in the world."
+/>
+
+### Agent Commands
+
+Commands available for agents interacting with Aegis.
+
+<Attribute 
+  name="End Turn"
+  type="AgentCommand" 
+  description="Represents a command that allows an agent to tell the server it is done with its turn."
+/>
+
+<Attribute 
+  name="Move"
+  type="AgentCommand" 
+  description="Represents a command for an agent to move in a specified direction."
+/>
+
+<Attribute 
+  name="Save Surv"
+  type="AgentCommand" 
+  description="Represents a command for an agent to save a survivor."
+/>
+
+### Agent
+
+Contains the core components for agents.
+
+<Attribute 
+  name="AgentController"
+  type="Class" 
+  description="An interface for controlling an agent and interacting with the Aegis system."
+/>

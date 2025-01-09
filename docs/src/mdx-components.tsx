@@ -2,11 +2,17 @@ import { useMDXComponent } from "@content-collections/mdx/react";
 import { cn } from "@/lib/utils";
 
 import Admonition from "@/components/Admonition";
+import Attribute from "@/components/Attribute";
+import Method from "@/components/Method";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tree, TreeItem } from "@/components/ui/file-tree";
 
 const components = {
   Admonition,
+  Attribute,
+  Badge,
+  Method,
   Tree,
   TreeItem,
   h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
@@ -39,15 +45,15 @@ const components = {
       {...props}
     />
   ),
-  ul: ({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
-    <ul className={cn("ml-6 list-disc", className)} {...props} />
-  ),
-  ol: ({ className, ...props }: React.HTMLAttributes<HTMLOListElement>) => (
-    <ol className={cn("ml-6 list-decimal", className)} {...props} />
-  ),
-  li: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
-    <li className={cn("mt-2", className)} {...props} />
-  ),
+  // ul: ({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
+  //   <ul className={cn("ml-6 list-disc", className)} {...props} />
+  // ),
+  // ol: ({ className, ...props }: React.HTMLAttributes<HTMLOListElement>) => (
+  //   <ol className={cn("ml-6 list-decimal", className)} {...props} />
+  // ),
+  // li: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
+  //   <li className={cn("mt-2", className)} {...props} />
+  // ),
   pre: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <pre
       className={cn(
