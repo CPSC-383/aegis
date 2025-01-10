@@ -1,8 +1,6 @@
 import { allCommonErrors } from "content-collections";
 import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
-import Sidebar from "@/components/Sidebar";
-import { navConfig } from "@/config/nav";
 import { getHeadings } from "@/lib/toc";
 import TableOfContent from "@/components/TableOfContent";
 
@@ -43,7 +41,6 @@ export default async function Page({ params }: Props) {
 
   return (
     <main className="flex overflow-hidden">
-      {/* <Sidebar items={navConfig.gettingStartedNav} /> */}
       <div className="flex-1 overflow-auto no-scrollbar">
         <div className="mt-8 sm:mt-12 sm:font-light">
           <h1 className="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold">

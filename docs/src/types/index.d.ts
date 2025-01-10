@@ -4,13 +4,9 @@ export interface NavItem {
   disabled?: boolean;
 }
 
-export interface NavItemWithChildren extends NavItem {
+export interface SidebarNavItem extends NavItem {
   items?: NavItemWithChildren[];
 }
-
-export interface MainNavItem extends NavItem {}
-
-export interface SidebarNavItem extends NavItemWithChildren {}
 
 export type TableOfContentsItem = {
   level: number;

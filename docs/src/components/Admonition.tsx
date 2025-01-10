@@ -7,7 +7,10 @@ interface Props {
 }
 
 export default function Admonition({ variant, title, children }: Props) {
-  const iconMap: Record<string, React.ComponentType<any>> = {
+  const iconMap: Record<
+    string,
+    React.ComponentType<React.SVGProps<SVGSVGElement>>
+  > = {
     tip: Lightbulb,
     caution: TriangleAlert,
     danger: Flame,

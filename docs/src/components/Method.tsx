@@ -58,11 +58,15 @@ export default function Method({
           <div>
             <h4 className="font-semibold border-b pb-1 mb-2">Returns</h4>
           </div>
-
           {returns.description && (
-            <p className="text-sm text-muted-foreground">
-              {returns.description}
-            </p>
+            <div className="flex space-x-2">
+              <Badge variant="secondary" className="text-xs">
+                {returns.type}
+              </Badge>
+              <p className="text-sm text-muted-foreground">
+                {returns.description}
+              </p>
+            </div>
           )}
         </div>
       )}

@@ -37,6 +37,7 @@ const docs = defineCollection({
   schema: (z) => ({
     title: z.string(),
     description: z.string(),
+    assignment: z.string().optional(),
   }),
   transform: async (document, context) => {
     const mdx = await compileMDX(context, document, {

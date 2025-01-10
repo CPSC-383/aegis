@@ -31,7 +31,6 @@ movement, pathfinding, and cell manipulation.
   description="Returns the 2D grid representing the world."
   returns={{
     type: "list[list[Cell]]",
-    link: "/docs/world/cell",
     description:
       "A two-dimensional list of Cell objects representing the world's grid structure.",
   }}
@@ -70,14 +69,12 @@ Cell ( (2,2), Move_Cost 1)
     {
       name: "location",
       type: "Location",
-      link: "/docs/common/location",
       description: "The location of the cell.",
       required: true,
     },
   ]}
   returns={{
     type: "Cell | None",
-    link: "/docs/world/cell",
     description:
       "The Cell object at the given location, or None if the location is invalid or out of bounds.",
   }}
@@ -114,7 +111,6 @@ None
     {
       name: "location",
       type: "Location",
-      link: "/docs/common/location",
       description: "The location to check.",
       required: true,
     },

@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import { navConfig } from "@/config/nav";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -21,9 +22,11 @@ export default function Navbar() {
     <nav className="w-full flex items-center justify-between px-6 py-4">
       <div className="flex items-center space-x-2">
         {mounted ? (
-          <img
+          <Image
             src={theme === "dark" ? "/logo-white.png" : "/logo-black.png"}
-            className="h-5"
+            alt="Picture of Aegis Logo"
+            width={80}
+            height={80}
           />
         ) : (
           <div className="h-5 w-5" />

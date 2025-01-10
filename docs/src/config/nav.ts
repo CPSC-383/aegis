@@ -1,3 +1,5 @@
+import { isAssignment1 } from "@/lib/utils";
+
 export const navConfig = {
   mainNav: [
     { title: "Home", href: "/" },
@@ -65,8 +67,23 @@ export const navConfig = {
       title: "Common",
       items: [
         {
+          title: "AgentID",
+          href: "/docs/common/agent-id",
+          disabled: isAssignment1(),
+        },
+        {
+          title: "AgentID List",
+          href: "/docs/common/agent-id-list",
+          disabled: isAssignment1(),
+        },
+        {
           title: "Direction",
           href: "/docs/common/direction",
+        },
+        {
+          title: "Life Signals",
+          href: "/docs/common/life-signals",
+          disabled: isAssignment1(),
         },
         {
           title: "Location",
