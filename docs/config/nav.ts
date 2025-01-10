@@ -2,10 +2,14 @@ import { isAssignment1 } from "@/lib/utils";
 
 export const navConfig = {
   mainNav: [
-    { title: "Home", href: "/" },
-    { title: "Getting Started", href: "/getting-started" },
-    { title: "API Reference", href: "/docs" },
-    { title: "Common Errors", href: "/common-errors" },
+    { title: "Home", href: "/", path: "/" },
+    {
+      title: "Getting Started",
+      href: "/getting-started/installation",
+      path: "/getting-started",
+    },
+    { title: "API Reference", href: "/docs/intro", path: "/docs" },
+    { title: "Common Errors", href: "/common-errors", path: "/common-errors" },
   ],
   gettingStartedNav: [
     {

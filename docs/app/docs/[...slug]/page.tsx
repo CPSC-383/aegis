@@ -1,11 +1,11 @@
 import { allDocs } from "content-collections";
 import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
-import Sidebar from "@/components/Sidebar";
 import { navConfig } from "@/config/nav";
 import { getHeadings } from "@/lib/toc";
-import TableOfContent from "@/components/TableOfContent";
 import { isAssignment1 } from "@/lib/utils";
+import TableOfContent from "@/components/TableOfContent";
+import Sidebar from "@/components/Sidebar";
 
 interface Props {
   params: Promise<{
