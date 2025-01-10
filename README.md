@@ -1,70 +1,46 @@
 # CPSC 383 Aegis
 
 > [!NOTE]
-> You can use reuse existing tags found in the "Releases" section for building.
+> You can reuse existing tags found in the "Releases" section for building.
 
-## Building the Documentation
+## Project Structure
 
-> [!WARNING]
-> Do not touch the `docs` branch. The workflow will automatically update the files for the website.
+- `/docs` - Documentation website
+- `/client` - The aegis client
 
+## Development
 
-To build the documentation, follow these steps:
+### Prerequisites
 
-1. Ensure you are on the appropriate branch.
+- Node.js 
+- npm
 
-- For assignment 1:
+### Getting Started
+
+1. Clone the repository:
 
 ```bash
-git checkout a1
+git clone https://github.com/CPSC-383/aegis.git
+cd aegis
 ```
 
-- For assignment 3:
+2. Install dependencies:
+
+TODO
+
+### Building and Deployment
+
+#### Documentation
+
+To build and deploy the documentation, check the docs folder [readme](./docs/README.md)
+
+#### Aegis Release 
+
+1. Create a release tag with assignment suffix:
 
 ```bash
-git checkout a3
-```
-
-2. Navigate into the `docs` directory.
-
-```bash
-cd docs
-```
-
-3. Deploy the docs.
-
-```bash
-npm run deploy
-```
-
-## Release Build for the Aegis Client
-
-To build and release the Aegis Client, follows these steps:
-
-1. Ensure you are on the appropriate branch.
-
-- For assignment 1:
-
-```bash
-git checkout a1
-```
-
-- For assignment 3:
-
-```bash
-git checkout a3
-```
-
-2. Create a new tag for the documentation release.
-
-```bash
-git tag -a v<major>.<minor>.<patch> -m "<release message>"
-```
-
-Example:
-
-```bash
-git tag -a v2.1.3 -m "Fix bug in map editor"
+git tag -a v<major>.<minor>.<patch>-<assignment> -m "<release message>"
+# Example: git tag -a v2.1.3-a1 -m "Fix bug in map editor"
 ```
 
 3. Push the tag.
@@ -73,6 +49,7 @@ git tag -a v2.1.3 -m "Fix bug in map editor"
 git push origin <tag name>
 ```
 
-### Finding the Aegis Client
+> [!NOTE]
+> Tags must end with -a1 or -a3 to trigger the release workflow. For example: v1.0.0-a1 or v2.1.3-a3
 
-The zipped client will be in the "Releases" section.
+The client will be automatically built and available in the "Releases" section.

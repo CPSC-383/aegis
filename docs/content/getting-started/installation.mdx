@@ -1,0 +1,191 @@
+---
+title: "Installation"
+description: "A step-by-step guide to install Aegis on your system."
+---
+
+<Admonition variant="info" title="Before You Begin">
+Ensure that your system meets the following prerequisites:
+- **Python 3.12.x**
+
+<div className="ml-6">
+To check if you have the correct Python version installed, run the following command in your terminal:
+
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+```bash
+python3 --version
+```
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+```bash
+python --version
+```
+
+</TabsContent>
+
+</Tabs>
+
+This should return **Python 3.12.x.**
+
+</div>
+
+</Admonition>
+
+## Installation
+
+<Steps>
+
+### Download the assignment
+
+Download the ZIP file and unzip it with your preferred method.
+If successful, a new directory called aegis should have been created.
+
+### Navigate to the assignment directory
+
+```bash
+cd aegis
+```
+
+### Setting up the assignment
+
+Aegis requires a set of Python packages to function. Installing these in a virtual environment
+ensures there are no conflicts with other Python projects or system-wide packages.
+
+Run the setup script:
+
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+```bash
+python3 setup.py 
+source .venv/bin/activate
+```
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+```bash
+python setup.py 
+.venv\Scripts\activate
+```
+
+</TabsContent>
+
+</Tabs>
+
+If the script was successful, a virtual environment named `.venv` should have been created, the required packages
+installed within it and the client for your platform should be in the `client` folder.
+
+Steps do to it manually if the setup script failed:
+
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements
+```
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements
+```
+
+</TabsContent>
+
+</Tabs>
+
+Unzip your platform client in the client folder with your preferred method.
+
+### Confirm Installation 
+
+To confirm that Aegis installed properly, follow the steps outlined <a href="/getting-started/aegis/running-aegis">here</a>.
+
+</Steps>
+
+
+<Admonition variant="tip" title="Virtual Environment">
+Deactivate the virtual environment once you're done working on the assignment:
+
+```bash
+deactivate
+```
+
+You must reactivate the virtual environment every time you work on the assignment. If you're not inside the environment,
+you may encounter missing dependency errors.
+
+</Admonition>
+
+## File Structure
+
+The Aegis client uses a specific structure for agents and worlds. Be sure to follow these guidelines so the client can find and run the necessary files correctly.
+
+### Agent Structure
+
+<Tree>
+  <TreeItem name="aegis" type="folder">
+    <TreeItem name="src" type="folder">
+      <TreeItem name="agents" type="folder">
+        <TreeItem name="example_agent" type="folder">
+          <TreeItem name="example_agent.py" />
+          <TreeItem name="main.py" />
+        </TreeItem>
+      </TreeItem>
+    </TreeItem>
+  </TreeItem>
+</Tree>
+
+<ul className="ml-6 list-disc">
+  <li className="mt-2">Place new agents in the `src/agents` directory.</li>
+  <li className="mt-2">Agents must include a `main.py` file.</li>
+</ul>
+
+### World Structure
+
+<Tree>
+  <TreeItem name="aegis" type="folder">
+      <TreeItem name="worlds" type="folder">
+      <TreeItem name="ExampleWorld.world" />
+    </TreeItem>
+  </TreeItem>
+</Tree>
+
+<ul className="ml-6 list-disc">
+  <li className="mt-2">Place new worlds in the `worlds` directory.</li>
+  <li className="mt-2">All world files must end with `.world`.</li>
+</ul>

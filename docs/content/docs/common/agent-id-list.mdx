@@ -1,0 +1,117 @@
+---
+title: "AgentID List" 
+description: "A data structure for uniquely identifying an agent."
+assignment: "a3"
+---
+
+## Overview
+
+The Agent ID data structure is designed to uniquely identify an agent within a specific group. It consists of two key attributes:
+an ID, which uniquely identifies the agent, and a Group ID (GID), which represents the group to which the agent belongs.
+This ensures that each agent can be distinctly recognized both within their own group and across potentially multiple groups.
+
+## Methods
+
+### add(agent_id: AgentID)
+
+<Method
+  description="Add an AgentID instance to the list if not already present."
+  parameters={[
+    {
+      name: "agent_id",
+      type: "AgentID",
+      description: "AgentID instance to add to the list.",
+      required: true,
+    },
+  ]}
+/>
+
+### add_all(agent_id_list: list[AgentID] | AgentIDList)
+
+<Method
+  description="Adds all AgentID instances from another list or AgentIDList to the current list."
+  parameters={[
+    {
+      name: "agent_id_list",
+      type: "list[AgentID] | AgentIDList",
+      description: "A list of AgentID instances or an AgentIDList.",
+      required: true,
+    },
+  ]}
+/>
+
+### remove(agent_id: AgentID)
+
+<Method
+  description="Removes an AgentID instance from the list if it exists."
+  parameters={[
+    {
+      name: "agent_id",
+      type: "AgentID",
+      description: "The AgentID instance to remove.",
+      required: true,
+    },
+  ]}
+/>
+
+### remove_all(agent_id_list: list[AgentID])
+
+<Method
+  description="Removes all specified AgentID instances from the list."
+  parameters={[
+    {
+      name: "agent_id_list",
+      type: "list[AgentID]",
+      description: "A list of AgentID instances to remove.",
+      required: true,
+    },
+  ]}
+/>
+
+### remove_at(index: int)
+
+<Method
+  description="Removes and returns the AgentID instance at the given index."
+  parameters={[
+    {
+      name: "index",
+      type: "int",
+      description: "The index of the AgentID instance to remove.",
+      required: true,
+    },
+  ]}
+  returns={{
+    type: "AgentID",
+    description:
+      "The AgentID instance at the given index.",
+  }}
+/>
+
+### size()
+
+<Method
+  description="Returns the number of AgentID instances in the list."
+  returns={{
+    type: "int",
+    description:
+      "The number of AgentID instances in the list.",
+  }}
+/>
+
+### is_empty()
+
+<Method
+  description="Checks if the AgentIDList is empty."
+  returns={{
+    type: "bool",
+    description:
+      "True if the AgentIDList is empty, otherwise False.",
+  }}
+/>
+
+### clear()
+
+<Method
+  description="Clears all AgentID instances from the list."
+/>
+
