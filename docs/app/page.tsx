@@ -8,7 +8,7 @@ export default function CommonErrors() {
     {
       title: "Getting Started",
       description: "A step-by-step guide to quickly install and set up Aegis.",
-      href: "/getting-started",
+      href: "/getting-started/installation",
       icon: Rocket,
     },
     {
@@ -21,7 +21,7 @@ export default function CommonErrors() {
       title: "API Reference",
       description:
         "Explore the Aegis API, including all available functions and their usage.",
-      href: "/docs",
+      href: "/docs/intro",
       icon: Terminal,
     },
     {
