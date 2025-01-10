@@ -12,7 +12,7 @@ const prettyCodeOptions: Options = {
 
 const gettingStarted = defineCollection({
   name: "GettingStarted",
-  directory: "src/content/getting-started",
+  directory: "content/getting-started",
   include: "**/*.mdx",
   schema: (z) => ({
     title: z.string(),
@@ -32,7 +32,7 @@ const gettingStarted = defineCollection({
 
 const docs = defineCollection({
   name: "Doc",
-  directory: "src/content/docs",
+  directory: "content/docs",
   include: "**/*.mdx",
   schema: (z) => ({
     title: z.string(),
@@ -53,7 +53,7 @@ const docs = defineCollection({
 
 const commonErrors = defineCollection({
   name: "CommonErrors",
-  directory: "src/content/common-errors",
+  directory: "content/common-errors",
   include: "**/*.mdx",
   schema: (z) => ({
     title: z.string(),
