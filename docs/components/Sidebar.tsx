@@ -26,7 +26,7 @@ export default function Sidebar({ items }: Props) {
                     <div
                       className={`block py-1 px-2 text-sm
                   ${
-                    pathname === item.href
+                    pathname === item.href + "/"
                       ? "font-semibold border-l-2 border-border"
                       : "text-muted-foreground hover:text-foreground"
                   }

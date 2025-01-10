@@ -1,5 +1,5 @@
 import { useMDXComponent } from "@content-collections/mdx/react";
-import { cn } from "@/lib/utils";
+import { cn, getImagePath } from "@/lib/utils";
 
 import Admonition from "@/components/Admonition";
 import Attribute from "@/components/Attribute";
@@ -14,7 +14,6 @@ const components = {
   Admonition,
   Attribute,
   Badge,
-  Image,
   Method,
   Tree,
   TreeItem,
@@ -110,6 +109,9 @@ const components = {
       )}
       {...props}
     />
+  ),
+  Image: ({ className, src, ...props }: React.ComponentProps<typeof Image>) => (
+    <Image className={className} src={getImagePath(src as string)} {...props} />
   ),
   Tabs: ({ className, ...props }: React.ComponentProps<typeof Tabs>) => (
     <Tabs className={cn("relative mt-6 w-full", className)} {...props} />
