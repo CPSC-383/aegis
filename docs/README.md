@@ -1,50 +1,54 @@
-# React + TypeScript + Vite
+# Aegis Docs
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the Aegis project documentation website.
 
-Currently, two official plugins are available:
+> [!WARNING]
+> Do not touch the `docs` branch. The workflow will automatically update the files for the website.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Local Development
 
-## Expanding the ESLint configuration
+1. Install dependencies:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. Start the development server:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm run dev        # Development for assignment 3
+# OR
+npm run dev:a1     # Development for assignment 1 
 ```
+
+## Building
+
+Build the documentation site:
+
+```bash
+npm run build        # Build for assignment 3
+# OR
+npm run build:a1     # Build for assignment 1 
+```
+
+## Deployment
+
+To deploy:
+
+```bash
+npm run deploy        # Deploy for assignment 3 
+# OR
+npm run deploy:a1     # Deploy for assignment 1 
+```
+
+> [!NOTE]
+> The deployment will automatically build before publishing to the docs branch.
+
+## Project Structure
+- `/app` - Contains pages and API routes for Next.js
+- `/components` - Reusable React components
+- `/config` - Contains configuration files
+- `/content` - Documentation pages
+- `/public` - Static assets
+- `/lib` - Helper functions and utilities
+- `./mdx-components.tsx` - Custom components and styles to use with MDX files

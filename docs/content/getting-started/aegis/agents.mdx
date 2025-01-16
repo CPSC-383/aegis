@@ -1,0 +1,89 @@
+---
+title: "Agents"
+description: "This section will cover the basics needed to create agents that work with Aegis."
+---
+
+## Agents and the Simulated world in Aegis
+
+In the Aegis simulation, agents are members of the elite space force. Here’s what you need to know:
+
+<Admonition variant="info" title="Agent Communication">
+  Agents can't talk to each other directly. All communication and actions must go through Aegis.
+</Admonition>
+
+### World
+
+Each agent has to build their own world as they move around. At the start, they only know basic information of the world.
+The information includes:
+
+- **Fire Cells**: Dangerous areas where agents may incur damage.
+- **Killing Cells**: Cells that can immediately endanger the agent’s life.
+- **Charging Cells**: Cells where agents can recharge their energy.
+- **Presence of Survivors**: Whether or not a cell contains survivors in need of rescue.
+
+### World Layout
+
+Each square in the world grid has the following attributes:
+
+#### Stack of Objects
+
+This can include:
+
+- **Survivors**: People awaiting rescue.
+- **Rubble**: Debris that needs to be cleared.
+
+#### Move Cost
+
+The energy lost when moving onto a square. Some squares may have higher move costs than others, requiring agents to strategize their path.
+
+#### Cell Type
+
+Each cell can have one of the following types:
+
+- **CHARGING_CELL**: For recharging energy.
+- **FIRE_CELL**: A hazard where agents may take damage.
+- **KILLER_CELL**: A lethal hazard that can immediately endanger agents.
+- **NORMAL_CELL**: A walkable space with no hazards.
+
+#### Field of View
+
+Agents have a limited view of the world. Their field of view includes:
+- **Current Square with Life Signals**: The square the agent is currently on, displaying life signals for objects in that square. 
+Note that deeper layers may distort these signals, making it harder to detect objects or survivors deeper within the stack.
+- **Surrounding Squares within 1-Square Radius**: The immediate surroundings of the agent (e.g., north, northwest, etc.), allowing
+the agent to see basic details, including the top object in each square.
+
+## Agent Commands
+
+Agents can use the following commands to interact with Aegis. Click on each command for more information.
+
+<div className="text-xl mt-8 font-mono">[END_TURN](/docs/agent-commands/end-turn)</div>
+<div className="text-xl mt-4 font-mono">[MOVE](/docs/agent-commands/move)</div>
+<div className="text-xl mt-4 font-mono">[SAVE_SURV](/docs/agent-commands/save-surv)</div>
+
+## Agent States
+
+Each round involves four main states for an agent:
+
+<Steps>
+
+### IDLE
+
+The agent is waiting for instructions from Aegis.
+
+### READ_MAIL
+
+The agent has received the `MESSAGES_START` command and will start processing messages from the other agents.
+The agent returns to the `IDLE` state when it receives the `MESSAGES_END` command.
+
+### GET_CMD_RESULT
+
+The agent has received the `CMD_RESULT_START` command, indicating that Aegis is sending the results for the last command.
+The agent returns to the `IDLE` state when it receives the `CMD_RESULT_END` command.
+
+### THINK
+
+The agent has received the `ROUND_START` command, allowing it to begin computing its actions for the current round.
+The agent returns to the `IDLE` state when it receives the `ROUND_END` command.
+
+</Steps>
