@@ -1,5 +1,5 @@
-import { Location } from '@/utils/types'
 import BrushHandler from './BrushHandler'
+import { Location } from '@/core/world'
 
 class MoveCostHandler extends BrushHandler {
     constructor(

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 
-import { aegisAPI } from '@/aegis-api'
+import { aegisAPI } from '@/services'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
@@ -10,7 +10,6 @@ import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 interface Props {
     aegisPath: string
-    numAgentsAegis: number
     agents: string[]
     agent: string
     setAgent: (value: string) => void

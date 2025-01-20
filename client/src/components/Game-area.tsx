@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react'
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { EventType, dispatchEvent, listenEvent } from '@/events'
 import { getImage, whatBucket } from '@/utils/util'
-import { shadesOfBrown } from '@/utils/types'
+import { shadesOfBrown } from '@/types'
 
 import layerSpriteSheetSrc from '@/assets/layers-spritesheet-Sheet.png'
-
-import { AgentInfoDict, Size } from '@/utils/types'
 import { drawAgent, renderCoords } from '@/utils/renderUtils'
+import { Size } from '@/core/world'
+import { AgentInfoDict } from '@/core/simulation'
 
 function GameArea() {
     const { appState, setAppState } = useAppContext()

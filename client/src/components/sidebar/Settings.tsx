@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { SettingsIcon, Folder } from 'lucide-react'
 
-import { Scaffold } from '@/scaffold'
+import { Scaffold } from '@/services'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-import { Config } from '@/utils/types'
+import { Config } from '@/types'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 type Props = {

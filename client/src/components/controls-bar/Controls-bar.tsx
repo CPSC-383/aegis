@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { EventType, listenEvent } from '@/events'
 import { useForceUpdate } from '@/utils/util'
 import Timeline from './Timeline'
@@ -24,7 +24,7 @@ function ControlsBar() {
 
     const handleRound = (step: number) => {
         if (!simulation) return
-        simulation.jumpToRound(simulation.currentRound + step)
+        simulation.jumpToRound(simulation.getRoundNumber() + step)
     }
 
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -75,7 +75,7 @@ function ControlsBar() {
 
     // If maxRounds is -1, this means we are in the editor.
     // Don't show the control bar when there isn't a simulation as well.
-    if (simulation?.maxRounds == -1 || !simulation) return null
+    if (!simulation || simulation.getMaxRounds() == -1) return null
 
     return (
         <TooltipProvider>

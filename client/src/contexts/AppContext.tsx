@@ -1,5 +1,5 @@
 import { useContext, createContext, useState, SetStateAction, ReactNode } from 'react'
-import { Simulation } from './simulation/simulation'
+import { Simulation } from '@/core/simulation'
 
 export interface AppContext {
     simulation: Simulation | undefined

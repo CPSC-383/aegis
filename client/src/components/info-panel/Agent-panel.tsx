@@ -1,6 +1,6 @@
 import { EventType, listenEvent } from '@/events'
-import { Simulation } from '@/simulation/simulation'
-import { AgentInfoDict, StackContent } from '@/utils/types'
+import { Simulation, AgentInfoDict } from '@/core/simulation'
+import { StackContent } from '@/core/world'
 
 type Props = {
     selectedAgent: AgentInfoDict
@@ -12,7 +12,7 @@ type Props = {
 function AgentPanel({ selectedAgent, setSelectedAgent, setCellLayers, simulation }: Props) {
     const updateSelectedAgentInfo = () => {
         if (!selectedAgent) return
-        const agent = simulation!.getAgentFromIds(selectedAgent.id, selectedAgent.gid)
+        const agent = simulation!.getAgentWithIds(selectedAgent.id, selectedAgent.gid)
         const layers = simulation!.getLayersAtCell(selectedAgent.x, selectedAgent.y)
         setSelectedAgent(agent)
         setCellLayers(layers)

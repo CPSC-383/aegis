@@ -1,5 +1,4 @@
-import { WorldMap } from '@/simulation/world-map'
-import { Location, Stack } from '@/utils/types'
+import { Stack, WorldMap, Location } from '@/core/world'
 
 abstract class BrushHandler {
     protected worldMap: WorldMap

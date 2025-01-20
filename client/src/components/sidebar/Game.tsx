@@ -1,4 +1,4 @@
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { EventType, listenEvent } from '@/events'
 import { ASSIGNMENT_A3, getCurrentAssignment, useForceUpdate } from '@/utils/util'
 import { motion } from 'framer-motion'
@@ -71,7 +71,7 @@ function Game() {
                             <thead>
                                 <tr className="bg-gray-200">
                                     <th className="px-2 py-2">Group Stats Table</th>
-                                    {stats.groupStats.map((group) => (
+                                    {stats.groupStats!.map((group) => (
                                         <th key={group.gid} className="px-4 py-2">
                                             {group.name}
                                             <br /> ID: {group.gid}
@@ -86,7 +86,7 @@ function Game() {
                                         <br />
                                         Saved
                                     </td>
-                                    {stats.groupStats.map((group) => (
+                                    {stats.groupStats!.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
                                             {group.SurvivorsSaved}
                                         </td>
@@ -98,7 +98,7 @@ function Game() {
                                         <br />
                                         Predictions
                                     </td>
-                                    {stats.groupStats.map((group) => (
+                                    {stats.groupStats!.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
                                             {group.CorrectPredictions}
                                         </td>
@@ -110,7 +110,7 @@ function Game() {
                                         <br />
                                         Predictions
                                     </td>
-                                    {stats.groupStats.map((group) => (
+                                    {stats.groupStats!.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
                                             {group.IncorrectPredictions}
                                         </td>

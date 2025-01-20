@@ -1,8 +1,8 @@
 import React from 'react'
-import { RubbleInfo } from '@/utils/types'
 import { Users, Zap } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { RubbleInfo } from '@/core/world'
 
 interface Props {
     rubbleInfo: RubbleInfo

@@ -1,6 +1,7 @@
-import { Location, SpawnZoneTypes, SpecialCellBrushTypes } from '@/utils/types'
+import { SpecialCellBrushTypes } from '@/types'
 import BrushHandler from './BrushHandler'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
+import { SpawnZoneTypes, Location } from '@/core/world'
 
 class SpecialCellsHandler extends BrushHandler {
     constructor(

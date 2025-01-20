@@ -6,8 +6,7 @@ export enum EventType {
     RENDER = 'render',
     RENDER_MAP = 'render_map',
     RENDER_STACK = 'render_stack',
-    TILE_CLICK = 'tile_click',
-    RIGHT_CLICK = 'right_click'
+    TILE_CLICK = 'tile_click'
 }
 
 export function dispatchEvent(eventType: string, eventData: any) {

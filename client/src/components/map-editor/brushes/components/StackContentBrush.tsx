@@ -1,8 +1,9 @@
-import { RubbleInfo, StackContentBrushTypes } from '@/utils/types'
+import { StackContentBrushTypes } from '@/types'
 import RubbleSettings from './RubbleSettings'
 import { Mountain, User } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
+import { RubbleInfo } from '@/core/world'
 
 interface Props {
     stackType: StackContentBrushTypes

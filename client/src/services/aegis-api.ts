@@ -28,6 +28,4 @@ type AegisAPI = {
 }
 
 // @ts-ignore
-const aegisAPI: AegisAPI = window.electronAPI as ElectronAPI
-
-export { aegisAPI }
+export const aegisAPI: AegisAPI = window.electronAPI as ElectronAPI

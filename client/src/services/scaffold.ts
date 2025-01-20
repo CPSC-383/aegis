@@ -1,10 +1,9 @@
-import { aegisAPI } from '@/aegis-api'
 import { useEffect, useRef, useState } from 'react'
-import { ClientWebSocket } from './websocket'
-import { useAppContext } from './context'
-import { Simulation } from './simulation/simulation'
-import { useForceUpdate } from './utils/util'
-import { ConsoleLine } from './utils/types'
+import { ClientWebSocket, aegisAPI } from '@/services'
+import { useAppContext } from '@/contexts/AppContext'
+import { Simulation } from '@/core/simulation'
+import { useForceUpdate } from '@/utils/util'
+import { ConsoleLine } from '@/types'
 
 export type Scaffold = {
     aegisPath: string | undefined
@@ -18,7 +17,7 @@ export type Scaffold = {
     readAegisConfig: () => Promise<string>
 }
 
-function createScaffold(): Scaffold {
+export function createScaffold(): Scaffold {
     const { setAppState } = useAppContext()
     const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
     const [worlds, setWorlds] = useState<string[]>([])
@@ -204,5 +203,3 @@ const getAgents = async (aegisPath: string) => {
     }
     return agents
 }
-
-export default createScaffold

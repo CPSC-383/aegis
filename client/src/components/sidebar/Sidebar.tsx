@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { useAppContext } from '@/context'
-import { TabNames } from '@/utils/types'
+import { useAppContext } from '@/contexts/AppContext'
+import { TabNames } from '@/types'
 import { ChevronRight } from 'lucide-react'
 
 import Aegis from './Aegis'
@@ -13,7 +13,7 @@ import InfoPanel from '../info-panel/Info-panel'
 import MapEditor from '../map-editor/Map-editor'
 import Game from './Game'
 import Settings from './Settings'
-import createScaffold from '@/scaffold'
+import { createScaffold } from '@/services'
 
 function Sidebar() {
     const scaffold = createScaffold()

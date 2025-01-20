@@ -1,4 +1,5 @@
-import { Location, RubbleInfo, Stack, StackContentBrushTypes, SurvivorInfo } from '@/utils/types'
+import { StackContentBrushTypes } from '@/types'
+import { RubbleInfo, SurvivorInfo, Location, Stack } from '@/core/world'
 import BrushHandler from './BrushHandler'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 

@@ -1,12 +1,12 @@
 import { MouseEvent } from 'react'
-import { useAppContext } from '@/context'
+import { useAppContext } from '@/contexts/AppContext'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Progress } from '@/components/ui/progress'
 
 function Timeline() {
     const { appState } = useAppContext()
     const { simulation } = appState
-    const maxRounds = simulation ? simulation.maxRounds : 0
+    const maxRounds = simulation ? simulation.getMaxRounds() : 0
     const TIMELINE_WIDTH = 300
 
     const handleSeek = (e: MouseEvent<HTMLDivElement>) => {
@@ -29,7 +29,7 @@ function Timeline() {
         )
     }
 
-    const round = simulation.currentRound
+    const round = simulation.getRoundNumber()
     const progressPercentage = maxRounds ? (round / maxRounds) * 100 : 0
 
     return (
