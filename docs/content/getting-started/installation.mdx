@@ -134,7 +134,7 @@ Unzip your platform client in the client folder with your preferred method.
 
 ### Confirm Installation 
 
-To confirm that Aegis installed properly, follow the steps outlined <a href="/getting-started/aegis/running-aegis">here</a>.
+To confirm that Aegis installed properly, follow the steps outlined [here](/getting-started/running-aegis).
 
 </Steps>
 
@@ -150,42 +150,3 @@ You must reactivate the virtual environment every time you work on the assignmen
 you may encounter missing dependency errors.
 
 </Admonition>
-
-## File Structure
-
-The Aegis client uses a specific structure for agents and worlds. Be sure to follow these guidelines so the client can find and run the necessary files correctly.
-
-### Agent Structure
-
-<Tree>
-  <TreeItem name="aegis" type="folder">
-    <TreeItem name="src" type="folder">
-      <TreeItem name="agents" type="folder">
-        <TreeItem name="example_agent" type="folder">
-          <TreeItem name="example_agent.py" />
-          <TreeItem name="main.py" />
-        </TreeItem>
-      </TreeItem>
-    </TreeItem>
-  </TreeItem>
-</Tree>
-
-<ul className="ml-6 list-disc">
-  <li className="mt-2">Place new agents in the `src/agents` directory.</li>
-  <li className="mt-2">Agents must include a `main.py` file.</li>
-</ul>
-
-### World Structure
-
-<Tree>
-  <TreeItem name="aegis" type="folder">
-      <TreeItem name="worlds" type="folder">
-      <TreeItem name="ExampleWorld.world" />
-    </TreeItem>
-  </TreeItem>
-</Tree>
-
-<ul className="ml-6 list-disc">
-  <li className="mt-2">Place new worlds in the `worlds` directory.</li>
-  <li className="mt-2">All world files must end with `.world`.</li>
-</ul>

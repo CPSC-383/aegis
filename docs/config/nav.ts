@@ -19,6 +19,10 @@ export const navConfig = {
           title: "Installation",
           href: "/getting-started/installation",
         },
+        {
+          title: "Running Aegis",
+          href: "/getting-started/running-aegis",
+        },
       ],
     },
     {
@@ -33,8 +37,8 @@ export const navConfig = {
           href: "/getting-started/aegis/system",
         },
         {
-          title: "Running Aegis",
-          href: "/getting-started/aegis/running-aegis",
+          title: "File Structure",
+          href: "/getting-started/aegis/file-structure",
         },
       ],
     },

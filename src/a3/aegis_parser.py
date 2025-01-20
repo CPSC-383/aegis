@@ -78,14 +78,9 @@ class AegisParser:
                     cell = AegisParser.read_and_build_cell(line)
                     world[cell.location.x][cell.location.y] = cell
         except FileNotFoundError:
-            if not file_location.startswith(os.getcwd()):
-                raise AegisParserException(
-                    "Please make sure your path to the world information file has no spaces, weird characters etc."
-                )
-            else:
-                raise AegisParserException(
-                    f"Unable to find startup world information file from {file_location}"
-                )
+            raise AegisParserException(
+                f"Unable to find startup world information file from {file_location}"
+            )
         except Exception:
             raise AegisParserException(
                 f"Unable to read in startup world information file from {file_location}"
@@ -431,12 +426,12 @@ class AegisParser:
 
     @staticmethod
     def file(tokens: Iterator[str]) -> str:
-        file = ""
+        parts: list[str] = []
         while True:
             token = next(tokens)
             if token == ")":
-                return file
-            file += token
+                return " ".join(parts)
+            parts.append(token)
 
     @staticmethod
     def direction(tokens: Iterator[str]) -> Direction:
