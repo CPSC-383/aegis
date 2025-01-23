@@ -52,8 +52,8 @@ export class WorldMap {
      * @returns A WorldMap instance.
      */
     static fromData(data: any): WorldMap {
-        const { world_info, agent_energy } = data.settings
-        const { size, seed, world_file_levels } = world_info
+        const { world_info } = data.settings
+        const { size, seed, world_file_levels, agent_energy } = world_info
 
         const spawnCells = new Map<string, { type: SpawnZoneTypes; groups: number[] }>(
             data.spawn_locs.map((spawn: Spawn) => {
