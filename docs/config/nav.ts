@@ -127,6 +127,10 @@ export const navConfig = {
           title: "Save Surv",
           href: "/docs/agent-commands/save-surv",
         },
+        {
+          title: "Sleep",
+          href: "/docs/agent-commands/sleep",
+        },
       ],
     },
   ],
