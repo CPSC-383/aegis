@@ -13,6 +13,7 @@ from aegis.common.commands.aegis_commands import (
     MOVE_RESULT,
     ROUND_END,
     ROUND_START,
+    SLEEP_RESULT,
 )
 from a1.aegis_parser import AegisParser
 from aegis.common.world.info.cell_info import CellInfo
@@ -95,6 +96,11 @@ class Brain(ABC):
 
         elif isinstance(aegis_command, CMD_RESULT_END):
             base_agent.set_agent_state(AgentStates.IDLE)
+
+        elif isinstance(aegis_command, SLEEP_RESULT):
+            sleep_result: SLEEP_RESULT = aegis_command
+            if sleep_result.was_successful:
+                base_agent.set_energy_level(sleep_result.charge_energy)
 
         else:
             base_agent.log(
