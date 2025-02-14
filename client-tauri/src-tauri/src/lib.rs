@@ -1,5 +1,7 @@
+use tauri::{AppHandle, State, Emitter};
+use tauri_plugin_dialog::{DialogExt, FilePath };
+use tauri_plugin_shell::{ShellExt, process::CommandEvent, process::CommandChild};
 use std::path::{Path, PathBuf};
-use std::process::{Command, Child};
 use std::collections::HashMap;
 use std::sync::Mutex;
 use serde::{Serialize, Deserialize};
@@ -10,13 +12,15 @@ struct Config {
 }
 
 struct AppState {
-    processes: Mutex<HashMap<String, Child>>,
+    processes: Mutex<HashMap<String, CommandChild>>,
 }
 
 #[tauri::command]
-fn open_aegis_directory() -> Option<String> {
-    // TODO: Use the dialog plugin to add a file dialog box
-    Some("/path/to/aegis".to_string())
+async fn open_aegis_directory(app: AppHandle) -> Option<FilePath> {
+    app.dialog()
+        .file()
+        .set_title("Select aegis directory")
+        .blocking_pick_folder()
 }
 
 #[tauri::command]
@@ -63,7 +67,13 @@ fn fs_exists_sync(path: String) -> bool {
 
 #[tauri::command]
 fn fs_readdir_sync(path: String) -> Vec<String> {
-    std::fs::read_dir(path).unwrap().map(|entry| entry.unwrap().path().to_str().unwrap().to_string()).collect()
+    let mut entries: Vec<String> = std::fs::read_dir(path)
+        .unwrap()
+        .map(|entry| entry.unwrap().file_name().to_str().unwrap().to_string())
+        .collect();
+    
+    entries.sort();
+    entries
 }
 
 #[tauri::command]
@@ -73,7 +83,12 @@ fn fs_is_directory(path: String) -> bool {
 
 #[tauri::command]
 fn fs_read_file_sync(path: String) -> String {
-    std::fs::read_to_string(path).unwrap()
+    match std::fs::read_to_string(&path) {
+        Ok(contents) => contents,
+        Err(e) => {
+            format!("Error reading file: {}", e)
+        }
+    }
 }
 
 #[tauri::command]
@@ -82,27 +97,38 @@ fn export_world(default_path: String, content: String) {
 }
 
 #[tauri::command]
-fn spawn_aegis_process(state: tauri::State<AppState>, root_path: String, num_of_rounds: String, num_of_agents: String, world_file: String) -> Result<String, String> {
-    let src_path = Path::new(&root_path).join("src");
+async fn spawn_aegis_process(
+    state: State<'_, AppState>,
+    app: AppHandle,
+    root_path: String,
+    num_of_rounds: String,
+    num_of_agents: String,
+    world_file: String,
+) -> Result<String, String> {
+    let src_path = std::path::Path::new(&root_path).join("src");
     let proc = src_path.join("aegis").join("main.py");
 
     let world_file_path = format!("worlds/{}", world_file);
-    
+
     let proc_args = vec![
         "-NoKViewer",
         &num_of_agents,
         "-ProcFile",
         "replay.txt",
         "-WorldFile",
-        &world_file_path, 
+        &world_file_path,
         "-NumRound",
         &num_of_rounds,
         "-WaitForClient",
-        "true"
+        "true",
     ];
 
     let python_exec = get_python_executable_path(&root_path);
-    let child = Command::new(python_exec)
+
+    let handle = app.clone();
+    let (mut rx, child) = handle
+        .shell()
+        .command(python_exec)
         .args(&[proc.to_str().unwrap()])
         .args(proc_args)
         .current_dir(&root_path)
@@ -110,23 +136,60 @@ fn spawn_aegis_process(state: tauri::State<AppState>, root_path: String, num_of_
         .spawn()
         .map_err(|e| e.to_string())?;
 
-    let pid = child.id().to_string();
+    let pid = child.pid().to_string();
+
     state.processes.lock().unwrap().insert(pid.clone(), child);
+
+    tauri::async_runtime::spawn(async move {
+        while let Some(event) = rx.recv().await {
+            match event {
+                CommandEvent::Stdout(line) => {
+                    let line = String::from_utf8(line).unwrap();
+                    app.emit("aegis-stdout", line)
+                        .unwrap_or_else(|e| eprintln!("Failed to emit stdout: {}", e));
+                }
+                CommandEvent::Stderr(line) => {
+                    let line = String::from_utf8(line).unwrap();
+                    app.emit("aegis-stderr", line)
+                        .unwrap_or_else(|e| eprintln!("Failed to emit stderr: {}", e));
+                }
+                CommandEvent::Terminated(_payload) => {
+                    let _ = app.emit("aegis-exit", "");
+                }
+                _ => {}
+            }
+        }
+    });
 
     Ok(pid)
 }
 
 #[tauri::command]
-fn spawn_agent_processes(state: tauri::State<AppState>, root_path: String, group_name: String, num_of_agents_to_spawn: usize, agent: String) -> Result<Vec<String>, String> {
-    let src_path = Path::new(&root_path).join("src");
+async fn spawn_agent_processes(
+    state: State<'_, AppState>,
+    app: AppHandle,
+    root_path: String,
+    group_name: String,
+    num_of_agents_to_spawn: String,
+    agent: String,
+) -> Result<Vec<String>, String> {
+    let src_path = std::path::Path::new(&root_path).join("src");
     let proc = src_path.join("agents").join(agent).join("main.py");
-    let proc_args = vec![group_name];
+    let proc_args = vec![group_name.clone()];
 
     let python_exec = get_python_executable_path(&root_path);
 
     let mut pids = Vec::new();
+
+    let num_of_agents_to_spawn: usize = num_of_agents_to_spawn
+        .parse()
+        .map_err(|e| format!("Failed to parse num_of_agents_to_spawn: {}", e))?;
+
     for _ in 0..num_of_agents_to_spawn {
-        let child = Command::new(&python_exec)
+        let handle = app.clone();
+        let (mut rx, child) = handle
+            .shell()
+            .command(&python_exec)
             .args(&[proc.to_str().unwrap()])
             .args(&proc_args)
             .current_dir(&root_path)
@@ -134,8 +197,30 @@ fn spawn_agent_processes(state: tauri::State<AppState>, root_path: String, group
             .spawn()
             .map_err(|e| e.to_string())?;
 
-        let pid = child.id().to_string();
+        let pid = child.pid().to_string();
+
         state.processes.lock().unwrap().insert(pid.clone(), child);
+
+        let app_stdout = app.clone();
+        tauri::async_runtime::spawn(async move {
+            while let Some(event) = rx.recv().await {
+                match event {
+                    CommandEvent::Stdout(line) => {
+                        let line = String::from_utf8(line).unwrap();
+                        app_stdout
+                            .emit("agent-stdout",  line)
+                            .unwrap_or_else(|e| eprintln!("Failed to emit stdout: {}", e));
+                    }
+                    CommandEvent::Stderr(line) => {
+                        let line = String::from_utf8(line).unwrap();
+                        app_stdout
+                            .emit("agent-stderr",  line)
+                            .unwrap_or_else(|e| eprintln!("Failed to emit stderr: {}", e));
+                    }
+                    _ => {}
+                }
+            }
+        });
         pids.push(pid);
     }
 
@@ -144,7 +229,7 @@ fn spawn_agent_processes(state: tauri::State<AppState>, root_path: String, group
 
 #[tauri::command]
 fn kill_process(state: tauri::State<AppState>, pid: String) -> Result<(), String> {
-    if let Some(mut child) = state.processes.lock().unwrap().remove(&pid) {
+    if let Some(child) = state.processes.lock().unwrap().remove(&pid) {
         child.kill().map_err(|e| e.to_string())?;
     }
     Ok(())
@@ -163,6 +248,11 @@ fn get_python_executable_path(root_path: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .manage(AppState {
+            processes: Mutex::new(HashMap::new()),
+        })
+        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             open_aegis_directory,
