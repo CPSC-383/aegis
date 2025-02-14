@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/contexts/AppContext";
 import { EventType, listenEvent } from "@/events";
-import AgentPanel from "./Agent-panel";
-import CellPanel from "./Cell-panel";
+import AgentPanel from "./AgentPanel";
+import CellPanel from "./CellPanel";
 import { AgentInfoDict, CellDict } from "@/core/simulation";
 import { SpawnZoneTypes, StackContent } from "@/core/world";
 

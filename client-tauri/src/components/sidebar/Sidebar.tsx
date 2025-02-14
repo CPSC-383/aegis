@@ -9,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 import Aegis from "./Aegis";
 import Agents from "./Agents";
 import Console from "../Console";
-import InfoPanel from "../info-panel/Info-panel";
+import InfoPanel from "../info-panel/InfoPanel";
 import MapEditor from "../map-editor/MapEditor";
 import Game from "./Game";
 import Settings from "./Settings";
