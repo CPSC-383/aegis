@@ -96,6 +96,7 @@ fn fs_read_file_sync(path: String) -> String {
     }
 }
 
+// TODO: Add save file dialog when game area is done.
 #[tauri::command]
 fn export_world(default_path: String, content: String) {
     std::fs::write(default_path, content).unwrap();
