@@ -66,7 +66,7 @@ jobs:
 
       - name: Create ZIP archive
         working-directory: ${{ env.WORKING_DIR }}
-        run: 7z a packed-client/${{ matrix.platform }}-client.zip ${{ matrix.ARTIFACT_PATH }}
+        run: 7z a packed-client/${{ matrix.platform }}-client.zip ${{ env.ARTIFACT_PATH }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
