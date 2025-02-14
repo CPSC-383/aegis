@@ -1,5 +1,5 @@
 {
-  "Enable_Move_Cost": false,
+  "Enable_Move_Cost": true,
   "Predictions": true,
   "Save_Surv": {
     "strategy": "ALL",

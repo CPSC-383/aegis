@@ -6,12 +6,6 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 use std::fs::File;
 use std::io::Write;
-use serde::{Serialize, Deserialize};
-
-#[derive(Serialize, Deserialize)]
-struct Config {
-    Enable_Move_Cost: bool,
-}
 
 struct AppState {
     processes: Mutex<HashMap<String, CommandChild>>,
