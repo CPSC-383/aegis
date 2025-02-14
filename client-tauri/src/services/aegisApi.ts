@@ -3,7 +3,10 @@ import { listen } from "@tauri-apps/api/event";
 
 type AegisAPI = {
   openAegisDirectory: () => Promise<string | undefined>;
-  toggleMoveCost: (config_path: string, value: boolean) => Promise<void>;
+  toggleMoveCost: (
+    config_path: string,
+    enable_move_cost: boolean,
+  ) => Promise<void>;
   getAppPath: () => Promise<string>;
   exportWorld: (name: string, world: string) => Promise<void>;
   path: {
@@ -104,19 +107,19 @@ export const aegisAPI: AegisAPI = {
     },
 
     onStdout: (callback: (data: string) => void) => {
-      listen<string>("aegis_child_process_stdout", (event) => {
+      listen<string>("aegis-stdout", (event) => {
         callback(event.payload);
       });
     },
 
     onStderr: (callback: (data: string) => void) => {
-      listen<string>("aegis_child_process_stderr", (event) => {
+      listen<string>("aegis-stderr", (event) => {
         callback(event.payload);
       });
     },
 
     onExit: (callback: () => void) => {
-      listen("aegis_child_process_exit", () => {
+      listen("aegis-exit", () => {
         callback();
       });
     },
@@ -138,13 +141,13 @@ export const aegisAPI: AegisAPI = {
     },
 
     onStdout: (callback: (data: string) => void) => {
-      listen<string>("agent_child_process_stdout", (event) => {
+      listen<string>("agent-stdout", (event) => {
         callback(event.payload);
       });
     },
 
     onStderr: (callback: (data: string) => void) => {
-      listen<string>("agent_child_process_stderr", (event) => {
+      listen<string>("agent-stderr", (event) => {
         callback(event.payload);
       });
     },
