@@ -17,7 +17,7 @@ import { createScaffold } from "@/services";
 
 function Sidebar() {
   const scaffold = createScaffold();
-  const { aegisPath, setupAegisPath, agents, output } = scaffold;
+  const { aegisPath, setupAegisPath, agents, output, reloadData } = scaffold;
   const { appState } = useAppContext();
   const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -33,6 +33,10 @@ function Sidebar() {
   useEffect(() => {
     setIsCollapsed(!!appState.selectedCell);
   }, [appState.selectedCell]);
+
+  useEffect(() => {
+    reloadData();
+  });
 
   return (
     <div className="relative w-[30%]">

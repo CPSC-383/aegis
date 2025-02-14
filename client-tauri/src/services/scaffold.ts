@@ -19,6 +19,7 @@ export type Scaffold = {
   toggleMoveCost: (value: boolean) => void;
   killSim: (() => void) | undefined;
   readAegisConfig: () => Promise<string>;
+  reloadData: () => void;
 };
 
 export function createScaffold(): Scaffold {
@@ -64,6 +65,20 @@ export function createScaffold(): Scaffold {
     );
     aegisPid.current = pid;
     forceUpdate();
+  };
+
+  const reloadData = async () => {
+    if (!aegisPath) return;
+
+    try {
+      const worlds = await getWorlds(aegisPath);
+      const agents = await getAgents(aegisPath);
+
+      setWorlds(worlds);
+      setAgents(agents);
+    } catch (error) {
+      console.error("Error fetching worlds or agents:", error);
+    }
   };
 
   const toggleMoveCost = async (value: boolean) => {
@@ -165,6 +180,7 @@ export function createScaffold(): Scaffold {
     toggleMoveCost,
     killSim,
     readAegisConfig,
+    reloadData,
   };
 }
 
