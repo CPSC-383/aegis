@@ -168,7 +168,7 @@ def main():
     """
     parser = argparse.ArgumentParser(
         description="Run AEGIS simulation with agents",
-        epilog="Example: python run_headless_aegis_with_agents.py --rounds 50  --agent example_agent --world ExampleWorld",
+        epilog="Example: python run.py --rounds 50  --agent example_agent --world ExampleWorld",
     )
     _ = parser.add_argument(
         "--rounds", type=int, required=True, help="Number of simulation rounds"
