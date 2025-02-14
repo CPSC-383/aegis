@@ -1,13 +1,13 @@
 {
-  "Send_Message": {
-    "enabled": true,
-    "target": "ALL_GROUPS"
-  },
-  "Sleep_On_Every": false,
+  "Enable_Move_Cost": false,
+  "Predictions": true,
   "Save_Surv": {
     "strategy": "ALL",
     "tie_strategy": "C_ALL"
   },
-  "Predictions": true,
-  "Enable_Move_Cost": true
+  "Send_Message": {
+    "enabled": true,
+    "target": "ALL_GROUPS"
+  },
+  "Sleep_On_Every": false
 }

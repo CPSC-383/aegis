@@ -8,7 +8,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 struct Config {
-    enable_move_cost: bool,
+    Enable_Move_Cost: bool,
 }
 
 struct AppState {
@@ -24,18 +24,23 @@ async fn open_aegis_directory(app: AppHandle) -> Option<FilePath> {
 }
 
 #[tauri::command]
-fn toggle_move_cost(file_path: String, enable_move_cost: bool) -> Result<(), String> {
-    let file_content = std::fs::read_to_string(&file_path)
+fn toggle_move_cost(config_path: String, enable_move_cost: bool) -> Result<(), String> {
+    let file_content = std::fs::read_to_string(&config_path)
         .map_err(|e| format!("Failed to read config file: {}", e))?;
-
-    let mut config: Config = serde_json::from_str(&file_content)
+    
+    let mut config: serde_json::Value = serde_json::from_str(&file_content)
         .map_err(|e| format!("Failed to parse config file: {}", e))?;
 
-    config.enable_move_cost = enable_move_cost;
+    if let Some(enable_move_cost_value) = config.get_mut("Enable_Move_Cost") {
+        *enable_move_cost_value = serde_json::Value::Bool(enable_move_cost);
+    } else {
+        return Err("Enable_Move_Cost field not found in the config".to_string());
+    }
 
     let updated_config = serde_json::to_string_pretty(&config)
         .map_err(|e| format!("Failed to serialize config: {}", e))?;
-    std::fs::write(&file_path, updated_config)
+
+    std::fs::write(&config_path, updated_config)
         .map_err(|e| format!("Failed to write config file: {}", e))?;
 
     Ok(())

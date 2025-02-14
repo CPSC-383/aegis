@@ -3,7 +3,10 @@ import { listen } from "@tauri-apps/api/event";
 
 type AegisAPI = {
   openAegisDirectory: () => Promise<string | undefined>;
-  toggleMoveCost: (config_path: string, value: boolean) => Promise<void>;
+  toggleMoveCost: (
+    config_path: string,
+    enable_move_cost: boolean,
+  ) => Promise<void>;
   getAppPath: () => Promise<string>;
   exportWorld: (name: string, world: string) => Promise<void>;
   path: {
