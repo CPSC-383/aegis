@@ -64,7 +64,11 @@ fn path_join(parts: Vec<String>) -> String {
 
 #[tauri::command]
 fn path_dirname(path: String) -> String {
-    Path::new(&path).parent().unwrap().to_str().unwrap().to_string()
+    Path::new(&path)
+        .parent()
+        .map(|p| p.to_str().unwrap_or_default())
+        .unwrap_or_default()
+        .to_string() 
 }
 
 #[tauri::command]
