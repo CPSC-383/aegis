@@ -4,6 +4,8 @@ use tauri_plugin_shell::{ShellExt, process::CommandEvent, process::CommandChild}
 use std::path::{Path, PathBuf};
 use std::collections::HashMap;
 use std::sync::Mutex;
+use std::fs::File;
+use std::io::Write;
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
@@ -98,8 +100,22 @@ fn fs_read_file_sync(path: String) -> String {
 
 // TODO: Add save file dialog when game area is done.
 #[tauri::command]
-fn export_world(default_path: String, content: String) {
-    std::fs::write(default_path, content).unwrap();
+async fn export_world(app: AppHandle, default_path: String, content: String) {
+    let path = Path::new(&default_path);
+    let file_name = path.file_name().unwrap().to_str().unwrap().to_string();
+    let result = app.dialog()
+        .file()
+        .set_title("Export World")
+        .set_file_name(&file_name)
+        .set_directory(default_path)
+        .blocking_save_file();
+
+    match result {
+        Some(file_path) => {
+            let _ = File::create(file_path.to_string()).and_then(|mut file| file.write_all(content.as_bytes()));
+        },
+        None => {} 
+    }
 }
 
 #[tauri::command]
