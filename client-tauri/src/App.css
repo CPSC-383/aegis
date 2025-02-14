@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -57,6 +58,10 @@
   --chart-3: hsl(30 80% 55%);
   --chart-4: hsl(280 65% 60%);
   --chart-5: hsl(340 75% 55%);
+}
+
+@theme {
+  --default-font-family: Krub;
 }
 
 @theme inline {
