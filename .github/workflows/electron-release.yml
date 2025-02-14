@@ -1,13 +1,9 @@
-name: Build and Release Aegis
+name: Build and Release Aegis Electron
 
 on:
   push:
     tags:
       - "v*.*.*-*"
-
-env:
-  NODE_VERSION: "20"
-  WORKING_DIR: ./client
 
 jobs:
   build:
@@ -16,13 +12,17 @@ jobs:
         include:
           - os: macos-latest
             platform: mac
-            artifact_path: ./packed-client/mac-universal/*.app
+            path: "mac-universal/*.app"
           - os: "ubuntu-22.04"
             platform: linux
-            artifact_path: ./packed-client/*.AppImage
+            path: "*.AppImage"
           - os: windows-latest
             platform: win
-            artifact_path: ./packed-client/*.exe
+            path: "*.exe"
+    env:
+      NODE_VERSION: "20"
+      WORKING_DIR: ./client
+      ARTIFACT_PATH: "./packed-client/${{ matrix.path }}"
 
     runs-on: ${{ matrix.os }}
 
@@ -51,7 +51,7 @@ jobs:
 
       - name: Create ZIP archive
         working-directory: ${{ env.WORKING_DIR }}
-        run: 7z a packed-client/${{ matrix.platform }}-client.zip ${{ matrix.artifact_path }}
+        run: 7z a packed-client/${{ matrix.platform }}-client.zip ${{ env.ARTIFACT_PATH }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -138,3 +138,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ../aegis.zip
           tag: ${{ github.ref_name }}
+          release_name: "Electron client - ${{ github.ref_name }}"

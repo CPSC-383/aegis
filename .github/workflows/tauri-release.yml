@@ -3,7 +3,7 @@ name: Build and Release Aegis Tauri
 on:
   push:
     tags:
-      - "tauri-v*.*.*-*"
+      - "v*.*.*-*"
 
 jobs:
   build:
@@ -156,3 +156,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ../aegis.zip
           tag: ${{ github.ref_name }}
+          release_name: "Tauri client - ${{ github.ref_name }}"
