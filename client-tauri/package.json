@@ -8,7 +8,10 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "dev:a1": "cross-env VITE_CURRENT_ASSIGNMENT=a1 tauri dev"
+    "dev:a1": "cross-env VITE_CURRENT_ASSIGNMENT=a1 tauri dev",
+    "dev:a3": "tauri dev",
+    "build:a1": "cross-env VITE_CURRENT_ASSIGNMENT=a1 tauri build",
+    "build:a3": "tauri build"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
