@@ -1,8 +1,8 @@
 [package]
-name = "client-tauri"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+name = "aegis-client"
+version = "1.0.0"
+description = "The Aegis client for CPSC 383"
+authors = ["Dante, Colton"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
