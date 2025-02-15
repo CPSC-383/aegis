@@ -200,29 +200,29 @@ jobs:
 
       - name: Create Electron zip
         run: |
-          mkdir -p temp_electron/client
+          mkdir -p temp_electron/aegis/client
 
           for platform in mac linux win; do
-            mkdir -p "temp_electron/client/${platform}-client"
-            cp "artifacts/${platform}-electron/"* "temp_electron/client/${platform}-client/${platform}-client.zip"
+            mkdir -p "temp_electron/aegis/client/${platform}-client"
+            cp "artifacts/${platform}-electron/"* "temp_electron/aegis/client/${platform}-client/${platform}-client.zip"
           done
 
-          cp -r src worlds sys_files run.py setup.py requirements.txt temp_electron/
+          cp -r src worlds sys_files run.py setup.py requirements.txt temp_electron/aegis/
           cd temp_electron
-          zip -r ../aegis-electron.zip .
+          zip -r ../aegis-electron.zip aegis
 
       - name: Create Tauri zip
         run: |
-          mkdir -p temp_tauri/client
+          mkdir -p temp_tauri/aegis/client
 
           for platform in mac linux win; do
-            mkdir -p "temp_tauri/client/${platform}-client"
-            cp "artifacts/${platform}-tauri/"* "temp_tauri/client/${platform}-client/${platform}-client.zip"
+            mkdir -p "temp_tauri/aegis/client/${platform}-client"
+            cp "artifacts/${platform}-tauri/"* "temp_tauri/aegis/client/${platform}-client/${platform}-client.zip"
           done
 
-          cp -r src worlds sys_files run.py setup.py requirements.txt temp_tauri/
+          cp -r src worlds sys_files run.py setup.py requirements.txt temp_tauri/aegis/
           cd temp_tauri
-          zip -r ../aegis-tauri.zip .
+          zip -r ../aegis-tauri.zip aegis
 
       - name: Create Release
         uses: svenstaro/upload-release-action@v2
