@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "targets": "app"
+  }
+}

@@ -1,28 +1,28 @@
-name: Build and Release Aegis
+name: Build and Release Aegis Clients
 
 on:
   push:
     tags:
       - "v*.*.*-*"
 
-env:
-  NODE_VERSION: "20"
-  WORKING_DIR: ./client
-
 jobs:
-  build:
+  build-electron:
     strategy:
       matrix:
         include:
           - os: macos-latest
             platform: mac
-            artifact_path: ./packed-client/mac-universal/*.app
-          - os: ubuntu-latest
+            path: "mac-universal/*.app"
+          - os: "ubuntu-22.04"
             platform: linux
-            artifact_path: ./packed-client/*.AppImage
+            path: "*.AppImage"
           - os: windows-latest
             platform: win
-            artifact_path: ./packed-client/*.exe
+            path: "*.exe"
+    env:
+      NODE_VERSION: "20"
+      WORKING_DIR: ./client
+      ARTIFACT_PATH: "./packed-client/${{ matrix.path }}"
 
     runs-on: ${{ matrix.os }}
 
@@ -51,16 +51,84 @@ jobs:
 
       - name: Create ZIP archive
         working-directory: ${{ env.WORKING_DIR }}
-        run: 7z a packed-client/${{ matrix.platform }}-client.zip ${{ matrix.artifact_path }}
+        run: 7z a packed-client/${{ matrix.platform }}-electron.zip ${{ env.ARTIFACT_PATH }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}-client
+          name: ${{ matrix.platform }}-electron
+          path: ${{ env.WORKING_DIR }}/packed-client/*.zip
+
+  build-tauri:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            platform: mac
+            target: "universal-apple-darwin"
+            path: "bundle/macos/*.app"
+          - os: "ubuntu-22.04"
+            platform: linux
+            target: "x86_64-unknown-linux-gnu"
+            path: "bundle/appimage/*.AppImage"
+          - os: windows-latest
+            platform: win
+            target: "x86_64-pc-windows-msvc"
+            path: "*.exe"
+    env:
+      ARTIFACT_PATH: "./src-tauri/target/${{ matrix.target }}/release/${{ matrix.path }}"
+      WORKING_DIR: "./client-tauri"
+      DENO_VERSION: "v2.x"
+      ARGS: "--target ${{ matrix.target }}"
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+
+      - name: Install MacOS dependencies
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          rustup target add x86_64-apple-darwin
+
+      - name: Install Linux dependencies
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install packages
+        run: deno install
+        working-directory: ${{ env.WORKING_DIR }}
+
+      - name: Build app
+        working-directory: ${{ env.WORKING_DIR }}
+        run: |
+          if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
+            deno task build:a1 ${{ env.ARGS }}
+          else
+            deno task build:a3 ${{ env.ARGS }}
+          fi
+        shell: bash
+
+      - name: Create ZIP archive
+        working-directory: ${{ env.WORKING_DIR }}
+        run: 7z a packed-client/${{ matrix.platform }}-tauri.zip ${{ env.ARTIFACT_PATH }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-tauri
           path: ${{ env.WORKING_DIR }}/packed-client/*.zip
 
   release:
-    needs: build
+    needs: [build-electron, build-tauri]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -70,12 +138,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Clean client directory
-        run: rm -rf client/*
+        run: |
+          rm -rf client
+          rm -rf client-tauri
+          mkdir client
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./client/
+          path: ./artifacts/
 
       - name: Setup version-specific files
         run: |
@@ -127,14 +198,37 @@ jobs:
           # Remove development files
           rm -rf .git .github ./docs scripts .gitignore README.md
 
-      - name: Create release archive
+      - name: Create Electron zip
         run: |
-          cd ..
-          zip -r aegis.zip $(basename $GITHUB_WORKSPACE)
+          mkdir -p temp_electron/aegis/client
 
-      - name: Upload release
+          for platform in mac linux win; do
+            mkdir -p "temp_electron/aegis/client/${platform}-client"
+            cp "artifacts/${platform}-electron/"* "temp_electron/aegis/client/${platform}-client/${platform}-client.zip"
+          done
+
+          cp -r src worlds sys_files run.py setup.py requirements.txt temp_electron/aegis/
+          cd temp_electron
+          zip -r ../aegis-electron.zip aegis
+
+      - name: Create Tauri zip
+        run: |
+          mkdir -p temp_tauri/aegis/client
+
+          for platform in mac linux win; do
+            mkdir -p "temp_tauri/aegis/client/${platform}-client"
+            cp "artifacts/${platform}-tauri/"* "temp_tauri/aegis/client/${platform}-client/${platform}-client.zip"
+          done
+
+          cp -r src worlds sys_files run.py setup.py requirements.txt temp_tauri/aegis/
+          cd temp_tauri
+          zip -r ../aegis-tauri.zip aegis
+
+      - name: Create Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ../aegis.zip
+          file_glob: true
+          file: aegis-*.zip
           tag: ${{ github.ref_name }}
+          release_name: "Aegis clients for version ${{ github.ref_name }}"
