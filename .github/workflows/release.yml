@@ -3,7 +3,7 @@ name: Build and Release Aegis Clients
 on:
   push:
     tags:
-      - "r-v*.*.*-*"
+      - "v*.*.*-*"
 
 jobs:
   build-electron:
@@ -201,7 +201,12 @@ jobs:
       - name: Create Electron zip
         run: |
           mkdir -p temp_electron/client
-          cp -r artifacts/*-electron/* temp_electron/client/
+
+          for platform in mac linux win; do
+            mkdir -p "temp_electron/client/${platform}-client"
+            cp "artifacts/${platform}-electron/"* "temp_electron/client/${platform}-client/${platform}-client.zip"
+          done
+
           cp -r src worlds sys_files run.py setup.py requirements.txt temp_electron/
           cd temp_electron
           zip -r ../aegis-electron.zip .
@@ -209,7 +214,12 @@ jobs:
       - name: Create Tauri zip
         run: |
           mkdir -p temp_tauri/client
-          cp -r artifacts/*-tauri/* temp_tauri/client/
+
+          for platform in mac linux win; do
+            mkdir -p "temp_tauri/client/${platform}-client"
+            cp "artifacts/${platform}-tauri/"* "temp_tauri/client/${platform}-client/${platform}-client.zip"
+          done
+
           cp -r src worlds sys_files run.py setup.py requirements.txt temp_tauri/
           cd temp_tauri
           zip -r ../aegis-tauri.zip .
