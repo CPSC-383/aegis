@@ -67,7 +67,9 @@ export const navConfig = {
       items: [
         {
           title: "Agent Controller",
-          href: "/docs/agent/agent-controller",
+          href: isAssignment1()
+            ? "/docs/agent/agent-controller"
+            : "/docs/agent/agent-controller-a3",
         },
       ],
     },
@@ -109,6 +111,10 @@ export const navConfig = {
         {
           title: "Cell",
           href: "/docs/world/cell",
+        },
+        {
+          title: "Cell Info",
+          href: "/docs/world/cell-info",
         },
       ],
     },

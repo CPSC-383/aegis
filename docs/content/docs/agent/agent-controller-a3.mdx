@@ -109,3 +109,39 @@ self._agent.send(SAVE_SURV())
 self._agent.log(f"My location is {self._agent.get_location()}")
 # Output: [Agent#(1:1)]@4: My location is (17, 15)
 ```
+
+### get_prediction_info_size()
+
+<Method
+  description="Returns the size of the prediction info queue."
+  returns={{
+    type: "int",
+    description: "The size of the prediction info queue.",
+  }}
+/>
+
+**Example:**
+
+```py
+self._agent.log(f"Size of prediction queue: {self._agent.get_prediction_info_size()}")
+```
+
+### get_prediction_info()
+
+<Method
+  description="Returns a prediction info from the queue."
+  returns={{
+    type: "tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]",
+    description: "Tuple of the surv_id, image, and labels",
+  }}
+/>
+
+**Example:**
+
+```py
+pred = self._agent.get_prediction_info()
+surv_id = pred[0]
+image = pred[1]
+labels = pred[2]
+```
+
