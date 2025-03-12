@@ -2,19 +2,15 @@ from typing import override
 
 # If you need to import anything, add it to the import below.
 from aegis import (
-    CONNECT_OK,
     END_TURN,
     SEND_MESSAGE_RESULT,
     MOVE,
-    MOVE_RESULT,
     OBSERVE_RESULT,
     PREDICT_RESULT,
     SAVE_SURV,
     SAVE_SURV_RESULT,
     SEND_MESSAGE,
-    SLEEP_RESULT,
     TEAM_DIG,
-    TEAM_DIG_RESULT,
     AgentCommand,
     AgentIDList,
     Direction,
@@ -30,32 +26,14 @@ class ExampleAgent(Brain):
         self._agent: AgentController = BaseAgent.get_agent()
 
     @override
-    def handle_connect_ok(self, connect_ok: CONNECT_OK) -> None:
-        self._agent.log("CONNECT_OK")
-
-    @override
-    def handle_disconnect(self) -> None:
-        self._agent.log("DISCONNECT")
-
-    @override
-    def handle_dead(self) -> None:
-        self._agent.log("DEAD")
-
-    @override
     def handle_send_message_result(self, smr: SEND_MESSAGE_RESULT) -> None:
         self._agent.log(f"SEND_MESSAGE_RESULT: {smr}")
         self._agent.log(f"{smr}")
         print("#--- You need to implement handle_send_message_result function! ---#")
 
     @override
-    def handle_move_result(self, mr: MOVE_RESULT) -> None:
-        self._agent.log(f"MOVE_RESULT: {mr}")
-        self._agent.log(f"{mr}")
-        print("#--- You need to implement handle_move_result function! ---#")
-
-    @override
     def handle_observe_result(self, ovr: OBSERVE_RESULT) -> None:
-        self._agent.log(f"OBSERVER_RESULT: {ovr}")
+        self._agent.log(f"OBSERVE_RESULT: {ovr}")
         self._agent.log(f"{ovr}")
         print("#--- You need to implement handle_observe_result function! ---#")
 
@@ -69,18 +47,6 @@ class ExampleAgent(Brain):
     def handle_predict_result(self, prd: PREDICT_RESULT) -> None:
         self._agent.log(f"PREDICT_RESULT: {prd}")
         self._agent.log(f"{prd}")
-
-    @override
-    def handle_sleep_result(self, sr: SLEEP_RESULT) -> None:
-        self._agent.log(f"SLEEP_RESULT: {sr}")
-        self._agent.log(f"{sr}")
-        print("#--- You need to implement handle_sleep_result function! ---#")
-
-    @override
-    def handle_team_dig_result(self, tdr: TEAM_DIG_RESULT) -> None:
-        self._agent.log(f"TEAM_DIG_RSULT: {tdr}")
-        self._agent.log(f"{tdr}")
-        print("#--- You need to implement handle_team_dig_result function! ---#")
 
     @override
     def think(self) -> None:
