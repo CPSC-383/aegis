@@ -55,7 +55,7 @@ class ExampleAgent(Brain):
 
     @override
     def handle_observe_result(self, ovr: OBSERVE_RESULT) -> None:
-        self._agent.log(f"OBSERVER_RESULT: {ovr}")
+        self._agent.log(f"OBSERVE_RESULT: {ovr}")
         self._agent.log(f"{ovr}")
         print("#--- You need to implement handle_observe_result function! ---#")
 

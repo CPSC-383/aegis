@@ -1,0 +1,32 @@
+---
+title: "Predict"
+description: "Represents the prediction of an agent."
+---
+
+## Overview
+
+The `PREDICT` command represents an agent's prediction based on previously saved survivors.
+The `surv_id` parameter can be accessed after a survivor has been saved (`SAVE_SURV_RESULT`),
+allowing predictions to be associated with specific survivors.
+
+## Params
+
+<Attribute
+  name="surv_id"
+  type="int"
+  description="The id of the survivor (predictions are based on saved survivors, so this is the id of the survivor associated with the prediction)."
+  required
+/>
+
+<Attribute
+  name="label"
+  type="np.int64"
+  description="The label of the prediction."
+  required
+/>
+
+**Example:**
+
+```py
+self._agent.send(PREDICT(2, 5))
+```

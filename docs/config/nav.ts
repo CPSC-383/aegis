@@ -124,12 +124,32 @@ export const navConfig = {
           href: "/docs/agent-commands/move",
         },
         {
+          title: "Observe",
+          href: "/docs/agent-commands/observe",
+          disabled: isAssignment1(),
+        },
+        {
+          title: "Predict",
+          href: "/docs/agent-commands/predict",
+          disabled: isAssignment1(),
+        },
+        {
           title: "Save Surv",
           href: "/docs/agent-commands/save-surv",
         },
         {
+          title: "Send Message",
+          href: "/docs/agent-commands/send-message",
+          disabled: isAssignment1(),
+        },
+        {
           title: "Sleep",
           href: "/docs/agent-commands/sleep",
+        },
+        {
+          title: "Team Dig",
+          href: "/docs/agent-commands/team-dig",
+          disabled: isAssignment1(),
         },
       ],
     },
