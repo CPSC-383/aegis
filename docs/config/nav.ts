@@ -153,5 +153,27 @@ export const navConfig = {
         },
       ],
     },
+    {
+      title: "Aegis Commands",
+      items: [
+        {
+          title: "Observe Result",
+          href: "/docs/aegis-commands/observe-result",
+        },
+        {
+          title: "Predict Result",
+          href: "/docs/aegis-commands/predict-result",
+        },
+        {
+          title: "Save Surv Result",
+          href: "/docs/aegis-commands/save-surv-result",
+        },
+        {
+          title: "Send Message Result",
+          href: "/docs/aegis-commands/send-message-result",
+        },
+      ],
+      disabled: isAssignment1(),
+    },
   ],
 };
