@@ -41,52 +41,12 @@ class Brain(ABC):
         return self._world
 
     @abstractmethod
-    def handle_connect_ok(self, connect_ok: CONNECT_OK) -> None:
-        """
-        Handles the CONNECT_OK command.
-
-        Args:
-            connect_ok: The CONNECT_OK command to handle.
-        """
-        pass
-
-    @abstractmethod
     def handle_send_message_result(self, smr: SEND_MESSAGE_RESULT) -> None:
         """
         Handles the SEND_MESSAGE_RESULT command.
 
         Args:
             smr: The SEND_MESSAGE_RESULT command to handle.
-        """
-        pass
-
-    @abstractmethod
-    def handle_move_result(self, mr: MOVE_RESULT) -> None:
-        """
-        Handles the MOVE_RESULT command.
-
-        Args:
-            mr: The MOVE_RESULT command to handle.
-        """
-        pass
-
-    @abstractmethod
-    def handle_team_dig_result(self, tdr: TEAM_DIG_RESULT) -> None:
-        """
-        Handles the TEAM_DIG_RESULT command.
-
-        Args:
-            tdr: The TEAM_DIG_RESULT command to handle.
-        """
-        pass
-
-    @abstractmethod
-    def handle_sleep_result(self, sr: SLEEP_RESULT) -> None:
-        """
-        Handles the SLEEP_RESULT command.
-
-        Args:
-            sr: The SLEEP_RESULT command to handle.
         """
         pass
 
@@ -112,16 +72,6 @@ class Brain(ABC):
         Args:
             ovr: The OBSERVE_RESULT command to handle.
         """
-        pass
-
-    @abstractmethod
-    def handle_disconnect(self) -> None:
-        """Handles the DISCONNECT command."""
-        pass
-
-    @abstractmethod
-    def handle_dead(self) -> None:
-        """Handles the DEATH_CARD command."""
         pass
 
     @abstractmethod
@@ -153,11 +103,9 @@ class Brain(ABC):
 
         elif isinstance(aegis_command, DEATH_CARD):
             base_agent.set_agent_state(AgentStates.SHUTTING_DOWN)
-            self.handle_dead()
 
         elif isinstance(aegis_command, DISCONNECT):
             base_agent.set_agent_state(AgentStates.SHUTTING_DOWN)
-            self.handle_disconnect()
 
         elif isinstance(aegis_command, SEND_MESSAGE_RESULT):
             self.handle_send_message_result(aegis_command)
@@ -209,7 +157,6 @@ class Brain(ABC):
             sleep_result: SLEEP_RESULT = aegis_command
             if sleep_result.was_successful:
                 base_agent.set_energy_level(sleep_result.charge_energy)
-            self.handle_sleep_result(sleep_result)
 
         elif isinstance(aegis_command, TEAM_DIG_RESULT):
             team_dig_result: TEAM_DIG_RESULT = aegis_command
@@ -218,7 +165,6 @@ class Brain(ABC):
             )
             base_agent.set_energy_level(team_dig_result.energy_level)
             base_agent.set_location(team_dig_result_current_info.location)
-            self.handle_team_dig_result(team_dig_result)
             base_agent.update_surround(team_dig_result.surround_info, self.get_world())  # pyright: ignore[reportArgumentType]
 
         elif isinstance(aegis_command, AEGIS_UNKNOWN):

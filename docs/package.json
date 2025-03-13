@@ -10,8 +10,8 @@
     "build:a1": "cross-env NEXT_PUBLIC_CURRENT_ASSIGNMENT=a1 npm run build",
     "start": "next start",
     "lint": "next lint",
-    "predeploy": "npm run build && touch out/.nojekyll",
-    "predeploy:a1": "npm run build:a1 && touch out/.nojekyll",
+    "predeploy": "npm run build",
+    "predeploy:a1": "npm run build:a1",
     "deploy": "gh-pages -d out -b docs",
     "deploy:a1": "gh-pages -d out -b docs"
   },

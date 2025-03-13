@@ -1,0 +1,35 @@
+---
+title: "Send Message"
+description: "Represents a command for an agent to send a message to other agents."
+---
+
+## Overview
+
+The `SEND_MESSAGE` command allows an agent to send messages to other agents.
+The message is not sent until the beginning of the next round.
+
+## Params
+
+<Attribute
+  name="agent_id_list"
+  type="AgentIDList"
+  description="The list of agents to send a message to. If empty, it will send to all group members."
+  required
+/>
+
+<Attribute
+  name="message"
+  type="str"
+  description="The content of the message."
+  required
+/>
+
+**Example:**
+
+```py
+# Using an empty AgentIDList will send the message to all group members.
+self._agent.send(SEND_MESSAGE(AgentIDList(), "Hello, World!"))
+
+# Send message to Agent with ID 1 and group ID 1.
+self._agent.send(SEND_MESSAGE(AgentIDList([AgentID(1,1)]), "Hello, World!"))
+```

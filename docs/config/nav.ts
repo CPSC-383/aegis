@@ -67,7 +67,9 @@ export const navConfig = {
       items: [
         {
           title: "Agent Controller",
-          href: "/docs/agent/agent-controller",
+          href: isAssignment1()
+            ? "/docs/agent/agent-controller"
+            : "/docs/agent/agent-controller-a3",
         },
       ],
     },
@@ -110,6 +112,10 @@ export const navConfig = {
           title: "Cell",
           href: "/docs/world/cell",
         },
+        {
+          title: "Cell Info",
+          href: "/docs/world/cell-info",
+        },
       ],
     },
     {
@@ -124,14 +130,56 @@ export const navConfig = {
           href: "/docs/agent-commands/move",
         },
         {
+          title: "Observe",
+          href: "/docs/agent-commands/observe",
+          disabled: isAssignment1(),
+        },
+        {
+          title: "Predict",
+          href: "/docs/agent-commands/predict",
+          disabled: isAssignment1(),
+        },
+        {
           title: "Save Surv",
           href: "/docs/agent-commands/save-surv",
+        },
+        {
+          title: "Send Message",
+          href: "/docs/agent-commands/send-message",
+          disabled: isAssignment1(),
         },
         {
           title: "Sleep",
           href: "/docs/agent-commands/sleep",
         },
+        {
+          title: "Team Dig",
+          href: "/docs/agent-commands/team-dig",
+          disabled: isAssignment1(),
+        },
       ],
+    },
+    {
+      title: "Aegis Commands",
+      items: [
+        {
+          title: "Observe Result",
+          href: "/docs/aegis-commands/observe-result",
+        },
+        {
+          title: "Predict Result",
+          href: "/docs/aegis-commands/predict-result",
+        },
+        {
+          title: "Save Surv Result",
+          href: "/docs/aegis-commands/save-surv-result",
+        },
+        {
+          title: "Send Message Result",
+          href: "/docs/aegis-commands/send-message-result",
+        },
+      ],
+      disabled: isAssignment1(),
     },
   ],
 };

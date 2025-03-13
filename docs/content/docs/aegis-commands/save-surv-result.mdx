@@ -1,0 +1,47 @@
+---
+title: "Save Surv Result"
+description: "Represents the result of saving a survivor."
+---
+
+## Overview
+The `SAVE_SURV_RESULT` represents the outcome of saving a survivor. It provides
+details such as the agent's energy level after the action, the ID of the saved survivor,
+and optional data for making predictions.
+
+## Attributes
+
+<Attribute
+  name="energy_level"
+  type="int"
+  description="The energy level of the agent."
+/>
+
+<Attribute
+  name="surv_saved_id"
+  type="int"
+  description="The ID of the saved survivor."
+/>
+
+<Attribute
+  name="image_to_predict"
+  type="NDArray[np.float32] | None"
+  description="The image to predict. None, if no data available."
+/>
+
+<Attribute
+  name="all_unique_labels"
+  type="NDArray[np.int64] | None"
+  description="An array of all unique labels for prediction. None, if no data available."
+/>
+
+## Methods
+
+### has_pred_info()
+
+<Method
+  description="Checks if the prediction information is available."
+  returns={{
+    type: "bool",
+    description: "True if prediction information is present, False otherwise.",
+  }}
+/>
