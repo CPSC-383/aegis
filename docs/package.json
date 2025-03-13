@@ -12,8 +12,8 @@
     "lint": "next lint",
     "predeploy": "npm run build",
     "predeploy:a1": "npm run build:a1",
-    "deploy": "gh-pages -d out -b docs",
-    "deploy:a1": "gh-pages -d out -b docs"
+    "deploy": "gh-pages -d out -b docs --nojekyll",
+    "deploy:a1": "gh-pages -d out -b docs --nojekyll"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
