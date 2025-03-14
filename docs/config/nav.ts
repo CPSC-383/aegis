@@ -8,7 +8,11 @@ export const navConfig = {
       href: "/getting-started/installation",
       path: "/getting-started",
     },
-    { title: "API Reference", href: "/docs/intro", path: "/docs" },
+    {
+      title: "API Reference",
+      href: isAssignment1() ? "/docs/intro" : "/docs/intro-a3",
+      path: "/docs",
+    },
     { title: "Common Errors", href: "/common-errors", path: "/common-errors" },
   ],
   gettingStartedNav: [
@@ -30,7 +34,9 @@ export const navConfig = {
       items: [
         {
           title: "Agents",
-          href: "/getting-started/aegis/agents",
+          href: isAssignment1()
+            ? "/getting-started/aegis/agents"
+            : "/getting-started/aegis/agents-a3",
         },
         {
           title: "System",
@@ -58,7 +64,7 @@ export const navConfig = {
       items: [
         {
           title: "Introduction",
-          href: "/docs/intro",
+          href: isAssignment1() ? "/docs/intro" : "/docs/intro-a3",
         },
       ],
     },
@@ -115,6 +121,7 @@ export const navConfig = {
         {
           title: "Cell Info",
           href: "/docs/world/cell-info",
+          disabled: isAssignment1(),
         },
       ],
     },
@@ -161,6 +168,7 @@ export const navConfig = {
     },
     {
       title: "Aegis Commands",
+      disabled: isAssignment1(),
       items: [
         {
           title: "Observe Result",
@@ -179,7 +187,6 @@ export const navConfig = {
           href: "/docs/aegis-commands/send-message-result",
         },
       ],
-      disabled: isAssignment1(),
     },
   ],
 };

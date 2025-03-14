@@ -5,6 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import { navConfig } from "@/config/nav";
 import { getHeadings } from "@/lib/toc";
 import TableOfContent from "@/components/TableOfContent";
+import { isAssignment1 } from "@/lib/utils";
 
 interface Props {
   params: Promise<{
@@ -34,7 +35,11 @@ export function generateStaticParams(): { slug: string[] }[] {
 export default async function Page({ params }: Props) {
   const entry = await getDocFromParams({ params });
 
-  if (!entry) {
+  if (
+    !entry ||
+    (entry.assignment == "a3" && isAssignment1()) ||
+    (entry.assignment == "a1" && !isAssignment1())
+  ) {
     return notFound();
   }
 
