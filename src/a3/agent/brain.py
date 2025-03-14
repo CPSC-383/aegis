@@ -157,6 +157,9 @@ class Brain(ABC):
             sleep_result: SLEEP_RESULT = aegis_command
             if sleep_result.was_successful:
                 base_agent.set_energy_level(sleep_result.charge_energy)
+        elif isinstance(aegis_command, OBSERVE_RESULT):
+            ovr: OBSERVE_RESULT = aegis_command
+            self.handle_observe_result(ovr)
 
         elif isinstance(aegis_command, TEAM_DIG_RESULT):
             team_dig_result: TEAM_DIG_RESULT = aegis_command
