@@ -35,16 +35,20 @@ export function generateStaticParams(): { slug: string[] }[] {
 export default async function Page({ params }: Props) {
   const entry = await getDocFromParams({ params });
 
-  if (!entry || (entry.assignment && isAssignment1())) {
+  if (
+    !entry ||
+    (entry.assignment == "a3" && isAssignment1()) ||
+    (entry.assignment == "a1" && !isAssignment1())
+  ) {
     return notFound();
   }
 
   const headings = getHeadings(entry.content);
 
   return (
-    <main className="flex overflow-hidden gap-16">
+    <main className="flex overflow-hidden gap-8 max-w-full">
       <Sidebar items={navConfig.docsNav} />
-      <div className="flex-1 overflow-auto no-scrollbar">
+      <div className="flex-1 overflow-auto overflow-x-hidden no-scrollbar">
         <div className="mt-8 sm:mt-12 sm:font-light">
           <h1 className="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
             {entry.title}

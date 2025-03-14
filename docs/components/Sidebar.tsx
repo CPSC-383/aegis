@@ -12,13 +12,15 @@ export default function Sidebar({ items }: Props) {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 p-4 overflow-y-auto">
+    <div className="w-56 p-4 overflow-y-auto no-scrollbar">
       {items.map((item, index) => (
         <div className="mt-4" key={index}>
           <div className="flex justify-between items-center">
-            <h4 className="font-semibold px-2 py-1 mb-1">{item.title}</h4>
+            {!item.disabled && (
+              <h4 className="font-semibold px-2 py-1 mb-1">{item.title}</h4>
+            )}
           </div>
-          {item.items?.length && (
+          {item.items?.length && !item.disabled && (
             <div>
               {item.items.map((item, index) =>
                 item.href && !item.disabled ? (

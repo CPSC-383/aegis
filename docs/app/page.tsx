@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Cpu, Rocket, Terminal, TriangleAlert } from "lucide-react";
 import Link from "next/link";
+import { isAssignment1 } from "@/lib/utils";
 
 export default function CommonErrors() {
   const cardData = [
@@ -21,7 +22,7 @@ export default function CommonErrors() {
       title: "API Reference",
       description:
         "Explore the Aegis API, including all available functions and their usage.",
-      href: "/docs/intro",
+      href: isAssignment1() ? "/docs/intro" : "/docs/intro-a3",
       icon: Terminal,
     },
     {
