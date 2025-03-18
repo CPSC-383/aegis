@@ -7,11 +7,11 @@ There are two ways to run Aegis: using the provided script or via the client.
 
 ## Using the provided script
 
-To run Aegis in the command line, use the `run_headless_aegis_with_agents.py` script. 
+To run Aegis in the command line, use the `run.py` script. 
 The usage of the python script is shown below:
 
 ```bash
-python run_headless_aegis_with_agents.py \
+python run.py \
   --agent-amount <agent amount> \
   --rounds <num of rounds> \
   --agent <agent directory> \
@@ -23,7 +23,7 @@ this argument when running the command. Below is an example of how to execute th
 the `example_agent` and `ExampleWorld`, configured to run for 50 rounds:
 
 ```bash
-python run_headless_aegis_with_agents.py \
+python run.py \
   --rounds 50 \
   --agent example_agent \
   --world ExampleWorld
@@ -32,7 +32,7 @@ python run_headless_aegis_with_agents.py \
 If you need a quick reminder on how to use the script, simply include the `-h` flag to display the help menu.
 
 ```bash
-python run_headless_aegis_with_agents.py -h
+python run.py -h
 ```
 
 ## Using the client
