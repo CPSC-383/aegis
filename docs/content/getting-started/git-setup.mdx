@@ -4,8 +4,8 @@ description: "This section will cover how to setup a git repo for you group."
 assignment: "a3"
 ---
 
-Only one person in the group has to create the repo and the `.gitignore` file. The owner of the repo should add the group members
-and then those members should clone the repisotory.
+Only one person in the group needs to create the repository and the `.gitignore` file. The owner of the repository 
+should add the group members, who can then clone the repository.
 
 ## Initializing Git in an Existing Project
 
@@ -90,6 +90,37 @@ git remote add origin https://csgit.ucalgary.ca/yourusename/your-repo.git
 
 </Steps>
 
+## Cloning the Repository
+
+After being added to the repository, the group members should clone the repository to their local machines.
+
+<Tabs defaultValue="github">
+
+<TabsList>
+
+<TabsTrigger value="github">Github</TabsTrigger>
+<TabsTrigger value="gitlab">Gitlab</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="github">
+
+```bash
+git clone https://github.com/ownerusername/your-repo.git
+```
+
+</TabsContent>
+
+<TabsContent value="gitlab">
+
+```bash
+git clone https://csgit.ucalgary.ca/ownerusername/your-repo.git
+```
+
+</TabsContent>
+
+</Tabs>
+
 ## Creating a .gitignore File
 
 A `.gitignore` file tells Git which files to ignore.
@@ -108,7 +139,7 @@ Ensure the `.gitignore` file is placed in the root directory of your aegis direc
 touch .gitignore
 ```
 
-Add the following to the `.gitignore`:
+### Add the Following Content 
 
 ```gitignore
 replay.txt
