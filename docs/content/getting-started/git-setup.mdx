@@ -1,0 +1,240 @@
+---
+title: "Git Setup"
+description: "This section will cover how to setup a git repo for you group."
+assignment: "a3"
+---
+
+Only one person in the group needs to create the repository and the `.gitignore` file. The owner of the repository 
+should add the group members, who can then clone the repository.
+
+## Initializing Git in an Existing Project
+
+<Steps>
+
+### Navigate to the Aegis Directory
+
+Open a terminal and change into the Aegis directory.
+
+```bash
+cd path/to/aegis/directory
+```
+
+### Initialize the Git Repo
+
+Initialize Git in the Aegis directory.
+
+```bash
+git init
+```
+
+### Create a New Repository
+
+<Tabs defaultValue="github">
+
+<TabsList>
+
+<TabsTrigger value="github">Github</TabsTrigger>
+<TabsTrigger value="gitlab">Gitlab</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="github">
+
+1. Go to [GitHub](https://github.com) and log in.
+2. Click the "New" button to create a new repository.
+3. Enter a repository name, choose private for the visibility, and click "Create Repository".
+
+</TabsContent>
+
+<TabsContent value="gitlab">
+
+1. Go to [Gitlab](https://csgit.ucalgary.ca/) and log in with your IT account.
+2. Click the "+" button and then click "New project/repository".
+3. Create a blank project.
+3. Enter a project name, choose private for the visibility, and click "Create Project".
+
+</TabsContent>
+
+</Tabs>
+
+### Add a Remote Repository
+
+Link your aegis repository to the newly created remote repository.
+
+<Tabs defaultValue="github">
+
+<TabsList>
+
+<TabsTrigger value="github">Github</TabsTrigger>
+<TabsTrigger value="gitlab">Gitlab</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="github">
+
+```bash
+git remote add origin https://github.com/yourusername/your-repo.git
+```
+
+</TabsContent>
+
+<TabsContent value="gitlab">
+
+```bash
+git remote add origin https://csgit.ucalgary.ca/yourusename/your-repo.git
+```
+
+</TabsContent>
+
+</Tabs>
+
+</Steps>
+
+## Cloning the Repository
+
+After being added to the repository, the group members should clone the repository to their local machines.
+
+<Tabs defaultValue="github">
+
+<TabsList>
+
+<TabsTrigger value="github">Github</TabsTrigger>
+<TabsTrigger value="gitlab">Gitlab</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="github">
+
+```bash
+git clone https://github.com/ownerusername/your-repo.git
+```
+
+</TabsContent>
+
+<TabsContent value="gitlab">
+
+```bash
+git clone https://csgit.ucalgary.ca/ownerusername/your-repo.git
+```
+
+</TabsContent>
+
+</Tabs>
+
+## Creating a .gitignore File
+
+A `.gitignore` file tells Git which files to ignore.
+
+<Admonition variant="caution" title="File in the root of the project">
+
+Ensure the `.gitignore` file is placed in the root directory of your aegis directory for it to work correctly.
+
+</Admonition>
+
+<Steps>
+
+### Create a .gitignore File
+
+```bash
+touch .gitignore
+```
+
+### Add the Following Content 
+
+```gitignore
+replay.txt
+client
+.venv
+venv
+WorldInfoFile.out
+*__pycache__*
+
+# Editor directories and files
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo *.ntvs*
+*.njsproj
+*.sln
+*.sw?
+```
+
+</Steps>
+
+The `.gitignore` should be placed like follows:
+
+<Tree>
+  <TreeItem name="aegis" type="folder">
+    <TreeItem name=".gitignore" />
+    <TreeItem name="client" type="folder" />
+    <TreeItem name="requirements.txt" />
+    <TreeItem name="setup.py" />
+    <TreeItem name="src" type="folder" />
+    <TreeItem name="sys_files" type="folder" />
+    <TreeItem name="worlds" type="folder" />
+  </TreeItem>
+</Tree>
+
+## Adding and Pushing Changes
+
+<Steps>
+
+### Add and Commit Files
+
+Stage and commit your files.
+
+```bash
+git add .
+git commit -m "Initial Commit"
+```
+
+### Push to the Repository
+
+Push your code to the repository.
+
+```bash
+git branch -M main
+git push -u origin main
+```
+
+</Steps>
+
+## Using Git Commands
+
+### Push Changes to the Remote Repository
+
+After making changes, you can push them to the remote repository.
+
+```bash
+git add .
+git commit -m "Your commit message"
+git push
+```
+
+### Pull Changes from the Remote Repository
+
+Fetch and merge changes from the remote repository to your local repository.
+
+<Admonition variant="tip" title="Pull Frequently">
+
+To avoid conflicts when pushing your changes, make it a habit to pull frequently from the repository.
+This will help you stay in sync with the latest updates and minimize issues down the line.
+
+</Admonition>
+
+```bash
+git pull
+```
+
+### Check the Status of Your Repository
+
+View the current state of your working directory and staging area.
+
+```bash
+git status
+```
+
+## Using GitHub Desktop
+
+If you don't like using the terminal, another option is to use [Github Desktop](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop)
