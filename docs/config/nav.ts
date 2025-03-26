@@ -30,6 +30,7 @@ export const navConfig = {
         {
           title: "Git Setup",
           href: "/getting-started/git-setup",
+          disabled: isAssignment1(),
         },
       ],
     },
