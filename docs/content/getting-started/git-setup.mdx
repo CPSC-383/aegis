@@ -4,8 +4,56 @@ description: "This section will cover how to setup a git repo for you group."
 assignment: "a3"
 ---
 
-Only one person in the group needs to create the repository and the `.gitignore` file. The owner of the repository 
-should add the group members, who can then clone the repository.
+## Overview
+
+This guide provides a step-by-step process for setting up a Git repository for your group project. Only one person
+in the group needs to create the repository and the `.gitignore` file.
+
+## Prerequisites: Installing Git
+
+Ensure Git is installed on your system using:
+
+```bash
+git --version
+```
+
+If it is not installed, follow the steps below:
+
+<Tabs defaultValue="mac">
+
+<TabsList>
+
+<TabsTrigger value="mac">Mac</TabsTrigger>
+<TabsTrigger value="linux">Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac">
+
+Install Git using Homebrew:
+
+```bash
+brew install git
+```
+
+If you don't have Homebrew, first install it from [brew.sh](https://brew.sh/)
+
+</TabsContent>
+
+<TabsContent value="linux">
+
+Install Git using the package manager included with your Linux distribution.
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+Download Git from [here](https://git-scm.com/downloads/win).
+
+</TabsContent>
+
+</Tabs>
 
 ## Initializing Git in an Existing Project
 
@@ -92,21 +140,50 @@ git remote add origin https://csgit.ucalgary.ca/yourusename/your-repo.git
 
 ## Creating a .gitignore File
 
-A `.gitignore` file tells Git which files to ignore.
-
-<Admonition variant="caution" title="File in the root of the project">
-
-Ensure the `.gitignore` file is placed in the root directory of your aegis directory for it to work correctly.
-
+<Admonition variant="caution" title="Important Placement">
+The `.gitignore` file must be in the root directory of your project to work correctly.
 </Admonition>
+
+A `.gitignore` file tells Git which files to ignore.
 
 <Steps>
 
-### Create a .gitignore File
+### Create the .gitignore File
+
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+Creating a file in the command line:
 
 ```bash
 touch .gitignore
 ```
+
+or you can use the file explorer.
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+Creating a file in the command line:
+
+```bash
+echo "" > .gitignore
+```
+
+or you can use the file explorer.
+
+</TabsContent>
+
+</Tabs>
 
 ### Add the Following Content 
 
@@ -129,15 +206,14 @@ WorldInfoFile.out
 *.sw?
 ```
 
-</Steps>
-
-The `.gitignore` should be placed like follows:
+### Typical Repository Structure
 
 <Tree>
   <TreeItem name="aegis" type="folder">
     <TreeItem name=".gitignore" />
     <TreeItem name="client" type="folder" />
     <TreeItem name="requirements.txt" />
+    <TreeItem name="run.py" />
     <TreeItem name="setup.py" />
     <TreeItem name="src" type="folder" />
     <TreeItem name="sys_files" type="folder" />
@@ -145,13 +221,14 @@ The `.gitignore` should be placed like follows:
   </TreeItem>
 </Tree>
 
-## Adding and Pushing Changes
+</Steps>
+
+
+## Initial Commit and Push
 
 <Steps>
 
-### Add and Commit Files
-
-Stage and commit your files.
+### Stage and Commit Files
 
 ```bash
 git add .
@@ -159,8 +236,6 @@ git commit -m "Initial Commit"
 ```
 
 ### Push to the Repository
-
-Push your code to the repository.
 
 ```bash
 git branch -M main
@@ -200,26 +275,17 @@ git clone https://csgit.ucalgary.ca/ownerusername/your-repo.git
 
 </Tabs>
 
-## Using Git Commands
+## Essential Git Workflow Commands
 
-### Push Changes to the Remote Repository
+### Pull Latest Changes 
 
-After making changes, you can push them to the remote repository.
+<Admonition variant="tip" title="Collaboration Best Practices">
+Minimize merge conflicts and maintain smooth team collaboration by following these key Git workflow principles:
 
-```bash
-git add .
-git commit -m "Your commit message"
-git push
-```
-
-### Pull Changes from the Remote Repository
-
-Fetch and merge changes from the remote repository to your local repository.
-
-<Admonition variant="tip" title="Pull Frequently">
-
-To avoid conflicts when pushing your changes, make it a habit to pull frequently from the repository.
-This will help you stay in sync with the latest updates and minimize issues down the line.
+- Always pull changes before starting work to ensure you have the latest project state.
+- Communicate with your team about who is working on specific files or features.
+- Pull changes from the remote repository immediately before pushing your commits.
+- Break your work into small commits that allow you to easily revert changes if something breaks. This provides a clear rollback path and reduces the risk of losing significant work.
 
 </Admonition>
 
@@ -227,14 +293,21 @@ This will help you stay in sync with the latest updates and minimize issues down
 git pull
 ```
 
-### Check the Status of Your Repository
+### Pushing Your Changes
 
-View the current state of your working directory and staging area.
+```bash
+git add .
+git commit -m "Descriptive commit message"
+git push
+```
+
+### Checking Repository Status
 
 ```bash
 git status
 ```
 
-## Using GitHub Desktop
+## Additional Resources
 
-If you don't like using the terminal, another option is to use [Github Desktop](https://docs.github.com/en/desktop/overview/getting-started-with-github-desktop)
+- [Git Official Documentation](https://git-scm.com/doc)
+- [GitHub Desktop](https://desktop.github.com/) (alternative to command line)

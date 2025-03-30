@@ -24,7 +24,7 @@ function MapBrushes() {
     const [stackType, setStackType] = useState<StackContentBrushTypes>(StackContentBrushTypes.Survivor)
     const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({ remove_energy: 0, remove_agents: 0 })
     const [survivorInfo, _] = useState<SurvivorInfo>({
-        energy_level: 0,
+        energy_level: 100,
         body_mass: 0,
         mental_state: 0,
         damage_factor: 0
