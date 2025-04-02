@@ -131,6 +131,15 @@ export const navConfig = {
       ],
     },
     {
+      title: "World Objects",
+      items: [
+        {
+          title: "Rubble",
+          href: "/docs/world-objects/rubble",
+        },
+      ],
+    },
+    {
       title: "Agent Commands",
       items: [
         {
