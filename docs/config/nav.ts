@@ -132,6 +132,7 @@ export const navConfig = {
     },
     {
       title: "World Objects",
+      disabled: isAssignment1(),
       items: [
         {
           title: "Rubble",
