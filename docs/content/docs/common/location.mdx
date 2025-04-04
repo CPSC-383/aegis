@@ -77,6 +77,41 @@ dir = start.direction_to(goal)
 # Returns Direction.NORTH
 ```
 
+### distance_to(location: Location)
+
+<Admonition variant="danger" title="Warning: Incorrect Heuristic">
+
+This should **not** be used in your A* heuristic! Using an improper heuristic can lead
+to suboptimal or incorrect pathfinding results.
+
+</Admonition>
+
+<Method
+  description="Calculates the squared distance between the current location and the given location."
+  parameters={[
+    {
+      name: "location",
+      type: "Location",
+      description: "The location to which the distance is calculated.",
+      required: true,
+    },
+  ]}
+  returns={{
+    type: "Direction",
+    description:
+      "The squared distance to the given location.",
+  }}
+/>
+
+**Example:**
+
+```py
+start = create_location(1, 2)
+goal = create_location(3, 5)
+dist = start.distance_to(goal) 
+# Returns 13 
+```
+
 ## Factory Functions
 
 ### create_location(x: int, y: int)
