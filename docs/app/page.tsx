@@ -5,7 +5,7 @@ import Link from "next/link";
 import { isAssignment1 } from "@/lib/utils";
 import Footer from "@/components/Footer";
 
-export default function CommonErrors() {
+export default function Home() {
   const cardData = [
     {
       title: "Getting Started",

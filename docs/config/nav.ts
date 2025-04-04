@@ -14,6 +14,11 @@ export const navConfig = {
       path: "/docs",
     },
     { title: "Common Errors", href: "/common-errors", path: "/common-errors" },
+    {
+      title: "Acknowledgments",
+      href: "/acknowledgments",
+      path: "/acknowledgments",
+    },
   ],
   gettingStartedNav: [
     {
