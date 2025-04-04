@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
 import { getHeadings } from "@/lib/toc";
 import TableOfContent from "@/components/TableOfContent";
+import Footer from "@/components/Footer";
 
 interface Props {
   params: Promise<{
@@ -61,6 +62,7 @@ export default async function Page({ params }: Props) {
             />
           </div>
         </div>
+        <Footer />
       </div>
     </main>
   );

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Cpu, Rocket, Terminal, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { isAssignment1 } from "@/lib/utils";
+import Footer from "@/components/Footer";
 
 export default function CommonErrors() {
   const cardData = [
@@ -35,7 +36,7 @@ export default function CommonErrors() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="flex flex-col h-full max-w-7xl mx-auto p-6">
       <div className="space-y-8">
         <div>
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
@@ -88,6 +89,9 @@ export default function CommonErrors() {
             </Card>
           ))}
         </div>
+      </div>
+      <div className="mt-auto">
+        <Footer />
       </div>
     </div>
   );

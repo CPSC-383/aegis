@@ -6,6 +6,7 @@ import { getHeadings } from "@/lib/toc";
 import { isAssignment1 } from "@/lib/utils";
 import TableOfContent from "@/components/TableOfContent";
 import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/Footer";
 
 interface Props {
   params: Promise<{
@@ -48,7 +49,7 @@ export default async function Page({ params }: Props) {
   return (
     <main className="flex overflow-hidden gap-8 max-w-full">
       <Sidebar items={navConfig.docsNav} />
-      <div className="flex-1 overflow-auto overflow-x-hidden no-scrollbar">
+      <div className="flex-1 flex flex-col overflow-auto overflow-x-hidden no-scrollbar">
         <div className="mt-8 sm:mt-12 sm:font-light">
           <h1 className="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
             {entry.title}
@@ -64,6 +65,9 @@ export default async function Page({ params }: Props) {
           <div className="w-60 shrink-0 max-lg:hidden mt-8">
             <TableOfContent headings={headings} className="sticky top-8" />
           </div>
+        </div>
+        <div className="mt-auto">
+          <Footer />
         </div>
       </div>
     </main>

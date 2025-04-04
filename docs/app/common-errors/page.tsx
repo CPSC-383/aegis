@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Laptop, Monitor, Terminal } from "lucide-react";
 import Link from "next/link";
+import Footer from "@/components/Footer";
 
 export default function CommonErrors() {
   const errorCategories = [
@@ -27,7 +28,7 @@ export default function CommonErrors() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="flex flex-col h-full max-w-7xl mx-auto p-6">
       <div className="space-y-6">
         <div>
           <h1 className="text-4xl font-bold tracking-tight">Common Errors</h1>
@@ -78,6 +79,9 @@ export default function CommonErrors() {
             free to reach out to any of the TAs for help.
           </p>
         </div>
+      </div>
+      <div className="mt-auto">
+        <Footer />
       </div>
     </div>
   );
