@@ -8,7 +8,7 @@ def main() -> None:
 
     try:
         print("Aegis  : Initializing.")
-        if not aegis.read_command_line(sys.argv[1:]):
+        if not aegis.read_command_line():
             print(
                 "Aegis  : Unable to initialize.",
                 file=sys.stderr,
