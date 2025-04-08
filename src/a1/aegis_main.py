@@ -1,4 +1,6 @@
+import argparse
 import base64
+from dataclasses import dataclass
 import gzip
 import json
 import sys
@@ -21,8 +23,22 @@ from aegis.common import (
     LifeSignals,
     Utility,
 )
+from aegis.common.commands.aegis_commands import (
+    CONNECT_OK,
+    DEATH_CARD,
+    DISCONNECT,
+    MOVE_RESULT,
+    OBSERVE_RESULT,
+    ROUND_END,
+    ROUND_START,
+    SAVE_SURV_RESULT,
+    SEND_MESSAGE_RESULT,
+    SLEEP_RESULT,
+    TEAM_DIG_RESULT,
+)
 from aegis.common.commands.agent_command import AgentCommand
 from aegis.common.commands.agent_commands import (
+    AGENT_UNKNOWN,
     END_TURN,
     MOVE,
     OBSERVE,
@@ -30,20 +46,6 @@ from aegis.common.commands.agent_commands import (
     SEND_MESSAGE,
     SLEEP,
     TEAM_DIG,
-    AGENT_UNKNOWN,
-)
-from aegis.common.commands.aegis_commands import (
-    CONNECT_OK,
-    DEATH_CARD,
-    DISCONNECT,
-    SEND_MESSAGE_RESULT,
-    MOVE_RESULT,
-    OBSERVE_RESULT,
-    ROUND_END,
-    ROUND_START,
-    SAVE_SURV_RESULT,
-    SLEEP_RESULT,
-    TEAM_DIG_RESULT,
 )
 from aegis.common.network.aegis_socket_exception import AegisSocketException
 from aegis.common.world.cell import InternalCell
@@ -53,6 +55,15 @@ from aegis.parsers.config_parser import ConfigParser
 from aegis.parsers.world_file_parser import WorldFileParser
 from aegis.server_websocket import WebSocketServer
 from aegis.world.aegis_world import AegisWorld
+
+
+@dataclass
+class Args:
+    agent_amount: int
+    replay_file: str
+    world_file: str
+    rounds: int
+    client: bool
 
 
 class Aegis:
@@ -78,62 +89,63 @@ class Aegis:
         self._aegis_world: AegisWorld = AegisWorld()
         self._ws_server: WebSocketServer = WebSocketServer()
 
-    def read_command_line(self, args: list[str]) -> bool:
+    def read_command_line(self) -> bool:
+        parser = argparse.ArgumentParser(
+            description="AEGIS Simulation Configuration",
+        )
+
+        _ = parser.add_argument(
+            "--agent-amount",
+            dest="agent_amount",
+            type=int,
+            required=False,
+            help="Number of agent instances to run",
+        )
+        _ = parser.add_argument(
+            "--replay-file",
+            dest="replay_file",
+            type=str,
+            required=False,
+            default="replay.txt",
+            help="Set the name of the file to save the protocol file to (default: replay.txt)",
+        )
+        _ = parser.add_argument(
+            "--world-file",
+            dest="world_file",
+            type=str,
+            required=True,
+            help="Indicates the file AEGIS should use to build the world from upon startup.",
+        )
+        _ = parser.add_argument(
+            "--rounds",
+            type=int,
+            required=True,
+            help="Number of simulation rounds",
+        )
+        _ = parser.add_argument(
+            "--client",
+            action="store_true",
+            required=False,
+            help="Set to true to wait for client to connect.",
+        )
+
         try:
-            command_line_reader = CommandLineReader()
+            args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]
 
-            options = [
-                ("NoKViewer", CommandLineReader.INT, False),
-                ("ProcFile", CommandLineReader.STRING, False),
-                ("WorldFile", CommandLineReader.STRING, True),
-                ("NumRound", CommandLineReader.INT, True),
-                ("WaitForClient", CommandLineReader.BOOL, False),
-            ]
-
-            for name, value_type, is_required in options:
-                option = Option()
-                option.name = name
-                option.value_type = value_type
-                option.is_required = is_required
-                command_line_reader.add_option(option)
-
-            command_line_reader.set_error_output(self._init_error_output())
-            if not command_line_reader.read_cmd_line_args(args):
-                return False
-
-            for name, value_type, _ in options:
-                option = command_line_reader.get_option(name)
-                if option and option.is_set and option.value:
-                    if name == "NoKViewer":
-                        self._parameters.number_of_agents = 1
-                    elif name == "ProcFile":
-                        self._parameters.replay_filename = str(option.value)
-                    elif name == "WorldFile":
-                        self._parameters.world_filename = str(option.value)
-                    elif name == "NumRound":
-                        self._parameters.number_of_rounds = int(option.value)
-                    elif name == "WaitForClient":
-                        self._ws_server.set_wait_for_client(bool(option.value))
+            if args.agent_amount > 0:
+                self._parameters.number_of_agents = args.agent_amount
+            if args.replay_file:
+                self._parameters.replay_filename = args.replay_file
+            if args.world_file:
+                self._parameters.world_filename = args.world_file
+            if args.rounds > 0:
+                self._parameters.number_of_rounds = args.rounds
+            if args.client:
+                self._ws_server.set_wait_for_client(args.client)
 
             return True
-        except Exception:
+        except SystemExit:
             return False
-
-    def _init_error_output(self) -> str:
-        s = ""
-        s += "Aegis  : Incorrect arguments.\n"
-        s += "Option List:\n"
-        s += "\t-NoKViewer <#>       = Starts up AEGIS with no viewer and waits\n"
-        s += "\t                          for the indicated number of agents to connect.\n"
-        s += "\t                          Not required, default yes.\n"
-        s += "\t-ProcFile <file>     = Set the name of the file to save the protocol\n"
-        s += "\t                          file to.\n"
-        s += "\t                          Not required, default replay.txt.\n"
-        s += "\t-WorldFile <filename>  = Indicates the file AEGIS should use to\n"
-        s += "\t                          build the world from upon startup.\n"
-        s += "\t-NumRound <#>        = Set number of rounds in simulation."
-        s += "\t-WaitForClient <bool> = Set to true to wait for client to connect."
-        return s
 
     def start_up(self) -> bool:
         try:
