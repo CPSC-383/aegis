@@ -13,8 +13,6 @@ from aegis.assist.config_settings import ConfigSettings
 from aegis.assist.parameters import Parameters
 from aegis.assist.replay_file_writer import ReplayFileWriter
 from aegis.assist.state import State
-from aegis.command_line_reader.command_line_reader import CommandLineReader
-from aegis.command_line_reader.option import Option
 from aegis.common import (
     AgentID,
     AgentIDList,
