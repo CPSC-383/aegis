@@ -127,11 +127,11 @@ class AegisRunner:
         command = [
             self.python_command,
             aegis_main,
-            "-NoKViewer",
+            "--agent-amount",
             str(self.agent_amount),
-            "-WorldFile",
+            "--world-file",
             f"worlds/{self.world_file}.world",
-            "-NumRound",
+            "--rounds",
             str(self.rounds),
         ]
 

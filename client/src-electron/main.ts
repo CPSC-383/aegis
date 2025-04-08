@@ -160,16 +160,15 @@ class ElectronApp {
         const srcPath = path.join(rootPath, 'src')
         const proc = path.join(srcPath, 'aegis', 'main.py')
         const procArgs = [
-            '-NoKViewer',
+            '--agent-amount',
             numOfAgents,
-            '-ProcFile',
+            '--replay-file',
             'replay.txt',
-            '-WorldFile',
+            '--world-file',
             `worlds/${worldFile}`,
-            '-NumRound',
+            '--rounds',
             numOfRounds,
-            '-WaitForClient',
-            'true'
+            '--client'
         ]
         const options = {
             cwd: rootPath,
