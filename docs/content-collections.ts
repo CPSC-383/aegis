@@ -72,6 +72,27 @@ const commonErrors = defineCollection({
   },
 });
 
+const howTo = defineCollection({
+  name: "HowTo",
+  directory: "content/how-to",
+  include: "**/*.mdx",
+  schema: (z) => ({
+    title: z.string(),
+    description: z.string(),
+    assignment: z.string().optional(),
+  }),
+  transform: async (document, context) => {
+    const mdx = await compileMDX(context, document, {
+      rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+    });
+    return {
+      ...document,
+      mdx,
+      slug: document._meta.path,
+    };
+  },
+});
+
 export default defineConfig({
-  collections: [gettingStarted, docs, commonErrors],
+  collections: [gettingStarted, docs, commonErrors, howTo],
 });

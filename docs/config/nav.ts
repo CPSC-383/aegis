@@ -9,6 +9,11 @@ export const navConfig = {
       path: "/getting-started",
     },
     {
+      title: "How To",
+      href: "/how-to/intro",
+      path: "/how-to",
+    },
+    {
       title: "API Reference",
       href: isAssignment1() ? "/docs/intro" : "/docs/intro-a3",
       path: "/docs",
@@ -64,6 +69,22 @@ export const navConfig = {
         {
           title: "Client",
           href: "/getting-started/client",
+        },
+      ],
+    },
+  ],
+  howToNav: [
+    {
+      title: "Guides",
+      items: [
+        {
+          title: "Python Setup",
+          href: "/how-to/python-setup",
+        },
+        {
+          title: "Git Setup",
+          href: "/how-to/git-setup",
+          disabled: isAssignment1(),
         },
       ],
     },
