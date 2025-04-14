@@ -8,6 +8,7 @@ import { navConfig } from "@/config/nav";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { getImagePath } from "@/lib/utils";
+import Search from "@/components/Search";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -52,6 +53,7 @@ export default function Navbar() {
         })}
       </div>
       <ThemeToggle />
+      <Search />
     </nav>
   );
 }
