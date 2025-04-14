@@ -5,4 +5,5 @@ export const searchIndex = allDocs.map((doc) => ({
   slug: `/docs/${doc.slug}`,
   description: doc.description,
   content: doc.content,
+  attributes: doc.attributes,
 }));

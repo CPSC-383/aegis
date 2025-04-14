@@ -11,6 +11,7 @@ import {
   CommandEmpty,
 } from "@/components/ui/command";
 import { DialogTitle } from "./ui/dialog";
+import { CommandGroup } from "cmdk";
 
 export default function Search() {
   const [open, setOpen] = useState(false);
@@ -28,16 +29,27 @@ export default function Search() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const results = query
-    ? searchIndex.filter((doc) => {
-        const q = query.toLowerCase();
-        return (
-          doc.title.toLowerCase().includes(q) ||
-          doc.description.toLowerCase().includes(q) ||
-          doc.content.toLowerCase().includes(q)
-        );
-      })
-    : searchIndex;
+  const temp = searchIndex.flatMap((doc) => {
+    const q = query.toLowerCase();
+
+    const matchingAttributes = doc.attributes?.filter((attr) => {
+      return (
+        attr.name.toLowerCase().includes(q) ||
+        attr.type.toLowerCase().includes(q) ||
+        attr.description.toLowerCase().includes(q)
+      );
+    });
+
+    return matchingAttributes
+      ? [
+          {
+            name: `${doc.title} Attributes`,
+            items: matchingAttributes,
+            slug: doc.slug,
+          },
+        ]
+      : [];
+  });
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
@@ -49,22 +61,24 @@ export default function Search() {
       />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
-        {results.map((doc) => (
-          <CommandItem
-            key={doc.slug}
-            value={`${doc.title} ${doc.content}`}
-            onSelect={() => {
-              router.push(doc.slug);
-              setOpen(false);
-            }}
-          >
-            <div>
-              <div className="font-medium">{doc.title}</div>
-              <div className="text-sm text-muted-foreground">
-                {doc.description}
-              </div>
-            </div>
-          </CommandItem>
+        {temp.map((group, i) => (
+          <CommandGroup key={`${group.name}-${i}`} heading={group.name}>
+            {group.items.map((attr) => (
+              <CommandItem
+                onSelect={() => {
+                  router.push(group.slug);
+                  setOpen(false);
+                }}
+              >
+                <div>
+                  <div className="font-medium">{attr.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {attr.description}
+                  </div>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
         ))}
       </CommandList>
     </CommandDialog>
