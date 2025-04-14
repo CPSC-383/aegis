@@ -72,9 +72,9 @@ const commonErrors = defineCollection({
   },
 });
 
-const howTo = defineCollection({
-  name: "HowTo",
-  directory: "content/how-to",
+const guides = defineCollection({
+  name: "Guides",
+  directory: "content/guides",
   include: "**/*.mdx",
   schema: (z) => ({
     title: z.string(),
@@ -94,5 +94,5 @@ const howTo = defineCollection({
 });
 
 export default defineConfig({
-  collections: [gettingStarted, docs, commonErrors, howTo],
+  collections: [gettingStarted, docs, commonErrors, guides],
 });

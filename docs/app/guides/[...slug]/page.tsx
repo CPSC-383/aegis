@@ -1,4 +1,4 @@
-import { allHowTos } from "content-collections";
+import { allGuides } from "content-collections";
 import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
 import { navConfig } from "@/config/nav";
@@ -17,7 +17,7 @@ interface Props {
 async function getDocFromParams({ params }: Props) {
   const { slug } = await params;
 
-  const entry = allHowTos.find((entry) => {
+  const entry = allGuides.find((entry) => {
     return entry.slug === slug.join("/");
   });
 
@@ -28,7 +28,7 @@ async function getDocFromParams({ params }: Props) {
 }
 
 export function generateStaticParams(): { slug: string[] }[] {
-  return allHowTos.map((entry) => ({
+  return allGuides.map((entry) => ({
     slug: entry.slug.split("/"),
   }));
 }
@@ -48,7 +48,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <main className="flex overflow-hidden gap-8 max-w-full">
-      <Sidebar items={navConfig.howToNav} />
+      <Sidebar items={navConfig.guidesNav} />
       <div className="flex-1 flex flex-col overflow-auto overflow-x-hidden no-scrollbar">
         <div className="mt-8 sm:mt-12 sm:font-light">
           <h1 className="flex items-center text-[clamp(1.875rem,5vw,2.25rem)] font-bold">
