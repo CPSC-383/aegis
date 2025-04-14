@@ -9,9 +9,9 @@ export const navConfig = {
       path: "/getting-started",
     },
     {
-      title: "How To",
-      href: "/how-to/intro",
-      path: "/how-to",
+      title: "Guides",
+      href: "/guides/intro",
+      path: "/guides",
     },
     {
       title: "API Reference",
@@ -73,17 +73,17 @@ export const navConfig = {
       ],
     },
   ],
-  howToNav: [
+  guidesNav: [
     {
       title: "Guides",
       items: [
         {
           title: "Python Setup",
-          href: "/how-to/python-setup",
+          href: "/guides/python-setup",
         },
         {
           title: "Git Setup",
-          href: "/how-to/git-setup",
+          href: "/guides/git-setup",
           disabled: isAssignment1(),
         },
       ],
