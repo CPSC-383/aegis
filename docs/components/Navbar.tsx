@@ -52,8 +52,10 @@ export default function Navbar() {
           );
         })}
       </div>
-      <Search />
-      <ThemeToggle />
+      <div className="flex items-center space-x-2">
+        <Search />
+        <ThemeToggle />
+      </div>
     </nav>
   );
 }

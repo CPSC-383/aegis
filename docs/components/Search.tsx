@@ -1,9 +1,9 @@
 "use client";
 
 import { searchIndex } from "@/lib/search-index";
-import { cn } from "@/lib/utils";
+import { cn, isAssignment1 } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CommandDialog,
   CommandInput,
@@ -31,38 +31,77 @@ export default function Search() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const attributes = searchIndex.flatMap((doc) => {
+  useEffect(() => {
+    if (open) {
+      setQuery("");
+    }
+  }, [open]);
+
+  const results = useMemo(() => {
     const q = query.toLowerCase();
 
-    const matchingAttributes = doc.attributes?.filter((attr) => {
-      return (
-        attr.name.toLowerCase().includes(q) ||
-        attr.type.toLowerCase().includes(q) ||
-        attr.description.toLowerCase().includes(q)
-      );
-    });
+    return searchIndex.flatMap((doc) => {
+      if (
+        (doc.assignment === "a3" && isAssignment1()) ||
+        (doc.assignment == "a1" && !isAssignment1())
+      )
+        return [];
 
-    return matchingAttributes
-      ? [
-          {
-            name: `${doc.title} Attributes`,
-            items: matchingAttributes,
-            slug: doc.slug,
-          },
-        ]
-      : [];
-  });
+      const matchingAttributes =
+        doc.attributes?.filter(
+          (attr) =>
+            attr.name.toLowerCase().includes(q) ||
+            attr.type.toLowerCase().includes(q) ||
+            attr.description.toLowerCase().includes(q),
+        ) ?? [];
+
+      const matchingMethods =
+        doc.methods?.filter(
+          (method) =>
+            method.name.toLowerCase().includes(q) ||
+            method.description.toLowerCase().includes(q),
+        ) ?? [];
+
+      const items = [
+        ...matchingAttributes.map((attr) => ({
+          type: "attribute" as const,
+          name: attr.name,
+          description: attr.description,
+        })),
+        ...matchingMethods.map((method) => ({
+          type: "method" as const,
+          name: method.name,
+          description: method.description,
+        })),
+      ];
+
+      return items.length > 0
+        ? [
+            {
+              name: doc.title,
+              items,
+              slug: doc.slug,
+            },
+          ]
+        : [];
+    });
+  }, [query]);
+
+  useEffect(() => {
+    console.log("Search query changed:", query);
+    console.log("Results:", results);
+  }, [query, results]);
 
   return (
     <>
       <Button
         variant="outline"
         className={cn(
-          "relative h-8 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-40 lg:w-56 xl:w-64",
+          "relative h-8 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-32 lg:w-42",
         )}
         onClick={() => setOpen(true)}
       >
-        <span className="hidden lg:inline-flex">Search documentation...</span>
+        <span className="hidden lg:inline-flex">Search api...</span>
         <span className="inline-flex lg:hidden">Search...</span>
         <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
           <span className="text-xs">⌘</span>K
@@ -77,20 +116,26 @@ export default function Search() {
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          {attributes.map((group) => (
+          {results.map((group) => (
             <CommandGroup key={group.slug} heading={group.name}>
-              {group.items.map((attr, i) => (
+              {group.items.map((item, i) => (
                 <CommandItem
-                  key={`${group.slug}-${attr.name}-${i}`}
+                  key={`${group.slug}-${item.type}-${item.name}-${i}`}
+                  value={`${item.name} ${item.description}`}
                   onSelect={() => {
                     router.push(group.slug);
                     setOpen(false);
                   }}
                 >
                   <div>
-                    <div className="font-medium">{attr.name}</div>
+                    <div className="font-medium">
+                      {item.name}
+                      <span className="ml-2 text-xs text-muted-foreground uppercase">
+                        ({item.type})
+                      </span>
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                      {attr.description}
+                      {item.description}
                     </div>
                   </div>
                 </CommandItem>

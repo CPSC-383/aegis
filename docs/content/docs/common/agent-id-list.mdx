@@ -16,6 +16,7 @@ such as adding, removing, and checking for specific agents.
 ### add(agent_id: AgentID)
 
 <Method
+  name="add"
   description="Add an AgentID instance to the list if not already present."
   parameters={[
     {
@@ -30,6 +31,7 @@ such as adding, removing, and checking for specific agents.
 ### add_all(agent_id_list: list[AgentID] | AgentIDList)
 
 <Method
+  name="add_all"
   description="Adds all AgentID instances from another list or AgentIDList to the current list."
   parameters={[
     {
@@ -44,6 +46,7 @@ such as adding, removing, and checking for specific agents.
 ### remove(agent_id: AgentID)
 
 <Method
+  name="remove"
   description="Removes an AgentID instance from the list if it exists."
   parameters={[
     {
@@ -58,6 +61,7 @@ such as adding, removing, and checking for specific agents.
 ### remove_all(agent_id_list: list[AgentID])
 
 <Method
+  name="remove_all"
   description="Removes all specified AgentID instances from the list."
   parameters={[
     {
@@ -72,6 +76,7 @@ such as adding, removing, and checking for specific agents.
 ### remove_at(index: int)
 
 <Method
+  name="remove_at"
   description="Removes and returns the AgentID instance at the given index."
   parameters={[
     {
@@ -91,6 +96,7 @@ such as adding, removing, and checking for specific agents.
 ### size()
 
 <Method
+  name="size"
   description="Returns the number of AgentID instances in the list."
   returns={{
     type: "int",
@@ -102,6 +108,7 @@ such as adding, removing, and checking for specific agents.
 ### is_empty()
 
 <Method
+  name="is_empty"
   description="Checks if the AgentIDList is empty."
   returns={{
     type: "bool",
@@ -113,6 +120,7 @@ such as adding, removing, and checking for specific agents.
 ### clear()
 
 <Method
+  name="clear"
   description="Clears all AgentID instances from the list."
 />
 

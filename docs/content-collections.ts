@@ -1,5 +1,6 @@
 import { rehypeSlug } from "@/lib/rehype-slug";
 import { extractAttributes } from "@/lib/extract-attributes";
+import { extractMethods } from "@/lib/extract-methods";
 import { defineCollection, defineConfig } from "@content-collections/core";
 import { compileMDX } from "@content-collections/mdx";
 import rehypePrettyCode, { type Options } from "rehype-pretty-code";
@@ -50,6 +51,7 @@ const docs = defineCollection({
       mdx,
       slug: document._meta.path,
       attributes: extractAttributes(document.content),
+      methods: extractMethods(document.content),
     };
   },
 });

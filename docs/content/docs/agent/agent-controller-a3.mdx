@@ -16,6 +16,7 @@ out specific tasks, such as rescuing survivors and navigating the environment.
 ### get_agent_id()
 
 <Method
+  name="get_agent_id"
   description="Returns the AgentID of the agent."
   returns={{
     type: "AgentID",
@@ -34,6 +35,7 @@ print(agent_id)
 ### get_energy_level()
 
 <Method
+  name="get_energy_level"
   description="Returns the current energy level of the agent."
   returns={{
     type: "int",
@@ -52,6 +54,7 @@ print(energy)
 ### get_location()
 
 <Method
+  name="get_location"
   description="Returns the current location of the agent."
   returns={{
     type: "Location",
@@ -70,6 +73,7 @@ print(loc)
 ### get_round_number()
 
 <Method
+  name="get_round_number"
   description="Returns the current round number of the simulation."
   returns={{
     type: "int",
@@ -88,6 +92,7 @@ print(round)
 ### send()
 
 <Method
+  name="send"
   description="Sends an action command to the Aegis system."
   parameters={[
     {
@@ -110,6 +115,7 @@ self._agent.send(SAVE_SURV())
 ### log()
 
 <Method
+  name="log"
   description="Logs a message, including the agent's ID and the current round number, for tracking or debugging purposes."
   parameters={[
     {
@@ -132,6 +138,7 @@ self._agent.log(f"My location is {self._agent.get_location()}")
 ### get_prediction_info_size()
 
 <Method
+  name="get_prediction_info_size"
   description="Returns the size of the prediction info queue."
   returns={{
     type: "int",
@@ -148,6 +155,7 @@ self._agent.log(f"Size of prediction queue: {self._agent.get_prediction_info_siz
 ### get_prediction_info()
 
 <Method
+  name="get_prediction_info"
   description="Returns a prediction info from the queue."
   returns={{
     type: "tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]",
