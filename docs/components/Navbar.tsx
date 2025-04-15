@@ -52,8 +52,8 @@ export default function Navbar() {
           );
         })}
       </div>
-      <ThemeToggle />
       <Search />
+      <ThemeToggle />
     </nav>
   );
 }
