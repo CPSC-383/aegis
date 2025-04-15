@@ -6,7 +6,6 @@ import { getHeadings } from "@/lib/toc";
 import { isAssignment1 } from "@/lib/utils";
 import TableOfContent from "@/components/TableOfContent";
 import Sidebar from "@/components/Sidebar";
-import Footer from "@/components/Footer";
 
 interface Props {
   params: Promise<{
@@ -65,9 +64,6 @@ export default async function Page({ params }: Props) {
           <div className="w-60 shrink-0 max-lg:hidden mt-8">
             <TableOfContent headings={headings} className="sticky top-8" />
           </div>
-        </div>
-        <div className="mt-auto">
-          <Footer />
         </div>
       </div>
     </main>

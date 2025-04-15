@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Cpu, Rocket, Terminal, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { isAssignment1 } from "@/lib/utils";
-import Footer from "@/components/Footer";
 
 export default function Home() {
   const cardData = [
@@ -89,9 +88,6 @@ export default function Home() {
             </Card>
           ))}
         </div>
-      </div>
-      <div className="mt-auto">
-        <Footer />
       </div>
     </div>
   );

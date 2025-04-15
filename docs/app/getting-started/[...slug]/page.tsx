@@ -6,7 +6,6 @@ import { navConfig } from "@/config/nav";
 import { getHeadings } from "@/lib/toc";
 import TableOfContent from "@/components/TableOfContent";
 import { isAssignment1 } from "@/lib/utils";
-import Footer from "@/components/Footer";
 
 interface Props {
   params: Promise<{
@@ -66,7 +65,6 @@ export default async function Page({ params }: Props) {
             <TableOfContent headings={headings} className="sticky top-8" />
           </div>
         </div>
-        <Footer />
       </div>
     </main>
   );
