@@ -7,4 +7,5 @@ export const searchIndex = allDocs.map((doc) => ({
   content: doc.content,
   attributes: doc.attributes,
   methods: doc.methods,
+  assignment: doc.assignment,
 }));
