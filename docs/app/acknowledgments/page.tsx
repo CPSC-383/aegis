@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Users } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import Footer from "@/components/Footer";
 
 export default function AcknowledgmentPage() {
   const contributors = [
@@ -61,9 +60,6 @@ export default function AcknowledgmentPage() {
             </Card>
           ))}
         </div>
-      </div>
-      <div className="mt-auto">
-        <Footer />
       </div>
     </div>
   );

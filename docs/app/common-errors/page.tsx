@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Laptop, Monitor, Terminal } from "lucide-react";
 import Link from "next/link";
-import Footer from "@/components/Footer";
 
 export default function CommonErrors() {
   const errorCategories = [
@@ -79,9 +78,6 @@ export default function CommonErrors() {
             free to reach out to any of the TAs for help.
           </p>
         </div>
-      </div>
-      <div className="mt-auto">
-        <Footer />
       </div>
     </div>
   );
