@@ -3,7 +3,7 @@
 import { searchIndex } from "@/lib/search-index";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CommandDialog,
   CommandInput,
@@ -31,27 +31,60 @@ export default function Search() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const attributes = searchIndex.flatMap((doc) => {
+  useEffect(() => {
+    if (open) {
+      setQuery("");
+    }
+  }, [open]);
+
+  const results = useMemo(() => {
     const q = query.toLowerCase();
 
-    const matchingAttributes = doc.attributes?.filter((attr) => {
-      return (
-        attr.name.toLowerCase().includes(q) ||
-        attr.type.toLowerCase().includes(q) ||
-        attr.description.toLowerCase().includes(q)
-      );
-    });
+    return searchIndex.flatMap((doc) => {
+      const matchingAttributes =
+        doc.attributes?.filter(
+          (attr) =>
+            attr.name.toLowerCase().includes(q) ||
+            attr.type.toLowerCase().includes(q) ||
+            attr.description.toLowerCase().includes(q),
+        ) ?? [];
 
-    return matchingAttributes
-      ? [
-          {
-            name: `${doc.title} Attributes`,
-            items: matchingAttributes,
-            slug: doc.slug,
-          },
-        ]
-      : [];
-  });
+      const matchingMethods =
+        doc.methods?.filter(
+          (method) =>
+            method.name.toLowerCase().includes(q) ||
+            method.description.toLowerCase().includes(q),
+        ) ?? [];
+
+      const items = [
+        ...matchingAttributes.map((attr) => ({
+          type: "attribute" as const,
+          name: attr.name,
+          description: attr.description,
+        })),
+        ...matchingMethods.map((method) => ({
+          type: "method" as const,
+          name: method.name,
+          description: method.description,
+        })),
+      ];
+
+      return items.length > 0
+        ? [
+            {
+              name: doc.title,
+              items,
+              slug: doc.slug,
+            },
+          ]
+        : [];
+    });
+  }, [query]);
+
+  useEffect(() => {
+    console.log("Search query changed:", query);
+    console.log("Results:", results);
+  }, [query, results]);
 
   return (
     <>
@@ -77,20 +110,25 @@ export default function Search() {
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          {attributes.map((group) => (
+          {results.map((group) => (
             <CommandGroup key={group.slug} heading={group.name}>
-              {group.items.map((attr, i) => (
+              {group.items.map((item, i) => (
                 <CommandItem
-                  key={`${group.slug}-${attr.name}-${i}`}
+                  key={`${group.slug}-${item.type}-${item.name}-${i}`}
                   onSelect={() => {
                     router.push(group.slug);
                     setOpen(false);
                   }}
                 >
                   <div>
-                    <div className="font-medium">{attr.name}</div>
+                    <div className="font-medium">
+                      {item.name}
+                      <span className="ml-2 text-xs text-muted-foreground uppercase">
+                        ({item.type})
+                      </span>
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                      {attr.description}
+                      {item.description}
                     </div>
                   </div>
                 </CommandItem>
