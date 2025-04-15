@@ -115,6 +115,7 @@ export default function Search() {
               {group.items.map((item, i) => (
                 <CommandItem
                   key={`${group.slug}-${item.type}-${item.name}-${i}`}
+                  value={item.name}
                   onSelect={() => {
                     router.push(group.slug);
                     setOpen(false);
