@@ -3,7 +3,7 @@ import { GraduationCap, BookOpen } from "lucide-react";
 
 export default function Footer() {
   return (
-    <>
+    <div className="max-w-7xl w-full mx-auto">
       <Separator />
       <footer className="w-full py-4 text-center text-sm text-muted-foreground flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -17,6 +17,6 @@ export default function Footer() {
           </p>
         </div>
       </footer>
-    </>
+    </div>
   );
 }

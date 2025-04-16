@@ -8,6 +8,7 @@ import { navConfig } from "@/config/nav";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { getImagePath } from "@/lib/utils";
+import Search from "@/components/Search";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -21,7 +22,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="w-full flex items-center justify-between px-6 py-4">
+    <nav className="max-w-7xl mx-auto w-full flex items-center justify-between px-6 py-4">
       <div className="flex items-center space-x-2">
         {mounted ? (
           <Image
@@ -51,7 +52,10 @@ export default function Navbar() {
           );
         })}
       </div>
-      <ThemeToggle />
+      <div className="flex items-center space-x-2">
+        <Search />
+        <ThemeToggle />
+      </div>
     </nav>
   );
 }
