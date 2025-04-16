@@ -10,10 +10,11 @@ import {
   CommandList,
   CommandItem,
   CommandEmpty,
+  CommandGroup,
 } from "@/components/ui/command";
 import { DialogTitle } from "@/components/ui/dialog";
-import { CommandGroup } from "cmdk";
 import { Button } from "@/components/ui/button";
+import { Cog, Tag } from "lucide-react";
 
 export default function Search() {
   const [open, setOpen] = useState(false);
@@ -87,11 +88,6 @@ export default function Search() {
     });
   }, [query]);
 
-  useEffect(() => {
-    console.log("Search query changed:", query);
-    console.log("Results:", results);
-  }, [query, results]);
-
   return (
     <>
       <Button
@@ -127,15 +123,22 @@ export default function Search() {
                     setOpen(false);
                   }}
                 >
-                  <div>
-                    <div className="font-medium">
-                      {item.name}
-                      <span className="ml-2 text-xs text-muted-foreground uppercase">
-                        ({item.type})
-                      </span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {item.description}
+                  <div className="flex items-start justify-center gap-2">
+                    {item.type === "attribute" ? (
+                      <Tag className="mt-1 h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Cog className="mt-1 h-4 w-4 text-muted-foreground" />
+                    )}
+                    <div>
+                      <div className="font-medium">
+                        {item.name}
+                        <span className="ml-2 text-xs text-muted-foreground uppercase">
+                          ({item.type})
+                        </span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {item.description}
+                      </div>
                     </div>
                   </div>
                 </CommandItem>
