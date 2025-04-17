@@ -7,38 +7,37 @@ interface Props {
 }
 
 export default function Admonition({ variant, title, children }: Props) {
-  const iconMap: Record<
-    string,
-    React.ComponentType<React.SVGProps<SVGSVGElement>>
-  > = {
+  const iconMap = {
     tip: Lightbulb,
     caution: TriangleAlert,
     danger: Flame,
     info: Info,
   };
 
-  const IconComponent = iconMap[variant];
+  const Icon = iconMap[variant];
 
-  const alertClasses = {
-    tip: "border-green-400 dark:bg-green-900/30 dark:text-green-200 bg-green-50 text-green-600",
+  const styleMap = {
+    tip: "bg-green-50/50 dark:bg-green-900/20 text-green-700 dark:text-green-200 border-green-200 dark:border-green-700",
     caution:
-      "border-yellow-400 dark:bg-yellow-900/30 dark:text-yellow-200 bg-yellow-50 text-yellow-600",
+      "bg-yellow-50/50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-200 border-yellow-200 dark:border-yellow-700",
     danger:
-      "border-red-400 dark:bg-red-900/30 dark:text-red-200 bg-red-50 text-red-600",
-    info: "border-sky-400 dark:bg-sky-900/30 dark:text-sky-200 bg-sky-50 text-sky-600",
+      "bg-red-50/50 dark:bg-red-900/20 text-red-700 dark:text-red-200 border-red-200 dark:border-red-700",
+    info: "bg-sky-50/50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-200 border-sky-200 dark:border-sky-700",
   };
 
   return (
     <div
-      className={`my-3 rounded-md border-l-4 px-4 py-3 prose-p:my-0 ${alertClasses[variant]}`}
+      className={`my-4 rounded-lg border px-4 py-3 ${styleMap[variant]} transition-colors`}
     >
-      <div className="flex items-center gap-2 pb-2">
-        <IconComponent className="h-5 w-5" aria-hidden="true" />
-        <p className="text-sm font-bold">
-          {title ? title.toUpperCase() : variant.toUpperCase()}
-        </p>
+      <div className="flex items-start gap-3">
+        <Icon className="h-5 w-5 mt-0.5 flex-shrink-0" aria-hidden="true" />
+        <div className="space-y-1">
+          {title && <p className="text-sm font-medium leading-none">{title}</p>}
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            {children}
+          </div>
+        </div>
       </div>
-      <div>{children}</div>
     </div>
   );
 }

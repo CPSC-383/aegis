@@ -78,10 +78,7 @@ const components = {
     />
   ),
   p: ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
-    <p
-      className={cn("leading-7 not-first:mt-6", className)}
-      {...props}
-    />
+    <p className={cn("leading-7 not-first:mt-6", className)} {...props} />
   ),
   ul: ({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
     <ul className={cn("ml-6 list-disc", className)} {...props} />
@@ -163,7 +160,7 @@ const components = {
   ),
   Steps: ({ ...props }) => (
     <div
-      className="relative [&>h3]:step steps mb-12 ml-4 border-l pl-8 [counter-reset:step]"
+      className="relative [&>h3]:step steps mb-12 ml-4 border-l border-dashed pl-8 [counter-reset:step]"
       {...props}
     />
   ),
