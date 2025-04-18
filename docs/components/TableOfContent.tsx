@@ -2,9 +2,10 @@
 import { cn } from "@/lib/utils";
 import { TableOfContentsItem } from "@/types";
 import { useEffect, useState } from "react";
+import { getHeadings } from "@/lib/toc";
 
 interface Props {
-  headings: TableOfContentsItem[];
+  content: string;
   className?: string;
 }
 
@@ -29,8 +30,42 @@ const handleClick = (e: React.MouseEvent) => {
   }
 };
 
-export default function TableOfContent({ headings, className }: Props) {
+export default function TableOfContent({ content, className }: Props) {
   const [activeHeading, setActiveHeading] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [headings, setHeadings] = useState<TableOfContentsItem[]>([]);
+
+  useEffect(() => {
+    const updateTab = () => {
+      const activePanel = document.querySelector(
+        '[role="tabpanel"][data-state="active"]',
+      );
+      const id = activePanel?.getAttribute("id");
+      const splits = id?.split("-");
+      const tabName = splits?.[splits.length - 1] ?? null;
+      setActiveTab(tabName);
+    };
+
+    const observer = new MutationObserver(updateTab);
+
+    const tabList = document.querySelector('[role="tablist"]');
+    if (tabList) {
+      observer.observe(tabList, {
+        attributes: true,
+        subtree: true,
+        attributeFilter: ["data-state"],
+      });
+    }
+
+    updateTab();
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const extracted = getHeadings(content, activeTab);
+    setHeadings(extracted);
+  }, [content, activeTab]);
 
   useEffect(() => {
     const observerOptions: IntersectionObserverInit = {

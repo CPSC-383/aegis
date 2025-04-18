@@ -43,8 +43,6 @@ export default async function Page({ params }: Props) {
     return notFound();
   }
 
-  const headings = getHeadings(entry.content);
-
   return (
     <main className="flex overflow-hidden gap-8 max-w-full">
       <Sidebar items={navConfig.guidesNav} />
@@ -62,7 +60,7 @@ export default async function Page({ params }: Props) {
             <Mdx code={entry.mdx} />
           </div>
           <div className="w-60 shrink-0 max-lg:hidden mt-8">
-            <TableOfContent headings={headings} className="sticky top-8" />
+            <TableOfContent content={entry.content} className="sticky top-8" />
           </div>
         </div>
       </div>
