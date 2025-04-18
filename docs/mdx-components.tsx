@@ -74,6 +74,7 @@ const components = {
         "font-medium underline underline-offset-2 hover:underline-offset-4 transition-all duration-300 dark:text-teal-400 text-teal-500",
         className,
       )}
+      target="_blank"
       {...props}
     />
   ),
