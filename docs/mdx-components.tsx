@@ -102,8 +102,8 @@ const components = {
   code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <code
       className={cn(
-        "relative rounded-md bg-muted px-1.5 py-0.5 font-mono text-sm break-words text-foreground",
-        "max-w-full whitespace-pre-wrap break-words",
+        "relative rounded-md bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground",
+        "break-all whitespace-pre-wrap max-w-full overflow-auto",
         className,
       )}
       {...props}
