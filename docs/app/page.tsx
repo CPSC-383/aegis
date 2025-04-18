@@ -53,7 +53,7 @@ export default function Home() {
           </blockquote>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 mt-8">
+        <div className="grid gap-6 sm:grid-cols-2 my-8">
           {cardData.map((card) => (
             <Card
               key={card.title}

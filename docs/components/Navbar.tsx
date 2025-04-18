@@ -22,7 +22,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="max-w-7xl mx-auto w-full flex items-center justify-between px-6 py-4">
+    <nav className="max-w-7xl mx-auto w-full hidden md:flex items-center justify-between px-4 sm:px-6 py-4">
       <div className="flex items-center space-x-2">
         {mounted ? (
           <Image
@@ -36,11 +36,10 @@ export default function Navbar() {
         )}
       </div>
 
-      <div className="hidden md:flex space-x-6 text-sm">
+      <div className="flex space-x-6 text-sm">
         {navConfig.mainNav.map((item, index) => {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.path}/`);
-
           return (
             <Link
               key={index}
@@ -52,6 +51,7 @@ export default function Navbar() {
           );
         })}
       </div>
+
       <div className="flex items-center space-x-2">
         <Search />
         <ThemeToggle />
