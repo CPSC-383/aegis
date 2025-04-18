@@ -4,59 +4,66 @@ description: "This section will cover the basics needed to create agents that wo
 assignment: "a1"
 ---
 
-## Agents and the Simulated world in Aegis
+## Agents and the Simulated World in Aegis
 
-In the Aegis simulation, agents are members of the elite space force. Here’s what you need to know:
+In the Aegis simulation, agents are members of the elite space force, tasked with navigating a hazardous environment and rescuing survivors.
+Here's what you need to know to design an agent that can survive — and thrive — in this environment:
 
 <Admonition variant="info" title="Agent Communication">
   Agents can't talk to each other directly. All communication and actions must go through Aegis.
 </Admonition>
 
-### World
+### World Knowledge
 
-Each agent has to build their own world as they move around. At the start, they only know basic information of the world.
-The information includes:
+Agents must build their own understanding of the world as they explore it. At the beginning of the simulation, an agent only has partial
+knowledge of the environment. They will gradually uncover more as they interact with the world.
 
-- **Fire Cells**: Dangerous areas where agents may incur damage.
-- **Killing Cells**: Cells that can immediately endanger the agent’s life.
-- **Charging Cells**: Cells where agents can recharge their energy.
-- **Presence of Survivors**: Whether or not a cell contains survivors in need of rescue.
+Initial information includes:
+
+- **Fire Cells**: Dangerous zones where agents may take damage.
+- **Killer Cells**: Lethal areas that can instantly endanger an agent’s life.
+- **Charging Cells**: Safe zones where agents can restore energy.
+- **Presence of Survivors**: Signals indicating potential survivors in the current cell.
+- **Move Cost**: The energy required to enter a cell (if this setting is enabled). 
 
 ### World Layout
 
-Each square in the world grid has the following attributes:
+The world is structured as a grid of square cells. Each cell includes the following attributes:
 
 #### Stack of Objects
 
-This can include:
+A stack may contain:
 
-- **Survivors**: People awaiting rescue.
-- **Rubble**: Debris that needs to be cleared.
+- **Survivors**: People that agents must rescue.
+- **Rubble**: Debris that must be cleared before reaching survivors.
 
 #### Move Cost
 
-The energy lost when moving onto a square. Some squares may have higher move costs than others, requiring agents to strategize their path.
+Each cell has an energy cost for entry. Some paths may be more expensive to traverse, requiring agents to plan their movement efficiently.
 
 #### Cell Type
 
-Each cell can have one of the following types:
+Each cell is one of the following:
 
-- **CHARGING_CELL**: For recharging energy.
-- **FIRE_CELL**: A hazard where agents may take damage.
-- **KILLER_CELL**: A lethal hazard that can immediately endanger agents.
-- **NORMAL_CELL**: A walkable space with no hazards.
+- **CHARGING_CELL** — recharge energy here
+- **FIRE_CELL** — hazard: may cause damage
+- **KILLER_CELL** — high-risk hazard
+- **NORMAL_CELL** — safe and walkable
 
 #### Field of View
 
-Agents have a limited view of the world. Their field of view includes:
-- **Current Square with Life Signals**: The square the agent is currently on, displaying life signals for objects in that square. 
-Note that deeper layers may distort these signals, making it harder to detect objects or survivors deeper within the stack.
-- **Surrounding Squares within 1-Square Radius**: The immediate surroundings of the agent (e.g., north, northwest, etc.), allowing
-the agent to see basic details, including the top object in each square.
+An agent's vision is limited and includes:
+
+- **Current Cell (Life Signals)**: The agent can detect life signals of stacked objects in its current cell. However, objects deeper in the
+stack may appear distorted or harder to detect.
+- **Surrounding Cells (1-Cell Radius)**: The agent sees the top object of each nearby cell (e.g., north, northwest, east, etc.) within
+a 1-cell radius.
 
 ## Agent Commands
 
-Agents can use the following commands to interact with Aegis. Click on each command for more information.
+Agents use a predefined set of commands to interact with Aegis. Each command is sent during the agent's `THINK` state.
+
+Click on a command below to learn more:
 
 <div className="text-xl mt-8 font-mono">[END_TURN](/docs/agent-commands/end-turn)</div>
 <div className="text-xl mt-4 font-mono">[MOVE](/docs/agent-commands/move)</div>
@@ -65,27 +72,27 @@ Agents can use the following commands to interact with Aegis. Click on each comm
 
 ## Agent States
 
-Each round involves four main states for an agent:
+Agents go through a fixed cycle of states each round. These states determine what the agent is allowed to do and when it can process or send information.
 
 <Steps>
 
 ### IDLE
 
-The agent is waiting for instructions from Aegis.
+The agent is waiting for a signal from Aegis. It should not attempt to send commands during this state.
 
 ### READ_MAIL
 
-The agent has received the `MESSAGES_START` command and will start processing messages from the other agents.
-The agent returns to the `IDLE` state when it receives the `MESSAGES_END` command.
+The agent receives the `MESSAGES_START` command and begins reading incoming messages.  
+It will return to `IDLE` upon receiving the `MESSAGES_END` command.
 
 ### GET_CMD_RESULT
 
-The agent has received the `CMD_RESULT_START` command, indicating that Aegis is sending the results for the last command.
-The agent returns to the `IDLE` state when it receives the `CMD_RESULT_END` command.
+The agent receives the `CMD_RESULT_START` command, indicating that the result of the previous command is being delivered.  
+It returns to `IDLE` after the `CMD_RESULT_END` command is received.
 
 ### THINK
 
-The agent has received the `ROUND_START` command, allowing it to begin computing its actions for the current round.
-The agent returns to the `IDLE` state when it receives the `ROUND_END` command.
+The agent receives the `ROUND_START` command, indicating it can now compute and send its next action.  
+It should finish thinking and issuing its command before receiving the `ROUND_END` command, which signals a return to `IDLE`.
 
 </Steps>

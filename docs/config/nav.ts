@@ -37,11 +37,6 @@ export const navConfig = {
           title: "Running Aegis",
           href: "/getting-started/running-aegis",
         },
-        {
-          title: "Git Setup",
-          href: "/getting-started/git-setup",
-          disabled: isAssignment1(),
-        },
       ],
     },
     {
