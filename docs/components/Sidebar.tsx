@@ -6,7 +6,7 @@ import { SidebarNavItem } from "@/types";
 interface Props {
   items: SidebarNavItem[];
   className?: string;
-  onItemClick?: () => void; // Added to close mobile sidebar on click
+  onItemClick?: () => void;
 }
 
 export default function Sidebar({ items, className = "", onItemClick }: Props) {
