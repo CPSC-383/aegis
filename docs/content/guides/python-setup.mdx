@@ -177,8 +177,127 @@ Still not working? Try restarting your PC and running the command again.
 
 <TabsContent value="linux">
 
-TODO
+You can install Python 3.12.10 on Linux using a package manager or by building from source, depending on your distro.
+
+<Steps>
+
+### Check Your Distro
+
+Make sure you know which Linux distribution you're using (e.g., Ubuntu, Fedora, Arch).
+
+You can usually check with:
+
+```bash
+cat /etc/os-release
+```
+
+This tells you the distribution name and version.
+
+<br/>
+
+### Option 1: Ubuntu / Debian
+
+Ubuntu 24.04+ might already have Python 3.12. To install manually:
+
+```bash
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.12
+```
+
+Confirm it:
+
+```bash
+python3.12 --version
+```
+
+You should see:
+
+```txt
+Python 3.12.10
+```
+
+### Option 2: Arch Linux
+
+Arch users can install it directly from the AUR:
+
+```bash
+sudo pacman -Sy python312
+```
+
+This usually installs the latest version. Confirm with:
+
+```bash
+python3.12 --version
+```
+
+You should see:
+
+```txt
+Python 3.12.10
+```
+
+### Option 3: Build from Source (Works on Any Distro)
+
+If your package manager doesn't offer Python 3.12.10, you can build it from source.
+
+#### Install Build Dependencies
+
+Make sure you install the required development tools and libraries. The package names vary slightly by distro, but here's a common example for Debian-based systems:
+
+```bash
+sudo apt update
+sudo apt install -y \
+  build-essential zlib1g-dev libncurses-dev libbz2-dev libreadline-dev \
+  libsqlite3-dev libssl-dev libffi-dev liblzma-dev uuid-dev \
+  wget curl llvm tk-dev libncursesw5-dev xz-utils
+```
+
+Just make sure you download the equivalent dev libraries on your distro.
+
+#### Download and Extract the Source Code
+
+```bash
+cd /tmp
+wget https://www.python.org/ftp/python/3.12.10/Python-3.12.10.tgz
+tar -xvf Python-3.12.10.tgz
+cd Python-3.12.10
+```
+
+#### Build and Install
+
+```bash
+./configure --enable-optimizations
+make -j$(nproc)
+sudo make altinstall
+```
+
+<Admonition variant="caution" title="Install">
+
+Don't use `make install` — `make altinstall` avoids overwriting the system’s default `python3`.
+
+</Admonition>
+
+#### Verify the Installation
+
+```bash
+python3.12 --version
+```
+
+You should see:
+
+```txt
+Python 3.12.10
+```
+
+</Steps>
 
 </TabsContent>
 
 </Tabs>
+
+### Next Steps
+
+Now that Python 3.12.10 is installed, you're ready to [install Aegis](/getting-started/installation).
+
+If you run into issues, don’t hesitate to reach out to a TA.
