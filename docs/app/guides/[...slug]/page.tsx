@@ -2,7 +2,6 @@ import { allGuides } from "content-collections";
 import { notFound } from "next/navigation";
 import { Mdx } from "@/mdx-components";
 import { navConfig } from "@/config/nav";
-import { getHeadings } from "@/lib/toc";
 import { isAssignment1 } from "@/lib/utils";
 import TableOfContent from "@/components/TableOfContent";
 import Sidebar from "@/components/Sidebar";
@@ -43,8 +42,6 @@ export default async function Page({ params }: Props) {
     return notFound();
   }
 
-  const headings = getHeadings(entry.content);
-
   return (
     <main className="flex overflow-hidden gap-8 max-w-full">
       <Sidebar items={navConfig.guidesNav} />
@@ -62,7 +59,7 @@ export default async function Page({ params }: Props) {
             <Mdx code={entry.mdx} />
           </div>
           <div className="w-60 shrink-0 max-lg:hidden mt-8">
-            <TableOfContent headings={headings} className="sticky top-8" />
+            <TableOfContent content={entry.content} className="sticky top-8" />
           </div>
         </div>
       </div>

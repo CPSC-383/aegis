@@ -74,6 +74,7 @@ const components = {
         "font-medium underline underline-offset-2 hover:underline-offset-4 transition-all duration-300 dark:text-teal-400 text-teal-500",
         className,
       )}
+      target="_blank"
       {...props}
     />
   ),
@@ -101,7 +102,8 @@ const components = {
   code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <code
       className={cn(
-        "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm",
+        "relative rounded-md bg-muted px-1.5 py-0.5 font-mono text-sm break-words text-foreground",
+        "max-w-full whitespace-pre-wrap break-words",
         className,
       )}
       {...props}
