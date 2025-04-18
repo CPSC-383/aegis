@@ -280,6 +280,8 @@ Don't use `make install` — `make altinstall` avoids overwriting the system’s
 
 #### Verify the Installation
 
+Restart your terminal and run:
+
 ```bash
 python3.12 --version
 ```
@@ -288,6 +290,14 @@ You should see:
 
 ```txt
 Python 3.12.10
+```
+
+#### Cleanup
+
+Once Python is installed, you can safely remove the temporary build files:
+
+```bash
+rm -rf /tmp/Python-3.12.10 /tmp/Python-3.12.10.tgz
 ```
 
 </Steps>
