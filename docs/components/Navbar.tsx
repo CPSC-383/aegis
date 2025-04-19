@@ -8,6 +8,7 @@ import { navConfig } from "@/config/nav";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { getImagePath } from "@/lib/utils";
+import Search from "@/components/Search";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -21,7 +22,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="w-full flex items-center justify-between px-6 py-4">
+    <nav className="max-w-7xl mx-auto w-full hidden lg-custom:flex items-center justify-between px-4 sm:px-6 py-4">
       <div className="flex items-center space-x-2">
         {mounted ? (
           <Image
@@ -35,23 +36,30 @@ export default function Navbar() {
         )}
       </div>
 
-      <div className="hidden md:flex space-x-6 text-sm">
+      <div className="flex space-x-6 text-sm overflow-hidden whitespace-nowrap">
         {navConfig.mainNav.map((item, index) => {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.path}/`);
-
           return (
             <Link
               key={index}
               href={item.href}
-              className={`hover:text-foreground ${isActive ? "font-semibold border-b-2 border-border pb-2" : "text-muted-foreground"}`}
+              className={`hover:text-foreground ${
+                isActive
+                  ? "font-semibold border-b-2 border-border pb-2"
+                  : "text-muted-foreground"
+              }`}
             >
-              <span>{item.title}</span>
+              <span className="whitespace-nowrap">{item.title}</span>
             </Link>
           );
         })}
       </div>
-      <ThemeToggle />
+
+      <div className="flex items-center space-x-2">
+        <Search />
+        <ThemeToggle />
+      </div>
     </nav>
   );
 }

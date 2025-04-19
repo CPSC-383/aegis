@@ -3,14 +3,13 @@ title: "File Structure"
 description: "This section explains the basic file structure of Aegis and shows where to find the different components."
 ---
 
-The Aegis client uses a specific structure for agents and worlds. Be sure to follow these guidelines so the client can find and run the necessary files correctly.
+The Aegis client expects a specific structure for both agents and world files. Be sure to follow this structure so that the client can locate and run everything correctly.
 
-All of the following files and folders should already be included in your assignment.
+All required folders and files are included in your assignment starter code.
 
 ### Agent Structure
 
-The agent files are organized under the `src/agents` directory. Follow the structure outlined below to ensure the client can locate and
-execute your agents properly.
+Agent code lives in the `src/agents` directory. Here's what the expected layout looks like:
 
 <Tree>
   <TreeItem name="aegis" type="folder">
@@ -25,26 +24,21 @@ execute your agents properly.
   </TreeItem>
 </Tree>
 
-- `aegis/src/agents/`: This is the main folder where all agents should reside.
-- `example_agent/`: Each agent should have its own directory (e.g., example_agent), named appropriately.
-- `example_agent.py`: This file contains the agent's logic.
+- `aegis/src/agents/`: The base folder for all agents.
+- `example_agent/`: Each agent lives in its own directory, named appropriately.
+- `example_agent.py`: This is where your custom agent logic goes.
 
-#### Main.py
+#### main.py
 
 <Admonition variant="danger" title="Don't Edit">
 
-Don't edit the `main.py` file in the `example_agent` directory. 
+Do not modify the `main.py` file in the `example_agent/` directory.
 
-All of your custom agent logic should be placed in a separate file (e.g., `example_agent.py`). 
-The `main.py` file is already set up to serve as the entry point for the agent, and changing it may cause
-the client to fail to recognize or run your agent.
+This file is the predefined entry point used by the Aegis client. Editing it may prevent your agent from being recognized or executed properly.
 
 </Admonition>
 
-The `main.py` file is the entry point for your agent. It is required for every agent and should be placed inside the agent's directory.
-Without a `main.py` file, your agent won't run and the client won't be able to find it.
-
-Here's an example of what a `main.py` file looks like:
+Each agent directory must include a `main.py` file. This file handles launching the agent and connecting it to the Aegis server. Here's what a typical `main.py` looks like:
 
 ```py
 import sys
@@ -66,25 +60,23 @@ if __name__ == "__main__":
     main()
 ```
 
-#### Recommended Agent Logic File
+#### Organizing Agent Logic
 
-While the `main.py` file is the entry point for your agent, it’s a good idea to separate the agent's logic into a different file. 
-In the example above, the agent's logic is defined in `example_agent.py`. This separation helps maintain a clean structure and keeps
-the logic modular and easier to manage.
+Although `main.py` is the required entry point, it's strongly recommended to place your actual agent logic in a separate file like `example_agent.py`.
 
-Feel free to make as many files as you want.
+This keeps your code modular and clean, especially as agents become more complex. You’re also free to break your agent logic into multiple files if it helps with organization.
 
 ### World Structure
 
-World files are stored in the `worlds` directory.
+World files live in the `worlds` directory.
 
 <Tree>
   <TreeItem name="aegis" type="folder">
-      <TreeItem name="worlds" type="folder">
+    <TreeItem name="worlds" type="folder">
       <TreeItem name="ExampleWorld.world" />
     </TreeItem>
   </TreeItem>
 </Tree>
 
-- **File Extension**: All world files must have the `.world` extension.
-- **File Placement**: Place new world files in the `worlds` directory to ensure they can be accessed by the client.
+- **File Extension**: All world files must use the `.world` extension.
+- **File Placement**: All `.world` files must go in the `worlds/` directory for the client to detect them.

@@ -3,12 +3,9 @@ title: "Installation"
 description: "A step-by-step guide to install Aegis on your system."
 ---
 
-<Admonition variant="info" title="Before You Begin">
-Ensure that your system meets the following prerequisites:
-- **Python 3.12.x**
+## Prerequisites: Python 3.12.10
 
-<div className="ml-6">
-To check if you have the correct Python version installed, run the following command in your terminal:
+Aegis requires Python **3.12.10**. Before you begin, check if it’s already installed:
 
 <Tabs defaultValue="mac/linux">
 
@@ -25,6 +22,12 @@ To check if you have the correct Python version installed, run the following com
 python3 --version
 ```
 
+or 
+
+```bash
+python3.12 --version
+```
+
 </TabsContent>
 
 <TabsContent value="windows">
@@ -33,13 +36,83 @@ python3 --version
 python --version
 ```
 
+or 
+
+```bash
+py -3.12 --version
+```
+
 </TabsContent>
 
 </Tabs>
 
-This should return **Python 3.12.x.**
+If the output doesn't show `Python 3.12.10`, follow the [Python Setup Guide](/guides/python-setup) to install it and then come back. 
 
-</div>
+## Choosing the Right Python Command
+
+Depending on how Python is installed on your system, you may need to use different commands to run Python 3.12 specifically.
+
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+On macOS and most Linux systems:
+
+- `python3` usually points to your system's default Python 3 interpreter
+- `python3.12` specifically targets Python 3.12 (if installed)
+
+Use: 
+
+```bash
+python3.12
+```
+
+if you have multiple versions installed, or fall back to:
+
+```bash
+python3
+```
+
+if `python3` points to Python 3.12.10.
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+On Windows:
+
+- `python` may point to the latest installed version
+- `py 3.12` explicitly runs Python 3.12
+
+Use: 
+
+```bash
+py -3.12
+```
+
+if you have multiple versions installed, or fall back to:
+
+```bash
+python
+```
+
+if `python` points to Python 3.12.10.
+
+</TabsContent>
+
+</Tabs>
+
+<Admonition variant="info" title="Python Command">
+
+This installation guide assumes your default Python command (`python` or `python3`) points to **Python 3.12.10**.
+If it doesn’t, substitute the appropriate version-specific command (`python3.12` or `py -3.12`) whenever needed.
 
 </Admonition>
 
@@ -49,21 +122,23 @@ This should return **Python 3.12.x.**
 
 ### Download the assignment
 
-Download the ZIP file and unzip it with your preferred method.
-If successful, a new directory called aegis should have been created.
+Start by downloading the assignment ZIP file. Once downloaded, unzip it using your preferred tool. 
+This should create a folder named `aegis`.
 
-### Navigate to the assignment directory
+### Navigate into the directory
+
+Open a terminal and change into the new directory:
 
 ```bash
-cd aegis
+cd <path to aegis> 
 ```
 
-### Setting up the assignment
+### Run the Setup Script
 
 Aegis requires a set of Python packages to function. Installing these in a virtual environment
 ensures there are no conflicts with other Python projects or system-wide packages.
 
-Run the setup script:
+You can set everything up with a two commands:
 
 <Tabs defaultValue="mac/linux">
 
@@ -94,10 +169,15 @@ python setup.py
 
 </Tabs>
 
-If the script was successful, a virtual environment named `.venv` should have been created, the required packages
-installed within it and the client for your platform should be in the `client` folder.
+If the script was successful, this will:
 
-Steps do to it manually if the setup script failed:
+- Create a virtual environment named `.venv`
+- Install the required Python packages
+- Setup the proper client for your system in the `client/` directory
+
+#### Optional: Manual Setup
+
+If the setup script fails or you'd prefer to do it manually:
 
 <Tabs defaultValue="mac/linux">
 
@@ -134,7 +214,9 @@ Unzip your platform client in the client folder with your preferred method.
 
 ### Confirm Installation 
 
-To confirm that Aegis installed properly, follow the steps outlined [here](/getting-started/running-aegis).
+Before checking if Aegis is installed correctly, make sure you've read the tip below about working inside the virtual environment.
+
+To verify that everything is working as expected, run aegis with one of the methods in the [Running Aegis section](/getting-started/running-aegis).
 
 </Steps>
 
@@ -146,7 +228,36 @@ Deactivate the virtual environment once you're done working on the assignment:
 deactivate
 ```
 
-You must reactivate the virtual environment every time you work on the assignment. If you're not inside the environment,
-you may encounter missing dependency errors.
+You must reactivate the virtual environment every time you work on the assignment:
 
+<Tabs defaultValue="mac/linux">
+
+<TabsList>
+
+<TabsTrigger value="mac/linux">Mac/Linux</TabsTrigger>
+<TabsTrigger value="windows">Windows</TabsTrigger>
+
+</TabsList>
+
+<TabsContent value="mac/linux">
+
+```bash
+source .venv/bin/activate
+```
+
+</TabsContent>
+
+<TabsContent value="windows">
+
+```bash
+.venv\Scripts\activate
+```
+
+</TabsContent>
+
+</Tabs>
+
+Once activated, you can simply use the `python` command—regardless of your system—and it will point to the correct version inside the virtual environment.
+
+If the virtual environment is not active, you may encounter missing dependency errors or use the wrong Python version.
 </Admonition>

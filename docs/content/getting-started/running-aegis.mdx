@@ -3,12 +3,12 @@ title: "Running Aegis"
 description: "This section will cover how to run Aegis."
 ---
 
-There are two ways to run Aegis: using the provided script or via the client.
+Aegis can be run in two ways: using the command-line script or through the graphical Client. Use whichever method works best for your workflow.
 
-## Using the provided script
+## Using the Provided Script
 
-To run Aegis in the command line, use the `run.py` script. 
-The usage of the python script is shown below:
+To run Aegis from the command line, use the `run.py` script.  
+The basic usage is shown below:
 
 ```bash
 python run.py \
@@ -18,9 +18,9 @@ python run.py \
   --world <world file>
 ```
 
-For Assignment 1, the `--agent-amount` argument is optional as it defaults to 1. You can omit
-this argument when running the command. Below is an example of how to execute the simulation using
-the `example_agent` and `ExampleWorld`, configured to run for 50 rounds:
+For **Assignment 1**, the `--agent-amount` argument is optional and defaults to `1`. You can omit it when running the command.
+
+Here’s an example using the `example_agent` and `ExampleWorld` for 50 rounds:
 
 ```bash
 python run.py \
@@ -29,26 +29,22 @@ python run.py \
   --world ExampleWorld
 ```
 
-If you need a quick reminder on how to use the script, simply include the `-h` flag to display the help menu.
+If you need a quick reminder of how the script works, run it with the `-h` flag to display the help menu:
 
 ```bash
 python run.py -h
 ```
 
-## Using the client
+## Using the Client
 
-You can either open the client from the command line or a file
-explorer. Run the following in the `aegis` folder if you
-use the command line:
+You can open the Client either through the terminal or your system’s file explorer. To launch it from the terminal, navigate to the `client` directory and run the appropriate command below:
 
 <Tabs defaultValue="mac">
 
 <TabsList>
-
-<TabsTrigger value="mac">Mac</TabsTrigger>
-<TabsTrigger value="windows">Windows</TabsTrigger>
-<TabsTrigger value="linux">Linux</TabsTrigger>
-
+  <TabsTrigger value="mac">Mac</TabsTrigger>
+  <TabsTrigger value="windows">Windows</TabsTrigger>
+  <TabsTrigger value="linux">Linux</TabsTrigger>
 </TabsList>
 
 <TabsContent value="mac">
@@ -58,7 +54,7 @@ cd client
 open Aegis.app
 ```
 
-If you get the following error, click [here](/common-errors/mac-errors) for a step-by-step solution.
+If you see the following error, follow the [Mac error troubleshooting guide](/common-errors/mac-errors).
 
 <Image src="/mac_error.png" alt="Picture of Mac open error" width={256} height={256} />
 
@@ -81,32 +77,29 @@ cd client
 ```
 
 </TabsContent>
-
 </Tabs>
 
-Once the client opens, follow the steps below to run a game.
+Once the Client opens, follow the steps below to run a simulation.
 
 <Steps>
 
 ### Setting Up Aegis
 
-Since the client can't automatically find the Aegis code, you'll need to set it up manually. Click on the _Setup Aegis Path_ button,
-and select the aegis root directory. If set up properly, the sidebar tabs will appear and the client should display a list of available
-worlds when you attempt to select one.
+Since the Client can't automatically locate the Aegis code, click the **Setup Aegis Path** button and select the root `aegis` directory.  
+If successful, the sidebar tabs will appear and the Client will list available worlds when prompted to select one.
 
-### Starting Up Aegis
+### Starting the Simulation
 
-In the Aegis tab, select a world, and configure the number of rounds. Once the _Start Up Game_ button becomes active, click it. You’ll
-know Aegis has started successfully when either the console confirms it or the button changes to _Kill Game_. At this point, you can proceed
-to connect your agents.
+Go to the **Aegis** tab, select a world, and configure the number of rounds.  
+Once the **Start Up Game** button becomes active, click it. You’ll know Aegis has launched when the console confirms it or the button changes to **Kill Game**.
 
 ### Connecting Agents
 
-Go to the Agents tab, choose the agent you wish to use, and assign it a group name. When the _Connect Agent_ button becomes active, click
-it to connect your agents.
+Switch to the **Agents** tab, select the agent you wish to connect, and assign it a group name.  
+Click **Connect Agent** once the button becomes available.
 
-### Simulation
+### Running the Simulation
 
-If everything has been set up correctly, you should see the simulation appear.
+If everything is set up correctly, the simulation should start and display in the main window.
 
 </Steps>

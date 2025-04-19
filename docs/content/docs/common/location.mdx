@@ -25,6 +25,7 @@ The `Location` class provides a robust interface for managing two-dimensional co
 ### add(direction: Direction)
 
 <Method
+  name="add"
   description="Adds the given direction to the current location."
   parameters={[
     {
@@ -52,6 +53,7 @@ north_location = loc.add(Direction.NORTH)
 ### direction_to(location: Location)
 
 <Method
+  name="direction_to"
   description="Calculate the direction between the current location and a target location."
   parameters={[
     {
@@ -77,11 +79,48 @@ dir = start.direction_to(goal)
 # Returns Direction.NORTH
 ```
 
+### distance_to(location: Location)
+
+<Admonition variant="danger" title="Warning: Incorrect Heuristic">
+
+This should **not** be used as your A* heuristic! Using an improper heuristic can lead
+to suboptimal or incorrect pathfinding results.
+
+</Admonition>
+
+<Method
+  name="distance_to"
+  description="Calculates the squared distance between the current location and the given location."
+  parameters={[
+    {
+      name: "location",
+      type: "Location",
+      description: "The location to which the distance is calculated.",
+      required: true,
+    },
+  ]}
+  returns={{
+    type: "int",
+    description:
+      "The squared distance to the given location.",
+  }}
+/>
+
+**Example:**
+
+```py
+start = create_location(1, 2)
+goal = create_location(3, 5)
+dist = start.distance_to(goal) 
+# Returns 13 
+```
+
 ## Factory Functions
 
 ### create_location(x: int, y: int)
 
 <Method
+  name="create_location"
   description="Create a new Location object at the specified coordinates."
   parameters={[
     {

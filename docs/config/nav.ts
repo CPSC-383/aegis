@@ -9,11 +9,21 @@ export const navConfig = {
       path: "/getting-started",
     },
     {
+      title: "Guides",
+      href: "/guides/intro",
+      path: "/guides",
+    },
+    {
       title: "API Reference",
       href: isAssignment1() ? "/docs/intro" : "/docs/intro-a3",
       path: "/docs",
     },
     { title: "Common Errors", href: "/common-errors", path: "/common-errors" },
+    {
+      title: "Acknowledgments",
+      href: "/acknowledgments",
+      path: "/acknowledgments",
+    },
   ],
   gettingStartedNav: [
     {
@@ -26,11 +36,6 @@ export const navConfig = {
         {
           title: "Running Aegis",
           href: "/getting-started/running-aegis",
-        },
-        {
-          title: "Git Setup",
-          href: "/getting-started/git-setup",
-          disabled: isAssignment1(),
         },
       ],
     },
@@ -59,6 +64,22 @@ export const navConfig = {
         {
           title: "Client",
           href: "/getting-started/client",
+        },
+      ],
+    },
+  ],
+  guidesNav: [
+    {
+      title: "Guides",
+      items: [
+        {
+          title: "Python Setup",
+          href: "/guides/python-setup",
+        },
+        {
+          title: "Git Setup",
+          href: "/guides/git-setup",
+          disabled: isAssignment1(),
         },
       ],
     },
@@ -132,6 +153,7 @@ export const navConfig = {
     },
     {
       title: "World Objects",
+      disabled: isAssignment1(),
       items: [
         {
           title: "Rubble",

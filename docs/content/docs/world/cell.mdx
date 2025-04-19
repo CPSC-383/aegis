@@ -7,11 +7,16 @@ description: "Represents a cell in the world."
 
 The `Cell` class is a fundamental unit within the world grid, representing individual
 tiles that agents interact with. Each cell has properties like movement cost, location,
-and whether it contains survivors. It also supports advanced features, including layered
+whether it contains survivors and the agents on the cell. It also supports advanced features, including layered
 content and type-specific behaviors such as charging, fire, and killer properties.
 
 ## Attributes
 
+<Attribute
+  name="agent_id_list"
+  type="AgentIDList"
+  description="List of agent IDs present in the cell."
+/>
 <Attribute
   name="move_cost"
   type="int"
@@ -33,6 +38,7 @@ content and type-specific behaviors such as charging, fire, and killer propertie
 ### get_top_layer()
 
 <Method
+  name="get_top_layer"
   description="Returns the top layer of the cell without removing it."
   returns={{
     type: "WorldObject | None",
@@ -58,6 +64,7 @@ print(top_layer)
 ### is_charging_cell()
 
 <Method
+  name="is_charging_cell"
   description="Determines whether the cell is of type CHARGING_CELL."
   returns={{
     type: "bool",
@@ -81,6 +88,7 @@ print(cell.is_charging_cell())
 ### is_fire_cell()
 
 <Method
+  name="is_fire_cell"
   description="Determines whether the cell is of type FIRE_CELL."
   returns={{
     type: "bool",
@@ -103,7 +111,7 @@ print(cell.is_fire_cell())
 ### is_killer_cell()
 
 <Method
-  name="is_killer_cell()"
+  name="is_killer_cell"
   description="Determines whether the cell is of type KILLER_CELL."
   returns={{
     type: "bool",
@@ -126,6 +134,7 @@ print(cell.is_killer_cell())
 ### is_normal_cell()
 
 <Method
+  name="is_normal_cell"
   description="Determines whether the cell is of type NORMAL_CELL."
   returns={{
     type: "bool",

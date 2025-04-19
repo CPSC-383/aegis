@@ -1,4 +1,6 @@
 import { rehypeSlug } from "@/lib/rehype-slug";
+import { extractAttributes } from "@/lib/extract-attributes";
+import { extractMethods } from "@/lib/extract-methods";
 import { defineCollection, defineConfig } from "@content-collections/core";
 import { compileMDX } from "@content-collections/mdx";
 import rehypePrettyCode, { type Options } from "rehype-pretty-code";
@@ -48,6 +50,8 @@ const docs = defineCollection({
       ...document,
       mdx,
       slug: document._meta.path,
+      attributes: extractAttributes(document.content),
+      methods: extractMethods(document.content),
     };
   },
 });
@@ -72,6 +76,27 @@ const commonErrors = defineCollection({
   },
 });
 
+const guides = defineCollection({
+  name: "Guides",
+  directory: "content/guides",
+  include: "**/*.mdx",
+  schema: (z) => ({
+    title: z.string(),
+    description: z.string(),
+    assignment: z.string().optional(),
+  }),
+  transform: async (document, context) => {
+    const mdx = await compileMDX(context, document, {
+      rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+    });
+    return {
+      ...document,
+      mdx,
+      slug: document._meta.path,
+    };
+  },
+});
+
 export default defineConfig({
-  collections: [gettingStarted, docs, commonErrors],
+  collections: [gettingStarted, docs, commonErrors, guides],
 });

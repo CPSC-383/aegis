@@ -1,18 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import "./globals.css";
 import Navbar from "@/components/Navbar";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import Footer from "@/components/Footer";
+import { lexend, geistMono } from "./fonts";
+import "./globals.css";
+import MobileNavigation from "@/components/MobileNavigation";
 
 export const metadata: Metadata = {
   title: "Aegis",
@@ -28,11 +20,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} flex h-[98vh] max-w-7xl mx-auto flex-col items-center font-sans antialiased scroll-smooth`}
+        className={`${lexend.variable} ${geistMono.variable} h-screen overflow-hidden flex flex-col font-sans antialiased scroll-smooth`}
       >
         <ThemeProvider attribute="class" defaultTheme="light">
           <Navbar />
-          {children}
+          <main className="flex-1 overflow-y-auto max-w-7xl w-full mx-auto flex flex-col items-center">
+            {children}
+          </main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
