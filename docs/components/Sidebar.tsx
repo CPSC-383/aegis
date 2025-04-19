@@ -14,7 +14,7 @@ export default function Sidebar({ items, className = "", onItemClick }: Props) {
 
   return (
     <div
-      className={`w-56 p-4 overflow-y-auto no-scrollbar bg-background ${className}`}
+      className={`w-56 h-full p-4 overflow-y-auto no-scrollbar bg-background ${className}`}
     >
       {items.map((item, index) => (
         <div className="mt-4" key={index}>
@@ -29,7 +29,7 @@ export default function Sidebar({ items, className = "", onItemClick }: Props) {
                 item.href && !item.disabled ? (
                   <Link key={index} href={item.href} passHref>
                     <div
-                      className={`block py-1 px-2 text-sm
+                      className={`block py-1.5 px-2 text-sm
                         ${
                           pathname === item.href + "/"
                             ? "font-semibold border-l-2 border-border"

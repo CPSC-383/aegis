@@ -104,10 +104,10 @@ export default function MobileNavigation({ sidebarItems }: Props) {
           <Search />
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto no-scrollbar">
           <div className="p-4 border-b">
             <h3 className="text-sm font-semibold mb-3">Navigation</h3>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {navConfig.mainNav.map((item, index) => {
                 const isActive =
                   pathname === item.href ||
@@ -117,7 +117,7 @@ export default function MobileNavigation({ sidebarItems }: Props) {
                     key={index}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className={`block py-2 text-sm ${
+                    className={`block py-1.5 text-sm ${
                       isActive
                         ? "font-semibold text-foreground"
                         : "text-muted-foreground"
@@ -144,7 +144,7 @@ export default function MobileNavigation({ sidebarItems }: Props) {
                         subItem.href && !subItem.disabled ? (
                           <Link key={subIndex} href={subItem.href} passHref>
                             <div
-                              className={`block py-1 text-sm
+                              className={`block py-1.5 text-sm
                               ${
                                 pathname === subItem.href + "/"
                                   ? "font-semibold text-foreground"
