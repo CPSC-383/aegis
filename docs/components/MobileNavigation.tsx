@@ -79,17 +79,16 @@ export default function MobileNavigation({ sidebarItems }: Props) {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 md:hidden"
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg-custom:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <div
-        className={`fixed left-0 top-0 z-50 h-full w-80 max-w-[80vw] transform bg-background shadow-lg transition-transform duration-400 ease-in-out md:hidden flex flex-col ${
+        className={`fixed left-0 top-0 z-50 h-full w-80 max-w-[80vw] transform bg-background shadow-lg transition-transform duration-400 ease-in-out lg-custom:hidden flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* Fixed header */}
         <div className="flex items-center justify-between p-4 border-b shrink-0">
           <span className="font-medium">Menu</span>
           <button
@@ -101,14 +100,11 @@ export default function MobileNavigation({ sidebarItems }: Props) {
           </button>
         </div>
 
-        {/* Search - also fixed */}
         <div className="p-4 border-b shrink-0">
           <Search />
         </div>
 
-        {/* Scrollable content container */}
         <div className="flex-1 overflow-y-auto">
-          {/* Main Navigation */}
           <div className="p-4 border-b">
             <h3 className="text-sm font-semibold mb-3">Navigation</h3>
             <div className="space-y-2">
@@ -134,7 +130,6 @@ export default function MobileNavigation({ sidebarItems }: Props) {
             </div>
           </div>
 
-          {/* Sidebar Items (if provided) */}
           {sidebarItems && (
             <div className="p-4 pb-20">
               <h3 className="text-sm font-semibold mb-3">Documentation</h3>
