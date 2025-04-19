@@ -2,7 +2,7 @@ import { Lightbulb, TriangleAlert, Flame, Info } from "lucide-react";
 
 interface Props {
   variant: "tip" | "caution" | "danger" | "info";
-  title?: string;
+  title: string;
   children: React.ReactNode;
 }
 
@@ -29,13 +29,13 @@ export default function Admonition({ variant, title, children }: Props) {
     <div
       className={`my-4 rounded-lg border px-4 py-3 ${styleMap[variant]} transition-colors`}
     >
-      <div className="flex items-start gap-3">
-        <Icon className="h-5 w-5 mt-0.5 flex-shrink-0" aria-hidden="true" />
-        <div className="space-y-1">
-          {title && <p className="text-sm font-medium leading-none">{title}</p>}
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            {children}
-          </div>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+          <p className="text-base font-semibold leading-none">{title}</p>
+        </div>
+        <div className="prose prose-sm dark:prose-invert max-w-none">
+          {children}
         </div>
       </div>
     </div>
