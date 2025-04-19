@@ -4,7 +4,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { lexend, geistMono } from "./fonts";
 import "./globals.css";
-import MobileNavigation from "@/components/MobileNavigation";
 
 export const metadata: Metadata = {
   title: "Aegis",
