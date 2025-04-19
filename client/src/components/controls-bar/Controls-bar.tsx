@@ -30,16 +30,13 @@ function ControlsBar() {
     const handleKeyPress = (e: KeyboardEvent) => {
         switch (e.key.toLowerCase()) {
             case ' ':
-            case 'k':
                 e.preventDefault()
                 togglePlayPause(!simPaused)
                 break
             case 'arrowleft':
-            case 'j':
                 handleRound(-1)
                 break
             case 'arrowright':
-            case 'l':
                 handleRound(1)
                 break
             case 'm':
