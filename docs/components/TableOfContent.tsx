@@ -98,7 +98,7 @@ export default function TableOfContent({ content, className }: Props) {
   }, [headings]);
 
   return (
-    <div className={cn("font-secondary xl:block hidden", className)}>
+    <div className={cn("font-secondary lg-custom:block hidden", className)}>
       <p className="mb-4 text-lg font-semibold flex items-center">
         On This Page
       </p>

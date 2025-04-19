@@ -48,7 +48,7 @@ export default async function Page({ params }: Props) {
       <MobileNavigation sidebarItems={navConfig.docsNav} />
 
       <main className="flex overflow-hidden gap-8 max-w-full">
-        <div className="hidden md:block">
+        <div className="hidden lg-custom:block">
           <Sidebar items={navConfig.docsNav} />
         </div>
 

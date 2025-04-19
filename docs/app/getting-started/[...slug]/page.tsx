@@ -48,7 +48,7 @@ export default async function Page({ params }: Props) {
       <MobileNavigation sidebarItems={navConfig.gettingStartedNav} />
 
       <div className="flex overflow-hidden">
-        <div className="hidden md:block">
+        <div className="hidden lg-custom:block">
           <Sidebar items={navConfig.gettingStartedNav} />
         </div>
 

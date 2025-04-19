@@ -52,7 +52,7 @@ export default function MobileNavigation({ sidebarItems }: Props) {
 
   return (
     <>
-      <nav className="md:hidden w-full flex items-center justify-between px-4 py-3 bg-background border-b">
+      <nav className="lg-custom:hidden w-full flex items-center justify-between px-4 py-3">
         <div className="flex items-center space-x-2">
           {mounted ? (
             <Image

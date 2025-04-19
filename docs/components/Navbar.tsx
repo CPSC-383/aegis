@@ -22,7 +22,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="max-w-7xl mx-auto w-full hidden md:flex items-center justify-between px-4 sm:px-6 py-4">
+    <nav className="max-w-7xl mx-auto w-full hidden lg-custom:flex items-center justify-between px-4 sm:px-6 py-4">
       <div className="flex items-center space-x-2">
         {mounted ? (
           <Image
@@ -36,7 +36,7 @@ export default function Navbar() {
         )}
       </div>
 
-      <div className="flex space-x-6 text-sm">
+      <div className="flex space-x-6 text-sm overflow-hidden whitespace-nowrap">
         {navConfig.mainNav.map((item, index) => {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.path}/`);
@@ -44,9 +44,13 @@ export default function Navbar() {
             <Link
               key={index}
               href={item.href}
-              className={`hover:text-foreground ${isActive ? "font-semibold border-b-2 border-border pb-2" : "text-muted-foreground"}`}
+              className={`hover:text-foreground ${
+                isActive
+                  ? "font-semibold border-b-2 border-border pb-2"
+                  : "text-muted-foreground"
+              }`}
             >
-              <span>{item.title}</span>
+              <span className="whitespace-nowrap">{item.title}</span>
             </Link>
           );
         })}
