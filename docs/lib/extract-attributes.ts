@@ -18,6 +18,7 @@ export function extractAttributes(content: string): AttributeInfo[] {
     let propMatch;
     while ((propMatch = propRegex.exec(props)) !== null) {
       const [, key, value] = propMatch;
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
       (attr as any)[key] = value;
     }
 

@@ -18,6 +18,7 @@ export function extractMethods(content: string): MethodInfo[] {
     while ((propMatch = propRegex.exec(props)) !== null) {
       const [, key, value] = propMatch;
       if (key === "name" || key === "description") {
+        /* eslint-disable  @typescript-eslint/no-explicit-any */
         (method as any)[key] = value;
       }
     }
