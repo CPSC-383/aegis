@@ -101,7 +101,7 @@ export default function MobileNavigation({ sidebarItems }: Props) {
         </div>
 
         <div className="p-4 border-b shrink-0">
-          <Search />
+          <Search source="mobile" />
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar">

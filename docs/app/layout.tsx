@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
+import { SearchProvider } from "@/contexts/SearchContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { lexend, geistMono } from "./fonts";
@@ -22,11 +23,13 @@ export default function RootLayout({
         className={`${lexend.variable} ${geistMono.variable} h-screen overflow-hidden flex flex-col font-sans antialiased scroll-smooth`}
       >
         <ThemeProvider attribute="class" defaultTheme="light">
-          <Navbar />
-          <main className="flex-1 overflow-y-auto max-w-7xl w-full mx-auto flex flex-col items-center">
-            {children}
-          </main>
-          <Footer />
+          <SearchProvider>
+            <Navbar />
+            <main className="flex-1 overflow-y-auto max-w-7xl w-full mx-auto flex flex-col items-center">
+              {children}
+            </main>
+            <Footer />
+          </SearchProvider>
         </ThemeProvider>
       </body>
     </html>
