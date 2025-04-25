@@ -15,39 +15,65 @@ import {
 import { DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Cog, Tag } from "lucide-react";
+import { useSearch } from "@/contexts/SearchContext";
 
-export default function Search() {
-  const [open, setOpen] = useState(false);
+interface SearchProps {
+  source: "navbar" | "mobile";
+}
+
+export default function Search({ source }: SearchProps) {
+  const {
+    isSearchOpen,
+    openSearch,
+    closeSearch,
+    searchSource,
+    setSearchSource,
+  } = useSearch();
   const [query, setQuery] = useState("");
   const router = useRouter();
+
+  const isActive = !searchSource || searchSource === source;
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+
+        if (!isSearchOpen) {
+          setSearchSource(source);
+          openSearch();
+        } else if (searchSource === source) {
+          closeSearch();
+          setSearchSource(null);
+        }
       }
     };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+
+    window.addEventListener("keydown", down);
+    return () => window.removeEventListener("keydown", down);
+  }, [
+    isSearchOpen,
+    openSearch,
+    closeSearch,
+    source,
+    searchSource,
+    setSearchSource,
+  ]);
 
   useEffect(() => {
-    if (open) {
+    if (isSearchOpen) {
       setQuery("");
     }
-  }, [open]);
+  }, [isSearchOpen]);
 
   const results = useMemo(() => {
     const q = query.toLowerCase();
-
     return searchIndex.flatMap((doc) => {
       if (
         (doc.assignment === "a3" && isAssignment1()) ||
-        (doc.assignment == "a1" && !isAssignment1())
+        (doc.assignment === "a1" && !isAssignment1())
       )
         return [];
-
       const matchingAttributes =
         doc.attributes?.filter(
           (attr) =>
@@ -55,14 +81,12 @@ export default function Search() {
             attr.type.toLowerCase().includes(q) ||
             attr.description.toLowerCase().includes(q),
         ) ?? [];
-
       const matchingMethods =
         doc.methods?.filter(
           (method) =>
             method.name.toLowerCase().includes(q) ||
             method.description.toLowerCase().includes(q),
         ) ?? [];
-
       const items = [
         ...matchingAttributes.map((attr) => ({
           type: "attribute" as const,
@@ -75,7 +99,6 @@ export default function Search() {
           description: method.description,
         })),
       ];
-
       return items.length > 0
         ? [
             {
@@ -88,6 +111,9 @@ export default function Search() {
     });
   }, [query]);
 
+  // If this instance is not active, don't render the button
+  if (!isActive) return null;
+
   return (
     <>
       <Button
@@ -95,7 +121,10 @@ export default function Search() {
         className={cn(
           "relative h-8 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none sm:pr-12 md:w-32 lg:w-42",
         )}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setSearchSource(source);
+          openSearch();
+        }}
       >
         <span className="hidden lg:inline-flex">Search api...</span>
         <span className="inline-flex lg:hidden">Search...</span>
@@ -103,7 +132,15 @@ export default function Search() {
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog
+        open={isSearchOpen && searchSource === source}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeSearch();
+            setSearchSource(null);
+          }
+        }}
+      >
         <DialogTitle></DialogTitle>
         <CommandInput
           placeholder="Search docs..."
@@ -120,7 +157,8 @@ export default function Search() {
                   value={`${item.name} ${item.description}`}
                   onSelect={() => {
                     router.push(group.slug);
-                    setOpen(false);
+                    closeSearch();
+                    setSearchSource(null);
                   }}
                 >
                   <div className="flex items-start justify-center gap-2">
