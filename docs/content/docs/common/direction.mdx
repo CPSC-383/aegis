@@ -162,6 +162,25 @@ coordinates. It defines a set of cardinal and intercardinal directions that can 
   />
 </Attribute>
 
+<Attribute
+  name="CENTER"
+  type="tuple"
+  description="No movement; represents staying in the current location."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the CENTER direction."
+    defaultValue={0}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the CENTER direction."
+    defaultValue={0}
+  />
+</Attribute>
+
 ## Methods
 
 ### get_random_direction()
