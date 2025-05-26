@@ -99,6 +99,9 @@ class ExampleAgent(Brain):
         # Fetch the cell at the agent’s current location. If the location is outside the world’s bounds,
         # return a default move action and end the turn.
         current_cell = world.get_cell_at(self._agent.get_location())
+        if current_cell is None:
+            self.send_and_end_turn(MOVE(Direction.CENTER))
+            return
 
         # Get the top layer at the agent’s current location.
         top_layer = current_cell.get_top_layer()
