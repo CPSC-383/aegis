@@ -34,3 +34,4 @@ dist-ssr
 *.sw?
 packed-client
 WorldInfoFile.out
+.prettierrc

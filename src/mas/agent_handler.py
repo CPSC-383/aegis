@@ -20,7 +20,7 @@ from aegis.common.commands.aegis_commands import (
 )
 from aegis.common.constants import Constants
 from aegis.common.network.aegis_socket_exception import AegisSocketException
-from a3.aegis_parser import AegisParser
+from mas.aegis_parser import AegisParser
 from aegis.common.parsers.aegis_parser_exception import AegisParserException
 
 import numpy as np
@@ -178,10 +178,7 @@ class AgentHandler:
             return
         try:
             if agent.agent_socket is not None:
-                if (
-                    isinstance(command, SAVE_SURV_RESULT)
-                    and command.image_to_predict is not None
-                ):
+                if isinstance(command, SAVE_SURV_RESULT) and command.image_to_predict is not None:
                     image = command.image_to_predict
                     unique_labels = command.all_unique_labels
                     if unique_labels is None:
@@ -316,9 +313,7 @@ class AgentHandler:
         self.send_message_to(agent.agent_id, MESSAGES_END())
         mailbox.clear()
 
-    def _add_message_to_mailbox(
-        self, agent: AgentControl, smr: SEND_MESSAGE_RESULT
-    ) -> None:
+    def _add_message_to_mailbox(self, agent: AgentControl, smr: SEND_MESSAGE_RESULT) -> None:
         if self.current_mailbox == 1:
             agent.mailbox2.append(smr)
         elif self.current_mailbox == 2:
@@ -328,17 +323,11 @@ class AgentHandler:
         self.forward_message_list.clear()
 
     def empty_forward_messages(self) -> None:
-        self.forward_message_list = [
-            msg
-            for msg in self.forward_message_list
-            if msg.get_number_left_to_read() > 0
-        ]
+        self.forward_message_list = [msg for msg in self.forward_message_list if msg.get_number_left_to_read() > 0]
 
         self.current_mailbox = 2 if self.current_mailbox == 1 else 1
 
-    def increase_agent_group_saved(
-        self, gid: int, number_saved: int, save_state: int
-    ) -> None:
+    def increase_agent_group_saved(self, gid: int, number_saved: int, save_state: int) -> None:
         state_message = "alive" if save_state == Constants.SAVE_STATE_ALIVE else "dead"
         print(f"Aegis  : Group {gid} saved {number_saved} survivors {state_message}.")
         agent_group: AgentGroup | None = self.get_agent_group(gid)
@@ -352,14 +341,9 @@ class AgentHandler:
             agent_group.number_saved_dead += number_saved
 
         # update agent group score (BASE for first survivor saved, EXTRA for any additional survivors saved (surv groups))
-        agent_group.score += (
-            Constants.SCORE_SURV_SAVED_BASE
-            + (number_saved - 1) * Constants.SCORE_ANY_EXTRA_SURV_SAVED
-        )
+        agent_group.score += Constants.SCORE_SURV_SAVED_BASE + (number_saved - 1) * Constants.SCORE_ANY_EXTRA_SURV_SAVED
 
-    def increase_agent_group_predicted(
-        self, gid: int, surv_id: int, label: np.int64, pred_correct: bool
-    ) -> None:
+    def increase_agent_group_predicted(self, gid: int, surv_id: int, label: np.int64, pred_correct: bool) -> None:
         """called when group predicts, also updates group score accordingly
 
         Args:
@@ -379,9 +363,7 @@ class AgentHandler:
             agent_group.number_predicted_wrong += 1
         agent_group.number_predicted += 1
 
-        print(
-            f"Aegis  : Group {gid} predicted symbol {label} from survivor {surv_id} {correct_string}"
-        )
+        print(f"Aegis  : Group {gid} predicted symbol {label} from survivor {surv_id} {correct_string}")
 
     def print_group_survivor_saves(self) -> None:
         print("=================================================")
@@ -389,6 +371,4 @@ class AgentHandler:
         print("(Score, Number Saved, Correct Predictions)")
         print("=================================================")
         for group in self.agent_group_list:
-            print(
-                f"{group.name} : ({group.score}, {group.number_saved}, {group.number_predicted_right})"
-            )
+            print(f"{group.name} : ({group.score}, {group.number_saved}, {group.number_predicted_right})")

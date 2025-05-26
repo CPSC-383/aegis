@@ -1,7 +1,7 @@
 import sys
 
-from a3.agent import BaseAgent
-from agents.example_agent_a3.example_agent import ExampleAgent
+from mas.agent import BaseAgent
+from agents.example_agent_mas.example_agent import ExampleAgent
 
 
 def main() -> None:

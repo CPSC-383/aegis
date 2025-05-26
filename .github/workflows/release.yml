@@ -85,16 +85,16 @@ jobs:
           if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             cp requirements-a1.txt requirements.txt
           else
-            cp requirements-a3.txt requirements.txt
+            cp requirements-mas.txt requirements.txt
           fi
-          rm requirements-a1.txt requirements-a3.txt
+          rm requirements-a1.txt requirements-mas.txt
 
           # Update imports for A1 if needed
           if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
             find ./src/aegis -type f \
               -not -path "*/__pycache__/*" \
               -not -path "*/agent_predictions/*" \
-              -exec grep -l "a3" {} + | xargs sed -i 's/a3/a1/g'
+              -exec grep -l "mas" {} + | xargs sed -i 's/mas/a1/g'
             grep -lrw "PREDICT" ./src/aegis --include="__init__.py" | xargs sed -i '/PREDICT/d'
           fi
 
@@ -110,7 +110,7 @@ jobs:
 
       - name: Update agent files
         run: |
-          VERSION=$(if [[ "${{ github.ref_name }}" == *"-a1" ]]; then echo "a1"; else echo "a3"; fi)
+          VERSION=$(if [[ "${{ github.ref_name }}" == *"-a1" ]]; then echo "a1"; else echo "mas"; fi)
           find ./src/agents -mindepth 1 \
             -not -path "*/example_agent_${VERSION}/*" \
             -not -path "*/example_agent_${VERSION}" \
@@ -120,10 +120,11 @@ jobs:
         run: |
           # Remove version-specific directories
           if [[ "${{ github.ref_name }}" == *"-a1" ]]; then
-            rm -rf ./src/a3
+            rm -rf ./src/mas
             rm sys_files/*.npy
-          else
+            else
             rm -rf ./src/a1
+            rm sys_files/*.npy # added line above for temp spring sem not needing it
           fi
 
           # Remove development files

@@ -18,7 +18,7 @@ __all__ = [
     "TEAM_DIG_RESULT",
 ]
 
-from a3.SAVE_SURV_RESULT import SAVE_SURV_RESULT
+from mas.SAVE_SURV_RESULT import SAVE_SURV_RESULT
 from aegis.common.commands.aegis_commands.AEGIS_UNKNOWN import AEGIS_UNKNOWN
 from aegis.common.commands.aegis_commands.CMD_RESULT_END import CMD_RESULT_END
 from aegis.common.commands.aegis_commands.CMD_RESULT_START import CMD_RESULT_START

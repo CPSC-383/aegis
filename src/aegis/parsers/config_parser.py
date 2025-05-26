@@ -3,7 +3,7 @@ import sys
 from typing import Any
 
 from aegis.assist.config_settings import ConfigSettings
-from a3.aegis_parser import AegisParser
+from mas.aegis_parser import AegisParser
 
 
 class ConfigParser(AegisParser):

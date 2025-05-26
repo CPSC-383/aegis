@@ -20,13 +20,13 @@ from aegis.common.commands.aegis_commands import (
     SLEEP_RESULT,
     TEAM_DIG_RESULT,
 )
-from a3.aegis_parser import AegisParser
+from mas.aegis_parser import AegisParser
 from aegis.common.world.info.cell_info import CellInfo
 from aegis.common.world.world import InternalWorld
 from aegis.api import World
 
-import a3.agent.base_agent
-from a3.agent.agent_states import AgentStates
+import mas.agent.base_agent
+from mas.agent.agent_states import AgentStates
 
 
 class Brain(ABC):
@@ -50,29 +50,29 @@ class Brain(ABC):
         """
         pass
 
-    @abstractmethod
-    def handle_save_surv_result(self, ssr: SAVE_SURV_RESULT) -> None:
-        """
-        Handles the SAVE_SURV_RESULT command.
+    # @abstractmethod
+    # def handle_save_surv_result(self, ssr: SAVE_SURV_RESULT) -> None:
+    #     """
+    #     Handles the SAVE_SURV_RESULT command.
 
-        Args:
-            ssr: The SAVE_SURV_RESULT command to handle.
-        """
-        pass
+    #     Args:
+    #         ssr: The SAVE_SURV_RESULT command to handle.
+    #     """
+    #     pass
 
-    @abstractmethod
-    def handle_predict_result(self, prd: PREDICT_RESULT) -> None:
-        pass
+    # @abstractmethod
+    # def handle_predict_result(self, prd: PREDICT_RESULT) -> None:
+    #     pass
 
-    @abstractmethod
-    def handle_observe_result(self, ovr: OBSERVE_RESULT) -> None:
-        """
-        Handles the OBSERVE_RESULT command.
+    # @abstractmethod
+    # def handle_observe_result(self, ovr: OBSERVE_RESULT) -> None:
+    #     """
+    #     Handles the OBSERVE_RESULT command.
 
-        Args:
-            ovr: The OBSERVE_RESULT command to handle.
-        """
-        pass
+    #     Args:
+    #         ovr: The OBSERVE_RESULT command to handle.
+    #     """
+    #     pass
 
     @abstractmethod
     def think(self) -> None:
@@ -89,15 +89,13 @@ class Brain(ABC):
         Args:
             aegis_command: The command received from AEGIS.
         """
-        base_agent = a3.agent.base_agent.BaseAgent.get_agent()
+        base_agent = mas.agent.base_agent.BaseAgent.get_agent()
         if isinstance(aegis_command, CONNECT_OK):
             connect_ok: CONNECT_OK = aegis_command
             base_agent.set_agent_id(connect_ok.new_agent_id)
             base_agent.set_energy_level(connect_ok.energy_level)
             base_agent.set_location(connect_ok.location)
-            self._world = InternalWorld(
-                AegisParser.build_world(connect_ok.world_filename)
-            )  # pyright: ignore[reportAttributeAccessIssue]
+            self._world = InternalWorld(AegisParser.build_world(connect_ok.world_filename))  # pyright: ignore[reportAttributeAccessIssue]
             base_agent.set_agent_state(AgentStates.CONNECTED)
             base_agent.log("Connected Successfully")
 
@@ -118,9 +116,7 @@ class Brain(ABC):
 
         elif isinstance(aegis_command, MOVE_RESULT):
             move_result: MOVE_RESULT = aegis_command
-            move_result_current_info: CellInfo = (
-                move_result.surround_info.get_current_info()
-            )
+            move_result_current_info: CellInfo = move_result.surround_info.get_current_info()
             base_agent.set_energy_level(move_result.energy_level)
             base_agent.set_location(move_result_current_info.location)
             base_agent.update_surround(move_result.surround_info, self.get_world())  # pyright: ignore[reportArgumentType]
@@ -133,9 +129,7 @@ class Brain(ABC):
 
         elif isinstance(aegis_command, SAVE_SURV_RESULT):
             save_surv_result: SAVE_SURV_RESULT = aegis_command
-            save_surv_result_current_info = (
-                save_surv_result.surround_info.get_current_info()
-            )
+            save_surv_result_current_info = save_surv_result.surround_info.get_current_info()
             base_agent.set_energy_level(save_surv_result.energy_level)
             base_agent.set_location(save_surv_result_current_info.location)
             if save_surv_result.has_pred_info():
@@ -146,26 +140,24 @@ class Brain(ABC):
                 )
                 base_agent.add_prediction_info((surv_id, image, labels))
 
-            self.handle_save_surv_result(save_surv_result)
+            # self.handle_save_surv_result(save_surv_result)
             base_agent.update_surround(save_surv_result.surround_info, self.get_world())  # pyright: ignore[reportArgumentType]
 
-        elif isinstance(aegis_command, PREDICT_RESULT):
-            pred_req: PREDICT_RESULT = aegis_command
-            self.handle_predict_result(pred_req)
+        # elif isinstance(aegis_command, PREDICT_RESULT):
+        #     pred_req: PREDICT_RESULT = aegis_command
+        #     self.handle_predict_result(pred_req)
 
         elif isinstance(aegis_command, SLEEP_RESULT):
             sleep_result: SLEEP_RESULT = aegis_command
             if sleep_result.was_successful:
                 base_agent.set_energy_level(sleep_result.charge_energy)
-        elif isinstance(aegis_command, OBSERVE_RESULT):
-            ovr: OBSERVE_RESULT = aegis_command
-            self.handle_observe_result(ovr)
+        # elif isinstance(aegis_command, OBSERVE_RESULT):
+        #     ovr: OBSERVE_RESULT = aegis_command
+        #     self.handle_observe_result(ovr)
 
         elif isinstance(aegis_command, TEAM_DIG_RESULT):
             team_dig_result: TEAM_DIG_RESULT = aegis_command
-            team_dig_result_current_info: CellInfo = (
-                team_dig_result.surround_info.get_current_info()
-            )
+            team_dig_result_current_info: CellInfo = team_dig_result.surround_info.get_current_info()
             base_agent.set_energy_level(team_dig_result.energy_level)
             base_agent.set_location(team_dig_result_current_info.location)
             base_agent.update_surround(team_dig_result.surround_info, self.get_world())  # pyright: ignore[reportArgumentType]
