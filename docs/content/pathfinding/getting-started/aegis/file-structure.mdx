@@ -1,0 +1,82 @@
+---
+title: "File Structure"
+description: "This section explains the basic file structure of Aegis and shows where to find the different components."
+---
+
+The Aegis client expects a specific structure for both agents and world files. Be sure to follow this structure so that the client can locate and run everything correctly.
+
+All required folders and files are included in your assignment starter code.
+
+### Agent Structure
+
+Agent code lives in the `src/agents` directory. Here's what the expected layout looks like:
+
+<Tree>
+  <TreeItem name="aegis" type="folder">
+    <TreeItem name="src" type="folder">
+      <TreeItem name="agents" type="folder">
+        <TreeItem name="example_agent" type="folder">
+          <TreeItem name="example_agent.py" />
+          <TreeItem name="main.py" />
+        </TreeItem>
+      </TreeItem>
+    </TreeItem>
+  </TreeItem>
+</Tree>
+
+- `aegis/src/agents/`: The base folder for all agents.
+- `example_agent/`: Each agent lives in its own directory, named appropriately.
+- `example_agent.py`: This is where your custom agent logic goes.
+
+#### main.py
+
+<Admonition variant="danger" title="Don't Edit">
+
+Do not modify the `main.py` file in the `example_agent/` directory.
+
+This file is the predefined entry point used by the Aegis client. Editing it may prevent your agent from being recognized or executed properly.
+
+</Admonition>
+
+Each agent directory must include a `main.py` file. This file handles launching the agent and connecting it to the Aegis server. Here's what a typical `main.py` looks like:
+
+```py
+import sys
+
+from a1.agent import BaseAgent
+from agents.example_agent.example_agent import ExampleAgent
+
+
+def main() -> None:
+    if len(sys.argv) == 1:
+        BaseAgent.get_agent().start_test(ExampleAgent())
+    elif len(sys.argv) == 2:
+        BaseAgent.get_agent().start_with_group_name(sys.argv[1], ExampleAgent())
+    else:
+        print("Agent: Usage: python3 agents/example_agent/main.py <groupname>")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+#### Organizing Agent Logic
+
+Although `main.py` is the required entry point, it's strongly recommended to place your actual agent logic in a separate file like `example_agent.py`.
+
+This keeps your code modular and clean, especially as agents become more complex. You’re also free to break your agent logic into multiple files if it helps with organization.
+
+### World Structure
+
+World files live in the `worlds` directory.
+
+<Tree>
+  <TreeItem name="aegis" type="folder">
+    <TreeItem name="worlds" type="folder">
+      <TreeItem name="ExampleWorld.world" />
+    </TreeItem>
+  </TreeItem>
+</Tree>
+
+- **File Extension**: All world files must use the `.world` extension.
+- **File Placement**: All `.world` files must go in the `worlds/` directory for the client to detect them.

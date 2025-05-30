@@ -3,7 +3,9 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navConfig } from "@/config/nav";
+import { useAssignment } from "@/contexts/AssignmentContext";
+import { navPathfinding } from "@/config/nav-pathfinding";
+import { navMas } from "@/config/nav-mas";
 import { SidebarNavItem } from "@/types";
 import Search from "@/components/Search";
 import { useTheme } from "next-themes";
@@ -20,17 +22,18 @@ export default function MobileNavigation({ sidebarItems }: Props) {
   const pathname = usePathname();
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { assignment, isPathfinding } = useAssignment()
+  const navConfig = isPathfinding ? navPathfinding : navMas
+
   const logoPath = theme === "dark" ? "/logo-white.png" : "/logo-black.png";
 
-  // Fix logo hydration issue
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Close menu when screen size changes to desktop
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setIsOpen(false);
       }
     };
@@ -38,38 +41,34 @@ export default function MobileNavigation({ sidebarItems }: Props) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Prevent scrolling when menu is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
 
+  const closeMenu = () => setIsOpen(false);
+
   return (
     <>
-      <nav className="lg-custom:hidden w-full flex items-center justify-between px-4 py-3">
-        <div className="flex items-center space-x-2">
-          {mounted ? (
+      <nav className="lg:hidden w-full flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+        <div className="flex items-center">
+          {mounted && (
             <Image
               src={getImagePath(logoPath)}
-              alt="Picture of Aegis Logo"
+              alt="Logo"
               width={60}
               height={60}
             />
-          ) : (
-            <div className="h-5 w-5" />
           )}
         </div>
-        <div className="flex items-center space-x-3">
+
+        <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -79,89 +78,91 @@ export default function MobileNavigation({ sidebarItems }: Props) {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg-custom:hidden"
-          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={closeMenu}
         />
       )}
 
       <div
-        className={`fixed left-0 top-0 z-50 h-full w-80 max-w-[80vw] transform bg-background shadow-lg transition-transform duration-400 ease-in-out lg-custom:hidden flex flex-col ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed flex flex-col left-0 top-0 z-50 h-full w-80 max-w-[85vw] bg-white dark:bg-slate-900 shadow-xl transform transition-transform duration-300 ease-out lg:hidden ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
-        <div className="flex items-center justify-between p-4 border-b shrink-0">
-          <span className="font-medium">Menu</span>
+        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+          <h2 className="font-medium text-slate-900 dark:text-white">Menu</h2>
           <button
-            onClick={() => setIsOpen(false)}
-            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+            onClick={closeMenu}
+            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="Close menu"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        <div className="p-4 border-b shrink-0">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
           <Search source="mobile" />
         </div>
 
         <div className="flex-1 overflow-y-auto no-scrollbar">
-          <div className="p-4 border-b">
-            <h3 className="text-sm font-semibold mb-3">Navigation</h3>
-            <div className="space-y-1">
+          <div className="p-4">
+            <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+              Navigation
+            </h3>
+            <nav className="space-y-1">
               {navConfig.mainNav.map((item, index) => {
                 const isActive =
-                  pathname === item.href ||
-                  pathname.startsWith(`${item.path}/`);
+                  pathname === item.href || pathname.startsWith(`/${assignment}${item.path}/`) || pathname.startsWith(`${item.path}/`);
                 return (
                   <Link
                     key={index}
                     href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`block py-1.5 text-sm ${
-                      isActive
-                        ? "font-semibold text-foreground"
-                        : "text-muted-foreground"
-                    }`}
+                    onClick={closeMenu}
+                    className={`block px-2 py-2 text-sm rounded-lg transition-colors ${isActive
+                      ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium"
+                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
+                      }`}
                   >
                     {item.title}
                   </Link>
                 );
               })}
-            </div>
+            </nav>
           </div>
 
           {sidebarItems && (
-            <div className="p-4 pb-20">
-              <h3 className="text-sm font-semibold mb-3">Documentation</h3>
-              {sidebarItems.map((item, index) => (
-                <div className="mt-4" key={index}>
-                  {!item.disabled && (
-                    <h4 className="font-medium text-sm mb-2">{item.title}</h4>
-                  )}
-                  {item.items?.length && !item.disabled && (
-                    <div className="ml-2 space-y-1">
-                      {item.items.map((subItem, subIndex) =>
-                        subItem.href && !subItem.disabled ? (
-                          <Link key={subIndex} href={subItem.href} passHref>
-                            <div
-                              className={`block py-1.5 text-sm
-                              ${
-                                pathname === subItem.href + "/"
-                                  ? "font-semibold text-foreground"
-                                  : "text-muted-foreground"
-                              }
-                            `}
-                              onClick={() => setIsOpen(false)}
+            <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+              <h3 className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
+                Documentation
+              </h3>
+              <div className="space-y-4">
+                {sidebarItems.map((item, index) => (
+                  <div key={index}>
+                    {!item.disabled && (
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        {item.title}
+                      </h4>
+                    )}
+                    {item.items?.length && !item.disabled && (
+                      <div className="space-y-1 ml-2">
+                        {item.items.map((subItem, subIndex) =>
+                          subItem.href && !subItem.disabled ? (
+                            <Link
+                              key={subIndex}
+                              href={subItem.href}
+                              onClick={closeMenu}
+                              className={`block px-2 py-1.5 text-sm rounded-md transition-colors ${pathname === subItem.href + "/"
+                                ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium"
+                                : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
+                                }`}
                             >
                               {subItem.title}
-                            </div>
-                          </Link>
-                        ) : null,
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
+                            </Link>
+                          ) : null
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

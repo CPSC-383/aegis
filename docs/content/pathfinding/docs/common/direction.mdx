@@ -1,0 +1,216 @@
+---
+title: "Direction" 
+description: "Enum representing different directions, used for navigating the world."
+---
+
+## Overview 
+
+The `Direction` class provides a flexible and powerful interface for working with two-dimensional
+coordinates. It defines a set of cardinal and intercardinal directions that can be used for navigating the world.
+
+## Attributes
+
+<Attribute
+  name="NORTH"
+  type="tuple"
+  description="Direction that points north (up)."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the NORTH direction."
+    defaultValue={0}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the NORTH direction."
+    defaultValue={1}
+  />
+</Attribute>
+
+<Attribute
+  name="NORTH_EAST"
+  type="tuple"
+  description="Direction that points northeast (up and right)."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the NORTH_EAST direction."
+    defaultValue={1}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the NORTH_EAST direction."
+    defaultValue={1}
+  />
+</Attribute>
+
+<Attribute
+  name="EAST"
+  type="tuple"
+  description="Direction that points east (right)."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the EAST direction."
+    defaultValue={1}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the EAST direction."
+    defaultValue={0}
+  />
+</Attribute>
+
+<Attribute
+  name="SOUTH_EAST"
+  type="tuple"
+  description="Direction that points southeast (down and right)."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the SOUTH_EAST direction."
+    defaultValue={1}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the SOUTH_EAST direction."
+    defaultValue={-1}
+  />
+</Attribute>
+
+<Attribute
+  name="SOUTH"
+  type="tuple"
+  description="Direction that points south (down)."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the SOUTH direction."
+    defaultValue={0}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the SOUTH direction."
+    defaultValue={-1}
+  />
+</Attribute>
+
+<Attribute
+  name="SOUTH_WEST"
+  type="tuple"
+  description="Direction that points southwest (down and left)."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the SOUTH_WEST direction."
+    defaultValue={-1}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the SOUTH_WEST direction."
+    defaultValue={-1}
+  />
+</Attribute>
+
+<Attribute
+  name="WEST"
+  type="tuple"
+  description="Direction that points west (left)."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the WEST direction."
+    defaultValue={-1}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the WEST direction."
+    defaultValue={0}
+  />
+</Attribute>
+
+<Attribute
+  name="NORTH_WEST"
+  type="tuple"
+  description="Direction that points northwest (up and left)."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the NORTH_WEST direction."
+    defaultValue={-1}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the NORTH_WEST direction."
+    defaultValue={1}
+  />
+</Attribute>
+
+<Attribute
+  name="CENTER"
+  type="tuple"
+  description="No movement; represents staying in the current location."
+>
+  <Attribute
+    name="dx"
+    type="int"
+    description="The change in the x-coordinate when moving in the CENTER direction."
+    defaultValue={0}
+  />
+  <Attribute
+    name="dy"
+    type="int"
+    description="The change in the y-coordinate when moving in the CENTER direction."
+    defaultValue={0}
+  />
+</Attribute>
+
+## Methods
+
+### get_random_direction()
+
+<Method
+  name="get_random_direction"
+  description="Returns a random direction."
+  returns={{
+    type: "Direction",
+    description: "A random direction."
+  }}
+/>
+
+**Example:**
+
+```py
+dir = Direction.get_random_direction()
+# Returns Direction.NORTH 
+
+dir = Direction.get_random_direction()
+# Returns Direction.SOUTH_EAST
+```
+
+## Additional Notes
+
+The `Direction` enum supports iteration, allowing you to easily loop over all defined directions.
+This can be useful when you need to process each direction or perform operations on every direction.
+For example, you can loop over the directions like this:
+
+```py
+for direction in Direction:
+  print(direction)
+```
