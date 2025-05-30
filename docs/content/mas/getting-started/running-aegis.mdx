@@ -18,12 +18,13 @@ python run.py \
   --world <world file>
 ```
 
-For **Assignment 1**, the `--agent-amount` argument is optional and defaults to `1`. You can omit it when running the command.
+For the MAS assignment, the `--agent-amount` argument must be set to `7`. 
 
 Here’s an example using the `example_agent` and `ExampleWorld` for 50 rounds:
 
 ```bash
 python run.py \
+  --agent-amount 7 \
   --rounds 50 \
   --agent example_agent \
   --world ExampleWorld
