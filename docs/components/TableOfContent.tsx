@@ -12,16 +12,14 @@ interface Props {
 const paddingMap: Record<number, string> = {
   1: "",
   2: "",
-  3: "pl-4",
-  4: "pl-8",
+  3: "pl-3",
+  4: "pl-6",
 };
 
 const handleClick = (e: React.MouseEvent) => {
   e.preventDefault();
-
   const target = e.currentTarget as HTMLAnchorElement;
   const targetId = target.getAttribute("href")?.substring(1);
-
   if (!targetId) return;
 
   const targetElement = document.getElementById(targetId);
@@ -37,9 +35,7 @@ export default function TableOfContent({ content, className }: Props) {
 
   useEffect(() => {
     const updateTab = () => {
-      const activePanel = document.querySelector(
-        '[role="tabpanel"][data-state="active"]',
-      );
+      const activePanel = document.querySelector('[role="tabpanel"][data-state="active"]');
       const id = activePanel?.getAttribute("id");
       const splits = id?.split("-");
       const tabName = splits?.[splits.length - 1] ?? null;
@@ -47,8 +43,8 @@ export default function TableOfContent({ content, className }: Props) {
     };
 
     const observer = new MutationObserver(updateTab);
-
     const tabList = document.querySelector('[role="tablist"]');
+
     if (tabList) {
       observer.observe(tabList, {
         attributes: true,
@@ -58,7 +54,6 @@ export default function TableOfContent({ content, className }: Props) {
     }
 
     updateTab();
-
     return () => observer.disconnect();
   }, []);
 
@@ -68,63 +63,55 @@ export default function TableOfContent({ content, className }: Props) {
   }, [content, activeTab]);
 
   useEffect(() => {
-    const observerOptions: IntersectionObserverInit = {
-      root: null,
-      rootMargin: "0px 0px -85% 0px",
-      threshold: 0,
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const id = entry.target.id;
-        if (entry.isIntersecting) {
-          setActiveHeading(id);
-        }
-      });
-    }, observerOptions);
-
-    const observeHeadings = (heading: TableOfContentsItem) => {
-      const element = document.getElementById(heading.slug);
-      if (element) {
-        observer.observe(element);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveHeading(entry.target.id);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "0px 0px -85% 0px",
+        threshold: 0,
       }
-    };
+    );
 
-    headings.forEach(observeHeadings);
+    headings.forEach((heading) => {
+      const element = document.getElementById(heading.slug);
+      if (element) observer.observe(element);
+    });
 
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, [headings]);
 
+  if (headings.length === 0) return null;
+
   return (
-    <div className={cn("font-secondary lg-custom:block hidden", className)}>
-      <p className="mb-4 text-lg font-semibold flex items-center">
+    <div className={cn("hidden lg:block", className)}>
+      <h3 className="mb-3 text-sm font-medium text-slate-900 dark:text-white">
         On This Page
-      </p>
-      <ul className="text-sm space-y-1.5">
-        {headings.map((heading) => {
-          return (
-            <li
-              key={heading.slug}
-              className={`text-muted-foreground ${paddingMap[heading.level] || ""}`}
-            >
-              <a
-                href={`#${heading.slug}`}
-                onClick={handleClick}
-                className={cn(
-                  "hover:text-foreground transition-colors",
-                  activeHeading === heading.slug
-                    ? "font-semibold text-foreground"
-                    : "",
-                )}
-              >
-                {heading.text}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
+      </h3>
+
+      <nav className="space-y-1">
+        {headings.map((heading) => (
+          <a
+            key={heading.slug}
+            href={`#${heading.slug}`}
+            onClick={handleClick}
+            className={cn(
+              "block py-1 text-sm transition-colors",
+              paddingMap[heading.level] || "",
+              activeHeading === heading.slug
+                ? "text-blue-600 dark:text-blue-400 font-medium"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            )}
+          >
+            {heading.text}
+          </a>
+        ))}
+      </nav>
     </div>
   );
 }

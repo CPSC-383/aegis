@@ -4,7 +4,9 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { navConfig } from "@/config/nav";
+import { useAssignment } from "@/contexts/AssignmentContext";
+import { navPathfinding } from "@/config/nav-pathfinding";
+import { navMas } from "@/config/nav-mas";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { getImagePath } from "@/lib/utils";
@@ -12,6 +14,8 @@ import Search from "@/components/Search";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { assignment, isPathfinding } = useAssignment()
+  const navConfig = isPathfinding ? navPathfinding : navMas
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const logoPath = theme === "dark" ? "/logo-white.png" : "/logo-black.png";
@@ -39,16 +43,15 @@ export default function Navbar() {
       <div className="flex space-x-6 text-sm overflow-hidden whitespace-nowrap">
         {navConfig.mainNav.map((item, index) => {
           const isActive =
-            pathname === item.href || pathname.startsWith(`${item.path}/`);
+            pathname === item.href || pathname.startsWith(`/${assignment}${item.path}/`) || pathname.startsWith(`${item.path}/`);
           return (
             <Link
               key={index}
               href={item.href}
-              className={`hover:text-foreground ${
-                isActive
-                  ? "font-semibold border-b-2 border-border pb-2"
-                  : "text-muted-foreground"
-              }`}
+              className={`hover:text-foreground ${isActive
+                ? "font-semibold border-b-2 border-border pb-2"
+                : "text-muted-foreground"
+                }`}
             >
               <span className="whitespace-nowrap">{item.title}</span>
             </Link>

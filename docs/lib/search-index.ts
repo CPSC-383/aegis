@@ -1,11 +1,19 @@
-import { allDocs } from "content-collections";
+import { allDocPathfindings, allDocMAS } from "content-collections";
 
-export const searchIndex = allDocs.map((doc) => ({
+export const searchPathfinding = allDocPathfindings.map((doc) => ({
   title: doc.title,
-  slug: `/docs/${doc.slug}`,
+  slug: `/pathfinding/docs/${doc.slug}`,
   description: doc.description,
   content: doc.content,
   attributes: doc.attributes,
   methods: doc.methods,
-  assignment: doc.assignment,
+}));
+
+export const searchMas = allDocMAS.map((doc) => ({
+  title: doc.title,
+  slug: `/mas/docs/${doc.slug}`,
+  description: doc.description,
+  content: doc.content,
+  attributes: doc.attributes,
+  methods: doc.methods,
 }));

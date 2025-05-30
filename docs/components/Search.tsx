@@ -1,7 +1,7 @@
 "use client";
 
-import { searchIndex } from "@/lib/search-index";
-import { cn, isAssignment1 } from "@/lib/utils";
+import { searchMas, searchPathfinding } from "@/lib/search-index";
+import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -16,6 +16,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Cog, Tag } from "lucide-react";
 import { useSearch } from "@/contexts/SearchContext";
+import { useAssignment } from "@/contexts/AssignmentContext";
 
 interface SearchProps {
   source: "navbar" | "mobile";
@@ -29,6 +30,8 @@ export default function Search({ source }: SearchProps) {
     searchSource,
     setSearchSource,
   } = useSearch();
+  const { isPathfinding } = useAssignment()
+  const searchIndex = isPathfinding ? searchPathfinding : searchMas
   const [query, setQuery] = useState("");
   const router = useRouter();
 
@@ -69,11 +72,6 @@ export default function Search({ source }: SearchProps) {
   const results = useMemo(() => {
     const q = query.toLowerCase();
     return searchIndex.flatMap((doc) => {
-      if (
-        (doc.assignment === "a3" && isAssignment1()) ||
-        (doc.assignment === "a1" && !isAssignment1())
-      )
-        return [];
       const matchingAttributes =
         doc.attributes?.filter(
           (attr) =>
@@ -101,15 +99,15 @@ export default function Search({ source }: SearchProps) {
       ];
       return items.length > 0
         ? [
-            {
-              name: doc.title,
-              items,
-              slug: doc.slug,
-            },
-          ]
+          {
+            name: doc.title,
+            items,
+            slug: doc.slug,
+          },
+        ]
         : [];
     });
-  }, [query]);
+  }, [query, searchIndex]);
 
   // If this instance is not active, don't render the button
   if (!isActive) return null;

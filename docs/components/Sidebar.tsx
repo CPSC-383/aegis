@@ -13,40 +13,38 @@ export default function Sidebar({ items, className = "", onItemClick }: Props) {
   const pathname = usePathname();
 
   return (
-    <div
-      className={`w-56 h-full p-4 overflow-y-auto no-scrollbar bg-background ${className}`}
-    >
-      {items.map((item, index) => (
-        <div className="mt-4" key={index}>
-          <div className="flex justify-between items-center">
+    <div className={`w-60 p-4 overflow-y-auto h-full no-scrollbar ${className}`}>
+      <nav className="space-y-6">
+        {items.map((item, index) => (
+          <div key={index}>
             {!item.disabled && (
-              <h4 className="font-semibold px-2 py-1 mb-1">{item.title}</h4>
+              <h4 className="text-sm font-medium text-slate-700 dark:text-slate-400 uppercase tracking-wide mb-2 px-2">
+                {item.title}
+              </h4>
+            )}
+
+            {item.items?.length && !item.disabled && (
+              <div className="space-y-1">
+                {item.items.map((subItem, subIndex) =>
+                  subItem.href && !subItem.disabled ? (
+                    <Link key={subIndex} href={subItem.href}>
+                      <div
+                        className={`px-2 py-2 text-sm rounded-md transition-colors cursor-pointer ${pathname === subItem.href + "/"
+                          ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium"
+                          : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
+                          }`}
+                        onClick={onItemClick}
+                      >
+                        {subItem.title}
+                      </div>
+                    </Link>
+                  ) : null
+                )}
+              </div>
             )}
           </div>
-          {item.items?.length && !item.disabled && (
-            <div>
-              {item.items.map((item, index) =>
-                item.href && !item.disabled ? (
-                  <Link key={index} href={item.href} passHref>
-                    <div
-                      className={`block py-1.5 px-2 text-sm
-                        ${
-                          pathname === item.href + "/"
-                            ? "font-semibold border-l-2 border-border"
-                            : "text-muted-foreground hover:text-foreground"
-                        }
-                      `}
-                      onClick={onItemClick}
-                    >
-                      {item.title}
-                    </div>
-                  </Link>
-                ) : null,
-              )}
-            </div>
-          )}
-        </div>
-      ))}
+        ))}
+      </nav>
     </div>
   );
 }

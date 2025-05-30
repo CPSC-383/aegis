@@ -88,7 +88,7 @@ class ExampleAgent(Brain):
         # Here we are telling agent 2 to move to our current location if we are the leader (ID = 1)
         if self._agent.get_agent_id().id == 1:
             message = f"MOVE {self._agent.get_location().x} {self._agent.get_location().y}"
-            self._agent.send(SEND_MESSAGE(AgentIDList([AgentID(2, 2)]), message))
+            self._agent.send(SEND_MESSAGE(AgentIDList([AgentID(2, 1)]), message))
 
         # Retrieve the current state of the world.
         world = self.get_world()
