@@ -1,6 +1,6 @@
 "use client";
 
-import { searchIndex } from "@/lib/search-index";
+import { searchMas, searchPathfinding } from "@/lib/search-index";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -16,6 +16,7 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Cog, Tag } from "lucide-react";
 import { useSearch } from "@/contexts/SearchContext";
+import { useAssignment } from "@/contexts/AssignmentContext";
 
 interface SearchProps {
   source: "navbar" | "mobile";
@@ -29,6 +30,8 @@ export default function Search({ source }: SearchProps) {
     searchSource,
     setSearchSource,
   } = useSearch();
+  const { isPathfinding } = useAssignment()
+  const searchIndex = isPathfinding ? searchPathfinding : searchMas
   const [query, setQuery] = useState("");
   const router = useRouter();
 
@@ -96,12 +99,12 @@ export default function Search({ source }: SearchProps) {
       ];
       return items.length > 0
         ? [
-            {
-              name: doc.title,
-              items,
-              slug: doc.slug,
-            },
-          ]
+          {
+            name: doc.title,
+            items,
+            slug: doc.slug,
+          },
+        ]
         : [];
     });
   }, [query]);
