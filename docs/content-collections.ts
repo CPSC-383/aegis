@@ -12,53 +12,78 @@ const prettyCodeOptions: Options = {
   },
 };
 
-const gettingStarted = defineCollection({
-  name: "GettingStarted",
-  directory: "content/getting-started",
-  include: "**/*.mdx",
-  schema: (z) => ({
-    title: z.string(),
-    description: z.string(),
-    assignment: z.string().optional(),
-  }),
-  transform: async (document, context) => {
-    const mdx = await compileMDX(context, document, {
-      rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
-    });
-    return {
-      ...document,
-      mdx,
-      slug: document._meta.path,
-    };
-  },
-});
+const createCollections = (version: 'pathfinding' | 'mas') => {
+  const gettingStarted = defineCollection({
+    name: `GettingStarted${version === 'pathfinding' ? 'Pathfinding' : 'MAS'}`,
+    directory: `content/${version}/getting-started`,
+    include: "**/*.mdx",
+    schema: (z) => ({
+      title: z.string(),
+      description: z.string(),
+    }),
+    transform: async (document, context) => {
+      const mdx = await compileMDX(context, document, {
+        rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+      });
+      return {
+        ...document,
+        mdx,
+        slug: document._meta.path,
+        version,
+      };
+    },
+  });
 
-const docs = defineCollection({
-  name: "Doc",
-  directory: "content/docs",
-  include: "**/*.mdx",
-  schema: (z) => ({
-    title: z.string(),
-    description: z.string(),
-    assignment: z.string().optional(),
-  }),
-  transform: async (document, context) => {
-    const mdx = await compileMDX(context, document, {
-      rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
-    });
-    return {
-      ...document,
-      mdx,
-      slug: document._meta.path,
-      attributes: extractAttributes(document.content),
-      methods: extractMethods(document.content),
-    };
-  },
-});
+  const docs = defineCollection({
+    name: `Doc${version === 'pathfinding' ? 'Pathfinding' : 'MAS'}`,
+    directory: `content/${version}/docs`,
+    include: "**/*.mdx",
+    schema: (z) => ({
+      title: z.string(),
+      description: z.string(),
+    }),
+    transform: async (document, context) => {
+      const mdx = await compileMDX(context, document, {
+        rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+      });
+      return {
+        ...document,
+        mdx,
+        slug: document._meta.path,
+        attributes: extractAttributes(document.content),
+        methods: extractMethods(document.content),
+        version,
+      };
+    },
+  });
+
+  const guides = defineCollection({
+    name: `Guides${version === 'pathfinding' ? 'Pathfinding' : 'MAS'}`,
+    directory: `content/${version}/guides`,
+    include: "**/*.mdx",
+    schema: (z) => ({
+      title: z.string(),
+      description: z.string(),
+    }),
+    transform: async (document, context) => {
+      const mdx = await compileMDX(context, document, {
+        rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
+      });
+      return {
+        ...document,
+        mdx,
+        slug: document._meta.path,
+        version,
+      };
+    },
+  });
+
+  return { gettingStarted, docs, guides };
+};
 
 const commonErrors = defineCollection({
   name: "CommonErrors",
-  directory: "content/common-errors",
+  directory: `content/common-errors`,
   include: "**/*.mdx",
   schema: (z) => ({
     title: z.string(),
@@ -76,27 +101,23 @@ const commonErrors = defineCollection({
   },
 });
 
-const guides = defineCollection({
-  name: "Guides",
-  directory: "content/guides",
-  include: "**/*.mdx",
-  schema: (z) => ({
-    title: z.string(),
-    description: z.string(),
-    assignment: z.string().optional(),
-  }),
-  transform: async (document, context) => {
-    const mdx = await compileMDX(context, document, {
-      rehypePlugins: [rehypeSlug, [rehypePrettyCode, prettyCodeOptions]],
-    });
-    return {
-      ...document,
-      mdx,
-      slug: document._meta.path,
-    };
-  },
-});
+
+// Create collections for both versions
+const pathfindingCollections = createCollections('pathfinding');
+const masCollections = createCollections('mas');
 
 export default defineConfig({
-  collections: [gettingStarted, docs, commonErrors, guides],
+  collections: [
+    // Pathfinding collections
+    pathfindingCollections.gettingStarted,
+    pathfindingCollections.docs,
+    pathfindingCollections.guides,
+
+    // MAS collections
+    masCollections.gettingStarted,
+    masCollections.docs,
+    masCollections.guides,
+
+    commonErrors
+  ],
 });

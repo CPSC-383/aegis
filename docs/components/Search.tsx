@@ -1,7 +1,7 @@
 "use client";
 
 import { searchIndex } from "@/lib/search-index";
-import { cn, isAssignment1 } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -69,11 +69,6 @@ export default function Search({ source }: SearchProps) {
   const results = useMemo(() => {
     const q = query.toLowerCase();
     return searchIndex.flatMap((doc) => {
-      if (
-        (doc.assignment === "a3" && isAssignment1()) ||
-        (doc.assignment === "a1" && !isAssignment1())
-      )
-        return [];
       const matchingAttributes =
         doc.attributes?.filter(
           (attr) =>

@@ -1,4 +1,6 @@
-import { allDocs } from "content-collections";
+import { allDocPathfindings, allDocMAS } from "content-collections";
+
+const allDocs = [...allDocPathfindings, ...allDocMAS]
 
 export const searchIndex = allDocs.map((doc) => ({
   title: doc.title,
