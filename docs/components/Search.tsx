@@ -107,7 +107,7 @@ export default function Search({ source }: SearchProps) {
         ]
         : [];
     });
-  }, [query]);
+  }, [query, searchIndex]);
 
   // If this instance is not active, don't render the button
   if (!isActive) return null;
