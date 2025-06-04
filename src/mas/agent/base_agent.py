@@ -43,7 +43,9 @@ class BaseAgent:
         self._brain: mas.agent.brain.Brain | None = None
         self._energy_level: int = -1
         self._aegis_socket: AegisSocket | None = None
-        self._prediction_info: deque[tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]] = deque()
+        self._prediction_info: deque[
+            tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]
+        ] = deque()
         self._did_end_turn: bool = False
 
     @staticmethod
@@ -52,7 +54,9 @@ class BaseAgent:
             BaseAgent._agent = BaseAgent()
         return BaseAgent._agent
 
-    def update_surround(self, surround_info: SurroundInfo, world: InternalWorld | None) -> None:
+    def update_surround(
+        self, surround_info: SurroundInfo, world: InternalWorld | None
+    ) -> None:
         if world is None:
             return
 
@@ -65,6 +69,7 @@ class BaseAgent:
             if cell is None:
                 continue
 
+            cell.agent_id_list = cell_info.agent_id_list
             cell.move_cost = cell_info.move_cost
             cell.set_top_layer(cell_info.top_layer)
             if cell_info.top_layer is None and cell.has_survivors:
@@ -124,7 +129,9 @@ class BaseAgent:
 
     def add_prediction_info(
         self,
-        prediction_info: tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None],
+        prediction_info: tuple[
+            int, NDArray[np.float32] | None, NDArray[np.int64] | None
+        ],
     ) -> None:
         self._prediction_info.append(prediction_info)
         self.log("New Prediction Info!")
@@ -143,7 +150,9 @@ class BaseAgent:
     def start_test(self, brain: mas.agent.brain.Brain) -> None:
         self.start("localhost", "test", brain)
 
-    def start_with_group_name(self, group_name: str, brain: mas.agent.brain.Brain) -> None:
+    def start_with_group_name(
+        self, group_name: str, brain: mas.agent.brain.Brain
+    ) -> None:
         self.start("localhost", group_name, brain)
 
     def start(self, host: str, group_name: str, brain: mas.agent.brain.Brain) -> None:
@@ -166,7 +175,9 @@ class BaseAgent:
                 self._aegis_socket.send_message(str(CONNECT(group_name)))
                 message = self._aegis_socket.read_message()
                 if message is not None and self._brain is not None:
-                    self._brain.handle_aegis_command(AegisParser.parse_aegis_command(message))
+                    self._brain.handle_aegis_command(
+                        AegisParser.parse_aegis_command(message)
+                    )
                 if self.get_agent_state() == AgentStates.CONNECTED:
                     result = True
             except AegisParserException as e:
