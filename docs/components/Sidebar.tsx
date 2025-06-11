@@ -31,7 +31,7 @@ export default function Sidebar({ items, className = "", onItemClick }: Props) {
                     subItem.href && !subItem.disabled ? (
                       <Link key={subIndex} href={subItem.href}>
                         <div
-                          className={`group px-4 py-3 text-sm font-mono transition-colors cursor-pointer relative ${pathname === subItem.href + "/"
+                          className={`group px-4 py-3 text-sm transition-colors cursor-pointer relative ${pathname === subItem.href + "/"
                             ? "bg-zinc-100 dark:bg-zinc-900 text-foreground dark:text-foreground font-medium"
                             : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-black dark:hover:text-white"
                             }`}
