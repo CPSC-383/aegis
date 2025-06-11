@@ -96,7 +96,7 @@ export default function Home() {
             {cardData.map((card) => (
               <Card
                 key={card.title}
-                className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white dark:bg-slate-800"
+                className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white dark:bg-zinc-800"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
 
@@ -142,7 +142,7 @@ export default function Home() {
                 </p>
                 <Link href={`/${assignment}/getting-started/installation`}>
                   <Button
-                    className="bg-white dark:bg-slate-900 text-teal-600 dark:text-teal-400 hover:bg-gray-100 dark:hover:bg-slate-800 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl dark:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                    className="bg-white dark:bg-zinc-900 text-teal-600 dark:text-teal-400 hover:bg-gray-100 dark:hover:bg-zinc-800 font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl dark:shadow-2xl transition-all duration-300 transform hover:scale-105"
                   >
                     Get Started Now
                     <ArrowRight className="w-5 h-5 ml-2" />

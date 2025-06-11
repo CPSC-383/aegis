@@ -90,7 +90,7 @@ export default function TableOfContent({ content, className }: Props) {
 
   return (
     <div className={cn("hidden lg:block", className)}>
-      <h3 className="mb-3 text-sm font-medium text-slate-900 dark:text-white">
+      <h3 className="mb-3 text-sm font-medium text-zinc-900 dark:text-white">
         On This Page
       </h3>
 
@@ -104,8 +104,8 @@ export default function TableOfContent({ content, className }: Props) {
               "block py-1 text-sm transition-colors",
               paddingMap[heading.level] || "",
               activeHeading === heading.slug
-                ? "text-blue-600 dark:text-blue-400 font-medium"
-                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                ? "text-zinc-700 dark:text-zinc-200 font-medium"
+                : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-white"
             )}
           >
             {heading.text}

@@ -56,7 +56,7 @@ export default function CommonErrors() {
               {errorCategories.map((category) => (
                 <Card
                   key={category.title}
-                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white dark:bg-slate-800"
+                  className="group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white dark:bg-zinc-800"
                 >
                   <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
 
@@ -69,7 +69,6 @@ export default function CommonErrors() {
                       </div>
                     </div>
 
-                    {/* Content */}
                     <div className="flex-1 space-y-3">
                       <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-teal-600 group-hover:to-blue-600 transition-all duration-300">
                         {category.title}
@@ -79,7 +78,6 @@ export default function CommonErrors() {
                       </p>
                     </div>
 
-                    {/* Button */}
                     <div className="mt-6">
                       <Link href={category.href}>
                         <Button
@@ -97,9 +95,8 @@ export default function CommonErrors() {
             </div>
           </div>
 
-          {/* Help Section */}
           <div className="text-center">
-            <Card className="max-w-4xl mx-auto border-0 shadow-xl bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-800 dark:to-slate-700">
+            <Card className="max-w-4xl mx-auto border-0 shadow-xl bg-gradient-to-r from-zinc-50 to-gray-50 dark:from-zinc-800 dark:to-zinc-700">
               <div className="p-8">
                 <div className="flex items-center justify-center mb-4">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-r from-teal-500 to-blue-600 flex items-center justify-center">

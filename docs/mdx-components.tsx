@@ -93,7 +93,7 @@ const components = {
   pre: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <pre
       className={cn(
-        "mb-4 mt-6 max-h-[650px] overflow-x-auto rounded-lg border py-4 dark:bg-[#1a1b26] bg-[#eff1f5]",
+        "mb-4 mt-6 max-h-[650px] overflow-x-auto border py-4 dark:bg-[#1a1b26] bg-[#eff1f5]",
         className,
       )}
       {...props}
