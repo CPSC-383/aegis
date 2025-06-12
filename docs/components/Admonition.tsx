@@ -24,7 +24,7 @@ export default function Admonition({ variant, title, children }: Props) {
   };
 
   return (
-    <div className={`my-6 border ${styleMap[variant]}`}>
+    <div className={`my-6 border border-zinc-300 dark:border-zinc-700 ${styleMap[variant]}`}>
       <div className="px-4 py-3">
         <div className="flex items-center gap-2 mt-2">
           <Icon className="h-5 w-5 flex-shrink-0" />
