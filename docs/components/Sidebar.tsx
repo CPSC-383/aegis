@@ -13,7 +13,7 @@ export default function Sidebar({ items, className = "", onItemClick }: Props) {
   const pathname = usePathname();
 
   return (
-    <div className={`w-60 h-full border-r border-zinc-200 dark:border-zinc-800 ${className}`}>
+    <div className={`w-50 h-full border-r border-zinc-200 dark:border-zinc-800 ${className}`}>
       <div className="overflow-y-auto h-full no-scrollbar">
         <nav>
           {items.map((item, index) => (

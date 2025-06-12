@@ -14,14 +14,14 @@ const TreeItem = ({ name, type = "file", children }: Props) => {
       className={cn(
         "relative",
         children &&
-          type === "folder" &&
-          "before:absolute before:left-[7px] before:top-7 before:bottom-0 before:w-px before:bg-zinc-200 dark:before:bg-zinc-800",
+        type === "folder" &&
+        "before:absolute before:left-[7px] before:top-7 before:bottom-0 before:w-px before:bg-zinc-200 dark:before:bg-zinc-800",
       )}
     >
       <div
         className={cn(
           "flex items-center space-x-2 py-1 rounded-md",
-          "hover:bg-accent/50 cursor-default",
+          "cursor-default",
         )}
       >
         {type === "folder" ? (
@@ -42,7 +42,7 @@ const TreeItem = ({ name, type = "file", children }: Props) => {
 
 const Tree = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="border border-zinc-200 dark:border-zinc-800 shadow-sm p-4 mt-4 rounded-lg text-zinc-600 dark:text-zinc-300">
+    <div className="border border-zinc-300 dark:border-zinc-700 p-4 mt-4">
       {children}
     </div>
   );
