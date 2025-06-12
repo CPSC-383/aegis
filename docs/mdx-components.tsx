@@ -117,7 +117,7 @@ const components = {
     <code
       className={cn(
         "relative bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground",
-        "break-all whitespace-pre-wrap max-w-full overflow-auto",
+        "break-all whitespace-pre max-w-full overflow-auto",
         "[&:not(pre_&)]:font-semibold",
         className,
       )}
