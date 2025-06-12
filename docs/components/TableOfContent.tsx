@@ -12,8 +12,8 @@ interface Props {
 const paddingMap: Record<number, string> = {
   1: "",
   2: "",
-  3: "pl-3",
-  4: "pl-6",
+  3: "pl-6",
+  4: "pl-8",
 };
 
 const handleClick = (e: React.MouseEvent) => {
@@ -21,7 +21,6 @@ const handleClick = (e: React.MouseEvent) => {
   const target = e.currentTarget as HTMLAnchorElement;
   const targetId = target.getAttribute("href")?.substring(1);
   if (!targetId) return;
-
   const targetElement = document.getElementById(targetId);
   if (targetElement) {
     targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -44,7 +43,6 @@ export default function TableOfContent({ content, className }: Props) {
 
     const observer = new MutationObserver(updateTab);
     const tabList = document.querySelector('[role="tablist"]');
-
     if (tabList) {
       observer.observe(tabList, {
         attributes: true,
@@ -90,25 +88,31 @@ export default function TableOfContent({ content, className }: Props) {
 
   return (
     <div className={cn("hidden lg:block", className)}>
-      <h3 className="mb-3 text-sm font-medium text-zinc-900 dark:text-white">
-        On This Page
-      </h3>
+      <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+        <h3 className="text-sm font-mono uppercase tracking-wider font-black">
+          On this page
+        </h3>
+      </div>
 
-      <nav className="space-y-1">
+      <nav className="p-1">
         {headings.map((heading) => (
           <a
             key={heading.slug}
             href={`#${heading.slug}`}
             onClick={handleClick}
             className={cn(
-              "block py-1 text-sm transition-colors",
+              "block px-3 py-2 text-xs transition-colors",
               paddingMap[heading.level] || "",
               activeHeading === heading.slug
-                ? "text-zinc-700 dark:text-zinc-200 font-medium"
-                : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-800 dark:hover:text-white"
+                ? "bg-zinc-100 dark:bg-zinc-900 text-foreground dark:text-foreground"
+                : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-black dark:hover:text-white"
             )}
           >
-            {heading.text}
+            <div className="flex items-center justify-between">
+              <span className="uppercase tracking-wide">
+                {heading.text}
+              </span>
+            </div>
           </a>
         ))}
       </nav>
