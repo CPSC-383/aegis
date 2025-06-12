@@ -40,7 +40,7 @@ export default function CommonErrors() {
               {errorCategories.map((category, index) => (
                 <div
                   key={category.title}
-                  className="group border-0 bg-white dark:bg-background hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors duration-200"
+                  className="group border-0 bg-zinc-50 dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors duration-200"
                 >
                   <Link href={category.href}>
                     <div className="p-8 cursor-pointer">

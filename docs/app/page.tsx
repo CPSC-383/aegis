@@ -1,6 +1,5 @@
 "use client"
 
-import { Card } from "@/components/ui/card";
 import { ArrowRight, Cpu, Rocket, Terminal, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import MobileNavigation from "@/components/MobileNavigation";
@@ -82,9 +81,9 @@ export default function Home() {
           <div className="mb-16">
             <div className="grid md:grid-cols-2 gap-px bg-zinc-200 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800">
               {cardData.map((card, index) => (
-                <Card
+                <div
                   key={card.title}
-                  className="group border-0 rounded-none bg-white dark:bg-background hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors duration-200"
+                  className="group border-0 bg-zinc-50 dark:bg-zinc-950 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors duration-200"
                 >
                   <Link href={card.href}>
                     <div className="p-8 cursor-pointer">
@@ -114,7 +113,7 @@ export default function Home() {
                       </div>
                     </div>
                   </Link>
-                </Card>
+                </div>
               ))}
             </div>
           </div>
