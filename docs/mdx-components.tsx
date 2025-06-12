@@ -177,7 +177,7 @@ const components = {
   ),
   Steps: ({ ...props }) => (
     <div
-      className="relative [&>h3]:step steps mb-12 ml-4 border-l border-dashed pl-8 [counter-reset:step]"
+      className="relative [&>h3]:step steps mb-12 ml-4 border-l border-dashed border-zinc-300 dark:border-zinc-700 pl-8 [counter-reset:step]"
       {...props}
     />
   ),
