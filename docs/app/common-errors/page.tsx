@@ -57,12 +57,12 @@ export default function CommonErrors() {
                         {category.title}
                       </h3>
 
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono mb-6">
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 tracking-wider">
                         {category.description}
                       </p>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 group-hover:text-foreground dark:group-hover:text-foreground transition-colors">
+                        <div className="flex items-center text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400 group-hover:text-foreground dark:group-hover:text-foreground transition-colors">
                           VIEW ERRORS
                           <ArrowRight className="w-3 h-3 ml-2 group-hover:translate-x-1 transition-transform" />
                         </div>
@@ -85,7 +85,7 @@ export default function CommonErrors() {
               <h2 className="text-xl font-black text-foreground mb-4">
                 Still Need Help?
               </h2>
-              <p className="text-sm text-muted-foreground font-mono">
+              <p className="text-sm text-muted-foreground">
                 Can't find a solution? Contact any of the teaching assistants for help.
               </p>
             </div>

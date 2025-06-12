@@ -48,7 +48,7 @@ export default function Home() {
           <div className="my-16 flex flex-col items-center justify-center">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-4 h-4 bg-black dark:bg-white rotate-45"></div>
-              <span className="text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              <span className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                 CURRENT ASSIGNMENT
               </span>
             </div>
@@ -69,7 +69,7 @@ export default function Home() {
                     <p className="text-zinc-900 dark:text-zinc-100 mb-3 font-medium">
                       Aegis (ee-jis) - Shield, protection, support
                     </p>
-                    <p className="text-zinc-600 dark:text-zinc-400 font-mono text-sm">
+                    <p className="text-zinc-600 dark:text-zinc-400 text-sm">
                       Protective role of agents in survivor rescue operations
                     </p>
                   </div>
@@ -100,12 +100,12 @@ export default function Home() {
                         {card.title}
                       </h3>
 
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400 font-mono mb-6">
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 tracking-wider">
                         {card.description}
                       </p>
 
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center text-xs font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 group-hover:text-foreground dark:group-hover:text-foreground transition-colors">
+                        <div className="flex items-center text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400 group-hover:text-foreground dark:group-hover:text-foreground transition-colors">
                           READ MORE
                           <ArrowRight className="w-3 h-3 ml-2 group-hover:translate-x-1 transition-transform" />
                         </div>
