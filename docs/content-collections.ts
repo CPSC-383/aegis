@@ -10,6 +10,7 @@ const prettyCodeOptions: Options = {
     dark: "tokyo-night",
     light: "catppuccin-latte",
   },
+  keepBackground: false
 };
 
 const createCollections = (version: 'pathfinding' | 'mas') => {

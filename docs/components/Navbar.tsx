@@ -26,7 +26,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="max-w-7xl mx-auto w-full hidden lg-custom:flex items-center justify-between px-4 sm:px-6 py-4">
+    <nav className="max-w-7xl mx-auto w-full hidden lg-custom:flex items-center justify-between px-4 sm:px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
       <div className="flex items-center space-x-2">
         {mounted ? (
           <Image

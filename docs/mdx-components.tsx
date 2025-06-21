@@ -9,6 +9,7 @@ import Method from "@/components/Method";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tree, TreeItem } from "@/components/ui/file-tree";
+import { ExternalLink } from "lucide-react";
 
 const components = {
   Admonition,
@@ -71,12 +72,15 @@ const components = {
   a: ({ className, ...props }: React.ComponentProps<typeof Link>) => (
     <Link
       className={cn(
-        "font-medium underline underline-offset-2 hover:underline-offset-4 transition-all duration-300 dark:text-teal-400 text-teal-500",
+        "border-b border-zinc-300 dark:border-zinc-700 hover:border-zinc-700 dark:hover:border-zinc-300 inline-flex items-center gap-1",
         className,
       )}
       target="_blank"
       {...props}
-    />
+    >
+      {props.children}
+      <ExternalLink className="w-3 h-3 inline" />
+    </Link>
   ),
   p: ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
     <p className={cn("leading-7 not-first:mt-6", className)} {...props} />
@@ -91,19 +95,30 @@ const components = {
     <li className={cn("mt-2", className)} {...props} />
   ),
   pre: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
-    <pre
-      className={cn(
-        "mb-4 mt-6 max-h-[650px] overflow-x-auto rounded-lg border py-4 dark:bg-[#1a1b26] bg-[#eff1f5]",
-        className,
-      )}
-      {...props}
-    />
+    <div className="border border-zinc-300 dark:border-zinc-700 p-4 bg-zinc-50 dark:bg-zinc-950 mt-4">
+      <div className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-700 pb-1">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-red-400 rounded-full" />
+          <div className="w-2 h-2 bg-yellow-400 rounded-full" />
+          <div className="w-2 h-2 bg-green-400 rounded-full" />
+        </div>
+        <div className="text-sm text-muted-foreground">CODE</div>
+      </div>
+      <pre
+        className={cn(
+          "mb-4 mt-6 max-h-[650px] overflow-x-auto border border-zinc-300 dark:border-zinc-700 py-4 dark:bg-zinc-900 bg-zinc-100",
+          className,
+        )}
+        {...props}
+      />
+    </div>
   ),
   code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <code
       className={cn(
-        "relative rounded-md bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground",
-        "break-all whitespace-pre-wrap max-w-full overflow-auto",
+        "relative bg-muted px-1.5 py-0.5 font-mono text-sm text-foreground",
+        "break-all whitespace-pre max-w-full overflow-auto",
+        "[&:not(pre_&)]:font-semibold",
         className,
       )}
       {...props}
@@ -162,7 +177,7 @@ const components = {
   ),
   Steps: ({ ...props }) => (
     <div
-      className="relative [&>h3]:step steps mb-12 ml-4 border-l border-dashed pl-8 [counter-reset:step]"
+      className="relative [&>h3]:step steps mb-12 ml-4 border-l border-dashed border-zinc-300 dark:border-zinc-700 pl-8 [counter-reset:step]"
       {...props}
     />
   ),

@@ -24,9 +24,9 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={handleToggle}
-      className="hover:bg-accent h-10 w-10 px-2 rounded-md"
+      className="hover:bg-accent h-10 w-10 px-2 rounded-md cursor-pointer"
     >
-      {theme === "dark" ? <Moon /> : <Sun />}
+      {theme === "dark" ? <Sun /> : <Moon />}
     </button>
   );
 };

@@ -16,9 +16,7 @@ npm install
 2. Start the development server:
 
 ```bash
-npm run dev        # Development for assignment 3
-# OR
-npm run dev:a1     # Development for assignment 1 
+npm run dev
 ```
 
 ## Building
@@ -26,9 +24,7 @@ npm run dev:a1     # Development for assignment 1
 Build the documentation site:
 
 ```bash
-npm run build        # Build for assignment 3
-# OR
-npm run build:a1     # Build for assignment 1 
+npm run build
 ```
 
 ## Deployment
@@ -36,9 +32,7 @@ npm run build:a1     # Build for assignment 1
 To deploy:
 
 ```bash
-npm run deploy        # Deploy for assignment 3 
-# OR
-npm run deploy:a1     # Deploy for assignment 1 
+npm run deploy 
 ```
 
 > [!NOTE]
