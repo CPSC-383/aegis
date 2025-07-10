@@ -12,8 +12,8 @@
 
 ### Prerequisites
 
-- Node.js 
 - npm
+- uv
 
 ### Getting Started
 
@@ -26,7 +26,10 @@ cd aegis
 
 2. Install dependencies:
 
-TODO
+```bash
+uv sync
+source .venv/bin/activate
+```
 
 ### Building and Deployment
 
