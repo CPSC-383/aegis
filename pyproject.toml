@@ -1,0 +1,11 @@
+[project]
+name = "aegis"
+version = "0.1.0"
+description = "Survivor Simulation for CPSC383"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
