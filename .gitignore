@@ -1,9 +1,13 @@
-*__pycache__*
-replay.txt
-
 # Python venv
-venv
 .venv
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
 
 
 # Client Stuff
@@ -35,3 +39,4 @@ dist-ssr
 packed-client
 WorldInfoFile.out
 .prettierrc
+replay.txt

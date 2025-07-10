@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aegis"
+version = "0.1.0"
+description = "Survivor Simulation for CPSC383"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "websocket-server==0.6.4",
+]
+
+[project.scripts]
+aegis = "aegis:main"
+
+[project.optional-dependencies]
+comp = [
+    "tensorflow>=2.18.1",
+]
+
+[dependency-groups]
+dev = [
+    "hatch>=1.14.1",
+    "ruff>=0.12.2",
+]
