@@ -62,7 +62,8 @@ class AegisRunner:
         """
         Set up the Python path environment variables.
         """
-        venv_path = os.path.join(self.curr_dir, ".venv")
+
+        venv_path = os.environ["VIRTUAL_ENV"]
 
         if platform.system() == "Windows":
             python_executable = os.path.join(venv_path, "Scripts", "python.exe")
@@ -76,7 +77,7 @@ class AegisRunner:
                 f"Python executable not found in venv: {python_executable}"
             )
 
-        os.environ["PYTHONPATH"] = os.path.join(self.curr_dir, "src")
+        os.environ["PYTHONPATH"] = self.curr_dir
 
         site_packages = (
             os.path.join(venv_path, "Lib", "site-packages")
@@ -98,9 +99,7 @@ class AegisRunner:
         Args:
             agent_index (Optional[int]): Optional index for multi-agent logging
         """
-        agent_main = os.path.join(
-            self.curr_dir, "src", "agents", self.agent_name, "main.py"
-        )
+        agent_main = os.path.join(self.agent_name, "main.py")
 
         if not os.path.exists(agent_main):
             raise FileNotFoundError(f"Agent main script not found: {agent_main}")
@@ -119,7 +118,7 @@ class AegisRunner:
         """
         Run the AEGIS simulation.
         """
-        aegis_main = os.path.join(self.curr_dir, "src", "aegis", "main.py")
+        aegis_main = os.path.join(self.curr_dir, "main.py")
 
         if not os.path.exists(aegis_main):
             raise FileNotFoundError(f"AEGIS main script not found: {aegis_main}")
@@ -178,7 +177,7 @@ def main():
         dest="agent_directory",
         type=str,
         required=True,
-        help="Directory of the agent to run",
+        help="Path to the directory of the agent to run",
     )
     _ = parser.add_argument(
         "--world",

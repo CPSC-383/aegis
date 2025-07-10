@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from typing import cast
-from _aegis.types import Config
+from _aegis.aegis_types import Config
 
 CONFIG_PATH = Path("config/config.json")
 
