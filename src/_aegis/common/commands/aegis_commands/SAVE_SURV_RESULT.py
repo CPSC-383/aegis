@@ -1,5 +1,3 @@
-from _aegis.config import is_feature_enabled
-from _aegis.decorators import disabled_if
 from typing import override
 
 import numpy as np
@@ -7,8 +5,6 @@ from numpy.typing import NDArray
 
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.world.info import SurroundInfo
-
-ENABLE_PREDICTIONS = is_feature_enabled("ENABLE_PREDICTIONS")
 
 
 class SAVE_SURV_RESULT(AegisCommand):

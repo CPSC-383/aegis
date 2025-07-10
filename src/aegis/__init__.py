@@ -1,6 +1,3 @@
-# Public API exposed here
-from _aegis import config
+from _aegis.cli import main
 
-
-def run() -> None:
-    _ = config.load_config()
+__all__ = ["main"]
