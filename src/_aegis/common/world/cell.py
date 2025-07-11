@@ -11,7 +11,7 @@ from _aegis.common import (
     Utility,
 )
 from _aegis.common.world.info import CellInfo
-from _aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject
+from _aegis.common.world.objects import Survivor, WorldObject
 
 
 class Cell:
@@ -152,8 +152,6 @@ class Cell:
         for layer in self._cell_layer_list:
             if isinstance(layer, Survivor):
                 count += 1
-            if isinstance(layer, SurvivorGroup):
-                count += layer.number_of_survivors
         return count
 
     def get_generated_life_signals(self) -> LifeSignals:

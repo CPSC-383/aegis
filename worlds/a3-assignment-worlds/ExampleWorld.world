@@ -6,11 +6,6 @@
         "height": 15
       },
       "seed": 6668,
-      "world_file_levels": {
-        "high": 12,
-        "mid": 7,
-        "low": 1
-      },
       "agent_energy": 500
     }
   },
@@ -36,10 +31,7 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 0,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 0
           }
         }
       ]
@@ -621,10 +613,7 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 0,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 0
           }
         }
       ]
@@ -1478,10 +1467,7 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 0,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 0
           }
         }
       ]
