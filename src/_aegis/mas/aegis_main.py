@@ -1,13 +1,14 @@
 import argparse
 import base64
-from dataclasses import dataclass
 import gzip
 import json
 import sys
 import time
+from dataclasses import dataclass
 from datetime import datetime
 
 from mas.agent_handler import AgentHandler
+
 from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
 from _aegis.agent_predictions.prediction_handler import PredictionHandler
 from _aegis.assist.config_settings import ConfigSettings

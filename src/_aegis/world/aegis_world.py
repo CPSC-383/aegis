@@ -19,7 +19,7 @@ from _aegis.common.world.agent import Agent
 from _aegis.common.world.cell import InternalCell
 from _aegis.common.world.info import CellInfo, SurroundInfo
 from _aegis.common.world.objects import Survivor, SurvivorGroup
-from _aegis.common.world.world import InternalWorld
+from _aegis.common.world.world import World
 from _aegis.parsers.aegis_world_file import AegisWorldFile
 from _aegis.parsers.helper.world_file_type import StackContent, WorldFileType
 from _aegis.parsers.world_file_parser import WorldFileParser
@@ -74,6 +74,7 @@ class WorldDict(TypedDict):
     number_of_survivors_saved_dead: int
 
 
+# TODO: add this to new config file
 MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
     "Enable_Move_Cost"
 ]
@@ -92,7 +93,7 @@ class AegisWorld:
         self._high_survivor_level: int = 0
         self._random_seed: int = 0
         self.round: int = 0
-        self._world: InternalWorld | None = None
+        self._world: World | None = None
         self._agents: list[Agent] = []
         self._normal_cell_list: list[InternalCell] = []
         self._fire_cells_list: list[InternalCell] = []
@@ -149,7 +150,7 @@ class AegisWorld:
             self.round = 1
 
             # Create a world of known size
-            self._world = InternalWorld(
+            self._world = World(
                 width=aegis_world_file.width, height=aegis_world_file.height
             )
 

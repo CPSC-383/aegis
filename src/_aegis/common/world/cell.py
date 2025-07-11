@@ -4,8 +4,8 @@ from typing import override
 
 from _aegis.common import (
     AgentIDList,
-    Constants,
     CellType,
+    Constants,
     LifeSignals,
     Location,
     Utility,

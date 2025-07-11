@@ -18,8 +18,9 @@ from _aegis.common.commands.aegis_commands import (
 )
 from _aegis.mas.aegis_parser import AegisParser
 from _aegis.common.world.info.cell_info import CellInfo
-from _aegis.common.world.world import InternalWorld
+from _aegis.common.world.world import World
 from _aegis.agent.agent_states import AgentStates
 
+
 class CommandHandler:
-    def __init__(self, agent_controller, brain: Bra
+    pass

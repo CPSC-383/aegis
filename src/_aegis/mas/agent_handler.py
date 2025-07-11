@@ -1,29 +1,29 @@
 import socket
 import sys
 
+import numpy as np
+from mas.aegis_parser import AegisParser
+
 from _aegis.agent_control.agent_control import AgentControl
 from _aegis.agent_control.agent_group import AgentGroup
 from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
 from _aegis.agent_control.network.agent_socket import AgentSocket
 from _aegis.agent_control.network.agent_socket_exception import AgentSocketException
 from _aegis.common.agent_id import AgentID
-from _aegis.common.commands.agent_command import AgentCommand
-from _aegis.common.commands.agent_commands import AGENT_UNKNOWN, CONNECT
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     CMD_RESULT_END,
     CMD_RESULT_START,
-    SEND_MESSAGE_RESULT,
     MESSAGES_END,
     MESSAGES_START,
     SAVE_SURV_RESULT,
+    SEND_MESSAGE_RESULT,
 )
+from _aegis.common.commands.agent_command import AgentCommand
+from _aegis.common.commands.agent_commands import AGENT_UNKNOWN, CONNECT
 from _aegis.common.constants import Constants
 from _aegis.common.network.aegis_socket_exception import AegisSocketException
-from mas.aegis_parser import AegisParser
 from _aegis.common.parsers.aegis_parser_exception import AegisParserException
-
-import numpy as np
 
 
 class AgentHandler:

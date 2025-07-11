@@ -19,7 +19,7 @@ from _aegis.common.location import Location
 from _aegis.common.network.aegis_socket import AegisSocket
 from _aegis.common.network.aegis_socket_exception import AegisSocketException
 from _aegis.common.parsers.aegis_parser_exception import AegisParserException
-from _aegis.common.world.world import InternalWorld
+from _aegis.common.world.world import World
 from _aegis.mas.aegis_parser import AegisParser
 
 
@@ -49,9 +49,7 @@ class BaseAgent:
             BaseAgent._agent = BaseAgent()
         return BaseAgent._agent
 
-    def update_surround(
-        self, surround_info: SurroundInfo, world: InternalWorld | None
-    ) -> None:
+    def update_surround(self, surround_info: SurroundInfo, world: World | None) -> None:
         if world is None:
             return
 

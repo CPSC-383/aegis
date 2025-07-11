@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import override
+
 from _aegis.common import Location
 from _aegis.parsers.helper.world_file_type import StackContent
 

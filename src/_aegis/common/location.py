@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import override
+
 from _aegis.common.direction import Direction
 
 

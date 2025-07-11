@@ -2,7 +2,7 @@ from _aegis.common import Constants, Location
 from _aegis.common.world.cell import InternalCell
 
 
-class InternalWorld:
+class World:
     """
     Represents a 2D grid of cells.
 

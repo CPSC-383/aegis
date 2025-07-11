@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from .types import Config
 
 def load_config(path: Path = ...) -> Config: ...

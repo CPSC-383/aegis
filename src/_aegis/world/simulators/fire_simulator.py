@@ -1,6 +1,6 @@
 from _aegis.common import Direction, Utility
 from _aegis.common.world.cell import InternalCell
-from _aegis.common.world.world import InternalWorld
+from _aegis.common.world.world import World
 
 
 class FireSimulator:
@@ -8,11 +8,11 @@ class FireSimulator:
         self,
         fire_cells_list: list[InternalCell],
         non_fire_cells_list: list[InternalCell],
-        world: InternalWorld | None,
+        world: World | None,
     ) -> None:
         self._fire_cells_list: list[InternalCell] = fire_cells_list
         self._non_fire_cells_list: list[InternalCell] = non_fire_cells_list
-        self._world: InternalWorld | None = world
+        self._world: World | None = world
 
     def run(self) -> str:
         s = ""

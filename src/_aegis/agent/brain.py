@@ -22,7 +22,7 @@ from _aegis.common.commands.aegis_commands import (
     TEAM_DIG_RESULT,
 )
 from _aegis.common.world.info.cell_info import CellInfo
-from _aegis.common.world.world import InternalWorld
+from _aegis.common.world.world import World
 from _aegis.mas.aegis_parser import AegisParser
 
 
@@ -86,15 +86,13 @@ class Brain(ABC):
         Args:
             aegis_command: The command received from AEGIS.
         """
-        base_agent = mas.agent.base_agent.BaseAgent.get_agent()
+        base_agent = _aegis.agent.base_agent.BaseAgent.get_agent()
         if isinstance(aegis_command, CONNECT_OK):
             connect_ok: CONNECT_OK = aegis_command
             base_agent.set_agent_id(connect_ok.new_agent_id)
             base_agent.set_energy_level(connect_ok.energy_level)
             base_agent.set_location(connect_ok.location)
-            self._world = InternalWorld(
-                AegisParser.build_world(connect_ok.world_filename)
-            )  # pyright: ignore[reportAttributeAccessIssue]
+            self._world = World(AegisParser.build_world(connect_ok.world_filename))  # pyright: ignore[reportAttributeAccessIssue]
             base_agent.set_agent_state(AgentStates.CONNECTED)
             base_agent.log("Connected Successfully")
 
