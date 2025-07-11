@@ -366,7 +366,6 @@ class Aegis:
 
             survivors_saved = self._aegis_world.get_total_saved_survivors()
             total_survivors = self._aegis_world.get_num_survivors()
-            print(f"total survs: {total_survivors}")
 
             if survivors_saved == total_survivors:
                 print("Aegis  : All Survivors Saved")
