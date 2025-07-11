@@ -23,7 +23,7 @@ from _aegis.common.commands.agent_commands import AGENT_UNKNOWN, CONNECT
 from _aegis.common.constants import Constants
 from _aegis.common.network.aegis_socket_exception import AegisSocketException
 from _aegis.common.parsers.aegis_parser_exception import AegisParserException
-from _aegis.mas.aegis_parser import AegisParser
+from _aegis.parsers.aegis_parser import AegisParser
 
 
 class AgentHandler:

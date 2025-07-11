@@ -1,11 +1,5 @@
 from abc import ABC, abstractmethod
 
-from _aegis.common.commands.aegis_commands import (
-    OBSERVE_RESULT,
-    PREDICT_RESULT,
-    SAVE_SURV_RESULT,
-    SEND_MESSAGE_RESULT,
-)
 from _aegis.common.world.world import World
 
 

@@ -35,7 +35,7 @@ from _aegis.common.parsers.aegis_parser_exception import AegisParserException
 from _aegis.common.world.info import SurroundInfo
 from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.common.world.world import World
-from _aegis.mas.aegis_parser import AegisParser
+from _aegis.parsers.aegis_parser import AegisParser
 
 
 class BaseAgent:

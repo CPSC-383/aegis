@@ -11,8 +11,6 @@ from _aegis import (
     AgentCommand,
     AgentIDList,
     AgentID,
-    World,
-    Cell,
     Direction,
     Rubble,
     Survivor,

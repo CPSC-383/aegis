@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from _aegis.aegis_config import is_feature_enabled
-from _aegis.mas.agent_handler import AgentHandler
+from _aegis.agent_control.agent_handler import AgentHandler
 
 from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
 from _aegis.agent_predictions.prediction_handler import PredictionHandler
