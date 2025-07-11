@@ -2,46 +2,27 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from _aegis import AgentCommand, Location
+from _aegis.agent.agent_states import AgentStates
 from _aegis.common.agent_id import AgentID
+from _aegis.common.commands.agent_command import AgentCommand
+from _aegis.common.location import Location
 
 
 @runtime_checkable
 class AgentController(Protocol):
-    """
-    Interface for controlling an agent and interacting with the AEGIS system.
-    """
+    """Protocol defining the interface for agent operations."""
 
-    def get_agent_id(self) -> AgentID:
-        """Returns the ID of the agent."""
-        ...
-
-    def get_energy_level(self) -> int:
-        """Returns the energy level of the agent."""
-        ...
-
-    def get_location(self) -> Location:
-        """Returns the location of the agent."""
-        ...
-
-    def get_round_number(self) -> int:
-        """Returns the current round number of the simulation."""
-        ...
-
-    def send(self, agent_action: AgentCommand) -> None:
-        """
-        Sends an action command to the AEGIS system.
-
-        Args:
-            agent_action: The action command to send.
-        """
-        ...
-
-    def log(self, message: str) -> None:
-        """
-        Logs a message with the agent's ID and the round number.
-
-        Args:
-            message: The message to log.
-        """
-        ...
+    def get_round_number(self) -> int: ...
+    def get_agent_id(self) -> AgentID: ...
+    def get_location(self) -> Location: ...
+    def get_energy_level(self) -> int: ...
+    def send(self, command: AgentCommand) -> None: ...
+    def log(self, message: str) -> None: ...
+    def set_agent_state(self, state: AgentStates) -> None: ...
+    def set_agent_id(self, agent_id: AgentID) -> None: ...
+    def set_energy_level(self, energy_level: int) -> None: ...
+    def set_location(self, location) -> None: ...
+    # def add_prediction_info(
+    #     self, info: tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]
+    # ) -> None: ...
+    def update_surround(self, surround_info, world: World | None) -> None: ...

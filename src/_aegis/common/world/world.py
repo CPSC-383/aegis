@@ -1,4 +1,4 @@
-from _aegis.common import Constants, InternalLocation
+from _aegis.common import Constants, Location
 from _aegis.common.world.cell import InternalCell
 
 
@@ -79,7 +79,7 @@ class InternalWorld:
         self.width = len(world)
         self._world = world
 
-    def on_map(self, location: InternalLocation) -> bool:
+    def on_map(self, location: Location) -> bool:
         """
         Checks if a given location is on the map.
 
@@ -96,11 +96,11 @@ class InternalWorld:
             and location.y < self.height
         )
 
-    def set_cell_at(self, location: InternalLocation, cell: InternalCell) -> None:
+    def set_cell_at(self, location: Location, cell: InternalCell) -> None:
         if self.on_map(location):
             self._world[location.x][location.y] = cell
 
-    def get_cell_at(self, location: InternalLocation) -> InternalCell | None:
+    def get_cell_at(self, location: Location) -> InternalCell | None:
         """
         Returns the cell at the given location if it exists.
 

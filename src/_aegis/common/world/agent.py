@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import override
 
-from _aegis.common import AgentID, Constants, Direction, InternalLocation
+from _aegis.common import AgentID, Constants, Direction, Location
 
 
 class Agent:
@@ -11,7 +11,7 @@ class Agent:
 
     Attributes:
         agent_id (AgentID): The unique AgentID of the agent.
-        location (InternalLocation): The starting location of the agent.
+        location (Location): The starting location of the agent.
         orientation (Direction): The current orientation of the agent.
         command_sent (str): The last command sent by the agent.
     """
@@ -19,7 +19,7 @@ class Agent:
     def __init__(
         self,
         agent_id: AgentID,
-        location: InternalLocation,
+        location: Location,
         energy_level: int = Constants.DEFAULT_MAX_ENERGY_LEVEL,
     ) -> None:
         """
@@ -31,7 +31,7 @@ class Agent:
             energy_level: The starting energy level of the agent.
         """
         self.agent_id: AgentID = agent_id
-        self.location: InternalLocation = location
+        self.location: Location = location
         self._energy_level: int = energy_level
         self.orientation: Direction = Direction.CENTER
         self.command_sent: str = "None"

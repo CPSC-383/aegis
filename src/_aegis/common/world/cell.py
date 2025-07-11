@@ -7,7 +7,7 @@ from _aegis.common import (
     Constants,
     CellType,
     LifeSignals,
-    InternalLocation,
+    Location,
     Utility,
 )
 from _aegis.common.world.info import CellInfo
@@ -35,7 +35,7 @@ class InternalCell:
         move_cost (int): The movement cost associated with the cell.
         agent_id_list (AgentIDList): List of agent IDs present in the cell.
         has_survivors (bool): If there are survivors in the cell.
-        location (InternalLocation): The location of the cell on the map.
+        location (Location): The location of the cell on the map.
     """
 
     def __init__(
@@ -57,9 +57,9 @@ class InternalCell:
         self.has_survivors: bool = False
 
         if x is not None and y is not None:
-            self.location: InternalLocation = InternalLocation(x, y)
+            self.location: Location = Location(x, y)
         else:
-            self.location = InternalLocation(-1, -1)
+            self.location = Location(-1, -1)
 
     def setup_cell(self, cell_state_type: str) -> None:
         cell_state_type = cell_state_type.upper().strip()

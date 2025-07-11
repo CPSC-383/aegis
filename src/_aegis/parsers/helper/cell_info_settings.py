@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import override
-from _aegis.common import InternalLocation
+from _aegis.common import Location
 from _aegis.parsers.helper.world_file_type import StackContent
 
 
@@ -8,7 +8,7 @@ from _aegis.parsers.helper.world_file_type import StackContent
 class CellInfoSettings:
     move_cost: int
     contents: list[StackContent]
-    location: InternalLocation = InternalLocation(-1, -1)
+    location: Location = Location(-1, -1)
 
     @override
     def __str__(self) -> str:

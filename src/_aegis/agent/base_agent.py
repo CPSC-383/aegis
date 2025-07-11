@@ -1,12 +1,11 @@
-# pyright: reportImportCycles = false
-# pyright: reportMissingTypeStubs = false
-# pyright: reportUnknownMemberType = false
 from __future__ import annotations
 
 import sys
 from collections import deque
 
 import numpy as np
+from numpy.typing import NDArray
+
 from _aegis import (
     END_TURN,
     AgentCommand,
@@ -14,18 +13,14 @@ from _aegis import (
     Direction,
     SurroundInfo,
 )
-from _aegis.api import Location
+from _aegis.agent.agent_states import AgentStates
 from _aegis.common.commands.agent_commands import CONNECT
-from _aegis.common.location import InternalLocation
+from _aegis.common.location import Location
 from _aegis.common.network.aegis_socket import AegisSocket
 from _aegis.common.network.aegis_socket_exception import AegisSocketException
-from mas.aegis_parser import AegisParser
 from _aegis.common.parsers.aegis_parser_exception import AegisParserException
 from _aegis.common.world.world import InternalWorld
-from numpy.typing import NDArray
-
-import mas.agent.brain
-from mas.agent.agent_states import AgentStates
+from _aegis.mas.aegis_parser import AegisParser
 
 
 class BaseAgent:
@@ -39,7 +34,7 @@ class BaseAgent:
         self._round: int = 0
         self._agent_state: AgentStates = AgentStates.CONNECTING
         self._id: AgentID = AgentID(-1, -1)
-        self._location: InternalLocation = InternalLocation(-1, -1)
+        self._location: Location = Location(-1, -1)
         self._brain: mas.agent.brain.Brain | None = None
         self._energy_level: int = -1
         self._aegis_socket: AegisSocket | None = None
@@ -102,7 +97,7 @@ class BaseAgent:
         """Returns the location of the base agent."""
         return self._location  # pyright: ignore[reportReturnType]
 
-    def set_location(self, location: InternalLocation) -> None:
+    def set_location(self, location: Location) -> None:
         self._location = location
         self.log(f"New Location: {self._location}")
 
@@ -147,15 +142,12 @@ class BaseAgent:
         self._brain = brain
         self.log("New Brain")
 
-    def start_test(self, brain: mas.agent.brain.Brain) -> None:
-        self.start("localhost", "test", brain)
-
-    def start_with_group_name(
-        self, group_name: str, brain: mas.agent.brain.Brain
+    def start(
+        self,
+        group_name: str,
+        brain: mas.agent.brain.Brain,
+        host: str = "localhost",
     ) -> None:
-        self.start("localhost", group_name, brain)
-
-    def start(self, host: str, group_name: str, brain: mas.agent.brain.Brain) -> None:
         if self._agent_state == AgentStates.CONNECTING:
             self._brain = brain
             if self._connect_to_aegis(host, group_name):

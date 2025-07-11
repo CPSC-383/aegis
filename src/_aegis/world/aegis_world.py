@@ -12,7 +12,7 @@ from _aegis.common import (
     AgentIDList,
     Constants,
     Direction,
-    InternalLocation,
+    Location,
     Utility,
 )
 from _aegis.common.world.agent import Agent
@@ -85,7 +85,7 @@ class AegisWorld:
         self.install_object_handler(RubbleHandler())
         self.install_object_handler(SurvivorGroupHandler())
         self.install_object_handler(SurvivorHandler())
-        self._agent_locations: dict[AgentID, InternalLocation] = {}
+        self._agent_locations: dict[AgentID, Location] = {}
         self._spawn_manager: SpawnManger = SpawnManger()
         self._low_survivor_level: int = 0
         self._mid_survivor_level: int = 0
@@ -99,7 +99,7 @@ class AegisWorld:
         self._non_fire_cells_list: list[InternalCell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._survivor_groups_list: dict[int, SurvivorGroup] = {}
-        self._top_layer_removed_cell_list: list[InternalLocation] = []
+        self._top_layer_removed_cell_list: list[Location] = []
         self._fire_simulator: FireSimulator = FireSimulator(
             self._fire_cells_list, self._non_fire_cells_list, self._world
         )
@@ -188,7 +188,7 @@ class AegisWorld:
             # Cells that are normal
             for x in range(self._world.width):
                 for y in range(self._world.height):
-                    cell = self._world.get_cell_at(InternalLocation(x, y))
+                    cell = self._world.get_cell_at(Location(x, y))
                     if cell is None:
                         continue
 
@@ -234,7 +234,7 @@ class AegisWorld:
                 _ = writer.write(f"Size: ( WIDTH {width} , HEIGHT {height} )\n")
                 for x in range(self._world.width):
                     for y in range(self._world.height):
-                        cell = self._world.get_cell_at(InternalLocation(x, y))
+                        cell = self._world.get_cell_at(Location(x, y))
                         if cell is None:
                             _ = writer.write(f"[({x},{y}),No Cell]\n")
                             continue
@@ -325,7 +325,7 @@ class AegisWorld:
 
         if cell is None:
             if len(self._normal_cell_list) == 0:
-                cell = self._world.get_cell_at(InternalLocation(0, 0))
+                cell = self._world.get_cell_at(Location(0, 0))
             else:
                 cell = random.choice(self._normal_cell_list)
 
@@ -360,7 +360,7 @@ class AegisWorld:
                 return agent
         return None
 
-    def move_agent(self, agent_id: AgentID, location: InternalLocation) -> None:
+    def move_agent(self, agent_id: AgentID, location: Location) -> None:
         agent = self.get_agent(agent_id)
         if agent is None or self._world is None:
             return
@@ -385,7 +385,7 @@ class AegisWorld:
             agent_cell.agent_id_list.remove(agent.agent_id)
             self._number_of_alive_agents -= 1
 
-    def remove_layer_from_cell(self, location: InternalLocation) -> None:
+    def remove_layer_from_cell(self, location: Location) -> None:
         if self._world is None:
             return
 
@@ -415,12 +415,12 @@ class AegisWorld:
                     survivor_group.number_of_survivors
                 )
 
-    def get_cell_at(self, location: InternalLocation) -> InternalCell | None:
+    def get_cell_at(self, location: Location) -> InternalCell | None:
         if self._world is not None:
             return self._world.get_cell_at(location)
         return None
 
-    def get_surround_info(self, location: InternalLocation) -> SurroundInfo | None:
+    def get_surround_info(self, location: Location) -> SurroundInfo | None:
         surround_info = SurroundInfo()
         if self._world is None:
             return
@@ -468,7 +468,7 @@ class AegisWorld:
 
         for x in range(self._world.width):
             for y in range(self._world.height):
-                cell = self._world.get_cell_at(InternalLocation(x, y))
+                cell = self._world.get_cell_at(Location(x, y))
                 if cell is None:
                     continue
 

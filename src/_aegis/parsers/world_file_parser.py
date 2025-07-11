@@ -1,7 +1,7 @@
 import json
 from typing import cast
 
-from _aegis.common import AgentID, InternalLocation
+from _aegis.common import AgentID, Location
 from _aegis.parsers.aegis_world_file import AegisWorldFile
 from _aegis.parsers.helper.cell_info_settings import CellInfoSettings
 from _aegis.parsers.helper.cell_type_info import CellTypeInfo
@@ -21,7 +21,7 @@ class WorldFileParser:
     def parse_world_file(filename: str) -> AegisWorldFile | None:
         try:
             with open(filename, "r") as file:
-                data: WorldFileType = json.load(file)
+                data = cast(WorldFileType, json.load(file))
                 width = data["settings"]["world_info"]["size"]["width"]
                 height = data["settings"]["world_info"]["size"]["height"]
                 agent_energy = data["settings"]["world_info"]["agent_energy"]
@@ -66,7 +66,7 @@ class WorldFileParser:
             CellInfoSettings(
                 cell["move_cost"],
                 cell["contents"],
-                InternalLocation(cell["cell_loc"]["x"], cell["cell_loc"]["y"]),
+                Location(cell["cell_loc"]["x"], cell["cell_loc"]["y"]),
             )
             for cell in cell_stack_info
         ]
@@ -77,7 +77,7 @@ class WorldFileParser:
             CellTypeInfo(
                 name,
                 [
-                    InternalLocation(loc["x"], loc["y"])
+                    Location(loc["x"], loc["y"])
                     for loc in cast(list[CellLoc], cell_locs)
                 ],
             )
@@ -85,9 +85,9 @@ class WorldFileParser:
         ]
 
     @staticmethod
-    def _parse_agents(agents: list[AgentInfo]) -> dict[AgentID, InternalLocation]:
+    def _parse_agents(agents: list[AgentInfo]) -> dict[AgentID, Location]:
         return {
-            AgentID(agent_info["id"], agent_info["gid"]): InternalLocation(
+            AgentID(agent_info["id"], agent_info["gid"]): Location(
                 agent_info["x"], agent_info["y"]
             )
             for agent_info in agents
@@ -101,7 +101,7 @@ class WorldFileParser:
 
         for loc in spawn_locs:
             zone_type = SpawnZoneType(loc["type"])
-            location = InternalLocation(loc["x"], loc["y"])
+            location = Location(loc["x"], loc["y"])
             gid = loc.get("gid")
             spawn = SpawnZone(location, zone_type, gid)
             spawns.append(spawn)
