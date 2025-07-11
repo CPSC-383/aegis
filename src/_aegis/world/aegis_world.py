@@ -16,7 +16,7 @@ from _aegis.common import (
     Utility,
 )
 from _aegis.common.world.agent import Agent
-from _aegis.common.world.cell import InternalCell
+from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import CellInfo, SurroundInfo
 from _aegis.common.world.objects import Survivor, SurvivorGroup
 from _aegis.common.world.world import World
@@ -95,9 +95,9 @@ class AegisWorld:
         self.round: int = 0
         self._world: World | None = None
         self._agents: list[Agent] = []
-        self._normal_cell_list: list[InternalCell] = []
-        self._fire_cells_list: list[InternalCell] = []
-        self._non_fire_cells_list: list[InternalCell] = []
+        self._normal_cell_list: list[Cell] = []
+        self._fire_cells_list: list[Cell] = []
+        self._non_fire_cells_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._survivor_groups_list: dict[int, SurvivorGroup] = {}
         self._top_layer_removed_cell_list: list[Location] = []
@@ -416,7 +416,7 @@ class AegisWorld:
                     survivor_group.number_of_survivors
                 )
 
-    def get_cell_at(self, location: Location) -> InternalCell | None:
+    def get_cell_at(self, location: Location) -> Cell | None:
         if self._world is not None:
             return self._world.get_cell_at(location)
         return None

@@ -7,7 +7,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime
 
-from mas.agent_handler import AgentHandler
+from _aegis.mas.agent_handler import AgentHandler
 
 from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
 from _aegis.agent_predictions.prediction_handler import PredictionHandler
@@ -50,10 +50,9 @@ from _aegis.common.commands.agent_commands import (
     TEAM_DIG,
 )
 from _aegis.common.network.aegis_socket_exception import AegisSocketException
-from _aegis.common.world.cell import InternalCell
+from _aegis.common.world.cell import Cell
 from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.common.world.objects import Rubble, Survivor, SurvivorGroup, WorldObject
-from _aegis.parsers.config_parser import ConfigParser
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
@@ -887,7 +886,7 @@ class Aegis:
     def _handle_top_layer(
         self,
         top_layer: WorldObject,
-        cell: InternalCell,
+        cell: Cell,
         temp_cell_agent_list: list[AgentID],
         gid_counter: list[int],
     ) -> None:

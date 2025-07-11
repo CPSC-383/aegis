@@ -14,22 +14,9 @@ from _aegis.common.world.info import CellInfo
 from _aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject
 
 
-class InternalCell:
+class Cell:
     """
     Represents a cell in the world.
-
-    Examples:
-        >>> top_layer = cell.get_top_layer()
-        >>> top_layer
-        None    # Will return None when there are no layers.
-        >>> cell.is_normal_cell()
-        True
-        >>> cell.is_fire_cell()
-        False
-        >>> cell.is_killer_cell()
-        False
-        >>> cell.is_charging_cell()
-        False
 
     Attributes:
         move_cost (int): The movement cost associated with the cell.
@@ -44,7 +31,7 @@ class InternalCell:
         y: int | None = None,
     ) -> None:
         """
-        Initializes an InternalCell instance.
+        Initializes an Cell instance.
 
         Args:
             x: The x-coordinate of the cell.
@@ -224,8 +211,8 @@ class InternalCell:
     def __repr__(self) -> str:
         return self.__str__()
 
-    def clone(self) -> InternalCell:
-        cell = InternalCell()
+    def clone(self) -> Cell:
+        cell = Cell()
         cell._type = self._type
         cell.location = self.location
         cell.agent_id_list = self.agent_id_list.clone()

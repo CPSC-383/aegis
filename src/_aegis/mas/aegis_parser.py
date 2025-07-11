@@ -50,7 +50,7 @@ from _aegis.common.commands.agent_commands import (
 )
 from _aegis.common.commands.command import Command
 from _aegis.common.parsers.aegis_parser_exception import AegisParserException
-from _aegis.common.world.cell import InternalCell
+from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import (
     CellInfo,
     SurroundInfo,
@@ -69,8 +69,8 @@ MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
 
 class AegisParser:
     @staticmethod
-    def build_world(file_location: str) -> list[list[InternalCell]] | None:
-        world: list[list[InternalCell]] | None = None
+    def build_world(file_location: str) -> list[list[Cell]] | None:
+        world: list[list[Cell]] | None = None
         try:
             with open(file_location) as file:
                 world = AegisParser.read_world_size(file)
@@ -88,14 +88,14 @@ class AegisParser:
         return world
 
     @staticmethod
-    def read_world_size(file: TextIO) -> list[list[InternalCell]]:
+    def read_world_size(file: TextIO) -> list[list[Cell]]:
         tokens = file.readline().split()
         width = int(tokens[3])
         height = int(tokens[6])
         return [[None] * height for _ in range(width)]  # pyright: ignore[reportReturnType]
 
     @staticmethod
-    def read_and_build_cell(line: str) -> InternalCell:
+    def read_and_build_cell(line: str) -> Cell:
         pattern = r"[\[\]\(\),% ]"
         tokens = re.split(pattern, line.strip())
         tokens = [token for token in tokens if token]
@@ -105,7 +105,7 @@ class AegisParser:
         killer = tokens[3]
         charging = tokens[4]
         has_survivors = tokens[5] == "True"
-        cell = InternalCell(x, y)
+        cell = Cell(x, y)
 
         cell.set_normal_cell()
         if fire[0] == "+":
