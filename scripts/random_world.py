@@ -61,9 +61,6 @@ def generate_random_spawn_locations(width, height):
 
 def generate_random_cell_types(width, height):
     cell_types = {
-        "fire_cells": generate_random_cells(
-            width, height, max_cells=width * height // 20
-        ),
         "killer_cells": generate_random_cells(
             width, height, max_cells=width * height // 30
         ),

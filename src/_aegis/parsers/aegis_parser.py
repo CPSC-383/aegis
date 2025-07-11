@@ -97,16 +97,12 @@ class AegisParser:
         tokens = [token for token in tokens if token]
         x = int(tokens[0])
         y = int(tokens[1])
-        fire = tokens[2]
-        killer = tokens[3]
-        charging = tokens[4]
-        has_survivors = tokens[5] == "True"
+        killer = tokens[2]
+        charging = tokens[3]
+        has_survivors = tokens[4] == "True"
         cell = Cell(x, y)
 
         cell.set_normal_cell()
-        if fire[0] == "+":
-            cell.set_fire_cell()
-
         if killer[0] == "+":
             cell.set_killer_cell()
 
@@ -526,7 +522,6 @@ class AegisParser:
 
         if cell_type not in [
             "CHARGING_CELL",
-            "FIRE_CELL",
             "KILLER_CELL",
             "NO_CELL",
             "NORMAL_CELL",
@@ -535,8 +530,6 @@ class AegisParser:
 
         if cell_type == "NO_CELL":
             return CellInfo()
-        elif cell_type == "FIRE_CELL":
-            cell_type = CellType.FIRE_CELL
         elif cell_type == "KILLER_CELL":
             cell_type = CellType.KILLER_CELL
         elif cell_type == "CHARGING_CELL":

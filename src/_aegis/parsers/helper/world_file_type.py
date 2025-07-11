@@ -45,7 +45,6 @@ class CellLoc(TypedDict):
 
 
 class CellTypes(TypedDict):
-    fire_cells: list[CellLoc]
     killer_cells: list[CellLoc]
     charging_cells: list[CellLoc]
 

@@ -9,8 +9,7 @@ class CellType(Enum):
     NO_CELL = 1
     NORMAL_CELL = 2
     CHARGING_CELL = 3
-    FIRE_CELL = 4
-    KILLER_CELL = 5
+    KILLER_CELL = 4
 
 
 class Utility:

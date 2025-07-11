@@ -27,7 +27,7 @@
     }
   ],
   "cell_types": {
-    "fire_cells": [
+    "killer_cells": [
       {
         "x": 7,
         "y": 14
@@ -89,7 +89,6 @@
         "y": 0
       }
     ],
-    "killer_cells": [],
     "charging_cells": []
   },
   "stacks": [

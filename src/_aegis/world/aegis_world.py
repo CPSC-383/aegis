@@ -82,16 +82,11 @@ class AegisWorld:
         self.install_object_handler(SurvivorHandler())
         self._agent_locations: dict[AgentID, Location] = {}
         self._spawn_manager: SpawnManger = SpawnManger()
-        self._low_survivor_level: int = 0
-        self._mid_survivor_level: int = 0
-        self._high_survivor_level: int = 0
         self._random_seed: int = 0
         self.round: int = 0
         self._world: World | None = None
         self._agents: list[Agent] = []
         self._normal_cell_list: list[Cell] = []
-        self._fire_cells_list: list[Cell] = []
-        self._non_fire_cells_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._survivor_groups_list: dict[int, SurvivorGroup] = {}
         self._top_layer_removed_cell_list: list[Location] = []
@@ -132,9 +127,6 @@ class AegisWorld:
             # This is so spawn_manager can error check the spawn zones
             for spawn in aegis_world_file.agent_spawn_locations:
                 self._spawn_manager.add_spawn_zone(spawn)
-            self._low_survivor_level = aegis_world_file.low_survivor_level
-            self._mid_survivor_level = aegis_world_file.mid_survivor_level
-            self._high_survivor_level = aegis_world_file.high_survivor_level
             self._random_seed = aegis_world_file.random_seed
             self._initial_agent_energy = aegis_world_file.initial_agent_energy
             Utility.set_random_seed(aegis_world_file.random_seed)
@@ -235,17 +227,16 @@ class AegisWorld:
                         if cell.number_of_survivors() <= 0:
                             has_survivors = False
 
-                        fire = "+F" if cell.is_fire_cell() else "-F"
                         killer = "+K" if cell.is_killer_cell() else "-K"
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
                         if is_feature_enabled("ENABLE_MOVE_COST"):
                             _ = writer.write(
-                                f"[({x},{y}),({fire},{killer},{charging}),{has_survivors},{cell.move_cost}]\n"
+                                f"[({x},{y}),({killer},{charging}),{has_survivors},{cell.move_cost}]\n"
                             )
                         else:
                             _ = writer.write(
-                                f"[({x},{y}),({fire},{killer},{charging}),{has_survivors}]\n"
+                                f"[({x},{y}),({killer},{charging}),{has_survivors}]\n"
                             )
             path = os.path.realpath(os.getcwd())
             self._agent_world_filename = os.path.join(path, file)
@@ -291,10 +282,7 @@ class AegisWorld:
                 if cell is None:
                     continue
 
-                if cell.is_fire_cell():
-                    print(f"Aegis  : Agent {agent} ran into the fire and died.\n")
-                    dead_agents.add(agent.agent_id)
-                elif cell.is_killer_cell():
+                if cell.is_killer_cell():
                     print(f"Aegis  : Agent {agent} ran into killer cell and died.\n")
                     dead_agents.add(agent.agent_id)
 
@@ -321,9 +309,7 @@ class AegisWorld:
         if cell is None:
             raise Exception("Aegis  : No cell found for agent")
 
-        if cell.is_fire_cell():
-            print("Aegis  : Warning, agent has been placed on a fire cell!")
-        elif cell.is_killer_cell():
+        if cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")
 
         agent = Agent(agent_id, cell.location, self._initial_agent_energy)
