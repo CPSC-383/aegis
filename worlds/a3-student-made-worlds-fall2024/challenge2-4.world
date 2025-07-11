@@ -6,11 +6,6 @@
         "height": 15
       },
       "seed": 5618,
-      "world_file_levels": {
-        "high": 14,
-        "mid": 10,
-        "low": 1
-      },
       "agent_energy": 40
     }
   },
@@ -27,7 +22,6 @@
     }
   ],
   "cell_types": {
-    "fire_cells": [],
     "killer_cells": [],
     "charging_cells": []
   },
@@ -889,28 +883,19 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]

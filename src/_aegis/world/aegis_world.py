@@ -18,7 +18,7 @@ from _aegis.common import (
 from _aegis.common.world.agent import Agent
 from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import CellInfo, SurroundInfo
-from _aegis.common.world.objects import Survivor, SurvivorGroup
+from _aegis.common.world.objects import Survivor
 from _aegis.common.world.world import World
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.parsers.aegis_world_file import AegisWorldFile
@@ -28,10 +28,8 @@ from _aegis.server_websocket import WebSocketServer
 from _aegis.world.object_handlers import (
     ObjectHandler,
     RubbleHandler,
-    SurvivorGroupHandler,
     SurvivorHandler,
 )
-from _aegis.world.simulators.fire_simulator import FireSimulator
 from _aegis.world.simulators.survivor_simulator import SurvivorSimulator
 from _aegis.world.spawn_manager import SpawnManger
 
@@ -79,28 +77,18 @@ class AegisWorld:
     def __init__(self) -> None:
         self._object_handlers: dict[str, ObjectHandler] = {}
         self.install_object_handler(RubbleHandler())
-        self.install_object_handler(SurvivorGroupHandler())
         self.install_object_handler(SurvivorHandler())
         self._agent_locations: dict[AgentID, Location] = {}
         self._spawn_manager: SpawnManger = SpawnManger()
-        self._low_survivor_level: int = 0
-        self._mid_survivor_level: int = 0
-        self._high_survivor_level: int = 0
         self._random_seed: int = 0
         self.round: int = 0
         self._world: World | None = None
         self._agents: list[Agent] = []
         self._normal_cell_list: list[Cell] = []
-        self._fire_cells_list: list[Cell] = []
-        self._non_fire_cells_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
-        self._survivor_groups_list: dict[int, SurvivorGroup] = {}
         self._top_layer_removed_cell_list: list[Location] = []
-        self._fire_simulator: FireSimulator = FireSimulator(
-            self._fire_cells_list, self._non_fire_cells_list, self._world
-        )
         self._survivor_simulator: SurvivorSimulator = SurvivorSimulator(
-            self._survivors_list, self._survivor_groups_list
+            self._survivors_list
         )
         self._initial_agent_energy: int = Constants.DEFAULT_MAX_ENERGY_LEVEL
         self._agent_world_filename: str = ""
@@ -136,9 +124,6 @@ class AegisWorld:
             # This is so spawn_manager can error check the spawn zones
             for spawn in aegis_world_file.agent_spawn_locations:
                 self._spawn_manager.add_spawn_zone(spawn)
-            self._low_survivor_level = aegis_world_file.low_survivor_level
-            self._mid_survivor_level = aegis_world_file.mid_survivor_level
-            self._high_survivor_level = aegis_world_file.high_survivor_level
             self._random_seed = aegis_world_file.random_seed
             self._initial_agent_energy = aegis_world_file.initial_agent_energy
             Utility.set_random_seed(aegis_world_file.random_seed)
@@ -191,22 +176,15 @@ class AegisWorld:
                     if cell.is_normal_cell():
                         self._normal_cell_list.append(cell)
 
-            survivor_group_handler = cast(
-                SurvivorGroupHandler, self._object_handlers.get("SVG")
-            )
             survivor_handler = cast(SurvivorHandler, self._object_handlers.get("SV"))
-            self._number_of_survivors_alive = (
-                survivor_group_handler.alive + survivor_handler.alive
-            )
-            self._number_of_survivors_dead = (
-                survivor_group_handler.dead + survivor_handler.dead
-            )
+
+            self._number_of_survivors_alive = survivor_handler.alive
+            self._number_of_survivors_dead = survivor_handler.dead
 
             self._number_of_survivors = (
                 self._number_of_survivors_alive + self._number_of_survivors_dead
             )
             self._survivors_list = survivor_handler.sv_map
-            self._survivor_groups_list = survivor_group_handler.svg_map
             self._write_agent_world_file()
             return True
         except Exception as e:
@@ -239,17 +217,16 @@ class AegisWorld:
                         if cell.number_of_survivors() <= 0:
                             has_survivors = False
 
-                        fire = "+F" if cell.is_fire_cell() else "-F"
                         killer = "+K" if cell.is_killer_cell() else "-K"
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
                         if is_feature_enabled("ENABLE_MOVE_COST"):
                             _ = writer.write(
-                                f"[({x},{y}),({fire},{killer},{charging}),{has_survivors},{cell.move_cost}]\n"
+                                f"[({x},{y}),({killer},{charging}),{has_survivors},{cell.move_cost}]\n"
                             )
                         else:
                             _ = writer.write(
-                                f"[({x},{y}),({fire},{killer},{charging}),{has_survivors}]\n"
+                                f"[({x},{y}),({killer},{charging}),{has_survivors}]\n"
                             )
             path = os.path.realpath(os.getcwd())
             self._agent_world_filename = os.path.join(path, file)
@@ -260,9 +237,6 @@ class AegisWorld:
 
     def run_simulators(self) -> str:
         s = "Sim_Events;\n"
-        if Constants.FIRE_SPREAD:
-            s += self._fire_simulator.run()
-
         s += self._survivor_simulator.run()
         top_layer_remove_message = "Top_Layer_Rem; { "
         if not self._top_layer_removed_cell_list:
@@ -298,10 +272,7 @@ class AegisWorld:
                 if cell is None:
                     continue
 
-                if cell.is_fire_cell():
-                    print(f"Aegis  : Agent {agent} ran into the fire and died.\n")
-                    dead_agents.add(agent.agent_id)
-                elif cell.is_killer_cell():
+                if cell.is_killer_cell():
                     print(f"Aegis  : Agent {agent} ran into killer cell and died.\n")
                     dead_agents.add(agent.agent_id)
 
@@ -328,9 +299,7 @@ class AegisWorld:
         if cell is None:
             raise Exception("Aegis  : No cell found for agent")
 
-        if cell.is_fire_cell():
-            print("Aegis  : Warning, agent has been placed on a fire cell!")
-        elif cell.is_killer_cell():
+        if cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")
 
         agent = Agent(agent_id, cell.location, self._initial_agent_energy)
@@ -400,16 +369,6 @@ class AegisWorld:
                 self._number_of_survivors_saved_dead += 1
             else:
                 self._number_of_survivors_saved_alive += 1
-        elif isinstance(world_object, SurvivorGroup):
-            survivor_group = world_object
-            if survivor_group.get_energy_level() <= 0:
-                self._number_of_survivors_saved_dead += (
-                    survivor_group.number_of_survivors
-                )
-            else:
-                self._number_of_survivors_saved_alive += (
-                    survivor_group.number_of_survivors
-                )
 
     def get_cell_at(self, location: Location) -> Cell | None:
         if self._world is not None:
@@ -436,9 +395,6 @@ class AegisWorld:
 
     def remove_survivor(self, survivor: Survivor) -> None:
         del self._survivors_list[survivor.id]
-
-    def remove_survivor_group(self, survivor_group: SurvivorGroup) -> None:
-        del self._survivor_groups_list[survivor_group.id]
 
     def _get_json_world(self, filename: str) -> WorldFileType:
         with open(filename, "r") as file:

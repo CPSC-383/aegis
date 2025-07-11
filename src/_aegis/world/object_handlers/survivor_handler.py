@@ -18,23 +18,17 @@ class SurvivorHandler(ObjectHandler):
 
     @override
     def create_world_object(self, params: dict[Arguments, int]) -> WorldObject | None:
-        if len(params) < 4:
+        if len(params) < 1:
             print(
-                "WARRNING: SurvivorHandler: incorrect Parameter setting: missing energy_level, damage_factor, body_mass and/or mental_state"
+                "WARNING: SurvivorHandler: incorrect Parameter setting: missing energy_level"
             )
             return None
 
         energy_level = params["energy_level"]
-        damage_factor = params["damage_factor"]
-        body_mass = params["body_mass"]
-        mental_state = params["mental_state"]
 
         survivor = Survivor(
             self.world_object_count,
             energy_level,
-            damage_factor,
-            body_mass,
-            mental_state,
         )
 
         self.sv_map[self.world_object_count] = survivor

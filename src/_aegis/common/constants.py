@@ -14,7 +14,6 @@ class Constants:
         DEFAULT_MAX_ENERGY_LEVEL (int): The max energy an agent can have.
         SAVE_STATE_ALIVE (int): The state value indicating that the survivor is alive.
         SAVE_STATE_DEAD (int): The state value indicating that the survivor is dead.
-        FIRE_SPREAD (bool): Flag indicating if fire spread is enabled or not.
         WORLD_MIN (int): The minimum size of a world.
         WORLD_MAX (int): The maximum size of a world.
         NUM_OF_TESTING_IMAGES (int): The number of testing images.
@@ -31,7 +30,6 @@ class Constants:
     DEFAULT_MAX_ENERGY_LEVEL = 1000
     SAVE_STATE_ALIVE = 0
     SAVE_STATE_DEAD = 1
-    FIRE_SPREAD = False
     WORLD_MIN = 3
     WORLD_MAX = 30
     SCORE_SURV_SAVED_BASE = 100

@@ -26,16 +26,6 @@ class WorldFileParser:
                 height = data["settings"]["world_info"]["size"]["height"]
                 agent_energy = data["settings"]["world_info"]["agent_energy"]
                 seed = data["settings"]["world_info"]["seed"]
-                high_survivor_level = data["settings"]["world_info"][
-                    "world_file_levels"
-                ]["high"]
-
-                mid_survivor_level = data["settings"]["world_info"][
-                    "world_file_levels"
-                ]["mid"]
-                low_survivor_level = data["settings"]["world_info"][
-                    "world_file_levels"
-                ]["low"]
 
                 cell_settings = WorldFileParser._parse_cell_settings(data["cell_types"])
                 cell_stack_info = WorldFileParser._parse_cell_stack_info(data["stacks"])
@@ -47,9 +37,6 @@ class WorldFileParser:
                     height,
                     agent_energy,
                     seed,
-                    high_survivor_level,
-                    mid_survivor_level,
-                    low_survivor_level,
                     cell_stack_info,
                     cell_settings,
                     agent_spawn_locations,

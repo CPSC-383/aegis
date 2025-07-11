@@ -11,7 +11,7 @@ from _aegis.common import (
     Utility,
 )
 from _aegis.common.world.info import CellInfo
-from _aegis.common.world.objects import Survivor, SurvivorGroup, WorldObject
+from _aegis.common.world.objects import Survivor, WorldObject
 
 
 class Cell:
@@ -55,8 +55,6 @@ class Cell:
             self._type = CellType.NORMAL_CELL
         elif cell_state_type == "CHARGING_CELLS":
             self._type = CellType.CHARGING_CELL
-        elif cell_state_type == "FIRE_CELLS":
-            self._type = CellType.FIRE_CELL
         elif cell_state_type == "KILLER_CELLS":
             self._type = CellType.KILLER_CELL
 
@@ -68,15 +66,6 @@ class Cell:
             True if the cell type is CHARGING_CELL, False otherwise.
         """
         return self._type == CellType.CHARGING_CELL
-
-    def is_fire_cell(self) -> bool:
-        """
-        Checks if the cell is of type FIRE_CELL.
-
-        Returns:
-            True if the cell type is FIRE_CELL, False otherwise.
-        """
-        return self._type == CellType.FIRE_CELL
 
     def is_killer_cell(self) -> bool:
         """
@@ -104,9 +93,6 @@ class Cell:
 
     def set_killer_cell(self) -> None:
         self._type = CellType.KILLER_CELL
-
-    def set_fire_cell(self) -> None:
-        self._type = CellType.FIRE_CELL
 
     def get_cell_layers(self) -> list[WorldObject]:
         return self._cell_layer_list
@@ -148,9 +134,7 @@ class Cell:
     def get_cell_info(self) -> CellInfo:
         cell_type = CellType.NORMAL_CELL
 
-        if self.is_fire_cell():
-            cell_type = CellType.FIRE_CELL
-        elif self.is_killer_cell():
+        if self.is_killer_cell():
             cell_type = CellType.KILLER_CELL
         elif self.is_charging_cell():
             cell_type = CellType.CHARGING_CELL
@@ -168,8 +152,6 @@ class Cell:
         for layer in self._cell_layer_list:
             if isinstance(layer, Survivor):
                 count += 1
-            if isinstance(layer, SurvivorGroup):
-                count += layer.number_of_survivors
         return count
 
     def get_generated_life_signals(self) -> LifeSignals:

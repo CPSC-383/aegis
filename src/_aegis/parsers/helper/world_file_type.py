@@ -8,16 +8,9 @@ class WorldSize(TypedDict):
     height: int
 
 
-class WorldFileLevels(TypedDict):
-    high: int
-    mid: int
-    low: int
-
-
 class WorldInfo(TypedDict):
     size: WorldSize
     seed: int
-    world_file_levels: WorldFileLevels
     agent_energy: int
 
 
@@ -45,7 +38,6 @@ class CellLoc(TypedDict):
 
 
 class CellTypes(TypedDict):
-    fire_cells: list[CellLoc]
     killer_cells: list[CellLoc]
     charging_cells: list[CellLoc]
 
@@ -55,9 +47,6 @@ Arguments = Literal[
     "number_of_survivors",
     "remove_energy",
     "remove_agents",
-    "damage_factor",
-    "body_mass",
-    "mental_state",
 ]
 
 

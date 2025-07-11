@@ -53,7 +53,7 @@ from _aegis.common.commands.agent_commands import (
 from _aegis.common.network.aegis_socket_exception import AegisSocketException
 from _aegis.common.world.cell import Cell
 from _aegis.common.world.info.cell_info import CellInfo
-from _aegis.common.world.objects import Rubble, Survivor, SurvivorGroup, WorldObject
+from _aegis.common.world.objects import Rubble, Survivor, WorldObject
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
@@ -366,6 +366,7 @@ class Aegis:
 
             survivors_saved = self._aegis_world.get_total_saved_survivors()
             total_survivors = self._aegis_world.get_num_survivors()
+            print(f"total survs: {total_survivors}")
 
             if survivors_saved == total_survivors:
                 print("Aegis  : All Survivors Saved")
@@ -893,7 +894,7 @@ class Aegis:
         temp_cell_agent_list: list[AgentID],
         gid_counter: list[int],
     ) -> None:
-        if isinstance(top_layer, (Survivor, SurvivorGroup)):
+        if isinstance(top_layer, Survivor):
             self._aegis_world.remove_layer_from_cell(cell.location)
             alive_count, dead_count = self._calculate_survivor_stats(top_layer)
             self._assign_points(
@@ -916,24 +917,15 @@ class Aegis:
                     agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
                     self._SAVE_SURV_RESULT_list.add(agent_id)
 
-    def _calculate_survivor_stats(
-        self, survivor: Survivor | SurvivorGroup
-    ) -> tuple[int, int]:
+    def _calculate_survivor_stats(self, survivor: Survivor) -> tuple[int, int]:
         alive_count = 0
         dead_count = 0
 
-        if isinstance(survivor, SurvivorGroup):
-            self._aegis_world.remove_survivor_group(survivor)
-            if survivor.is_alive():
-                alive_count += survivor.number_of_survivors
-            else:
-                dead_count += survivor.number_of_survivors
+        self._aegis_world.remove_survivor(survivor)
+        if survivor.is_alive():
+            alive_count += 1
         else:
-            self._aegis_world.remove_survivor(survivor)
-            if survivor.is_alive():
-                alive_count += 1
-            else:
-                dead_count += 1
+            dead_count += 1
         return alive_count, dead_count
 
     def _assign_points(

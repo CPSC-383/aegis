@@ -8,11 +8,6 @@ def generate_random_world(width=15, height=15, agent_energy=500):
             "world_info": {
                 "size": {"width": width, "height": height},
                 "seed": random.randint(1, 10000),
-                "world_file_levels": {
-                    "high": 0,
-                    "mid": 0,
-                    "low": 0,
-                },
                 "agent_energy": agent_energy,
             }
         },
@@ -61,9 +56,6 @@ def generate_random_spawn_locations(width, height):
 
 def generate_random_cell_types(width, height):
     cell_types = {
-        "fire_cells": generate_random_cells(
-            width, height, max_cells=width * height // 20
-        ),
         "killer_cells": generate_random_cells(
             width, height, max_cells=width * height // 30
         ),
@@ -133,9 +125,6 @@ def generate_random_stack_contents():
                     "type": "sv",
                     "arguments": {
                         "energy_level": 0,
-                        "body_mass": 0,
-                        "mental_state": 0,
-                        "damage_factor": 0,
                     },
                 }
             )

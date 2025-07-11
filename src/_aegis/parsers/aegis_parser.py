@@ -58,7 +58,6 @@ from _aegis.common.world.info import (
 from _aegis.common.world.objects import (
     Rubble,
     Survivor,
-    SurvivorGroup,
     WorldObject,
 )
 
@@ -97,16 +96,12 @@ class AegisParser:
         tokens = [token for token in tokens if token]
         x = int(tokens[0])
         y = int(tokens[1])
-        fire = tokens[2]
-        killer = tokens[3]
-        charging = tokens[4]
-        has_survivors = tokens[5] == "True"
+        killer = tokens[2]
+        charging = tokens[3]
+        has_survivors = tokens[4] == "True"
         cell = Cell(x, y)
 
         cell.set_normal_cell()
-        if fire[0] == "+":
-            cell.set_fire_cell()
-
         if killer[0] == "+":
             cell.set_killer_cell()
 
@@ -116,7 +111,7 @@ class AegisParser:
         cell.has_survivors = has_survivors
 
         if is_feature_enabled("ENABLE_MOVE_COST"):
-            cell.move_cost = int(tokens[6])
+            cell.move_cost = int(tokens[5])
         return cell
 
     @staticmethod
@@ -526,7 +521,6 @@ class AegisParser:
 
         if cell_type not in [
             "CHARGING_CELL",
-            "FIRE_CELL",
             "KILLER_CELL",
             "NO_CELL",
             "NORMAL_CELL",
@@ -535,8 +529,6 @@ class AegisParser:
 
         if cell_type == "NO_CELL":
             return CellInfo()
-        elif cell_type == "FIRE_CELL":
-            cell_type = CellType.FIRE_CELL
         elif cell_type == "KILLER_CELL":
             cell_type = CellType.KILLER_CELL
         elif cell_type == "CHARGING_CELL":
@@ -576,8 +568,6 @@ class AegisParser:
             return AegisParser.rubble(tokens)
         elif object_type == "SURVIVOR":
             return AegisParser.survivor(tokens)
-        elif object_type == "SURVIVOR_GROUP":
-            return AegisParser.survivor_group(tokens)
         elif object_type == "None":
             return None
         else:
@@ -605,31 +595,8 @@ class AegisParser:
         AegisParser.comma(tokens)
         AegisParser.text(tokens, "ENG_LEV")
         energy_level = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "DMG_FAC")
-        damage_factor = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "BDM")
-        body_mass = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "MS")
-        mental_state = AegisParser.integer(tokens)
         AegisParser.close_round_bracket(tokens)
-        return Survivor(id, energy_level, damage_factor, body_mass, mental_state)
-
-    @staticmethod
-    def survivor_group(tokens: Iterator[str]) -> SurvivorGroup:
-        AegisParser.open_round_bracket(tokens)
-        AegisParser.text(tokens, "ID")
-        id = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "NUM_SV")
-        number_of_survivors = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "ENG_LV")
-        energy_level = AegisParser.integer(tokens)
-        AegisParser.close_round_bracket(tokens)
-        return SurvivorGroup(id, energy_level, number_of_survivors)
+        return Survivor(id, energy_level)
 
     @staticmethod
     def open_round_bracket(tokens: Iterator[str]) -> None:
