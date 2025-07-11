@@ -58,7 +58,6 @@ from _aegis.common.world.info import (
 from _aegis.common.world.objects import (
     Rubble,
     Survivor,
-    SurvivorGroup,
     WorldObject,
 )
 
@@ -569,8 +568,6 @@ class AegisParser:
             return AegisParser.rubble(tokens)
         elif object_type == "SURVIVOR":
             return AegisParser.survivor(tokens)
-        elif object_type == "SURVIVOR_GROUP":
-            return AegisParser.survivor_group(tokens)
         elif object_type == "None":
             return None
         else:
@@ -609,20 +606,6 @@ class AegisParser:
         mental_state = AegisParser.integer(tokens)
         AegisParser.close_round_bracket(tokens)
         return Survivor(id, energy_level, damage_factor, body_mass, mental_state)
-
-    @staticmethod
-    def survivor_group(tokens: Iterator[str]) -> SurvivorGroup:
-        AegisParser.open_round_bracket(tokens)
-        AegisParser.text(tokens, "ID")
-        id = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "NUM_SV")
-        number_of_survivors = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "ENG_LV")
-        energy_level = AegisParser.integer(tokens)
-        AegisParser.close_round_bracket(tokens)
-        return SurvivorGroup(id, energy_level, number_of_survivors)
 
     @staticmethod
     def open_round_bracket(tokens: Iterator[str]) -> None:
