@@ -17,6 +17,7 @@ aegis = "aegis:main"
 
 [project.optional-dependencies]
 comp = [
+    "numpy>=1.26.4",
     "tensorflow>=2.18.1",
 ]
 

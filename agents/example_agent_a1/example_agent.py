@@ -6,16 +6,17 @@ from aegis import (
     MOVE,
     SAVE_SURV,
     AgentCommand,
+    BaseAgent,
+    Brain,
     Direction,
     Survivor,
 )
-from a1.agent import BaseAgent, Brain, AgentController
 
 
 class ExampleAgent(Brain):
     def __init__(self) -> None:
         super().__init__()
-        self._agent: AgentController = BaseAgent.get_agent()
+        self._agent: BaseAgent = BaseAgent.get_agent()
 
     @override
     def think(self) -> None:
