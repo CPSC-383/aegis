@@ -717,19 +717,13 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 50,
-            "body_mass": 10,
-            "mental_state": 1,
-            "damage_factor": 2
+            "energy_level": 50
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 50,
-            "body_mass": 10,
-            "mental_state": 1,
-            "damage_factor": 2
+            "energy_level": 50
           }
         }
       ]
@@ -856,10 +850,7 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 50,
-            "body_mass": 10,
-            "mental_state": 1,
-            "damage_factor": 2
+            "energy_level": 50
           }
         }
       ]

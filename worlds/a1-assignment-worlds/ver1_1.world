@@ -253,10 +253,7 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 10,
-            "body_mass": 10,
-            "mental_state": 10,
-            "damage_factor": 10
+            "energy_level": 10
           }
         }
       ]

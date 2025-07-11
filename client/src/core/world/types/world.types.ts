@@ -13,9 +13,6 @@ export type Arguments =
   | 'number_of_survivors'
   | 'remove_energy'
   | 'remove_agents'
-  | 'damage_factor'
-  | 'body_mass'
-  | 'mental_state'
 
 export type StackContent = {
   type: string
@@ -44,9 +41,6 @@ export type RubbleInfo = {
 
 export type SurvivorInfo = {
   energy_level: number
-  damage_factor: number
-  body_mass: number
-  mental_state: number
 }
 
 export enum SpawnZoneTypes {

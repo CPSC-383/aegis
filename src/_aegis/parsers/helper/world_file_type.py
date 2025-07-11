@@ -54,9 +54,6 @@ Arguments = Literal[
     "number_of_survivors",
     "remove_energy",
     "remove_agents",
-    "damage_factor",
-    "body_mass",
-    "mental_state",
 ]
 
 

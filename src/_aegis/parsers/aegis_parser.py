@@ -595,17 +595,8 @@ class AegisParser:
         AegisParser.comma(tokens)
         AegisParser.text(tokens, "ENG_LEV")
         energy_level = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "DMG_FAC")
-        damage_factor = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "BDM")
-        body_mass = AegisParser.integer(tokens)
-        AegisParser.comma(tokens)
-        AegisParser.text(tokens, "MS")
-        mental_state = AegisParser.integer(tokens)
         AegisParser.close_round_bracket(tokens)
-        return Survivor(id, energy_level, damage_factor, body_mass, mental_state)
+        return Survivor(id, energy_level)
 
     @staticmethod
     def open_round_bracket(tokens: Iterator[str]) -> None:

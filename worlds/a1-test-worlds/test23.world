@@ -132,10 +132,7 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 100,
-            "mental_state": 100,
-            "damage_factor": 100
+            "energy_level": 100
           }
         }
       ]

@@ -130,9 +130,6 @@ def generate_random_stack_contents():
                     "type": "sv",
                     "arguments": {
                         "energy_level": 0,
-                        "body_mass": 0,
-                        "mental_state": 0,
-                        "damage_factor": 0,
                     },
                 }
             )
