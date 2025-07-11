@@ -7,6 +7,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime
 
+from _aegis.aegis_config import is_feature_enabled
 from _aegis.mas.agent_handler import AgentHandler
 
 from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
@@ -173,22 +174,24 @@ class Aegis:
             )
             return False
 
+        # FIX: Config settings parser thing
         try:
-            config_settings = ConfigParser.parse_config_file(
-                "sys_files/aegis_config.json"
-            )
-            if config_settings is None:
-                print(
-                    'aegis  : Unable to parse config file from "sys_files/aegis_config.json"',
-                    file=sys.stderr,
-                )
-                return False
+            pass
+            # config_settings = ConfigParser.parse_config_file(
+            #     "sys_files/aegis_config.json"
+            # )
+            # if config_settings is None:
+            #     print(
+            #         'aegis  : Unable to parse config file from "sys_files/aegis_config.json"',
+            #         file=sys.stderr,
+            #     )
+            #     return False
 
-            self._parameters.config_settings = config_settings
-            self._agent_handler.send_messages_to_all_groups = (
-                self._parameters.config_settings.send_messages_to_all_groups
-            )
-            if self._parameters.config_settings.predictions_enabled:
+            # self._parameters.config_settings = config_settings
+            # self._agent_handler.send_messages_to_all_groups = (
+            #     self._parameters.config_settings.send_messages_to_all_groups
+            # )
+            if is_feature_enabled("ENABLE_PREDICTIONS"):
                 self._prediction_handler = PredictionHandler()
         except Exception:
             print(

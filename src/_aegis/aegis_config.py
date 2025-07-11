@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import cast
 
-from _aegis.aegis_types import Config
+from _aegis.aegis_types import Config, FeatureFlagName
 
 CONFIG_PATH = Path("config/config.json")
 
@@ -17,6 +17,6 @@ def load_config(path: Path = CONFIG_PATH) -> Config:
     return config
 
 
-def is_feature_enabled(feature: str) -> bool:
+def is_feature_enabled(feature: FeatureFlagName) -> bool:
     config = load_config()
     return config.get(feature, False)

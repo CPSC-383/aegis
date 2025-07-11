@@ -77,17 +77,8 @@ class AegisRunner:
                 f"Python executable not found in venv: {python_executable}"
             )
 
-        os.environ["PYTHONPATH"] = self.curr_dir
-
-        site_packages = (
-            os.path.join(venv_path, "Lib", "site-packages")
-            if platform.system() == "Windows"
-            else os.path.join(
-                venv_path, "lib", f"python{sys.version[:3]}", "site-packages"
-            )
-        )
-        if os.path.exists(site_packages):
-            os.environ["PYTHONPATH"] += os.pathsep + site_packages
+        project_root = os.path.abspath(os.path.join(self.curr_dir, "..", ".."))
+        os.environ["PYTHONPATH"] = project_root
 
         self._log(f"Using Python interpreter: {self.python_command}")
         self._log(f"PYTHONPATH set to: {os.environ['PYTHONPATH']}")
@@ -97,14 +88,14 @@ class AegisRunner:
         Run a single agent instance.
 
         Args:
-            agent_index (Optional[int]): Optional index for multi-agent logging
+            agent_index (int | None): Optional index for multi-agent logging
         """
         agent_main = os.path.join(self.agent_name, "main.py")
 
         if not os.path.exists(agent_main):
             raise FileNotFoundError(f"Agent main script not found: {agent_main}")
 
-        command = [self.python_command, agent_main]
+        command = [self.python_command, agent_main, "AEGIS_CLI"]
         self._log(
             f"Running agent {agent_index if agent_index is not None else ''}: {' '.join(command)}"
         )

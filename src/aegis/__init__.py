@@ -12,7 +12,8 @@ from _aegis.common.commands.agent_commands import (
     SLEEP,
     TEAM_DIG,
 )
-from _aegis.common import Direction
+from _aegis.common import Direction, Location
+from _aegis.common.world.world import World
 from _aegis.common.world.objects import Survivor
 
 # To generate the list after adding imports, use `uv run python -c` or `python -c` with the venv activated :
@@ -33,4 +34,6 @@ __all__ = [
     "AgentCommand",
     "Direction",
     "Survivor",
+    "Location",
+    "World",
 ]

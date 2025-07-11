@@ -1,4 +1,3 @@
-import json
 import re
 import sys
 from collections.abc import Iterator
@@ -7,6 +6,7 @@ from typing import TextIO
 import numpy as np
 from numpy.typing import NDArray
 
+from _aegis.aegis_config import is_feature_enabled
 from _aegis.common import (
     AgentID,
     AgentIDList,
@@ -62,10 +62,6 @@ from _aegis.common.world.objects import (
     WorldObject,
 )
 
-MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
-    "Enable_Move_Cost"
-]
-
 
 class AegisParser:
     @staticmethod
@@ -119,7 +115,7 @@ class AegisParser:
 
         cell.has_survivors = has_survivors
 
-        if MOVE_COST_TOGGLE:
+        if is_feature_enabled("ENABLE_MOVE_COST"):
             cell.move_cost = int(tokens[6])
         return cell
 

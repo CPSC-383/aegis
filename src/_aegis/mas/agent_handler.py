@@ -2,7 +2,6 @@ import socket
 import sys
 
 import numpy as np
-from mas.aegis_parser import AegisParser
 
 from _aegis.agent_control.agent_control import AgentControl
 from _aegis.agent_control.agent_group import AgentGroup
@@ -24,6 +23,7 @@ from _aegis.common.commands.agent_commands import AGENT_UNKNOWN, CONNECT
 from _aegis.common.constants import Constants
 from _aegis.common.network.aegis_socket_exception import AegisSocketException
 from _aegis.common.parsers.aegis_parser_exception import AegisParserException
+from _aegis.mas.aegis_parser import AegisParser
 
 
 class AgentHandler:

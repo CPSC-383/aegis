@@ -20,6 +20,7 @@ from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import CellInfo, SurroundInfo
 from _aegis.common.world.objects import Survivor, SurvivorGroup
 from _aegis.common.world.world import World
+from _aegis.aegis_config import is_feature_enabled
 from _aegis.parsers.aegis_world_file import AegisWorldFile
 from _aegis.parsers.helper.world_file_type import StackContent, WorldFileType
 from _aegis.parsers.world_file_parser import WorldFileParser
@@ -72,12 +73,6 @@ class WorldDict(TypedDict):
     number_of_survivors_dead: int
     number_of_survivors_saved_alive: int
     number_of_survivors_saved_dead: int
-
-
-# TODO: add this to new config file
-MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
-    "Enable_Move_Cost"
-]
 
 
 class AegisWorld:
@@ -248,7 +243,7 @@ class AegisWorld:
                         killer = "+K" if cell.is_killer_cell() else "-K"
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
-                        if MOVE_COST_TOGGLE:
+                        if is_feature_enabled("ENABLE_MOVE_COST"):
                             _ = writer.write(
                                 f"[({x},{y}),({fire},{killer},{charging}),{has_survivors},{cell.move_cost}]\n"
                             )
@@ -447,7 +442,7 @@ class AegisWorld:
 
     def _get_json_world(self, filename: str) -> WorldFileType:
         with open(filename, "r") as file:
-            world: WorldFileType = json.load(file)
+            world = cast(WorldFileType, json.load(file))
         return world
 
     def convert_to_json(self) -> WorldDict:

@@ -1,0 +1,6 @@
+from pathlib import Path
+
+from _aegis.aegis_types import Config, FeatureFlagName
+
+def load_config(path: Path = ...) -> Config: ...
+def is_feature_enabled(feature: FeatureFlagName) -> bool: ...
