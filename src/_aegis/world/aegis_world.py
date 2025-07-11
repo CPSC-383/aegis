@@ -31,7 +31,6 @@ from _aegis.world.object_handlers import (
     SurvivorGroupHandler,
     SurvivorHandler,
 )
-from _aegis.world.simulators.fire_simulator import FireSimulator
 from _aegis.world.simulators.survivor_simulator import SurvivorSimulator
 from _aegis.world.spawn_manager import SpawnManger
 
@@ -96,9 +95,6 @@ class AegisWorld:
         self._survivors_list: dict[int, Survivor] = {}
         self._survivor_groups_list: dict[int, SurvivorGroup] = {}
         self._top_layer_removed_cell_list: list[Location] = []
-        self._fire_simulator: FireSimulator = FireSimulator(
-            self._fire_cells_list, self._non_fire_cells_list, self._world
-        )
         self._survivor_simulator: SurvivorSimulator = SurvivorSimulator(
             self._survivors_list, self._survivor_groups_list
         )
@@ -260,9 +256,6 @@ class AegisWorld:
 
     def run_simulators(self) -> str:
         s = "Sim_Events;\n"
-        if Constants.FIRE_SPREAD:
-            s += self._fire_simulator.run()
-
         s += self._survivor_simulator.run()
         top_layer_remove_message = "Top_Layer_Rem; { "
         if not self._top_layer_removed_cell_list:
