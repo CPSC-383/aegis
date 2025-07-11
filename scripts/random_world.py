@@ -8,11 +8,6 @@ def generate_random_world(width=15, height=15, agent_energy=500):
             "world_info": {
                 "size": {"width": width, "height": height},
                 "seed": random.randint(1, 10000),
-                "world_file_levels": {
-                    "high": 0,
-                    "mid": 0,
-                    "low": 0,
-                },
                 "agent_energy": agent_energy,
             }
         },

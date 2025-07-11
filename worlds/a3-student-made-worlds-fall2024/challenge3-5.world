@@ -6,11 +6,6 @@
         "height": 15
       },
       "seed": 7780,
-      "world_file_levels": {
-        "high": 14,
-        "mid": 10,
-        "low": 5
-      },
       "agent_energy": 14
     }
   },
