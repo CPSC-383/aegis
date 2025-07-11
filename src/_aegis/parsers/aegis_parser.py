@@ -112,7 +112,7 @@ class AegisParser:
         cell.has_survivors = has_survivors
 
         if is_feature_enabled("ENABLE_MOVE_COST"):
-            cell.move_cost = int(tokens[6])
+            cell.move_cost = int(tokens[5])
         return cell
 
     @staticmethod
