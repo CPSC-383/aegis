@@ -1,18 +1,19 @@
-import json
-import os
 import re
-from collections.abc import Iterator
 import sys
+from collections.abc import Iterator
 from typing import TextIO
 
 import numpy as np
+from numpy.typing import NDArray
+
+from _aegis.aegis_config import is_feature_enabled
 from _aegis.common import (
     AgentID,
     AgentIDList,
-    Direction,
     CellType,
+    Direction,
     LifeSignals,
-    InternalLocation,
+    Location,
 )
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
@@ -22,7 +23,6 @@ from _aegis.common.commands.aegis_commands import (
     CONNECT_OK,
     DEATH_CARD,
     DISCONNECT,
-    SEND_MESSAGE_RESULT,
     MESSAGES_END,
     MESSAGES_START,
     MOVE_RESULT,
@@ -31,6 +31,7 @@ from _aegis.common.commands.aegis_commands import (
     ROUND_END,
     ROUND_START,
     SAVE_SURV_RESULT,
+    SEND_MESSAGE_RESULT,
     SLEEP_RESULT,
     TEAM_DIG_RESULT,
 )
@@ -49,7 +50,7 @@ from _aegis.common.commands.agent_commands import (
 )
 from _aegis.common.commands.command import Command
 from _aegis.common.parsers.aegis_parser_exception import AegisParserException
-from _aegis.common.world.cell import InternalCell
+from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import (
     CellInfo,
     SurroundInfo,
@@ -60,17 +61,12 @@ from _aegis.common.world.objects import (
     SurvivorGroup,
     WorldObject,
 )
-from numpy.typing import NDArray
-
-MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
-    "Enable_Move_Cost"
-]
 
 
 class AegisParser:
     @staticmethod
-    def build_world(file_location: str) -> list[list[InternalCell]] | None:
-        world: list[list[InternalCell]] | None = None
+    def build_world(file_location: str) -> list[list[Cell]] | None:
+        world: list[list[Cell]] | None = None
         try:
             with open(file_location) as file:
                 world = AegisParser.read_world_size(file)
@@ -88,14 +84,14 @@ class AegisParser:
         return world
 
     @staticmethod
-    def read_world_size(file: TextIO) -> list[list[InternalCell]]:
+    def read_world_size(file: TextIO) -> list[list[Cell]]:
         tokens = file.readline().split()
         width = int(tokens[3])
         height = int(tokens[6])
         return [[None] * height for _ in range(width)]  # pyright: ignore[reportReturnType]
 
     @staticmethod
-    def read_and_build_cell(line: str) -> InternalCell:
+    def read_and_build_cell(line: str) -> Cell:
         pattern = r"[\[\]\(\),% ]"
         tokens = re.split(pattern, line.strip())
         tokens = [token for token in tokens if token]
@@ -105,7 +101,7 @@ class AegisParser:
         killer = tokens[3]
         charging = tokens[4]
         has_survivors = tokens[5] == "True"
-        cell = InternalCell(x, y)
+        cell = Cell(x, y)
 
         cell.set_normal_cell()
         if fire[0] == "+":
@@ -119,7 +115,7 @@ class AegisParser:
 
         cell.has_survivors = has_survivors
 
-        if MOVE_COST_TOGGLE:
+        if is_feature_enabled("ENABLE_MOVE_COST"):
             cell.move_cost = int(tokens[6])
         return cell
 
@@ -153,7 +149,7 @@ class AegisParser:
                 file_name = AegisParser.file(tokens)
                 AegisParser.done(tokens)
                 return CONNECT_OK(
-                    AgentID(id, gid), energy_level, InternalLocation(x, y), file_name
+                    AgentID(id, gid), energy_level, Location(x, y), file_name
                 )
             elif string.startswith(Command.STR_DISCONNECT):
                 AegisParser.text(tokens, Command.STR_DISCONNECT)
@@ -347,7 +343,7 @@ class AegisParser:
                 y = AegisParser.integer(tokens)
                 AegisParser.close_round_bracket(tokens)
                 AegisParser.done(tokens)
-                return OBSERVE(InternalLocation(x, y))
+                return OBSERVE(Location(x, y))
             elif string.startswith(Command.STR_SAVE_SURV):
                 AegisParser.text(tokens, Command.STR_SAVE_SURV)
                 AegisParser.done(tokens)
@@ -571,9 +567,7 @@ class AegisParser:
         top_layer = AegisParser.object(tokens)
         AegisParser.close_round_bracket(tokens)
         AegisParser.close_round_bracket(tokens)
-        return CellInfo(
-            cell_type, InternalLocation(x, y), move_cost, agent_id_list, top_layer
-        )
+        return CellInfo(cell_type, Location(x, y), move_cost, agent_id_list, top_layer)
 
     @staticmethod
     def object(tokens: Iterator[str]) -> WorldObject | None:

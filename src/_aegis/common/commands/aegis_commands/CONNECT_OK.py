@@ -1,6 +1,6 @@
 from typing import override
 
-from _aegis.common import AgentID, InternalLocation
+from _aegis.common import AgentID, Location
 from _aegis.common.commands.aegis_command import AegisCommand
 
 
@@ -19,7 +19,7 @@ class CONNECT_OK(AegisCommand):
         self,
         new_agent_id: AgentID,
         energy_level: int,
-        location: InternalLocation,
+        location: Location,
         world_filename: str,
     ) -> None:
         """
@@ -33,7 +33,7 @@ class CONNECT_OK(AegisCommand):
         """
         self.new_agent_id: AgentID = new_agent_id
         self.energy_level: int = energy_level
-        self.location: InternalLocation = location
+        self.location: Location = location
         self.world_filename: str = world_filename
 
     @override

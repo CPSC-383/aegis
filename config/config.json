@@ -1,3 +1,4 @@
 {
-  "ENABLE_PREDICTIONS": false
+  "ENABLE_PREDICTIONS": false,
+  "ENABLE_MOVE_COST": true
 }

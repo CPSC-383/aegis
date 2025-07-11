@@ -12,14 +12,15 @@ from _aegis.common import (
     AgentIDList,
     Constants,
     Direction,
-    InternalLocation,
+    Location,
     Utility,
 )
 from _aegis.common.world.agent import Agent
-from _aegis.common.world.cell import InternalCell
+from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import CellInfo, SurroundInfo
 from _aegis.common.world.objects import Survivor, SurvivorGroup
-from _aegis.common.world.world import InternalWorld
+from _aegis.common.world.world import World
+from _aegis.aegis_config import is_feature_enabled
 from _aegis.parsers.aegis_world_file import AegisWorldFile
 from _aegis.parsers.helper.world_file_type import StackContent, WorldFileType
 from _aegis.parsers.world_file_parser import WorldFileParser
@@ -74,32 +75,27 @@ class WorldDict(TypedDict):
     number_of_survivors_saved_dead: int
 
 
-MOVE_COST_TOGGLE: bool = json.load(open("sys_files/aegis_config.json"))[
-    "Enable_Move_Cost"
-]
-
-
 class AegisWorld:
     def __init__(self) -> None:
         self._object_handlers: dict[str, ObjectHandler] = {}
         self.install_object_handler(RubbleHandler())
         self.install_object_handler(SurvivorGroupHandler())
         self.install_object_handler(SurvivorHandler())
-        self._agent_locations: dict[AgentID, InternalLocation] = {}
+        self._agent_locations: dict[AgentID, Location] = {}
         self._spawn_manager: SpawnManger = SpawnManger()
         self._low_survivor_level: int = 0
         self._mid_survivor_level: int = 0
         self._high_survivor_level: int = 0
         self._random_seed: int = 0
         self.round: int = 0
-        self._world: InternalWorld | None = None
+        self._world: World | None = None
         self._agents: list[Agent] = []
-        self._normal_cell_list: list[InternalCell] = []
-        self._fire_cells_list: list[InternalCell] = []
-        self._non_fire_cells_list: list[InternalCell] = []
+        self._normal_cell_list: list[Cell] = []
+        self._fire_cells_list: list[Cell] = []
+        self._non_fire_cells_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._survivor_groups_list: dict[int, SurvivorGroup] = {}
-        self._top_layer_removed_cell_list: list[InternalLocation] = []
+        self._top_layer_removed_cell_list: list[Location] = []
         self._fire_simulator: FireSimulator = FireSimulator(
             self._fire_cells_list, self._non_fire_cells_list, self._world
         )
@@ -149,7 +145,7 @@ class AegisWorld:
             self.round = 1
 
             # Create a world of known size
-            self._world = InternalWorld(
+            self._world = World(
                 width=aegis_world_file.width, height=aegis_world_file.height
             )
 
@@ -188,7 +184,7 @@ class AegisWorld:
             # Cells that are normal
             for x in range(self._world.width):
                 for y in range(self._world.height):
-                    cell = self._world.get_cell_at(InternalLocation(x, y))
+                    cell = self._world.get_cell_at(Location(x, y))
                     if cell is None:
                         continue
 
@@ -234,7 +230,7 @@ class AegisWorld:
                 _ = writer.write(f"Size: ( WIDTH {width} , HEIGHT {height} )\n")
                 for x in range(self._world.width):
                     for y in range(self._world.height):
-                        cell = self._world.get_cell_at(InternalLocation(x, y))
+                        cell = self._world.get_cell_at(Location(x, y))
                         if cell is None:
                             _ = writer.write(f"[({x},{y}),No Cell]\n")
                             continue
@@ -247,7 +243,7 @@ class AegisWorld:
                         killer = "+K" if cell.is_killer_cell() else "-K"
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
-                        if MOVE_COST_TOGGLE:
+                        if is_feature_enabled("ENABLE_MOVE_COST"):
                             _ = writer.write(
                                 f"[({x},{y}),({fire},{killer},{charging}),{has_survivors},{cell.move_cost}]\n"
                             )
@@ -325,7 +321,7 @@ class AegisWorld:
 
         if cell is None:
             if len(self._normal_cell_list) == 0:
-                cell = self._world.get_cell_at(InternalLocation(0, 0))
+                cell = self._world.get_cell_at(Location(0, 0))
             else:
                 cell = random.choice(self._normal_cell_list)
 
@@ -360,7 +356,7 @@ class AegisWorld:
                 return agent
         return None
 
-    def move_agent(self, agent_id: AgentID, location: InternalLocation) -> None:
+    def move_agent(self, agent_id: AgentID, location: Location) -> None:
         agent = self.get_agent(agent_id)
         if agent is None or self._world is None:
             return
@@ -385,7 +381,7 @@ class AegisWorld:
             agent_cell.agent_id_list.remove(agent.agent_id)
             self._number_of_alive_agents -= 1
 
-    def remove_layer_from_cell(self, location: InternalLocation) -> None:
+    def remove_layer_from_cell(self, location: Location) -> None:
         if self._world is None:
             return
 
@@ -415,12 +411,12 @@ class AegisWorld:
                     survivor_group.number_of_survivors
                 )
 
-    def get_cell_at(self, location: InternalLocation) -> InternalCell | None:
+    def get_cell_at(self, location: Location) -> Cell | None:
         if self._world is not None:
             return self._world.get_cell_at(location)
         return None
 
-    def get_surround_info(self, location: InternalLocation) -> SurroundInfo | None:
+    def get_surround_info(self, location: Location) -> SurroundInfo | None:
         surround_info = SurroundInfo()
         if self._world is None:
             return
@@ -446,7 +442,7 @@ class AegisWorld:
 
     def _get_json_world(self, filename: str) -> WorldFileType:
         with open(filename, "r") as file:
-            world: WorldFileType = json.load(file)
+            world = cast(WorldFileType, json.load(file))
         return world
 
     def convert_to_json(self) -> WorldDict:
@@ -468,7 +464,7 @@ class AegisWorld:
 
         for x in range(self._world.width):
             for y in range(self._world.height):
-                cell = self._world.get_cell_at(InternalLocation(x, y))
+                cell = self._world.get_cell_at(Location(x, y))
                 if cell is None:
                     continue
 

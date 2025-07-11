@@ -21,6 +21,7 @@ dependencies = [
 
 [package.optional-dependencies]
 comp = [
+    { name = "numpy" },
     { name = "tensorflow" },
 ]
 
@@ -32,6 +33,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "numpy", marker = "extra == 'comp'", specifier = ">=1.26.4" },
     { name = "tensorflow", marker = "extra == 'comp'", specifier = ">=2.18.1" },
     { name = "websocket-server", specifier = "==0.6.4" },
 ]

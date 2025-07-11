@@ -1,13 +1,15 @@
 import argparse
 import base64
-from dataclasses import dataclass
 import gzip
 import json
 import sys
 import time
+from dataclasses import dataclass
 from datetime import datetime
 
-from mas.agent_handler import AgentHandler
+from _aegis.aegis_config import is_feature_enabled
+from _aegis.mas.agent_handler import AgentHandler
+
 from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
 from _aegis.agent_predictions.prediction_handler import PredictionHandler
 from _aegis.assist.config_settings import ConfigSettings
@@ -49,10 +51,9 @@ from _aegis.common.commands.agent_commands import (
     TEAM_DIG,
 )
 from _aegis.common.network.aegis_socket_exception import AegisSocketException
-from _aegis.common.world.cell import InternalCell
+from _aegis.common.world.cell import Cell
 from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.common.world.objects import Rubble, Survivor, SurvivorGroup, WorldObject
-from _aegis.parsers.config_parser import ConfigParser
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
@@ -173,22 +174,24 @@ class Aegis:
             )
             return False
 
+        # FIX: Config settings parser thing
         try:
-            config_settings = ConfigParser.parse_config_file(
-                "sys_files/aegis_config.json"
-            )
-            if config_settings is None:
-                print(
-                    'aegis  : Unable to parse config file from "sys_files/aegis_config.json"',
-                    file=sys.stderr,
-                )
-                return False
+            pass
+            # config_settings = ConfigParser.parse_config_file(
+            #     "sys_files/aegis_config.json"
+            # )
+            # if config_settings is None:
+            #     print(
+            #         'aegis  : Unable to parse config file from "sys_files/aegis_config.json"',
+            #         file=sys.stderr,
+            #     )
+            #     return False
 
-            self._parameters.config_settings = config_settings
-            self._agent_handler.send_messages_to_all_groups = (
-                self._parameters.config_settings.send_messages_to_all_groups
-            )
-            if self._parameters.config_settings.predictions_enabled:
+            # self._parameters.config_settings = config_settings
+            # self._agent_handler.send_messages_to_all_groups = (
+            #     self._parameters.config_settings.send_messages_to_all_groups
+            # )
+            if is_feature_enabled("ENABLE_PREDICTIONS"):
                 self._prediction_handler = PredictionHandler()
         except Exception:
             print(
@@ -886,7 +889,7 @@ class Aegis:
     def _handle_top_layer(
         self,
         top_layer: WorldObject,
-        cell: InternalCell,
+        cell: Cell,
         temp_cell_agent_list: list[AgentID],
         gid_counter: list[int],
     ) -> None:

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from typing import override
+
 from _aegis.common.direction import Direction
 
 
-class InternalLocation:
+class Location:
     """
     Represents a location in the world.
 
@@ -35,8 +36,8 @@ class InternalLocation:
     def proc_string(self) -> str:
         return f"( {self.x}, {self.y} )"
 
-    def clone(self) -> InternalLocation:
-        return InternalLocation(self.x, self.y)
+    def clone(self) -> Location:
+        return Location(self.x, self.y)
 
     @override
     def __hash__(self) -> int:
@@ -45,7 +46,7 @@ class InternalLocation:
         hash = 89 * hash + self.y
         return hash
 
-    def add(self, direction: Direction) -> InternalLocation:
+    def add(self, direction: Direction) -> Location:
         """
         Adds the given direction to the current location.
 
@@ -55,9 +56,9 @@ class InternalLocation:
         Returns:
             A new Location object one unit away in the given direction.
         """
-        return InternalLocation(self.x + direction.dx, self.y + direction.dy)
+        return Location(self.x + direction.dx, self.y + direction.dy)
 
-    def direction_to(self, location: InternalLocation) -> Direction:
+    def direction_to(self, location: Location) -> Direction:
         """
         Returns the direction from the this location to the target location.
 
@@ -91,7 +92,7 @@ class InternalLocation:
 
         return Direction.CENTER
 
-    def distance_to(self, location: InternalLocation) -> int:
+    def distance_to(self, location: Location) -> int:
         """
         Calculates the squared distance between the current location
         and the given location.
@@ -108,18 +109,18 @@ class InternalLocation:
 
     @override
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, InternalLocation):
+        if isinstance(other, Location):
             return self.x == other.x and self.y == other.y
         return False
 
     @override
     def __ne__(self, other: object) -> bool:
-        if isinstance(other, InternalLocation):
+        if isinstance(other, Location):
             return not self.__eq__(other)
         return False
 
     def __lt__(self, other: object) -> bool:
-        if isinstance(other, InternalLocation):
+        if isinstance(other, Location):
             if self.x < other.x:
                 return True
             elif self.x == other.x:
@@ -127,7 +128,7 @@ class InternalLocation:
         return False
 
     def __gt__(self, other: object) -> bool:
-        if isinstance(other, InternalLocation):
+        if isinstance(other, Location):
             if self.x > other.x:
                 return True
             elif self.x == other.x:
@@ -135,11 +136,11 @@ class InternalLocation:
         return False
 
     def __le__(self, other: object) -> bool:
-        if isinstance(other, InternalLocation):
+        if isinstance(other, Location):
             return self.__lt__(other) or self.__eq__(other)
         return False
 
     def __ge__(self, other: object) -> bool:
-        if isinstance(other, InternalLocation):
+        if isinstance(other, Location):
             return self.__gt__(other) or self.__eq__(other)
         return False

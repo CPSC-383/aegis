@@ -1,6 +1,6 @@
 from typing import override
 
-from _aegis.common import InternalLocation
+from _aegis.common import Location
 from _aegis.common.commands.agent_command import AgentCommand
 
 
@@ -12,14 +12,14 @@ class OBSERVE(AgentCommand):
         location (Location): The location to observe.
     """
 
-    def __init__(self, location: InternalLocation) -> None:
+    def __init__(self, location: Location) -> None:
         """
         Initializes a OBSERVE instance.
 
         Args:
             location: The location to observe.
         """
-        self.location: InternalLocation = location
+        self.location: Location = location
 
     @override
     def __str__(self) -> str:

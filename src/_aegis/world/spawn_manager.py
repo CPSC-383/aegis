@@ -1,7 +1,7 @@
-from enum import Enum
 import random
+from enum import Enum
 
-from _aegis.common.location import InternalLocation
+from _aegis.common.location import Location
 
 
 class SpawnZoneType(Enum):
@@ -12,11 +12,11 @@ class SpawnZoneType(Enum):
 class SpawnZone:
     def __init__(
         self,
-        location: InternalLocation,
+        location: Location,
         zone_type: SpawnZoneType,
         allowed_group: int | None = None,
     ) -> None:
-        self.location: InternalLocation = location
+        self.location: Location = location
         self.zone_type: SpawnZoneType = zone_type
         self.allowed_group: int | None = allowed_group
         self.spawned: bool = False
@@ -42,7 +42,7 @@ class SpawnManger:
 
         self.spawn_locations.append(spawn)
 
-    def get_spawn_location(self, group_id: int | None) -> InternalLocation:
+    def get_spawn_location(self, group_id: int | None) -> Location:
         # Prio group zones first
 
         group_spawns = [

@@ -1,5 +1,5 @@
 from _aegis.common.utility import Utility
-from _aegis.common.world.objects import SurvivorGroup, Survivor
+from _aegis.common.world.objects import Survivor, SurvivorGroup
 
 
 class SurvivorSimulator:

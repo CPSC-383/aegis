@@ -1,5 +1,6 @@
 from typing import override
 
+
 class Param:
     INT_PARAM = 0
     FLOAT_PARAM = 1
@@ -26,5 +27,5 @@ class Param:
             return self.string_param
 
     @staticmethod
-    def param_list_to_string(param_list: list['Param']) -> str:
+    def param_list_to_string(param_list: list["Param"]) -> str:
         return "( " + " , ".join(str(param) for param in param_list) + " )"

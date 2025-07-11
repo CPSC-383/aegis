@@ -1,6 +1,6 @@
 from typing import override
 
-from _aegis.common import AgentIDList, CellType, InternalLocation
+from _aegis.common import AgentIDList, CellType, Location
 from _aegis.common.world.objects import WorldObject
 
 
@@ -10,7 +10,7 @@ class CellInfo:
 
     Attributes:
         cell_type (CellType): The type of the cell.
-        location (InternalLocation): The location of the cell in the world.
+        location (Location): The location of the cell in the world.
         move_cost (int): The cost to move through the cell.
         agent_id_list (AgentIDList): A list of agent IDs on the cell.
         top_layer (WorldObject | None): Information about the top layer object.
@@ -19,7 +19,7 @@ class CellInfo:
     def __init__(
         self,
         cell_type: CellType = CellType.NO_CELL,
-        location: InternalLocation | None = None,
+        location: Location | None = None,
         move_cost: int = 0,
         agent_id_list: AgentIDList | None = None,
         top_layer: WorldObject | None = None,
@@ -35,9 +35,7 @@ class CellInfo:
             top_layer: Information about the top layer object.
         """
         self.cell_type: CellType = cell_type
-        self.location: InternalLocation = (
-            location if location is not None else InternalLocation(-1, -1)
-        )
+        self.location: Location = location if location is not None else Location(-1, -1)
         self.move_cost: int = move_cost
         self.agent_id_list: AgentIDList = (
             agent_id_list if agent_id_list is not None else AgentIDList()
