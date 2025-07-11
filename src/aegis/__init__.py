@@ -37,3 +37,5 @@ __all__ = [
     "World",
     "main",
 ]
+
+__version__ = "2.0.0"

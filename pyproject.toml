@@ -4,13 +4,16 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aegis"
-version = "0.1.0"
 description = "Survivor Simulation for CPSC383"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "websocket-server==0.6.4",
 ]
+dynamic = ["version"]
+
+[tool.hatch.version]
+path = "src/aegis/__init__.py"
 
 [project.scripts]
 aegis = "aegis:main"
