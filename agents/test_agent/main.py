@@ -1,10 +1,18 @@
-from aegis import MOVE, SAVE_SURV, AgentCommand, Direction, Survivor, TestAgent
+from aegis import (
+    MOVE,
+    SAVE_SURV,
+    TEAM_DIG,
+    AgentCommand,
+    Direction,
+    Survivor,
+    Agent,
+)
 
 
 class SocketAgent:
-    def __init__(self, agent: TestAgent) -> None:
+    def __init__(self, agent: Agent) -> None:
         super().__init__()
-        self._agent: TestAgent = agent
+        self._agent: Agent = agent
 
     def think(self) -> None:
         self._agent.log("Thinking")
@@ -32,7 +40,7 @@ class SocketAgent:
         # If a survivor is present, save it and end the turn.
         top_layer = cell.get_top_layer()
         if isinstance(top_layer, Survivor):
-            self.send_and_end_turn(SAVE_SURV())
+            self.send_and_end_turn(TEAM_DIG())
             return
 
         # Default action: Move the agent north if no other specific conditions are met.
@@ -45,5 +53,5 @@ class SocketAgent:
         self._agent.end_turn()
 
 
-def main(agent: TestAgent) -> SocketAgent:
+def main(agent: Agent) -> SocketAgent:
     return SocketAgent(agent)

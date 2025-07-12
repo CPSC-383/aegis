@@ -20,9 +20,7 @@ from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     CMD_RESULT_END,
     CMD_RESULT_START,
-    CONNECT_OK,
     DEATH_CARD,
-    DISCONNECT,
     MESSAGES_END,
     MESSAGES_START,
     MOVE_RESULT,
@@ -119,38 +117,7 @@ class AegisParser:
         try:
             string = string.strip()
             tokens = iter(string.split())
-            if string.startswith(Command.STR_CONNECT_OK):
-                AegisParser.text(tokens, Command.STR_CONNECT_OK)
-                AegisParser.open_round_bracket(tokens)
-                AegisParser.text(tokens, "ID")
-                id = AegisParser.integer(tokens)
-                AegisParser.comma(tokens)
-                AegisParser.text(tokens, "GID")
-                gid = AegisParser.integer(tokens)
-                AegisParser.comma(tokens)
-                AegisParser.text(tokens, "ENG_LEV")
-                energy_level = AegisParser.integer(tokens)
-                AegisParser.comma(tokens)
-                AegisParser.text(tokens, "LOC")
-                AegisParser.open_round_bracket(tokens)
-                AegisParser.text(tokens, "X")
-                x = AegisParser.integer(tokens)
-                AegisParser.comma(tokens)
-                AegisParser.text(tokens, "Y")
-                y = AegisParser.integer(tokens)
-                AegisParser.close_round_bracket(tokens)
-                AegisParser.comma(tokens)
-                AegisParser.text(tokens, "FILE")
-                file_name = AegisParser.file(tokens)
-                AegisParser.done(tokens)
-                return CONNECT_OK(
-                    AgentID(id, gid), energy_level, Location(x, y), file_name
-                )
-            elif string.startswith(Command.STR_DISCONNECT):
-                AegisParser.text(tokens, Command.STR_DISCONNECT)
-                AegisParser.done(tokens)
-                return DISCONNECT()
-            elif string.startswith(Command.STR_UNKNOWN):
+            if string.startswith(Command.STR_UNKNOWN):
                 AegisParser.text(tokens, Command.STR_UNKNOWN)
                 AegisParser.done(tokens)
                 return AEGIS_UNKNOWN()

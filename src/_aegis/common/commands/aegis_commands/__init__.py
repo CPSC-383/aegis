@@ -2,9 +2,7 @@ __all__ = [
     "AEGIS_UNKNOWN",
     "CMD_RESULT_END",
     "CMD_RESULT_START",
-    "CONNECT_OK",
     "DEATH_CARD",
-    "DISCONNECT",
     "SEND_MESSAGE_RESULT",
     "MESSAGES_END",
     "MESSAGES_START",
@@ -21,9 +19,7 @@ __all__ = [
 from _aegis.common.commands.aegis_commands.AEGIS_UNKNOWN import AEGIS_UNKNOWN
 from _aegis.common.commands.aegis_commands.CMD_RESULT_END import CMD_RESULT_END
 from _aegis.common.commands.aegis_commands.CMD_RESULT_START import CMD_RESULT_START
-from _aegis.common.commands.aegis_commands.CONNECT_OK import CONNECT_OK
 from _aegis.common.commands.aegis_commands.DEATH_CARD import DEATH_CARD
-from _aegis.common.commands.aegis_commands.DISCONNECT import DISCONNECT
 from _aegis.common.commands.aegis_commands.MESSAGES_END import MESSAGES_END
 from _aegis.common.commands.aegis_commands.MESSAGES_START import MESSAGES_START
 from _aegis.common.commands.aegis_commands.MOVE_RESULT import MOVE_RESULT

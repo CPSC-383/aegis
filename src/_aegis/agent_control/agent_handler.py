@@ -75,47 +75,6 @@ class AgentHandler:
 
         return agent_id
 
-    # def connect_to_agent(self, timeout: int) -> AgentID | None:
-    #     if self.server_socket is None:
-    #         return None
-    #     server_socket = self.server_socket
-    #     try:
-    #         server_socket.settimeout(timeout)
-    #         agent_socket = AgentSocket()
-    #         agent_socket.connect(server_socket)
-    #         message = agent_socket.read_message(timeout=timeout)
-    #
-    #         if message is None:
-    #             agent_socket.disconnect()
-    #             return None
-    #
-    #         command = AegisParser.parse_agent_command(message)
-    #         if not isinstance(command, CONNECT):
-    #             agent_socket.disconnect()
-    #             return None
-    #
-    #         agent_connect = command
-    #         group = self.get_group(agent_connect.group_name)
-    #         if group is None:
-    #             gid = self.add_group(agent_connect.group_name).GID
-    #         else:
-    #             gid = group.GID
-    #
-    #         group = self.get_group(agent_connect.group_name)
-    #         if group is None:
-    #             return None
-    #
-    #         id = group.id_counter
-    #         agent_control = AgentControl(AgentID(id, group.GID))
-    #         group.id_counter += 1
-    #
-    #         agent_control.agent_socket = agent_socket
-    #         group.agent_list.append(agent_control)
-    #         self.agent_list.append(agent_control)
-    #         return AgentID(id, gid)
-    #     except AgentSocketException | AegisParserException | AgentCrashedException:
-    #         return None
-
     def add_group(self, group_name: str) -> AgentGroup:
         group = AgentGroup(self.GID_counter, group_name)
         self.GID_counter += 1

@@ -5,54 +5,37 @@ import json
 import sys
 import time
 from dataclasses import dataclass
-from datetime import datetime
 
 from _aegis.aegis_config import is_feature_enabled
-from _aegis.agent.agent_states import AgentStates
+from _aegis.assist.agent_states import AgentStates
 from _aegis.command_processor import CommandProcessor
-from _aegis.common.world.world import World
-from _aegis.parsers.aegis_parser import AegisParser
-from _aegis.test_agent import TestAgent
+from _aegis.common.agent_id import AgentID
+from _aegis.agent import Agent
 from _aegis.agent_control.agent_handler import AgentHandler
 
 from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
 from _aegis.agent_predictions.prediction_handler import PredictionHandler
-from _aegis.assist.config_settings import ConfigSettings
 from _aegis.assist.parameters import Parameters
-from _aegis.assist.replay_file_writer import ReplayFileWriter
 from _aegis.assist.state import State
 from _aegis.common import (
-    AgentID,
     AgentIDList,
     Constants,
-    Direction,
     LifeSignals,
-    Utility,
 )
 from _aegis.common.commands.aegis_commands import (
-    DEATH_CARD,
-    DISCONNECT,
-    MOVE_RESULT,
     OBSERVE_RESULT,
     PREDICT_RESULT,
-    SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     SLEEP_RESULT,
-    TEAM_DIG_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
-    MOVE,
     OBSERVE,
     PREDICT,
-    SAVE_SURV,
     SEND_MESSAGE,
     SLEEP,
-    TEAM_DIG,
 )
-from _aegis.common.world.cell import Cell
 from _aegis.common.world.info.cell_info import CellInfo
-from _aegis.common.world.objects import Rubble, Survivor, WorldObject
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
@@ -75,23 +58,15 @@ class Aegis:
         self._state: State = State.NONE
         self._started_idling: int = -1
         self._end: bool = False
-        self._agents: list[TestAgent] = []
+        self._agents: list[Agent] = []
         self._agent_handler: AgentHandler = AgentHandler()
         self._agent_commands: list[AgentCommand] = []
-        self._command_records: list[str] = []
-        self._TEAM_DIG_list: list[TEAM_DIG] = []
-        self._SAVE_SURV_list: list[SAVE_SURV] = []
         self._PREDICT_list: list[PREDICT] = []
-        self._MOVE_list: list[MOVE] = []
         self._SLEEP_list: list[SLEEP] = []
         self._OBSERVE_list: list[OBSERVE] = []
-        self._TEAM_DIG_RESULT_list: AgentIDList = AgentIDList()
-        self._SAVE_SURV_RESULT_list: AgentIDList = AgentIDList()
-        self._MOVE_RESULT_list: AgentIDList = AgentIDList()
         self._SLEEP_RESULT_list: AgentIDList = AgentIDList()
         self._PREDICT_RESULT_list: AgentIDList = AgentIDList()
         self._OBSERVE_RESULT_list: list[OBSERVE] = []
-        self._crashed_agents: AgentIDList = AgentIDList()
         self._aegis_world: AegisWorld = AegisWorld()
         self._ws_server: WebSocketServer = WebSocketServer()
         self._prediction_handler: PredictionHandler | None = None
@@ -113,13 +88,6 @@ class Aegis:
             type=int,
             default=1,
             help="Number of agent instances to run",
-        )
-        _ = parser.add_argument(
-            "--replay-file",
-            dest="replay_file",
-            type=str,
-            default="replay.txt",
-            help="Set the name of the file to save the protocol file to (default: replay.txt)",
         )
         _ = parser.add_argument(
             "--world-file",
@@ -160,8 +128,6 @@ class Aegis:
 
             if args.agent_amount > 0:
                 self._parameters.number_of_agents = args.agent_amount
-            if args.replay_file:
-                self._parameters.replay_filename = args.replay_file
             if args.world_file:
                 self._parameters.world_filename = args.world_file
             if args.rounds > 0:
@@ -178,52 +144,8 @@ class Aegis:
             return False
 
     def start_up(self) -> bool:
-        # try:
-        #     self._agent_handler.set_agent_handler_port(Constants.AGENT_PORT)
-        #     if not ReplayFileWriter.open_replay_file(
-        #         self._parameters.replay_filename, self._parameters.world_filename
-        #     ):
-        #         print(
-        #             f"Aegis  : Could not open protocol file: {self._parameters.replay_filename}",
-        #             file=sys.stderr,
-        #         )
-        #         return False
-        #     print(f"Aegis  : Protocol file is: {self._parameters.replay_filename}")
-        # except AegisSocketException:
-        #     print("Aegis  : Could not open agent port.", file=sys.stderr)
-        #     return False
-        # except Exception:
-        #     print(
-        #         f"Aegis  : Could not open protocol file: {self._parameters.replay_filename}",
-        #         file=sys.stderr,
-        #     )
-        #     return False
-
-        try:
-            pass
-            # config_settings = ConfigParser.parse_config_file(
-            #     "sys_files/aegis_config.json"
-            # )
-            # if config_settings is None:
-            #     print(
-            #         'aegis  : Unable to parse config file from "sys_files/aegis_config.json"',
-            #         file=sys.stderr,
-            #     )
-            #     return False
-
-            # self._parameters.config_settings = config_settings
-            # self._agent_handler.send_messages_to_all_groups = (
-            #     self._parameters.config_settings.send_messages_to_all_groups
-            # )
-            if is_feature_enabled("ENABLE_PREDICTIONS"):
-                self._prediction_handler = PredictionHandler()
-        except Exception:
-            print(
-                'Aegis  : Unable to parse config file from "sys_files/aegis_config.json"',
-                file=sys.stderr,
-            )
-            return False
-
+        if is_feature_enabled("ENABLE_PREDICTIONS"):
+            self._prediction_handler = PredictionHandler()
         try:
             _aegis_world_file = WorldFileParser.parse_world_file(
                 self._parameters.world_filename
@@ -253,35 +175,16 @@ class Aegis:
     def shutdown(self) -> None:
         try:
             self._agent_handler.print_group_survivor_saves()
-            self._agent_handler.send_message_to_all(DISCONNECT())
             self._agent_handler.shutdown()
-
-            ReplayFileWriter.write_string(
-                f"MSG;System Run ended on: {datetime.now()}\n"
-            )
-            ReplayFileWriter.write_string("MSG;Kernel Shutting Down;\n")
-            ReplayFileWriter.close_replay_file()
         except AgentCrashedException:
             pass
 
     def start_agents(self) -> None:
         for _ in range(self._parameters.number_of_agents):
-            agent = TestAgent()
             agent_id = self._agent_handler.agent_info(self._parameters.group_name)
-            self._aegis_world.add_agent_by_id(agent_id)
-            agent_world = self._aegis_world.get_agent(agent_id)
-            if agent_world is None:
-                raise Exception("Error getting agent from world")
-            agent.set_agent_id(agent_id)
-            agent.set_energy_level(agent_world.get_energy_level())
-            agent.set_location(agent_world.location)
-            agent.set_world(
-                World(
-                    AegisParser.build_world(
-                        self._aegis_world.get_agent_world_filename()
-                    )
-                )
-            )
+            agent = self._aegis_world.add_agent_by_id(agent_id)
+            if agent is None:
+                raise Exception("Agent should not be of `none` type during creating")
             agent.set_agent_state(AgentStates.CONNECTED)
             agent.load_agent(self._parameters.agent)
             self._agents.append(agent)
@@ -325,16 +228,9 @@ class Aegis:
 
         if len(self._agents) == 0:
             print("Aegis  : No Agents Connected to Aegis!")
-            ReplayFileWriter.write_string("MSG;No Agents Connected to the Kernel;\n")
             self._end_simulation()
             return
 
-        ReplayFileWriter.write_string(
-            f"#\nWorld File Used : {self._parameters.world_filename};\n"
-        )
-        ReplayFileWriter.write_string(
-            f"Simulation Start: Number of Rounds {self._parameters.number_of_rounds};\n"
-        )
         print(f"Running for {self._parameters.number_of_rounds} rounds\n")
         print("================================================")
         _ = sys.stdout.flush()
@@ -362,7 +258,6 @@ class Aegis:
 
             if len(self._agents) == 0:
                 print("Aegis  : All Agents are Dead !!!")
-                ReplayFileWriter.write_string("MSG;All Agents are Dead !!;\n")
                 self._end_simulation()
                 return
 
@@ -371,33 +266,13 @@ class Aegis:
 
             if survivors_saved == total_survivors:
                 print("Aegis  : All Survivors Saved")
-                ReplayFileWriter.write_string("MSG;All Survivors Saved !!;\n")
                 self._end_simulation()
                 return
 
-            ReplayFileWriter.write_string(f"RS;{round};\n")
-            # self._run_agent_round()
             self._command_processor.run_turn()
 
-            # ======================================================
-
-            # agent_commands_message = "Agent_Cmds;{"
-            # if len(self._command_records) == 0:
-            #     agent_commands_message += "None"
-            # else:
-            #     agent_commands_message += "$".join(
-            #         f"[{record}]" for record in self._command_records
-            #     )
-            # self._command_records.clear()
-            # agent_commands_message += "}\n"
-            # ReplayFileWriter.write_string(agent_commands_message)
-
-            # self._process_commands()
-            # self._create_results()
-            # self._run_simulators()
-            # self._grim_reaper()
-            # self._agent_handler.empty_forward_messages()
-            # ReplayFileWriter.write_string("RE;\n")
+            # self._aegis_world.run_simulators()
+            self._grim_reaper()
             after_json_world = self.get_aegis_world().convert_to_json()
 
             round_data = {
@@ -409,107 +284,11 @@ class Aegis:
             event = json.dumps(round_data).encode()
             self._compress_and_send(event)
 
-        ReplayFileWriter.write_string("Simulation_Over;\n")
         self._end_simulation()
 
-    # def _run_agent_round(self) -> None:
-    #     self._agent_handler.reset_current_agent()
-    #     num_of_agents = self._agent_handler.get_number_of_agents()
-    #
-    #     for _ in range(num_of_agents):
-    #         try:
-    #             self._agent_handler.send_forward_messages_to_current()
-    #             self._agent_handler.send_result_of_command_to_current()
-    #             self._agent_handler.send_message_to_current(ROUND_START())
-    #
-    #             command = self._get_agent_command_of_current()
-    #             if command is not None:
-    #                 self._agent_commands.append(command)
-    #             else:
-    #                 if self._parameters.config_settings is not None:
-    #                     current_agent = self._agent_handler.get_current_agent()
-    #                     if (
-    #                         self._parameters.config_settings.handling_messages
-    #                         == ConfigSettings.SEND_MESSAGES_AND_PERFORM_ACTION
-    #                     ):
-    #                         print(
-    #                             f"Agent {current_agent.agent_id} sent no action (non-send) command this round.",
-    #                             file=sys.stderr,
-    #                         )
-    #                     else:
-    #                         print(
-    #                             f"Agent {current_agent.agent_id} sent no command this round.",
-    #                             file=sys.stderr,
-    #                         )
-    #
-    #             self._agent_handler.send_message_to_current(ROUND_END())
-    #             self._agent_handler.move_to_next_agent()
-    #         except AgentCrashedException:
-    #             crashed_agent_id = self._agent_handler.get_current_agent().agent_id
-    #             self._crashed_agents.add(crashed_agent_id)
-    #         _ = sys.stdout.flush()
-
-    # def _get_agent_command_of_current(self) -> AgentCommand | None:
-    #     timeout: int = self._parameters.milliseconds_to_wait_for_agent_command
-    #     initial_time_ms: int = time.time_ns() // 1_000_000
-    #     last_command: AgentCommand | None = None
-    #
-    #     while True:
-    #         elapsed_time_ms: int = time.time_ns() // 1_000_000 - initial_time_ms
-    #         if elapsed_time_ms > timeout:
-    #             break
-    #
-    #         remaining_time_ms: int = max(0, timeout - elapsed_time_ms)
-    #         if remaining_time_ms == 0:
-    #             break
-    #
-    #         try:
-    #             temp_command = self._agent_handler.get_agent_command_of_current(
-    #                 remaining_time_ms
-    #             )
-    #         except AgentCrashedException:
-    #             crashed_agent_id = self._agent_handler.get_current_agent().agent_id
-    #             self._crashed_agents.add(crashed_agent_id)
-    #             print(f"Agent {crashed_agent_id} has crashed.")
-    #             return None
-    #
-    #         if temp_command is None:
-    #             continue
-    #
-    #         if isinstance(temp_command, END_TURN) or isinstance(
-    #             temp_command, AGENT_UNKNOWN
-    #         ):
-    #             break
-    #
-    #         if isinstance(temp_command, SEND_MESSAGE):
-    #             if self._parameters.config_settings is not None:
-    #                 if (
-    #                     self._parameters.config_settings.handling_messages
-    #                     == ConfigSettings.SEND_MESSAGES_AND_PERFORM_ACTION
-    #                 ):
-    #                     self._handle_agent_command(temp_command)
-    #                 else:
-    #                     last_command = temp_command
-    #         else:
-    #             last_command = temp_command
-    #
-    #     return last_command
-
     def _process_command(self, command: AgentCommand) -> None:
-        self._command_records.append(command.proc_string())
-
-        agent = self._aegis_world.get_agent(command.get_agent_id())
-        if agent is not None:
-            agent.command_sent = str(command)
-
-        if isinstance(command, TEAM_DIG):
-            self._TEAM_DIG_list.append(command)
-        elif isinstance(command, SAVE_SURV):
-            self._SAVE_SURV_list.append(command)
-        elif isinstance(command, PREDICT):
+        if isinstance(command, PREDICT):
             self._PREDICT_list.append(command)
-        elif isinstance(command, MOVE):
-            self._MOVE_list.append(command)
         elif isinstance(command, SLEEP):
             self._SLEEP_list.append(command)
         elif isinstance(command, OBSERVE):
@@ -533,117 +312,13 @@ class Aegis:
                 self._agent_handler.forward_message(send_message_result)
 
     def _process_commands(self) -> None:
-        self._process_TEAM_DIG()
-        # self._process_SAVE_SURV()
-
         if (
             self._parameters.config_settings is not None
             and self._parameters.config_settings.predictions_enabled
         ):
             self._process_PREDICT()
-        self._process_MOVE()
         self._process_SLEEP()
         self._process_OBSERVE()
-
-    def _process_TEAM_DIG(self) -> None:
-        temp_agent_list: AgentIDList = AgentIDList()
-        for team_dig in self._TEAM_DIG_list:
-            temp_agent_list.add(team_dig.get_agent_id())
-        self._TEAM_DIG_list.clear()
-
-        temp_cell_agent_list = AgentIDList()
-        while temp_agent_list.size() > 0:
-            temp_cell_agent_list.clear()
-            agent_id = temp_agent_list.remove_at(0)
-            temp_cell_agent_list.add(agent_id)
-
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is None:
-                continue
-
-            cell = self._aegis_world.get_cell_at(agent.location)
-
-            if cell is None:
-                continue
-
-            for cell_agent in cell.agent_id_list:
-                if cell_agent in temp_agent_list:
-                    temp_cell_agent_list.add(cell_agent)
-                    temp_agent_list.remove(cell_agent)
-
-            top_layer = cell.get_top_layer()
-            if top_layer is None:
-                self._remove_energy_from_agents(
-                    temp_cell_agent_list, self._parameters.TEAM_DIG_ENERGY_COST
-                )
-                continue
-
-            if isinstance(top_layer, Rubble):
-                if top_layer.remove_agents <= temp_cell_agent_list.size():
-                    self._aegis_world.remove_layer_from_cell(cell.location)
-                    self._remove_energy_from_agents(
-                        temp_cell_agent_list, top_layer.remove_energy
-                    )
-                else:
-                    self._remove_energy_from_agents(
-                        temp_cell_agent_list, self._parameters.TEAM_DIG_ENERGY_COST
-                    )
-
-        temp_agent_list.clear()
-
-    def _remove_energy_from_agents(
-        self, agent_list: AgentIDList, energy_cost: int
-    ) -> None:
-        for agent_id in agent_list:
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is not None:
-                agent.remove_energy(energy_cost)
-                self._TEAM_DIG_RESULT_list.add(agent_id)
-
-    # def _process_SAVE_SURV(self) -> None:
-    #     temp_agent_list = AgentIDList()
-    #     for save_surv in self._SAVE_SURV_list:
-    #         temp_agent_list.add(save_surv.get_agent_id())
-    #
-    #     self._SAVE_SURV_list.clear()
-    #     temp_cell_agent_list: list[AgentID] = []
-    #
-    #     while temp_agent_list.size() > 0:
-    #         temp_cell_agent_list.clear()
-    #         gid_counter: list[int] = [0] * 10
-    #
-    #         agent_id = temp_agent_list.remove_at(0)
-    #         temp_cell_agent_list.append(agent_id)
-    #         gid_counter[agent_id.gid] += 1
-    #
-    #         agent = self._aegis_world.get_agent(agent_id)
-    #         if agent is None:
-    #             continue
-    #
-    #         cell = self._aegis_world.get_cell_at(agent.location)
-    #
-    #         if cell is None:
-    #             continue
-    #
-    #         for cell_agent in cell.agent_id_list:
-    #             if cell_agent in temp_agent_list:
-    #                 temp_cell_agent_list.append(cell_agent)
-    #                 temp_agent_list.remove(cell_agent)
-    #                 gid_counter[cell_agent.gid] += 1
-    #
-    #         top_layer = cell.get_top_layer()
-    #         if top_layer is None:
-    #             for agent_on_cell in temp_cell_agent_list:
-    #                 agent = self._aegis_world.get_agent(agent_on_cell)
-    #                 if agent is not None:
-    #                     agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
-    #                     self._SAVE_SURV_RESULT_list.add(agent_on_cell)
-    #         else:
-    #             self._handle_top_layer(
-    #                 top_layer, cell, temp_cell_agent_list, gid_counter
-    #             )
-    #
-    #     temp_agent_list.clear()
 
     def _process_PREDICT(self) -> None:
         for prediction in self._PREDICT_list:
@@ -654,54 +329,35 @@ class Aegis:
             if self._prediction_handler is not None:
                 # does aegis recognize a saved surv with no prediction for this agents group?
                 if self._prediction_handler.is_group_in_no_pred_yet(
-                    agent.agent_id.gid, prediction.surv_id
+                    agent.get_agent_id().gid, prediction.surv_id
                 ):
                     # was this agent a part of the saving?
                     if self._prediction_handler.is_agent_in_saving_group(
-                        agent.agent_id, prediction.surv_id
+                        agent.get_agent_id(), prediction.surv_id
                     ):
                         # record prediction result! (group, surv id entry is removed from no_pred_yet in set_pred_res)
                         correct_prediction = (
                             self._prediction_handler.check_agent_prediction(
-                                agent.agent_id,
+                                agent.get_agent_id(),
                                 prediction.surv_id,
                                 prediction.label,
                             )
                         )
                         self._prediction_handler.set_prediction_result(
-                            agent.agent_id,
+                            agent.get_agent_id(),
                             prediction.surv_id,
                             correct_prediction,
                         )
 
                         self._agent_handler.increase_agent_group_predicted(
-                            agent.agent_id.gid,
+                            agent.get_agent_id().gid,
                             prediction.surv_id,
                             prediction.label,
                             correct_prediction,
                         )
 
-            self._PREDICT_RESULT_list.add(agent.agent_id)
+            self._PREDICT_RESULT_list.add(agent.get_agent_id())
         self._PREDICT_list.clear()
-
-    def _process_MOVE(self) -> None:
-        for move in self._MOVE_list:
-            agent = self._aegis_world.get_agent(move.get_agent_id())
-            if agent is None:
-                continue
-
-            dest_location = agent.location.add(move.direction)
-            dest_cell = self._aegis_world.get_cell_at(dest_location)
-
-            if move.direction != Direction.CENTER and dest_cell:
-                agent.remove_energy(dest_cell.move_cost)
-                self._aegis_world.move_agent(agent.agent_id, dest_location)
-                agent.orientation = move.direction
-                agent.add_step_taken()
-            else:
-                agent.remove_energy(self._parameters.MOVE_ENERGY_COST)
-            self._MOVE_RESULT_list.add(move.get_agent_id())
-        self._MOVE_list.clear()
 
     def _process_SLEEP(self) -> None:
         for sleep in self._SLEEP_list:
@@ -709,7 +365,7 @@ class Aegis:
             if agent is None:
                 continue
 
-            agent_cell = self._aegis_world.get_cell_at(agent.location)
+            agent_cell = self._aegis_world.get_cell_at(agent.get_location())
             config_settings = self._parameters.config_settings
 
             if (config_settings and config_settings.sleep_everywhere) or (
@@ -736,53 +392,6 @@ class Aegis:
         self._OBSERVE_list.clear()
 
     def _create_results(self) -> None:
-        for agent_id in self._TEAM_DIG_RESULT_list:
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is None:
-                continue
-
-            surround_info = self._aegis_world.get_surround_info(agent.location)
-            if surround_info is None:
-                continue
-
-            team_dig_result = TEAM_DIG_RESULT(agent.get_energy_level(), surround_info)
-            self._agent_handler.set_result_of_command(agent.agent_id, team_dig_result)
-        self._TEAM_DIG_RESULT_list.clear()
-
-        for agent_id in self._SAVE_SURV_RESULT_list:
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is None:
-                continue
-
-            surround_info = self._aegis_world.get_surround_info(agent.location)
-            if surround_info is None:
-                continue
-
-            if (
-                self._parameters.config_settings is not None
-                and self._parameters.config_settings.predictions_enabled
-                and self._prediction_handler is not None
-            ):
-                # gets pred_info if agent was responsible for saving a surv (will be None if they arent)
-                pred_info = self._prediction_handler.get_pred_info_for_agent(
-                    agent.agent_id
-                )
-                save_surv_result = SAVE_SURV_RESULT(
-                    agent.get_energy_level(), surround_info, pred_info
-                )
-                self._agent_handler.set_result_of_command(
-                    agent.agent_id, save_surv_result
-                )
-            else:
-                save_surv_result = SAVE_SURV_RESULT(
-                    agent.get_energy_level(), surround_info, None
-                )
-                self._agent_handler.set_result_of_command(
-                    agent.agent_id, save_surv_result
-                )
-
-        self._SAVE_SURV_RESULT_list.clear()
-
         if (
             self._parameters.config_settings is not None
             and self._parameters.config_settings.predictions_enabled
@@ -796,7 +405,7 @@ class Aegis:
                 # see if this agent (not group!) made a prediction and return its result
                 #    IMPORTANT    if they made a prediction, but another agent in their group beat them to it, they wont get a result for their prediction!!!
                 pred_res_info = self._prediction_handler.get_prediction_result(
-                    agent.agent_id
+                    agent.get_agent_id()
                 )
                 if pred_res_info is not None:
                     prediction_result = PREDICT_RESULT(
@@ -806,23 +415,10 @@ class Aegis:
                     prediction_result = PREDICT_RESULT(-1, False)
 
                 self._agent_handler.set_result_of_command(
-                    agent.agent_id, prediction_result
+                    agent.get_agent_id(), prediction_result
                 )
 
             self._PREDICT_RESULT_list.clear()
-
-        for agent_id in self._MOVE_RESULT_list:
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is None:
-                continue
-
-            surround_info = self._aegis_world.get_surround_info(agent.location)
-            if surround_info is None:
-                continue
-
-            move_result = MOVE_RESULT(agent.get_energy_level(), surround_info)
-            self._agent_handler.set_result_of_command(agent.agent_id, move_result)
-        self._MOVE_RESULT_list.clear()
 
         for agent_id in self._SLEEP_RESULT_list:
             agent = self._aegis_world.get_agent(agent_id)
@@ -830,7 +426,7 @@ class Aegis:
                 continue
 
             success = False
-            agent_cell = self._aegis_world.get_cell_at(agent.location)
+            agent_cell = self._aegis_world.get_cell_at(agent.get_location())
             config_settings = self._parameters.config_settings
 
             if (config_settings and config_settings.sleep_everywhere) or (
@@ -838,7 +434,9 @@ class Aegis:
             ):
                 success = True
             sleep_result = SLEEP_RESULT(success, agent.get_energy_level())
-            self._agent_handler.set_result_of_command(agent.agent_id, sleep_result)
+            self._agent_handler.set_result_of_command(
+                agent.get_agent_id(), sleep_result
+            )
         self._SLEEP_RESULT_list.clear()
 
         for observe in self._OBSERVE_RESULT_list:
@@ -857,32 +455,27 @@ class Aegis:
                 agent.get_energy_level(), cell_info, life_signals
             )
 
-            self._agent_handler.set_result_of_command(agent.agent_id, observe_result)
+            self._agent_handler.set_result_of_command(
+                agent.get_agent_id(), observe_result
+            )
         self._OBSERVE_RESULT_list.clear()
-
-    def _run_simulators(self) -> None:
-        ReplayFileWriter.write_string(self._aegis_world.run_simulators())
 
     def _grim_reaper(self) -> None:
         dead_agents = self._aegis_world.grim_reaper()
-        dead_agents.add_all(self._crashed_agents)
-        self._crashed_agents.clear()
 
-        dead_agents_message = "Dead_Agents; { "
-        if not dead_agents:
-            dead_agents_message += "NONE"
-        else:
-            for agent_id in dead_agents:
-                agent = self._aegis_world.get_agent(agent_id)
-                dead_agents_message += f"{agent_id.proc_string()},"
-                self._aegis_world.remove_agent(agent)
-                try:
-                    self._agent_handler.send_message_to(agent_id, DEATH_CARD())
-                    self._agent_handler.remove_agent(agent_id)
-                except AgentCrashedException:
-                    pass
-        dead_agents_message += " };\n"
-        ReplayFileWriter.write_string(dead_agents_message)
+        for agent_id in dead_agents:
+            agent = self._get_agent_by_id(agent_id)
+            if agent is None:
+                continue
+            world_agent = self._aegis_world.get_agent(agent_id)
+            self._aegis_world.remove_agent(world_agent)
+            self._agents.remove(agent)
+
+    def _get_agent_by_id(self, agent_id: AgentID) -> Agent | None:
+        for agent in self._agents:
+            if agent.get_agent_id() == agent_id:
+                return agent
+        return None
 
     def get_aegis_world(self) -> AegisWorld:
         return self._aegis_world

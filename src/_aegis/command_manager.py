@@ -6,6 +6,9 @@ class CommandManager:
         self._command: AgentCommand | None = None
         self._ended_turn: bool = False
 
+    def get_command_sent(self) -> AgentCommand | None:
+        return self._command
+
     def send(self, command: AgentCommand) -> None:
         if self._ended_turn:
             raise RuntimeError("Cannot send command after turn ended.")

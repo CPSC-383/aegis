@@ -6,6 +6,7 @@ from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     MOVE_RESULT,
     SAVE_SURV_RESULT,
+    TEAM_DIG_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
@@ -21,21 +22,22 @@ from _aegis.common.constants import Constants
 from _aegis.common.direction import Direction
 from _aegis.common.utility import Utility
 from _aegis.common.world.cell import Cell
+from _aegis.common.world.objects.rubble import Rubble
 from _aegis.common.world.objects.survivor import Survivor
 from _aegis.common.world.objects.world_object import WorldObject
-from _aegis.test_agent import TestAgent
+from _aegis.agent import Agent
 from _aegis.world.aegis_world import AegisWorld
 
 
 class CommandProcessor:
     def __init__(
         self,
-        agents: list[TestAgent],
+        agents: list[Agent],
         aegis_world: AegisWorld,
         agent_handler: AgentHandler,
         prediction_handler: PredictionHandler | None,
     ) -> None:
-        self._agents: list[TestAgent] = agents
+        self._agents: list[Agent] = agents
         self._world: AegisWorld = aegis_world
         self._agent_handler: AgentHandler = agent_handler
         self._prediction_handler: PredictionHandler | None = prediction_handler
@@ -60,7 +62,7 @@ class CommandProcessor:
 
             match cmd:
                 case TEAM_DIG():
-                    pass
+                    self._handle_dig(cmd)
                 case SAVE_SURV():
                     self._handle_save(cmd)
                 case PREDICT() if is_feature_enabled("ENABLE_PREDICTIONS"):
@@ -76,11 +78,34 @@ class CommandProcessor:
                 case _:
                     raise Exception("Got unknown command")
 
+    def _handle_dig(self, cmd: TEAM_DIG) -> None:
+        agent = self._world.get_agent(cmd.get_agent_id())
+        if agent is None:
+            return
+
+        cell = self._world.get_cell_at(agent.get_location())
+        if cell is None:
+            return
+
+        agents_here = [aid for aid in cell.agent_id_list if self._world.get_agent(aid)]
+        top_layer = cell.get_top_layer()
+
+        if isinstance(top_layer, Rubble):
+            if top_layer.remove_agents <= len(agents_here) and all(
+                (a := self._world.get_agent(aid)) is not None
+                and a.get_energy_level() >= top_layer.remove_energy
+                for aid in agents_here
+            ):
+                self._world.remove_layer_from_cell(cell.location)
+                agent.remove_energy(top_layer.remove_energy)
+        else:
+            agent.remove_energy(Constants.TEAM_DIG_ENERGY_COST)
+
     def _handle_move(self, cmd: MOVE) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
         if agent is None:
             return
-        dest = agent.location.add(cmd.direction)
+        dest = agent.get_location().add(cmd.direction)
         dest_cell = self._world.get_cell_at(dest)
 
         if cmd.direction == Direction.CENTER:
@@ -88,7 +113,7 @@ class CommandProcessor:
 
         if dest_cell:
             agent.remove_energy(dest_cell.move_cost)
-            self._world.move_agent(agent.agent_id, dest)
+            self._world.move_agent(agent.get_agent_id(), dest)
             agent.add_step_taken()
         else:
             agent.remove_energy(Constants.MOVE_ENERGY_COST)
@@ -98,8 +123,7 @@ class CommandProcessor:
         if agent is None:
             return
 
-        location = agent.location
-        cell = self._world.get_cell_at(location)
+        cell = self._world.get_cell_at(agent.get_location())
         if cell is None:
             return
 
@@ -125,36 +149,34 @@ class CommandProcessor:
             if agent is None:
                 continue
 
-            world_agent = self._world.get_agent(cmd.get_agent_id())
-            if world_agent is None:
+            energy = agent.get_energy_level()
+            location = agent.get_location()
+            surround_info = self._world.get_surround_info(location)
+            if surround_info is None:
                 result = AEGIS_UNKNOWN()
             else:
-                energy = agent.get_energy_level()
-                location = world_agent.location
-                surround_info = self._world.get_surround_info(location)
-                if surround_info is None:
-                    result = AEGIS_UNKNOWN()
-                else:
-                    match cmd:
-                        case MOVE():
-                            result = MOVE_RESULT(energy, surround_info)
-                        case SAVE_SURV():
-                            pred_info = None
-                            if (
-                                is_feature_enabled("ENABLE_PREDICTIONS")
-                                and self._prediction_handler is not None
-                            ):
-                                pred_info = (
-                                    self._prediction_handler.get_pred_info_for_agent(
-                                        cmd.get_agent_id()
-                                    )
+                match cmd:
+                    case MOVE():
+                        result = MOVE_RESULT(energy, surround_info)
+                    case SAVE_SURV():
+                        pred_info = None
+                        if (
+                            is_feature_enabled("ENABLE_PREDICTIONS")
+                            and self._prediction_handler is not None
+                        ):
+                            pred_info = (
+                                self._prediction_handler.get_pred_info_for_agent(
+                                    agent.get_agent_id()
                                 )
-                            result = SAVE_SURV_RESULT(energy, surround_info, pred_info)
-                        case _:
-                            result = AEGIS_UNKNOWN()
+                            )
+                        result = SAVE_SURV_RESULT(energy, surround_info, pred_info)
+                    case TEAM_DIG():
+                        result = TEAM_DIG_RESULT(energy, surround_info)
+                    case _:
+                        result = AEGIS_UNKNOWN()
             agent.handle_aegis_command(result)
 
-    def _get_agent_by_id(self, agent_id: AgentID) -> TestAgent | None:
+    def _get_agent_by_id(self, agent_id: AgentID) -> Agent | None:
         for agent in self._agents:
             if agent.get_agent_id() == agent_id:
                 return agent

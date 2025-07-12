@@ -15,12 +15,13 @@ from _aegis.common import (
     Location,
     Utility,
 )
-from _aegis.common.world.agent import Agent
+from _aegis.agent import Agent
 from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import CellInfo, SurroundInfo
 from _aegis.common.world.objects import Survivor
 from _aegis.common.world.world import World
 from _aegis.aegis_config import is_feature_enabled
+from _aegis.parsers.aegis_parser import AegisParser
 from _aegis.parsers.aegis_world_file import AegisWorldFile
 from _aegis.parsers.helper.world_file_type import StackContent, WorldFileType
 from _aegis.parsers.world_file_parser import WorldFileParser
@@ -235,46 +236,50 @@ class AegisWorld:
                 f"Aegis  : Unable to write agent world file to '{self._agent_world_filename}'!"
             )
 
-    def run_simulators(self) -> str:
-        s = "Sim_Events;\n"
-        s += self._survivor_simulator.run()
-        top_layer_remove_message = "Top_Layer_Rem; { "
-        if not self._top_layer_removed_cell_list:
-            top_layer_remove_message += "NONE"
-        else:
-            for location in self._top_layer_removed_cell_list:
-                top_layer_remove_message += f"{location.proc_string()},"
-        top_layer_remove_message += " };\n"
-        s += top_layer_remove_message
-        self._top_layer_removed_cell_list.clear()
-
-        agents_information_message = "Agents_Information; { "
-        if not self._agents:
-            agents_information_message += "NONE"
-        else:
-            for agent in self._agents:
-                agents_information_message += f"({agent.agent_id.id},{agent.agent_id.gid},{agent.get_energy_level()},{agent.location.x},{agent.location.y}),"
-        agents_information_message += " };\n"
-        s += agents_information_message
-        s += "End_Sim;\n"
-        return s
+    # def run_simulators(self) -> str:
+    #     s = "Sim_Events;\n"
+    #     s += self._survivor_simulator.run()
+    #     top_layer_remove_message = "Top_Layer_Rem; { "
+    #     if not self._top_layer_removed_cell_list:
+    #         top_layer_remove_message += "NONE"
+    #     else:
+    #         for location in self._top_layer_removed_cell_list:
+    #             top_layer_remove_message += f"{location.proc_string()},"
+    #     top_layer_remove_message += " };\n"
+    #     s += top_layer_remove_message
+    #     self._top_layer_removed_cell_list.clear()
+    #
+    #     agents_information_message = "Agents_Information; { "
+    #     if not self._agents:
+    #         agents_information_message += "NONE"
+    #     else:
+    #         for agent in self._agents:
+    #             agents_information_message += f"({agent.agent_id.id},{agent.agent_id.gid},{agent.get_energy_level()},{agent.location.x},{agent.location.y}),"
+    #     agents_information_message += " };\n"
+    #     s += agents_information_message
+    #     s += "End_Sim;\n"
+    #     return s
 
     def grim_reaper(self) -> AgentIDList:
         dead_agents = AgentIDList()
         for agent in self._agents:
             if agent.get_energy_level() <= 0:
-                print(f"Aegis  : Agent {agent} ran out of energy and died.\n")
-                dead_agents.add(agent.agent_id)
+                print(
+                    f"Aegis  : Agent {agent.get_agent_id()} ran out of energy and died.\n"
+                )
+                dead_agents.add(agent.get_agent_id())
                 continue
 
             if self._world:
-                cell = self._world.get_cell_at(agent.location)
+                cell = self._world.get_cell_at(agent.get_location())
                 if cell is None:
                     continue
 
                 if cell.is_killer_cell():
-                    print(f"Aegis  : Agent {agent} ran into killer cell and died.\n")
-                    dead_agents.add(agent.agent_id)
+                    print(
+                        f"Aegis  : Agent {agent.get_agent_id()} ran into killer cell and died.\n"
+                    )
+                    dead_agents.add(agent.get_agent_id())
 
         self._number_of_dead_agents += dead_agents.size()
         return dead_agents
@@ -282,7 +287,7 @@ class AegisWorld:
     def get_agent_world_filename(self) -> str:
         return self._agent_world_filename
 
-    def add_agent_by_id(self, agent_id: AgentID) -> None:
+    def add_agent_by_id(self, agent_id: AgentID) -> Agent | None:
         if self._world is None:
             return
 
@@ -302,8 +307,13 @@ class AegisWorld:
         if cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")
 
-        agent = Agent(agent_id, cell.location, self._initial_agent_energy)
+        agent = Agent()
+        agent.set_agent_id(agent_id)
+        agent.set_location(cell.location)
+        agent.set_energy_level(self._initial_agent_energy)
+        agent.set_world(World(AegisParser.build_world(self._agent_world_filename)))
         self.add_agent(agent)
+        return agent
 
     def add_agent(self, agent: Agent) -> None:
         if agent not in self._agents:
@@ -311,17 +321,17 @@ class AegisWorld:
             if self._world is None:
                 return
 
-            cell = self._world.get_cell_at(agent.location)
+            cell = self._world.get_cell_at(agent.get_location())
             if cell is None:
                 return
 
-            cell.agent_id_list.add(agent.agent_id)
+            cell.agent_id_list.add(agent.get_agent_id())
             self._number_of_alive_agents += 1
             print(f"Aegis  : Added agent {agent}")
 
     def get_agent(self, agent_id: AgentID) -> Agent | None:
         for agent in self._agents:
-            if agent.agent_id == agent_id:
+            if agent.get_agent_id() == agent_id:
                 return agent
         return None
 
@@ -330,24 +340,24 @@ class AegisWorld:
         if agent is None or self._world is None:
             return
 
-        curr_cell = self._world.get_cell_at(agent.location)
+        curr_cell = self._world.get_cell_at(agent.get_location())
         dest_cell = self._world.get_cell_at(location)
 
         if dest_cell is None or curr_cell is None:
             return
 
-        curr_cell.agent_id_list.remove(agent.agent_id)
-        dest_cell.agent_id_list.add(agent.agent_id)
-        agent.location = dest_cell.location
+        curr_cell.agent_id_list.remove(agent.get_agent_id())
+        dest_cell.agent_id_list.add(agent.get_agent_id())
+        agent.set_location(dest_cell.location)
 
     def remove_agent(self, agent: Agent | None) -> None:
         if agent in self._agents and self._world is not None:
             self._agents.remove(agent)
-            agent_cell = self._world.get_cell_at(agent.location)
+            agent_cell = self._world.get_cell_at(agent.get_location())
             if agent_cell is None:
                 return
 
-            agent_cell.agent_id_list.remove(agent.agent_id)
+            agent_cell.agent_id_list.remove(agent.get_agent_id())
             self._number_of_alive_agents -= 1
 
     def remove_layer_from_cell(self, location: Location) -> None:
@@ -412,8 +422,8 @@ class AegisWorld:
         top_layer_rem_data: list[LocationDict] = []
         agent_map = {
             (
-                agent.agent_id.id,
-                agent.agent_id.gid,
+                agent.get_agent_id().id,
+                agent.get_agent_id().gid,
             ): agent
             for agent in self._agents
         }
@@ -443,12 +453,12 @@ class AegisWorld:
 
                     if agent is not None:
                         agent_dict: AgentInfoDict = {
-                            "id": agent.agent_id.id,
-                            "gid": agent.agent_id.gid,
+                            "id": agent.get_agent_id().id,
+                            "gid": agent.get_agent_id().gid,
                             "x": x,
                             "y": y,
                             "energy_level": agent.get_energy_level(),
-                            "command_sent": agent.command_sent,
+                            "command_sent": agent.command_sent(),
                             "steps_taken": agent.steps_taken,
                         }
                         agent_data.append(agent_dict)

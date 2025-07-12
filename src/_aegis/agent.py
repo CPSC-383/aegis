@@ -9,7 +9,7 @@ from types import ModuleType
 import numpy as np
 from numpy.typing import NDArray
 
-from _aegis.agent.agent_states import AgentStates
+from _aegis.assist.agent_states import AgentStates
 from _aegis.command_manager import CommandManager
 from _aegis.common import AgentID, Direction, Location
 from _aegis.common.commands.aegis_command import AegisCommand
@@ -17,9 +17,6 @@ from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     CMD_RESULT_END,
     CMD_RESULT_START,
-    CONNECT_OK,
-    DEATH_CARD,
-    DISCONNECT,
     MESSAGES_END,
     MESSAGES_START,
     MOVE_RESULT,
@@ -34,10 +31,9 @@ from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.world.info import SurroundInfo
 from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.common.world.world import World
-from _aegis.parsers.aegis_parser import AegisParser
 
 
-class TestAgent:
+class Agent:
     def __init__(self) -> None:
         self._round: int = 0
         self._world: World | None = None
@@ -50,6 +46,7 @@ class TestAgent:
         ] = deque()
         self._command_manager: CommandManager = CommandManager()
         self._module: ModuleType | None = None
+        self.steps_taken: int = 0
 
     def get_world(self) -> World | None:
         return self._world
@@ -161,6 +158,10 @@ class TestAgent:
         self._prediction_info.clear()
         self.log("Cleared Prediction Info")
 
+    def command_sent(self) -> str:
+        cmd = self._command_manager.get_command_sent()
+        return str(cmd) if cmd is not None else ""
+
     def send(self, command: AgentCommand) -> None:
         command.set_agent_id(self.get_agent_id())
         self._command_manager.send(command)
@@ -177,25 +178,10 @@ class TestAgent:
         print(f"{id_str}: {message}")
 
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
-        if isinstance(aegis_command, CONNECT_OK):
-            connect_ok: CONNECT_OK = aegis_command
-            self.set_agent_id(connect_ok.new_agent_id)
-            self.set_energy_level(connect_ok.energy_level)
-            self.set_location(connect_ok.location)
-            world = World(AegisParser.build_world(connect_ok.world_filename))
-            self.set_world(world)
-            self.set_agent_state(AgentStates.CONNECTED)
-            self.log("Connected Successfully")
-
-        elif isinstance(aegis_command, DEATH_CARD):
-            self.set_agent_state(AgentStates.SHUTTING_DOWN)
-
-        elif isinstance(aegis_command, DISCONNECT):
-            self.set_agent_state(AgentStates.SHUTTING_DOWN)
-
-        # elif isinstance(aegis_command, SEND_MESSAGE_RESULT):
-        #     if self._brain is not None:
-        #         self._brain.handle_send_message_result(aegis_command)
+        if isinstance(aegis_command, SEND_MESSAGE_RESULT):
+            pass
+            # if self._brain is not None:
+            #     self._brain.handle_send_message_result(aegis_command)
 
         elif isinstance(aegis_command, MESSAGES_END):
             self.set_agent_state(AgentStates.IDLE)
@@ -270,3 +256,16 @@ class TestAgent:
             self.log(
                 f"Brain: Got unrecognized reply from AEGIS: {aegis_command.__class__.__name__}.",
             )
+
+    def add_energy(self, energy: int) -> None:
+        if energy >= 0:
+            self._energy_level += energy
+
+    def remove_energy(self, energy: int) -> None:
+        if energy < self._energy_level:
+            self._energy_level -= energy
+        else:
+            self._energy_level = 0
+
+    def add_step_taken(self) -> None:
+        self.steps_taken += 1

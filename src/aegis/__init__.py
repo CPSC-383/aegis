@@ -14,7 +14,7 @@ from _aegis.common.commands.agent_commands import (
 )
 from _aegis.common.world.objects import Survivor
 from _aegis.common.world.world import World
-from _aegis.test_agent import TestAgent
+from _aegis.agent import Agent
 
 # To generate the list after adding imports,
 # use `uv run python -c` or `python -c` with the venv activated :
@@ -35,7 +35,7 @@ __all__ = [
     "TEAM_DIG",
     "World",
     "main",
-    "TestAgent",
+    "Agent",
 ]
 
 __version__ = "2.0.0"
