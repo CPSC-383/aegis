@@ -8,6 +8,11 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from _aegis.aegis_config import is_feature_enabled
+from _aegis.agent.agent_states import AgentStates
+from _aegis.command_processor import CommandProcessor
+from _aegis.common.world.world import World
+from _aegis.parsers.aegis_parser import AegisParser
+from _aegis.test_agent import TestAgent
 from _aegis.agent_control.agent_handler import AgentHandler
 
 from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
@@ -25,14 +30,11 @@ from _aegis.common import (
     Utility,
 )
 from _aegis.common.commands.aegis_commands import (
-    CONNECT_OK,
     DEATH_CARD,
     DISCONNECT,
     MOVE_RESULT,
     OBSERVE_RESULT,
     PREDICT_RESULT,
-    ROUND_END,
-    ROUND_START,
     SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     SLEEP_RESULT,
@@ -40,8 +42,6 @@ from _aegis.common.commands.aegis_commands import (
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
-    AGENT_UNKNOWN,
-    END_TURN,
     MOVE,
     OBSERVE,
     PREDICT,
@@ -50,7 +50,6 @@ from _aegis.common.commands.agent_commands import (
     SLEEP,
     TEAM_DIG,
 )
-from _aegis.common.network.aegis_socket_exception import AegisSocketException
 from _aegis.common.world.cell import Cell
 from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.common.world.objects import Rubble, Survivor, WorldObject
@@ -66,6 +65,8 @@ class Args:
     world_file: str
     rounds: int
     client: bool
+    agent: str
+    group_name: str
 
 
 class Aegis:
@@ -74,6 +75,7 @@ class Aegis:
         self._state: State = State.NONE
         self._started_idling: int = -1
         self._end: bool = False
+        self._agents: list[TestAgent] = []
         self._agent_handler: AgentHandler = AgentHandler()
         self._agent_commands: list[AgentCommand] = []
         self._command_records: list[str] = []
@@ -93,6 +95,12 @@ class Aegis:
         self._aegis_world: AegisWorld = AegisWorld()
         self._ws_server: WebSocketServer = WebSocketServer()
         self._prediction_handler: PredictionHandler | None = None
+        self._command_processor: CommandProcessor = CommandProcessor(
+            self._agents,
+            self._aegis_world,
+            self._agent_handler,
+            self._prediction_handler,
+        )
 
     def read_command_line(self) -> bool:
         parser = argparse.ArgumentParser(
@@ -103,14 +111,13 @@ class Aegis:
             "--agent-amount",
             dest="agent_amount",
             type=int,
-            required=False,
+            default=1,
             help="Number of agent instances to run",
         )
         _ = parser.add_argument(
             "--replay-file",
             dest="replay_file",
             type=str,
-            required=False,
             default="replay.txt",
             help="Set the name of the file to save the protocol file to (default: replay.txt)",
         )
@@ -126,6 +133,20 @@ class Aegis:
             type=int,
             required=True,
             help="Number of simulation rounds",
+        )
+        _ = parser.add_argument(
+            "--agent",
+            dest="agent",
+            type=str,
+            required=True,
+            help="Path to the agent file",
+        )
+        _ = parser.add_argument(
+            "--group-name",
+            dest="group_name",
+            type=str,
+            required=True,
+            help="Group name",
         )
         _ = parser.add_argument(
             "--client",
@@ -145,6 +166,10 @@ class Aegis:
                 self._parameters.world_filename = args.world_file
             if args.rounds > 0:
                 self._parameters.number_of_rounds = args.rounds
+            if args.agent:
+                self._parameters.agent = args.agent
+            if args.group_name:
+                self._parameters.group_name = args.group_name
             if args.client:
                 self._ws_server.set_wait_for_client(args.client)
 
@@ -153,28 +178,27 @@ class Aegis:
             return False
 
     def start_up(self) -> bool:
-        try:
-            self._agent_handler.set_agent_handler_port(Constants.AGENT_PORT)
-            if not ReplayFileWriter.open_replay_file(
-                self._parameters.replay_filename, self._parameters.world_filename
-            ):
-                print(
-                    f"Aegis  : Could not open protocol file: {self._parameters.replay_filename}",
-                    file=sys.stderr,
-                )
-                return False
-            print(f"Aegis  : Protocol file is: {self._parameters.replay_filename}")
-        except AegisSocketException:
-            print("Aegis  : Could not open agent port.", file=sys.stderr)
-            return False
-        except Exception:
-            print(
-                f"Aegis  : Could not open protocol file: {self._parameters.replay_filename}",
-                file=sys.stderr,
-            )
-            return False
+        # try:
+        #     self._agent_handler.set_agent_handler_port(Constants.AGENT_PORT)
+        #     if not ReplayFileWriter.open_replay_file(
+        #         self._parameters.replay_filename, self._parameters.world_filename
+        #     ):
+        #         print(
+        #             f"Aegis  : Could not open protocol file: {self._parameters.replay_filename}",
+        #             file=sys.stderr,
+        #         )
+        #         return False
+        #     print(f"Aegis  : Protocol file is: {self._parameters.replay_filename}")
+        # except AegisSocketException:
+        #     print("Aegis  : Could not open agent port.", file=sys.stderr)
+        #     return False
+        # except Exception:
+        #     print(
+        #         f"Aegis  : Could not open protocol file: {self._parameters.replay_filename}",
+        #         file=sys.stderr,
+        #     )
+        #     return False
 
-        # FIX: Config settings parser thing
         try:
             pass
             # config_settings = ConfigParser.parse_config_file(
@@ -240,48 +264,28 @@ class Aegis:
         except AgentCrashedException:
             pass
 
-    def connect_all_agents(self) -> None:
-        connected: bool = False
-        count: int = 0
+    def start_agents(self) -> None:
         for _ in range(self._parameters.number_of_agents):
-            for _ in range(5):
-                connected = self._connect_agent(
-                    self._parameters.milliseconds_to_wait_for_agent_connect
-                )
-                if connected:
-                    count += 1
-                    break
-        print(
-            f"Aegis  : {count} out of {self._parameters.number_of_agents} agents connected to AEGIS."
-        )
-        self._state = State.RUN_SIMULATION
-
-    def _connect_agent(self, timeout: int) -> bool:
-        agent_id = self._agent_handler.connect_to_agent(timeout)
-        if agent_id is None:
-            return False
-
-        try:
+            agent = TestAgent()
+            agent_id = self._agent_handler.agent_info(self._parameters.group_name)
             self._aegis_world.add_agent_by_id(agent_id)
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is None:
-                return False
-
-            self._agent_handler.send_message_to(
-                agent_id,
-                CONNECT_OK(
-                    agent_id,
-                    agent.get_energy_level(),
-                    agent.location,
-                    self._aegis_world.get_agent_world_filename(),
-                ),
+            agent_world = self._aegis_world.get_agent(agent_id)
+            if agent_world is None:
+                raise Exception("Error getting agent from world")
+            agent.set_agent_id(agent_id)
+            agent.set_energy_level(agent_world.get_energy_level())
+            agent.set_location(agent_world.location)
+            agent.set_world(
+                World(
+                    AegisParser.build_world(
+                        self._aegis_world.get_agent_world_filename()
+                    )
+                )
             )
-            ReplayFileWriter.write_string(
-                f"ADD_AGT; Info(ID {agent.agent_id.id}, GID {agent.agent_id.gid}, Eng {agent.get_energy_level()}):Loc(X {agent.location.x}, Y {agent.location.y});\n"
-            )
-            return True
-        except AgentCrashedException:
-            return False
+            agent.set_agent_state(AgentStates.CONNECTED)
+            agent.load_agent(self._parameters.agent)
+            self._agents.append(agent)
+        self._state = State.RUN_SIMULATION
 
     def _end_simulation(self) -> None:
         print("Aegis  : Simulation Over.")
@@ -308,8 +312,6 @@ class Aegis:
                             file=sys.stderr,
                         )
                         self._end_simulation()
-            case State.CONNECT_AGENTS:
-                _ = self._connect_agent(1)
             case State.RUN_SIMULATION:
                 self._run_simulation()
             case State.SHUT_DOWN:
@@ -321,7 +323,7 @@ class Aegis:
         self._ws_server.start()
         print("Aegis  : Running simulation.")
 
-        if self._agent_handler.get_number_of_agents() == 0:
+        if len(self._agents) == 0:
             print("Aegis  : No Agents Connected to Aegis!")
             ReplayFileWriter.write_string("MSG;No Agents Connected to the Kernel;\n")
             self._end_simulation()
@@ -358,7 +360,7 @@ class Aegis:
                 self._end_simulation()
                 return
 
-            if self._agent_handler.get_number_of_agents() <= 0:
+            if len(self._agents) == 0:
                 print("Aegis  : All Agents are Dead !!!")
                 ReplayFileWriter.write_string("MSG;All Agents are Dead !!;\n")
                 self._end_simulation()
@@ -374,29 +376,28 @@ class Aegis:
                 return
 
             ReplayFileWriter.write_string(f"RS;{round};\n")
-            self._run_agent_round()
+            # self._run_agent_round()
+            self._command_processor.run_turn()
 
-            for command in self._agent_commands:
-                self._handle_agent_command(command)
-            self._agent_commands.clear()
+            # ======================================================
 
-            agent_commands_message = "Agent_Cmds;{"
-            if len(self._command_records) == 0:
-                agent_commands_message += "None"
-            else:
-                agent_commands_message += "$".join(
-                    f"[{record}]" for record in self._command_records
-                )
-            self._command_records.clear()
-            agent_commands_message += "}\n"
-            ReplayFileWriter.write_string(agent_commands_message)
+            # agent_commands_message = "Agent_Cmds;{"
+            # if len(self._command_records) == 0:
+            #     agent_commands_message += "None"
+            # else:
+            #     agent_commands_message += "$".join(
+            #         f"[{record}]" for record in self._command_records
+            #     )
+            # self._command_records.clear()
+            # agent_commands_message += "}\n"
+            # ReplayFileWriter.write_string(agent_commands_message)
 
-            self._process_commands()
-            self._create_results()
-            self._run_simulators()
-            self._grim_reaper()
-            self._agent_handler.empty_forward_messages()
-            ReplayFileWriter.write_string("RE;\n")
+            # self._process_commands()
+            # self._create_results()
+            # self._run_simulators()
+            # self._grim_reaper()
+            # self._agent_handler.empty_forward_messages()
+            # ReplayFileWriter.write_string("RE;\n")
             after_json_world = self.get_aegis_world().convert_to_json()
 
             round_data = {
@@ -411,90 +412,90 @@ class Aegis:
         ReplayFileWriter.write_string("Simulation_Over;\n")
         self._end_simulation()
 
-    def _run_agent_round(self) -> None:
-        self._agent_handler.reset_current_agent()
-        num_of_agents = self._agent_handler.get_number_of_agents()
+    # def _run_agent_round(self) -> None:
+    #     self._agent_handler.reset_current_agent()
+    #     num_of_agents = self._agent_handler.get_number_of_agents()
+    #
+    #     for _ in range(num_of_agents):
+    #         try:
+    #             self._agent_handler.send_forward_messages_to_current()
+    #             self._agent_handler.send_result_of_command_to_current()
+    #             self._agent_handler.send_message_to_current(ROUND_START())
+    #
+    #             command = self._get_agent_command_of_current()
+    #             if command is not None:
+    #                 self._agent_commands.append(command)
+    #             else:
+    #                 if self._parameters.config_settings is not None:
+    #                     current_agent = self._agent_handler.get_current_agent()
+    #                     if (
+    #                         self._parameters.config_settings.handling_messages
+    #                         == ConfigSettings.SEND_MESSAGES_AND_PERFORM_ACTION
+    #                     ):
+    #                         print(
+    #                             f"Agent {current_agent.agent_id} sent no action (non-send) command this round.",
+    #                             file=sys.stderr,
+    #                         )
+    #                     else:
+    #                         print(
+    #                             f"Agent {current_agent.agent_id} sent no command this round.",
+    #                             file=sys.stderr,
+    #                         )
+    #
+    #             self._agent_handler.send_message_to_current(ROUND_END())
+    #             self._agent_handler.move_to_next_agent()
+    #         except AgentCrashedException:
+    #             crashed_agent_id = self._agent_handler.get_current_agent().agent_id
+    #             self._crashed_agents.add(crashed_agent_id)
+    #         _ = sys.stdout.flush()
 
-        for _ in range(num_of_agents):
-            try:
-                self._agent_handler.send_forward_messages_to_current()
-                self._agent_handler.send_result_of_command_to_current()
-                self._agent_handler.send_message_to_current(ROUND_START())
+    # def _get_agent_command_of_current(self) -> AgentCommand | None:
+    #     timeout: int = self._parameters.milliseconds_to_wait_for_agent_command
+    #     initial_time_ms: int = time.time_ns() // 1_000_000
+    #     last_command: AgentCommand | None = None
+    #
+    #     while True:
+    #         elapsed_time_ms: int = time.time_ns() // 1_000_000 - initial_time_ms
+    #         if elapsed_time_ms > timeout:
+    #             break
+    #
+    #         remaining_time_ms: int = max(0, timeout - elapsed_time_ms)
+    #         if remaining_time_ms == 0:
+    #             break
+    #
+    #         try:
+    #             temp_command = self._agent_handler.get_agent_command_of_current(
+    #                 remaining_time_ms
+    #             )
+    #         except AgentCrashedException:
+    #             crashed_agent_id = self._agent_handler.get_current_agent().agent_id
+    #             self._crashed_agents.add(crashed_agent_id)
+    #             print(f"Agent {crashed_agent_id} has crashed.")
+    #             return None
+    #
+    #         if temp_command is None:
+    #             continue
+    #
+    #         if isinstance(temp_command, END_TURN) or isinstance(
+    #             temp_command, AGENT_UNKNOWN
+    #         ):
+    #             break
+    #
+    #         if isinstance(temp_command, SEND_MESSAGE):
+    #             if self._parameters.config_settings is not None:
+    #                 if (
+    #                     self._parameters.config_settings.handling_messages
+    #                     == ConfigSettings.SEND_MESSAGES_AND_PERFORM_ACTION
+    #                 ):
+    #                     self._handle_agent_command(temp_command)
+    #                 else:
+    #                     last_command = temp_command
+    #         else:
+    #             last_command = temp_command
+    #
+    #     return last_command
 
-                command = self._get_agent_command_of_current()
-                if command is not None:
-                    self._agent_commands.append(command)
-                else:
-                    if self._parameters.config_settings is not None:
-                        current_agent = self._agent_handler.get_current_agent()
-                        if (
-                            self._parameters.config_settings.handling_messages
-                            == ConfigSettings.SEND_MESSAGES_AND_PERFORM_ACTION
-                        ):
-                            print(
-                                f"Agent {current_agent.agent_id} sent no action (non-send) command this round.",
-                                file=sys.stderr,
-                            )
-                        else:
-                            print(
-                                f"Agent {current_agent.agent_id} sent no command this round.",
-                                file=sys.stderr,
-                            )
-
-                self._agent_handler.send_message_to_current(ROUND_END())
-                self._agent_handler.move_to_next_agent()
-            except AgentCrashedException:
-                crashed_agent_id = self._agent_handler.get_current_agent().agent_id
-                self._crashed_agents.add(crashed_agent_id)
-            _ = sys.stdout.flush()
-
-    def _get_agent_command_of_current(self) -> AgentCommand | None:
-        timeout: int = self._parameters.milliseconds_to_wait_for_agent_command
-        initial_time_ms: int = time.time_ns() // 1_000_000
-        last_command: AgentCommand | None = None
-
-        while True:
-            elapsed_time_ms: int = time.time_ns() // 1_000_000 - initial_time_ms
-            if elapsed_time_ms > timeout:
-                break
-
-            remaining_time_ms: int = max(0, timeout - elapsed_time_ms)
-            if remaining_time_ms == 0:
-                break
-
-            try:
-                temp_command = self._agent_handler.get_agent_command_of_current(
-                    remaining_time_ms
-                )
-            except AgentCrashedException:
-                crashed_agent_id = self._agent_handler.get_current_agent().agent_id
-                self._crashed_agents.add(crashed_agent_id)
-                print(f"Agent {crashed_agent_id} has crashed.")
-                return None
-
-            if temp_command is None:
-                continue
-
-            if isinstance(temp_command, END_TURN) or isinstance(
-                temp_command, AGENT_UNKNOWN
-            ):
-                break
-
-            if isinstance(temp_command, SEND_MESSAGE):
-                if self._parameters.config_settings is not None:
-                    if (
-                        self._parameters.config_settings.handling_messages
-                        == ConfigSettings.SEND_MESSAGES_AND_PERFORM_ACTION
-                    ):
-                        self._handle_agent_command(temp_command)
-                    else:
-                        last_command = temp_command
-            else:
-                last_command = temp_command
-
-        return last_command
-
-    def _handle_agent_command(self, command: AgentCommand) -> None:
+    def _process_command(self, command: AgentCommand) -> None:
         self._command_records.append(command.proc_string())
 
         agent = self._aegis_world.get_agent(command.get_agent_id())
@@ -533,7 +534,7 @@ class Aegis:
 
     def _process_commands(self) -> None:
         self._process_TEAM_DIG()
-        self._process_SAVE_SURV()
+        # self._process_SAVE_SURV()
 
         if (
             self._parameters.config_settings is not None
@@ -599,50 +600,50 @@ class Aegis:
                 agent.remove_energy(energy_cost)
                 self._TEAM_DIG_RESULT_list.add(agent_id)
 
-    def _process_SAVE_SURV(self) -> None:
-        temp_agent_list = AgentIDList()
-        for save_surv in self._SAVE_SURV_list:
-            temp_agent_list.add(save_surv.get_agent_id())
-
-        self._SAVE_SURV_list.clear()
-        temp_cell_agent_list: list[AgentID] = []
-
-        while temp_agent_list.size() > 0:
-            temp_cell_agent_list.clear()
-            gid_counter: list[int] = [0] * 10
-
-            agent_id = temp_agent_list.remove_at(0)
-            temp_cell_agent_list.append(agent_id)
-            gid_counter[agent_id.gid] += 1
-
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is None:
-                continue
-
-            cell = self._aegis_world.get_cell_at(agent.location)
-
-            if cell is None:
-                continue
-
-            for cell_agent in cell.agent_id_list:
-                if cell_agent in temp_agent_list:
-                    temp_cell_agent_list.append(cell_agent)
-                    temp_agent_list.remove(cell_agent)
-                    gid_counter[cell_agent.gid] += 1
-
-            top_layer = cell.get_top_layer()
-            if top_layer is None:
-                for agent_on_cell in temp_cell_agent_list:
-                    agent = self._aegis_world.get_agent(agent_on_cell)
-                    if agent is not None:
-                        agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
-                        self._SAVE_SURV_RESULT_list.add(agent_on_cell)
-            else:
-                self._handle_top_layer(
-                    top_layer, cell, temp_cell_agent_list, gid_counter
-                )
-
-        temp_agent_list.clear()
+    # def _process_SAVE_SURV(self) -> None:
+    #     temp_agent_list = AgentIDList()
+    #     for save_surv in self._SAVE_SURV_list:
+    #         temp_agent_list.add(save_surv.get_agent_id())
+    #
+    #     self._SAVE_SURV_list.clear()
+    #     temp_cell_agent_list: list[AgentID] = []
+    #
+    #     while temp_agent_list.size() > 0:
+    #         temp_cell_agent_list.clear()
+    #         gid_counter: list[int] = [0] * 10
+    #
+    #         agent_id = temp_agent_list.remove_at(0)
+    #         temp_cell_agent_list.append(agent_id)
+    #         gid_counter[agent_id.gid] += 1
+    #
+    #         agent = self._aegis_world.get_agent(agent_id)
+    #         if agent is None:
+    #             continue
+    #
+    #         cell = self._aegis_world.get_cell_at(agent.location)
+    #
+    #         if cell is None:
+    #             continue
+    #
+    #         for cell_agent in cell.agent_id_list:
+    #             if cell_agent in temp_agent_list:
+    #                 temp_cell_agent_list.append(cell_agent)
+    #                 temp_agent_list.remove(cell_agent)
+    #                 gid_counter[cell_agent.gid] += 1
+    #
+    #         top_layer = cell.get_top_layer()
+    #         if top_layer is None:
+    #             for agent_on_cell in temp_cell_agent_list:
+    #                 agent = self._aegis_world.get_agent(agent_on_cell)
+    #                 if agent is not None:
+    #                     agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
+    #                     self._SAVE_SURV_RESULT_list.add(agent_on_cell)
+    #         else:
+    #             self._handle_top_layer(
+    #                 top_layer, cell, temp_cell_agent_list, gid_counter
+    #             )
+    #
+    #     temp_agent_list.clear()
 
     def _process_PREDICT(self) -> None:
         for prediction in self._PREDICT_list:
@@ -885,164 +886,6 @@ class Aegis:
 
     def get_aegis_world(self) -> AegisWorld:
         return self._aegis_world
-
-    def _handle_top_layer(
-        self,
-        top_layer: WorldObject,
-        cell: Cell,
-        temp_cell_agent_list: list[AgentID],
-        gid_counter: list[int],
-    ) -> None:
-        if isinstance(top_layer, Survivor):
-            self._aegis_world.remove_layer_from_cell(cell.location)
-            alive_count, dead_count = self._calculate_survivor_stats(top_layer)
-            self._assign_points(
-                temp_cell_agent_list, alive_count, dead_count, gid_counter
-            )
-
-            if (
-                self._parameters.config_settings is not None
-                and self._parameters.config_settings.predictions_enabled
-                and self._prediction_handler is not None
-            ):
-                self._prediction_handler.add_agent_to_no_pred_yet(
-                    temp_cell_agent_list[0], top_layer.id
-                )
-
-        else:
-            for agent_id in temp_cell_agent_list:
-                agent = self._aegis_world.get_agent(agent_id)
-                if agent is not None:
-                    agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
-                    self._SAVE_SURV_RESULT_list.add(agent_id)
-
-    def _calculate_survivor_stats(self, survivor: Survivor) -> tuple[int, int]:
-        alive_count = 0
-        dead_count = 0
-
-        self._aegis_world.remove_survivor(survivor)
-        if survivor.is_alive():
-            alive_count += 1
-        else:
-            dead_count += 1
-        return alive_count, dead_count
-
-    def _assign_points(
-        self,
-        temp_cell_agent_list: list[AgentID],
-        alive_count: int,
-        dead_count: int,
-        gid_counter: list[int],
-    ) -> None:
-        if self._parameters.config_settings is None:
-            return
-
-        points_config = self._parameters.config_settings.points_for_saving_survivors
-        points_tie_config = (
-            self._parameters.config_settings.points_for_saving_survivors_tie
-        )
-
-        if points_config == ConfigSettings.POINTS_FOR_ALL_SAVING_GROUPS:
-            for gid, count in enumerate(gid_counter):
-                if count > 0:
-                    if alive_count > 0:
-                        state = Constants.SAVE_STATE_ALIVE
-                        amount = alive_count
-                    else:
-                        state = Constants.SAVE_STATE_DEAD
-                        amount = dead_count
-                    self._agent_handler.increase_agent_group_saved(gid, amount, state)
-
-        elif points_config == ConfigSettings.POINTS_FOR_RANDOM_SAVING_GROUPS:
-            random_id = temp_cell_agent_list[
-                Utility.next_int() % len(temp_cell_agent_list)
-            ]
-            if alive_count > 0:
-                state = Constants.SAVE_STATE_ALIVE
-                amount = alive_count
-            else:
-                state = Constants.SAVE_STATE_DEAD
-                amount = dead_count
-            self._agent_handler.increase_agent_group_saved(random_id.gid, amount, state)
-        elif points_config == ConfigSettings.POINTS_FOR_LARGEST_SAVING_GROUPS:
-            largest_group_gid = 0
-            max_group_size = 0
-            tie = False
-
-            for gid, count in enumerate(gid_counter):
-                if count > max_group_size:
-                    largest_group_gid = gid
-                    max_group_size = count
-
-            for gid, count in enumerate(gid_counter):
-                if gid != largest_group_gid and count == max_group_size:
-                    tie = True
-                    break
-
-            if not tie:
-                if alive_count > 0:
-                    state = Constants.SAVE_STATE_ALIVE
-                    amount = alive_count
-                else:
-                    state = Constants.SAVE_STATE_DEAD
-                    amount = dead_count
-                self._agent_handler.increase_agent_group_saved(
-                    largest_group_gid,
-                    amount,
-                    state,
-                )
-            else:
-                if points_tie_config == ConfigSettings.POINTS_TIE_RANDOM_SAVING_GROUPS:
-                    self._handle_random_tie(
-                        alive_count, dead_count, gid_counter, max_group_size
-                    )
-                elif points_tie_config == ConfigSettings.POINTS_TIE_ALL_SAVING_GROUPS:
-                    self._handle_all_tie(
-                        alive_count, dead_count, gid_counter, max_group_size
-                    )
-
-        for agent_on_cell_id in temp_cell_agent_list:
-            agent = self._aegis_world.get_agent(agent_on_cell_id)
-            if agent is not None:
-                agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
-                self._SAVE_SURV_RESULT_list.add(agent_on_cell_id)
-
-    def _handle_random_tie(
-        self,
-        alive_count: int,
-        dead_count: int,
-        gid_counter: list[int],
-        max_group_size: int,
-    ) -> None:
-        while True:
-            random_id = Utility.next_int() % len(gid_counter)
-            if gid_counter[random_id] == max_group_size:
-                if alive_count > 0:
-                    state = Constants.SAVE_STATE_ALIVE
-                    amount = alive_count
-                else:
-                    state = Constants.SAVE_STATE_DEAD
-                    amount = dead_count
-                self._agent_handler.increase_agent_group_saved(random_id, amount, state)
-                break
-
-    def _handle_all_tie(
-        self,
-        alive_count: int,
-        dead_count: int,
-        gid_counter: list[int],
-        max_group_size: int,
-    ) -> None:
-        for gid, count in enumerate(gid_counter):
-            if count == max_group_size:
-                if alive_count > 0:
-                    state = Constants.SAVE_STATE_ALIVE
-                    amount = alive_count
-                else:
-                    state = Constants.SAVE_STATE_DEAD
-                    amount = dead_count
-
-                self._agent_handler.increase_agent_group_saved(gid, amount, state)
 
     def _compress_and_send(self, event: bytes) -> None:
         compressed_event = gzip.compress(event)
