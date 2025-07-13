@@ -3,18 +3,17 @@ import os
 import platform
 import subprocess
 import sys
-import time
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 
 @dataclass
 class RunnerArgs:
     rounds: int
-    agent_directory: str
-    world_file: str
+    agent: str
+    world: str
     verbose: bool
-    agent_amount: int
+    amount: int
+    group: str
 
 
 class AegisRunner:
@@ -23,7 +22,8 @@ class AegisRunner:
         agent_amount: int,
         rounds: int,
         world_file: str,
-        agent_name: str,
+        agent: str,
+        group_name: str,
         verbose: bool = False,
     ):
         """
@@ -32,15 +32,17 @@ class AegisRunner:
         Args:
             agent_amount (int): Number of agent instances to run
             rounds (int): Number of simulation rounds
-            world_file (str): Name of the world file to use
-            agent_name (str): Name of the agent to run
+            world_file (str): Path of the world file to use
+            agent (str): Path of the agent to run
+            group_name (str): Group name
             verbose (bool): Enable verbose logging
         """
         self.curr_dir: str = os.path.dirname(os.path.realpath(__file__))
         self.agent_amount: int = max(1, agent_amount)
         self.rounds: int = rounds
         self.world_file: str = world_file
-        self.agent_name: str = agent_name
+        self.agent: str = agent
+        self.group_name: str = group_name
         self.verbose: bool = verbose
 
         # Setup Python command based on platform
@@ -83,28 +85,6 @@ class AegisRunner:
         self._log(f"Using Python interpreter: {self.python_command}")
         self._log(f"PYTHONPATH set to: {os.environ['PYTHONPATH']}")
 
-    def run_agent(self, agent_index: int | None = None) -> None:
-        """
-        Run a single agent instance.
-
-        Args:
-            agent_index (int | None): Optional index for multi-agent logging
-        """
-        agent_main = os.path.join(self.agent_name, "main.py")
-
-        if not os.path.exists(agent_main):
-            raise FileNotFoundError(f"Agent main script not found: {agent_main}")
-
-        command = [self.python_command, agent_main, "AEGIS_CLI"]
-        self._log(
-            f"Running agent {agent_index if agent_index is not None else ''}: {' '.join(command)}"
-        )
-
-        result = subprocess.run(command)
-
-        if result.returncode != 0:
-            print(f"Agent run failed with error:\n{result.stderr}")
-
     def run_aegis(self) -> None:
         """
         Run the AEGIS simulation.
@@ -117,12 +97,16 @@ class AegisRunner:
         command = [
             self.python_command,
             aegis_main,
-            "--agent-amount",
+            "--amount",
             str(self.agent_amount),
-            "--world-file",
-            f"worlds/{self.world_file}.world",
+            "--agent",
+            self.agent,
+            "--world",
+            self.world_file,
             "--rounds",
             str(self.rounds),
+            "--group",
+            self.group_name,
         ]
 
         self._log(f"Running AEGIS: {' '.join(command)}")
@@ -133,23 +117,10 @@ class AegisRunner:
 
     def run(self) -> None:
         """
-        Run AEGIS simulation with agents using thread pool.
+        Run AEGIS simulation with agents.
         """
-        self._setup_environment()
-
-        with ThreadPoolExecutor(max_workers=self.agent_amount + 1) as executor:
-            # Start AEGIS first
-            _ = executor.submit(self.run_aegis)
-            time.sleep(1)  # Brief pause to ensure AEGIS starts
-
-            # Run agents
-            agent_futures = [
-                executor.submit(self.run_agent, i) for i in range(self.agent_amount)
-            ]
-
-            # Wait for all agents to complete
-            for future in agent_futures:
-                future.result()
+        # self._setup_environment()
+        self.run_aegis()
 
 
 def main():
@@ -158,30 +129,34 @@ def main():
     """
     parser = argparse.ArgumentParser(
         description="Run AEGIS simulation with agents",
-        epilog="Example: python run.py --rounds 50  --agent example_agent --world ExampleWorld",
+        epilog="Example: aegis --rounds 50 --agent agents/example_agent/main.py --world worlds/ExampleWorld --group Test",
     )
     _ = parser.add_argument(
         "--rounds", type=int, required=True, help="Number of simulation rounds"
     )
     _ = parser.add_argument(
         "--agent",
-        dest="agent_directory",
         type=str,
         required=True,
         help="Path to the directory of the agent to run",
     )
     _ = parser.add_argument(
         "--world",
-        dest="world_file",
         type=str,
         required=True,
-        help="Name of the world file to use",
+        help="Path to the world file to use",
     )
     _ = parser.add_argument(
-        "--agent-amount",
+        "--amount",
         type=int,
         default=1,
         help="Number of agent instances to run (default: 1)",
+    )
+    _ = parser.add_argument(
+        "--group",
+        type=str,
+        required=True,
+        help="Group name",
     )
     _ = parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose logging"
@@ -190,10 +165,11 @@ def main():
     args: RunnerArgs = parser.parse_args()  # pyright: ignore[reportAssignmentType]
 
     runner = AegisRunner(
-        agent_amount=args.agent_amount,
+        agent_amount=args.amount,
         rounds=args.rounds,
-        world_file=args.world_file,
-        agent_name=args.agent_directory,
+        world_file=args.world,
+        agent=args.agent,
+        group_name=args.group,
         verbose=args.verbose,
     )
 

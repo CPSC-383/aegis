@@ -6,22 +6,22 @@ from _aegis.assist.parameters import Parameters
 
 @dataclass
 class Args:
-    agent_amount: int
-    world_file: str
+    amount: int
+    world: str
     rounds: int
     client: bool
     agent: str
-    group_name: str
+    group: str
 
 
 def parse_args() -> tuple[Parameters, bool]:
     parser = argparse.ArgumentParser(description="AEGIS Simulation Configuration")
 
     _ = parser.add_argument(
-        "--agent-amount", type=int, default=1, help="Number of agents to run"
+        "--amount", type=int, default=1, help="Number of agents to run"
     )
     _ = parser.add_argument(
-        "--world-file",
+        "--world",
         type=str,
         required=True,
         help="Indicates the file AEGIS should use to build the world from upon startup.",
@@ -32,7 +32,7 @@ def parse_args() -> tuple[Parameters, bool]:
     _ = parser.add_argument(
         "--agent", type=str, required=True, help="Path to the agent file"
     )
-    _ = parser.add_argument("--group-name", type=str, required=True, help="Group name")
+    _ = parser.add_argument("--group", type=str, required=True, help="Group name")
     _ = parser.add_argument(
         "--client", action="store_true", help="Set to wait for the client to connect"
     )
@@ -40,10 +40,10 @@ def parse_args() -> tuple[Parameters, bool]:
     args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]
 
     params = Parameters()
-    params.number_of_agents = args.agent_amount
-    params.world_filename = args.world_file
+    params.number_of_agents = args.amount
+    params.world_filename = args.world
     params.number_of_rounds = args.rounds
     params.agent = args.agent
-    params.group_name = args.group_name
+    params.group_name = args.group
 
     return params, args.client
