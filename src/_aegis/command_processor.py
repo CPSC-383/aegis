@@ -183,15 +183,10 @@ class CommandProcessor:
             gid_counter[aid.gid] += 1
 
         top_layer = cell.get_top_layer()
-        for aid in agents_here:
-            other = self._world.get_agent(aid)
-            if other is None:
-                continue
-            other.remove_energy(Constants.SAVE_SURV_ENERGY_COST)
-            if top_layer is None:
-                continue
-            else:
-                self._handle_top_layer(top_layer, cell, agents_here, gid_counter)
+        agent.remove_energy(Constants.SAVE_SURV_ENERGY_COST)
+        if top_layer is None:
+            return
+        self._handle_top_layer(top_layer, cell, agents_here, gid_counter)
 
     def _results(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:

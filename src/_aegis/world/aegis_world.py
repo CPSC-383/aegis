@@ -301,7 +301,7 @@ class AegisWorld:
 
             cell.agent_id_list.append(agent.get_agent_id())
             self._number_of_alive_agents += 1
-            print(f"Aegis  : Added agent {agent}")
+            print(f"Aegis  : Added agent {agent.get_agent_id()}")
 
     def get_agent(self, agent_id: AgentID) -> Agent | None:
         for agent in self._agents:
