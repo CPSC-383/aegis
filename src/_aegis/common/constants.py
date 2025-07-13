@@ -2,11 +2,6 @@ class Constants:
     NORMAL_CHARGE: int = 5
     LOW_CHARGE: int = 1
     SUPER_CHARGE: int = 20
-    AGENT_PORT: int = 6001
-    DEPTH_LOW_START: int = 0
-    DEPTH_HIGH_START: int = 5
-    DEPTH_LOW_INC: int = 4
-    DEPTH_HIGH_INC: int = 5
     DEFAULT_MAX_ENERGY_LEVEL: int = 1000
     SAVE_STATE_ALIVE: int = 0
     SAVE_STATE_DEAD: int = 1
@@ -21,3 +16,4 @@ class Constants:
     PREDICTION_ENERGY_COST: int = 1
     TEAM_DIG_ENERGY_COST: int = 1
     MOVE_ENERGY_COST: int = 1
+    MAX_DIRECTIVES: int = 5

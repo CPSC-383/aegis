@@ -27,3 +27,7 @@ class MOVE_RESULT(AegisCommand):
     @override
     def __str__(self) -> str:
         return f"{self.STR_MOVE_RESULT} ( ENG_LEV {self.energy_level} , {self.surround_info} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

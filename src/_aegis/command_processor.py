@@ -52,11 +52,16 @@ class CommandProcessor:
 
         for agent in self._agents:
             agent.run()
-            command = agent.get_command()
+            command = agent.get_action_command()
             if command is not None:
                 commands.append(command)
 
+            directives = agent.get_directives()
+            commands.extend(directives)
             messages.extend(agent.get_messages())
+
+            agent.log(f"Action Command Sent: {command}")
+            agent.log(f"Directives Sent: {directives}")
 
         self._process(commands)
         self._route_messages(messages)

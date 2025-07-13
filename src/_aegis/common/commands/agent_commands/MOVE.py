@@ -32,5 +32,9 @@ class MOVE(AgentCommand):
         return f"{self.STR_MOVE} ( {self.direction} )"
 
     @override
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    @override
     def proc_string(self) -> str:
         return f"{self._agent_id.proc_string()}#Move {self.direction}"

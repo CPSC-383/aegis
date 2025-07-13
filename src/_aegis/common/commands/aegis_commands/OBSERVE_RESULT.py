@@ -33,3 +33,7 @@ class OBSERVE_RESULT(AegisCommand):
     @override
     def __str__(self) -> str:
         return f"{self.STR_OBSERVE_RESULT} ( ENG_LEV {self.energy_level} , CELL_INFO ( {self.cell_info} ) , LAYERS {self.layers} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

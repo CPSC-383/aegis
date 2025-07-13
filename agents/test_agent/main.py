@@ -1,14 +1,16 @@
 from aegis import (
     MOVE,
+    OBSERVE_RESULT,
+    PREDICT_RESULT,
     SAVE_SURV,
     SEND_MESSAGE,
+    Agent,
     Direction,
     Survivor,
-    Agent,
 )
 
 
-def handle_messages(agent: Agent, messages: list[SEND_MESSAGE]):
+def handle_messages(agent: Agent, messages: list[SEND_MESSAGE]) -> None:
     """
     Function to handle incoming messages.
     This is called before `think()` if there are messages to process.
@@ -17,10 +19,26 @@ def handle_messages(agent: Agent, messages: list[SEND_MESSAGE]):
         agent.log(f"Received Message: {message}")
 
 
+def handle_observe(agent: Agent, ovr: OBSERVE_RESULT) -> None:
+    """
+    Function to handle observe result.
+    This is called after `handle_messages()` and before `think()` if there are results to process.
+    """
+    agent.log(f"OVR: {ovr}")
+
+
+def handle_predict(agent: Agent, pred: PREDICT_RESULT) -> None:
+    """
+    Function to handle predict result.
+    This is called after `handle_messages()` and before `think()` if there are results to process.
+    """
+    agent.log(f"PRED: {pred}")
+
+
 def think(agent: Agent) -> None:
     """
     This function must be defined.
-    AEGIS calls this function every turn.
+    This is called after `handle_messages()` and the result functions.
     """
     agent.log("Thinking")
 

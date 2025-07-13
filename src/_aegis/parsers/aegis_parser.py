@@ -18,7 +18,6 @@ from _aegis.common import (
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
-    DEATH_CARD,
     MOVE_RESULT,
     OBSERVE_RESULT,
     PREDICT_RESULT,

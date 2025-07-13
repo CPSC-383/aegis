@@ -9,3 +9,7 @@ class AEGIS_UNKNOWN(AegisCommand):
     @override
     def __str__(self) -> str:
         return self.STR_UNKNOWN
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

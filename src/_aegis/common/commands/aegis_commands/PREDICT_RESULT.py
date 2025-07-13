@@ -26,3 +26,7 @@ class PREDICT_RESULT(AegisCommand):
     @override
     def __str__(self) -> str:
         return f"{self.STR_PREDICT_RESULT} ( SURV_ID {self.surv_id} , PREDICTION_CORRECT {self.prediction_correct} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

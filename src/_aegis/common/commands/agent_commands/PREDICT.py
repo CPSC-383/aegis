@@ -31,5 +31,9 @@ class PREDICT(AgentCommand):
         return f"{self.STR_PREDICT} ( SURV_ID {self.surv_id} , LABEL {self.label} )"
 
     @override
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    @override
     def proc_string(self) -> str:
         return f"{self._agent_id.proc_string()}#Prediction {self.label} for survivor {self.surv_id}"

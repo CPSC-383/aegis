@@ -31,5 +31,9 @@ class SEND_MESSAGE(AgentCommand):
         return f"{self.STR_SEND_MESSAGE} ( NumTo {len(self.agent_id_list)} , MsgSize {len(self.message)} , ID_List {self.agent_id_list} , MSG {self.message} )"
 
     @override
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    @override
     def proc_string(self) -> str:
         return f"{self._agent_id.proc_string()}#Send {self.message} to {len(self.agent_id_list)}"
