@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package aegis;
+
+// Basic types
+message Location {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message AgentID {
+  int32 id = 1;
+  int32 gid = 2;
+}
+
+// World objects
+message Survivor {
+  int32 id = 1;
+  int32 state = 2;  // 0 = alive, 1 = dead
+}
+
+message Rubble {
+  int32 move_cost = 1;
+}
+
+message Cell {
+  Location location = 1;
+  int32 move_cost = 2;
+  repeated AgentID agent_ids = 3;
+  bool has_survivors = 4;
+  
+  oneof top_layer {
+    Survivor survivor = 5;
+    Rubble rubble = 6;
+  }
+}
+
+// World state
+message WorldState {
+  int32 width = 1;
+  int32 height = 2;
+  repeated Cell cells = 3;
+  repeated Agent agents = 4;
+  repeated Survivor survivors = 5;
+}
+
+// Agent information
+message Agent {
+  AgentID agent_id = 1;
+  Location location = 2;
+  int32 energy_level = 3;
+  int32 steps_taken = 4;
+}
+
+// Group data for scoring
+message GroupData {
+  int32 gid = 1;
+  string name = 2;
+  int32 score = 3;
+  int32 number_saved = 4;
+  int32 number_predicted_right = 5;
+  int32 number_predicted_wrong = 6;
+}
+
+// Round update
+message RoundUpdate {
+  int32 round = 1;
+  WorldState world = 2;
+  repeated GroupData groups = 3;
+}
+
+// Simulation events
+message SimulationComplete {
+  // Empty message for completion event
+}
+
+// Main event wrapper
+message SimulationEvent {
+  oneof event {
+    WorldState world_init = 1;
+    RoundUpdate round_update = 2;
+    SimulationComplete complete = 3;
+  }
+}

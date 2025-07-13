@@ -1,14 +1,26 @@
 import { Simulation } from '@/core/simulation'
 import { WorldMap } from '@/core/world'
+import { ProtobufService } from './protobuf'
 import pako from 'pako'
 
 export class ClientWebSocket {
     private url: string = 'ws://localhost:6003'
     private reconnectInterval: number = 500
     private simulation: Simulation | undefined = undefined
+    private protobufService: ProtobufService
 
     constructor(readonly onSimCreated: (sim: Simulation) => void) {
+        this.protobufService = ProtobufService.getInstance()
+        this.initializeProtobuf()
         this.connect()
+    }
+
+    private async initializeProtobuf() {
+        try {
+            await this.protobufService.initialize()
+        } catch (error) {
+            console.error('Failed to initialize protobuf service:', error)
+        }
     }
 
     private connect() {
@@ -32,8 +44,8 @@ export class ClientWebSocket {
 
     private handleEvent(data: any) {
         const decodedBase64 = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
-        const decompressedData = pako.inflate(decodedBase64, { to: 'string' })
-        const event = JSON.parse(decompressedData)
+        const decompressedData = pako.inflate(decodedBase64)
+        const event = this.protobufService.deserialize(decompressedData)
 
         if (!this.simulation) {
             // First event should be the world data

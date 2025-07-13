@@ -1,7 +1,6 @@
 import argparse
 import base64
 import gzip
-import json
 import sys
 import time
 from dataclasses import dataclass
@@ -19,6 +18,7 @@ from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
+from _aegis.protobuf.protobuf_service import ProtobufService
 
 
 @dataclass
@@ -121,9 +121,7 @@ class Aegis:
         if is_feature_enabled("ENABLE_PREDICTIONS"):
             self._prediction_handler = PredictionHandler()
         try:
-            _aegis_world_file = WorldFileParser.parse_world_file(
-                self._parameters.world_filename
-            )
+            _aegis_world_file = WorldFileParser.parse_world_file(self._parameters.world_filename)
             if _aegis_world_file is None:
                 print(
                     f'Aegis  : Unable to parse world file from "{self._parameters.world_filename}"',
@@ -162,9 +160,8 @@ class Aegis:
     def _end_simulation(self) -> None:
         print("Aegis  : Simulation Over.")
 
-        game_over_data = {"event_type": "SimulationComplete"}
-        event = json.dumps(game_over_data).encode()
-        self._compress_and_send(event)
+        serialized_data = ProtobufService.serialize_simulation_complete()
+        self._compress_and_send(serialized_data)
 
         self._state = State.SHUT_DOWN
         self._end = True
@@ -204,17 +201,14 @@ class Aegis:
         print("================================================")
         _ = sys.stdout.flush()
 
-        after_json_world = self.get_aegis_world().convert_to_json()
+        world_data = self.get_aegis_world().get_protobuf_world_data()
 
-        round_data = {
-            "event_type": "Round",
-            "round": 0,
-            "after_world": after_json_world,
-        }
-        event = json.dumps(round_data).encode()
-        self._compress_and_send(event)
+        serialized_data = ProtobufService.serialize_round_update(
+            0, world_data, self._agent_handler.get_groups_data()
+        )
+        self._compress_and_send(serialized_data)
 
-        for round in range(1, self._parameters.number_of_rounds + 1):
+        for game_round in range(1, self._parameters.number_of_rounds + 1):
             if self._end:
                 break
 
@@ -238,16 +232,12 @@ class Aegis:
 
             self._command_processor.run_turn()
             self._grim_reaper()
-            after_json_world = self.get_aegis_world().convert_to_json()
+            world_data = self.get_aegis_world().get_protobuf_world_data()
 
-            round_data = {
-                "event_type": "Round",
-                "round": round,
-                "after_world": after_json_world,
-                "groups_data": self._agent_handler.get_groups_data(),
-            }
-            event = json.dumps(round_data).encode()
-            self._compress_and_send(event)
+            serialized_data = ProtobufService.serialize_round_update(
+                game_round, world_data, self._agent_handler.get_groups_data()
+            )
+            self._compress_and_send(serialized_data)
 
         self._end_simulation()
 
