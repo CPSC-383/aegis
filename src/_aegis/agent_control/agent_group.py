@@ -1,14 +1,11 @@
 from typing import override
 
-from _aegis.agent_control.agent_control import AgentControl
-
 
 class AgentGroup:
     def __init__(self, gid: int, group_name: str) -> None:
         self.GID: int = gid
         self.id_counter: int = 1
-        self.name = group_name
-        self.agent_list: list[AgentControl] = []
+        self.name: str = group_name
         self.number_saved_alive: int = 0
         self.number_saved_dead: int = 0
         self.number_saved: int = 0

@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import override
 
 from _aegis.common import (
-    AgentIDList,
     CellType,
     Location,
 )
+from _aegis.common.agent_id import AgentID
 from _aegis.common.world.info import CellInfo
 from _aegis.common.world.objects import Survivor, WorldObject
 
@@ -17,7 +17,7 @@ class Cell:
 
     Attributes:
         move_cost (int): The movement cost associated with the cell.
-        agent_id_list (AgentIDList): List of agent IDs present in the cell.
+        agent_id_list (list[AgentID]): List of agent IDs present in the cell.
         has_survivors (bool): If there are survivors in the cell.
         location (Location): The location of the cell on the map.
     """
@@ -36,7 +36,7 @@ class Cell:
         """
         self._type: CellType = CellType.NO_CELL
         self.move_cost: int = 1
-        self.agent_id_list: AgentIDList = AgentIDList()
+        self.agent_id_list: list[AgentID] = []
         self._cell_layer_list: list[WorldObject] = []
         self.has_survivors: bool = False
 
@@ -140,7 +140,7 @@ class Cell:
             cell_type,
             self.location.clone(),
             self.move_cost,
-            self.agent_id_list.clone(),
+            [agent_id.clone() for agent_id in self.agent_id_list],
             self.get_top_layer(),
         )
 
@@ -167,7 +167,7 @@ class Cell:
         cell = Cell()
         cell._type = self._type
         cell.location = self.location
-        cell.agent_id_list = self.agent_id_list.clone()
+        cell.agent_id_list = [agent_id.clone() for agent_id in self.agent_id_list]
         cell._cell_layer_list = [layer.clone() for layer in self._cell_layer_list]
         cell.move_cost = self.move_cost
         cell.has_survivors = self.has_survivors

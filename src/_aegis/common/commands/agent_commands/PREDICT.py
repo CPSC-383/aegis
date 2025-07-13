@@ -23,8 +23,8 @@ class PREDICT(AgentCommand):
             label: The label of the prediction.
         """
         super().__init__()
-        self.surv_id = surv_id
-        self.label = label
+        self.surv_id: int = surv_id
+        self.label: np.int64 = label
 
     @override
     def __str__(self) -> str:

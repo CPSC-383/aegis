@@ -25,7 +25,7 @@ class MOVE(AgentCommand):
         Args:
             direction: The direction to move.
         """
-        self.direction = direction
+        self.direction: Direction = direction
 
     @override
     def __str__(self) -> str:

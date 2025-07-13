@@ -1,15 +1,9 @@
 __all__ = [
     "AEGIS_UNKNOWN",
-    "CMD_RESULT_END",
-    "CMD_RESULT_START",
     "DEATH_CARD",
     "SEND_MESSAGE_RESULT",
-    "MESSAGES_END",
-    "MESSAGES_START",
     "MOVE_RESULT",
     "OBSERVE_RESULT",
-    "ROUND_END",
-    "ROUND_START",
     "SAVE_SURV_RESULT",
     "PREDICT_RESULT",
     "RECHARGE_RESULT",
@@ -17,16 +11,10 @@ __all__ = [
 ]
 
 from _aegis.common.commands.aegis_commands.AEGIS_UNKNOWN import AEGIS_UNKNOWN
-from _aegis.common.commands.aegis_commands.CMD_RESULT_END import CMD_RESULT_END
-from _aegis.common.commands.aegis_commands.CMD_RESULT_START import CMD_RESULT_START
 from _aegis.common.commands.aegis_commands.DEATH_CARD import DEATH_CARD
-from _aegis.common.commands.aegis_commands.MESSAGES_END import MESSAGES_END
-from _aegis.common.commands.aegis_commands.MESSAGES_START import MESSAGES_START
 from _aegis.common.commands.aegis_commands.MOVE_RESULT import MOVE_RESULT
 from _aegis.common.commands.aegis_commands.OBSERVE_RESULT import OBSERVE_RESULT
 from _aegis.common.commands.aegis_commands.PREDICT_RESULT import PREDICT_RESULT
-from _aegis.common.commands.aegis_commands.ROUND_END import ROUND_END
-from _aegis.common.commands.aegis_commands.ROUND_START import ROUND_START
 from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT
 from _aegis.common.commands.aegis_commands.SEND_MESSAGE_RESULT import (
     SEND_MESSAGE_RESULT,

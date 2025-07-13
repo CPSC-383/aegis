@@ -14,6 +14,7 @@ class SAVE_SURV_RESULT(AegisCommand):
     Attributes:
         energy_level (int): The energy level of the agent.
         surround_info (SurroundInfo): The surrounding info of the agent.
+        pred_info (tuple[int, NDArray[np.float32], NDArray[np.int64]] | None): Has the below info
         surv_saved_id (int): The ID of the saved survivor.
         image_to_predict (NDArray[np.float32] | None): The image to predict.
         all_unique_labels (NDArray[np.int64] | None): An array of all unique labels for prediction.
@@ -33,13 +34,15 @@ class SAVE_SURV_RESULT(AegisCommand):
             surround_info: The surrounding info of the agent.
             pred_info: The prediction information.
         """
-        self.energy_level = energy_level
-        self.surround_info = surround_info
-        self._pred_info = pred_info
+        self.energy_level: int = energy_level
+        self.surround_info: SurroundInfo = surround_info
+        self._pred_info: tuple[int, NDArray[np.float32], NDArray[np.int64]] | None = (
+            pred_info
+        )
         if pred_info:
-            self.surv_saved_id = pred_info[0]
-            self.image_to_predict = pred_info[1]
-            self.all_unique_labels = pred_info[2]
+            self.surv_saved_id: int = pred_info[0]
+            self.image_to_predict: NDArray[np.float32] | None = pred_info[1]
+            self.all_unique_labels: NDArray[np.int64] | None = pred_info[2]
         else:
             self.surv_saved_id = -1
             self.image_to_predict = None
