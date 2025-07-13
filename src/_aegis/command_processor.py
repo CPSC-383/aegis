@@ -2,6 +2,7 @@ from _aegis.aegis_config import is_feature_enabled
 from _aegis.agent_control.agent_handler import AgentHandler
 from _aegis.agent_predictions.prediction_handler import PredictionHandler
 from _aegis.common.agent_id import AgentID
+from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     MOVE_RESULT,
@@ -202,9 +203,8 @@ class CommandProcessor:
             energy = agent.get_energy_level()
             location = agent.get_location()
             surround_info = self._world.get_surround_info(location)
-            if surround_info is None:
-                result = AEGIS_UNKNOWN()
-            else:
+            result: AegisCommand = AEGIS_UNKNOWN()
+            if surround_info is not None:
                 match cmd:
                     case MOVE():
                         result = MOVE_RESULT(energy, surround_info)

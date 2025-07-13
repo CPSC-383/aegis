@@ -8,6 +8,7 @@ description = "Survivor Simulation for CPSC383"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "protobuf==5.29.5",
     "websocket-server==0.6.4",
 ]
 dynamic = ["version"]
@@ -27,5 +28,6 @@ comp = [
 [dependency-groups]
 dev = [
     "hatch>=1.14.1",
+    "mypy-protobuf>=3.6.0",
     "ruff>=0.12.2",
 ]

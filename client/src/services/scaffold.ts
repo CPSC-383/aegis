@@ -62,7 +62,7 @@ export function createScaffold(): Scaffold {
 
         const path = aegisAPI.path
 
-        const config_path = await path.join(aegisPath, 'sys_files', 'aegis_config.json')
+        const config_path = await path.join(aegisPath, 'sys_files', 'old_config.json')
         aegisAPI.toggleMoveCost(config_path, value)
     }
 
@@ -74,7 +74,7 @@ export function createScaffold(): Scaffold {
         const fs = aegisAPI.fs
         const path = aegisAPI.path
 
-        const config_path = await path.join(aegisPath, 'sys_files', 'aegis_config.json')
+        const config_path = await path.join(aegisPath, 'sys_files', 'old_config.json')
         const config = await fs.readFileSync(config_path)
         return config
     }

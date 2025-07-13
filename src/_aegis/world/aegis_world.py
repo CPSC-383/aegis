@@ -1,10 +1,8 @@
-import base64
-import gzip
 import json
 import os
 import queue
 import random
-from typing import TypedDict, cast
+from typing import TypedDict, cast, Dict, Any
 
 from _aegis.assist.state import State
 from _aegis.common import (
@@ -32,6 +30,7 @@ from _aegis.world.object_handlers import (
 )
 from _aegis.world.simulators.survivor_simulator import SurvivorSimulator
 from _aegis.world.spawn_manager import SpawnManger
+from _aegis.protobuf.protobuf_service import ProtobufService
 
 
 class LocationDict(TypedDict):
@@ -86,9 +85,7 @@ class AegisWorld:
         self._normal_cell_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._top_layer_removed_cell_list: list[Location] = []
-        self._survivor_simulator: SurvivorSimulator = SurvivorSimulator(
-            self._survivors_list
-        )
+        self._survivor_simulator: SurvivorSimulator = SurvivorSimulator(self._survivors_list)
         self._initial_agent_energy: int = Constants.DEFAULT_MAX_ENERGY_LEVEL
         self._agent_world_filename: str = ""
         self._number_of_survivors: int = 0
@@ -106,12 +103,8 @@ class AegisWorld:
             aegis_world_file_info = WorldFileParser().parse_world_file(filename)
             success = self.build_world(aegis_world_file_info)
 
-            world = self._get_json_world(filename)
-            data = {"event_type": "World", "data": world}
-            compressed_data = gzip.compress(json.dumps(data).encode())
-            encoded_data = base64.b64encode(compressed_data).decode().encode()
-
-            ws_server.add_event(encoded_data)
+            serialized_data = ProtobufService.serialize_world_init(self.get_protobuf_world_data())
+            ws_server.add_event(serialized_data)
             return success
         except Exception:
             return False
@@ -128,9 +121,7 @@ class AegisWorld:
             Utility.set_random_seed(aegis_world_file.random_seed)
 
             # Create a world of known size
-            self._world = World(
-                width=aegis_world_file.width, height=aegis_world_file.height
-            )
+            self._world = World(width=aegis_world_file.width, height=aegis_world_file.height)
 
             # Special type cells
             for cell_setting in aegis_world_file.cell_settings:
@@ -223,23 +214,17 @@ class AegisWorld:
                                 f"[({x},{y}),({killer},{charging}),{has_survivors},{cell.move_cost}]\n"
                             )
                         else:
-                            _ = writer.write(
-                                f"[({x},{y}),({killer},{charging}),{has_survivors}]\n"
-                            )
+                            _ = writer.write(f"[({x},{y}),({killer},{charging}),{has_survivors}]\n")
             path = os.path.realpath(os.getcwd())
             self._agent_world_filename = os.path.join(path, file)
         except Exception:
-            print(
-                f"Aegis  : Unable to write agent world file to '{self._agent_world_filename}'!"
-            )
+            print(f"Aegis  : Unable to write agent world file to '{self._agent_world_filename}'!")
 
     def grim_reaper(self) -> list[AgentID]:
         dead_agents: list[AgentID] = []
         for agent in self._agents:
             if agent.get_energy_level() <= 0:
-                print(
-                    f"Aegis  : Agent {agent.get_agent_id()} ran out of energy and died.\n"
-                )
+                print(f"Aegis  : Agent {agent.get_agent_id()} ran out of energy and died.\n")
                 dead_agents.append(agent.get_agent_id())
                 continue
 
@@ -249,9 +234,7 @@ class AegisWorld:
                     continue
 
                 if cell.is_killer_cell():
-                    print(
-                        f"Aegis  : Agent {agent.get_agent_id()} ran into killer cell and died.\n"
-                    )
+                    print(f"Aegis  : Agent {agent.get_agent_id()} ran into killer cell and died.\n")
                     if agent.get_agent_id() not in dead_agents:
                         dead_agents.append(agent.get_agent_id())
 
@@ -468,9 +451,84 @@ class AegisWorld:
         return self._number_of_survivors
 
     def get_total_saved_survivors(self) -> int:
-        return (
-            self._number_of_survivors_saved_alive + self._number_of_survivors_saved_dead
-        )
+        return self._number_of_survivors_saved_alive + self._number_of_survivors_saved_dead
 
     def get_agents(self) -> list[Agent]:
         return self._agents
+
+    def get_protobuf_world_data(self) -> Dict[str, Any]:
+        """Get world data in a format ready for protobuf serialization."""
+        if self._world is None:
+            raise Exception(
+                "Aegis  : World is not initialized! Cannot send world object to client!"
+            )
+
+        cells = []
+        agents = []
+        survivors = []
+
+        agent_map = {
+            (agent.get_agent_id().id, agent.get_agent_id().gid): agent for agent in self._agents
+        }
+
+        for x in range(self._world.width):
+            for y in range(self._world.height):
+                cell = self._world.get_cell_at(Location(x, y))
+                if cell is None:
+                    continue
+
+                cell_info = cell.get_cell_info()
+
+                # Create cell data
+                cell_data = {
+                    "location": {"x": x, "y": y},
+                    "move_cost": cell_info.move_cost,
+                    "agent_ids": [{"id": aid.id, "gid": aid.gid} for aid in cell.agent_id_list],
+                    "has_survivors": cell.number_of_survivors() > 0,
+                }
+
+                # Add top layer if present
+                top_layer = cell.get_top_layer()
+                if top_layer is not None:
+                    if isinstance(top_layer, Survivor):
+                        cell_data["survivor"] = {
+                            "id": top_layer.id,
+                            "state": (
+                                0 if top_layer.get_energy_level() > 0 else 1
+                            ),  # 0=alive, 1=dead
+                        }
+                        survivors.append(
+                            {
+                                "id": top_layer.id,
+                                "state": 0 if top_layer.get_energy_level() > 0 else 1,
+                            }
+                        )
+                    else:
+                        # Assume it's rubble
+                        cell_data["rubble"] = {"move_cost": cell_info.move_cost}
+
+                cells.append(cell_data)
+
+                # Add agent data for agents in this cell
+                for agent_id in cell.agent_id_list:
+                    key = (agent_id.id, agent_id.gid)
+                    agent = agent_map.get(key)
+                    if agent is not None:
+                        agent_data = {
+                            "agent_id": {
+                                "id": agent.get_agent_id().id,
+                                "gid": agent.get_agent_id().gid,
+                            },
+                            "location": {"x": x, "y": y},
+                            "energy_level": agent.get_energy_level(),
+                            "steps_taken": agent.steps_taken,
+                        }
+                        agents.append(agent_data)
+
+        return {
+            "width": self._world.width,
+            "height": self._world.height,
+            "cells": cells,
+            "agents": agents,
+            "survivors": survivors,
+        }

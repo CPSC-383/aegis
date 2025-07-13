@@ -158,7 +158,7 @@ class ElectronApp {
 
     private spawnAegisProcess(rootPath: string, numOfRounds: string, numOfAgents: string, worldFile: string) {
         const srcPath = path.join(rootPath, 'src')
-        const proc = path.join(srcPath, 'aegis', 'main.py')
+        const proc = path.join(srcPath, '_aegis', 'main.py')
         const procArgs = [
             '--agent-amount',
             numOfAgents,
@@ -206,7 +206,7 @@ class ElectronApp {
 
     private spawnAgentProcesses(rootPath: string, groupName: string, numOfAgentsToSpawn: number, agent: string) {
         const srcPath = path.join(rootPath, 'src')
-        const proc = path.join(srcPath, 'agents', agent, 'main.py')
+        const proc = path.join(srcPath, '_agents', agent, 'main.py')
         const procArgs = [groupName]
         const options = {
             cwd: rootPath,
