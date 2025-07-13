@@ -19,16 +19,10 @@ from _aegis.common import (
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
-    CMD_RESULT_END,
-    CMD_RESULT_START,
     DEATH_CARD,
-    MESSAGES_END,
-    MESSAGES_START,
     MOVE_RESULT,
     OBSERVE_RESULT,
     PREDICT_RESULT,
-    ROUND_END,
-    ROUND_START,
     SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     RECHARGE_RESULT,
@@ -37,8 +31,6 @@ from _aegis.common.commands.aegis_commands import (
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     AGENT_UNKNOWN,
-    CONNECT,
-    END_TURN,
     MOVE,
     OBSERVE,
     PREDICT,

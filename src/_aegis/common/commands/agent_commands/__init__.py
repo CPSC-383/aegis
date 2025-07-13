@@ -1,6 +1,4 @@
 from _aegis.common.commands.agent_commands.AGENT_UNKNOWN import AGENT_UNKNOWN
-from _aegis.common.commands.agent_commands.CONNECT import CONNECT
-from _aegis.common.commands.agent_commands.END_TURN import END_TURN
 from _aegis.common.commands.agent_commands.MOVE import MOVE
 from _aegis.common.commands.agent_commands.OBSERVE import OBSERVE
 from _aegis.common.commands.agent_commands.PREDICT import PREDICT
@@ -11,8 +9,6 @@ from _aegis.common.commands.agent_commands.TEAM_DIG import TEAM_DIG
 
 __all__ = [
     "AGENT_UNKNOWN",
-    "CONNECT",
-    "END_TURN",
     "MOVE",
     "OBSERVE",
     "SAVE_SURV",

@@ -3,7 +3,6 @@ from _aegis.common import Direction, Location
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     AGENT_UNKNOWN,
-    END_TURN,
     MOVE,
     OBSERVE,
     # PREDICT,
@@ -24,7 +23,6 @@ __all__ = [
     "AGENT_UNKNOWN",
     "AgentCommand",
     "Direction",
-    "END_TURN",
     "Location",
     "MOVE",
     "OBSERVE",
