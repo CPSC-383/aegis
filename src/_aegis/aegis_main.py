@@ -1,10 +1,8 @@
-import argparse
 import base64
 import gzip
 import json
 import sys
 import time
-from dataclasses import dataclass
 
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.assist.agent_states import AgentStates
@@ -21,20 +19,9 @@ from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
 
 
-@dataclass
-class Args:
-    agent_amount: int
-    replay_file: str
-    world_file: str
-    rounds: int
-    client: bool
-    agent: str
-    group_name: str
-
-
 class Aegis:
-    def __init__(self) -> None:
-        self._parameters: Parameters = Parameters()
+    def __init__(self, parameters: Parameters, wait_for_client: bool) -> None:
+        self._parameters: Parameters = parameters
         self._state: State = State.NONE
         self._started_idling: int = -1
         self._end: bool = False
@@ -43,6 +30,8 @@ class Aegis:
         self._agent_commands: list[AgentCommand] = []
         self._aegis_world: AegisWorld = AegisWorld(self._agents)
         self._ws_server: WebSocketServer = WebSocketServer()
+        if wait_for_client:
+            self._ws_server.set_wait_for_client(True)
         self._prediction_handler: PredictionHandler | None = None
         self._command_processor: CommandProcessor = CommandProcessor(
             self._agents,
@@ -50,72 +39,6 @@ class Aegis:
             self._agent_handler,
             self._prediction_handler,
         )
-
-    def read_command_line(self) -> bool:
-        parser = argparse.ArgumentParser(
-            description="AEGIS Simulation Configuration",
-        )
-
-        _ = parser.add_argument(
-            "--agent-amount",
-            dest="agent_amount",
-            type=int,
-            default=1,
-            help="Number of agent instances to run",
-        )
-        _ = parser.add_argument(
-            "--world-file",
-            dest="world_file",
-            type=str,
-            required=True,
-            help="Indicates the file AEGIS should use to build the world from upon startup.",
-        )
-        _ = parser.add_argument(
-            "--rounds",
-            type=int,
-            required=True,
-            help="Number of simulation rounds",
-        )
-        _ = parser.add_argument(
-            "--agent",
-            dest="agent",
-            type=str,
-            required=True,
-            help="Path to the agent file",
-        )
-        _ = parser.add_argument(
-            "--group-name",
-            dest="group_name",
-            type=str,
-            required=True,
-            help="Group name",
-        )
-        _ = parser.add_argument(
-            "--client",
-            action="store_true",
-            required=False,
-            help="Set to true to wait for client to connect.",
-        )
-
-        try:
-            args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]
-
-            if args.agent_amount > 0:
-                self._parameters.number_of_agents = args.agent_amount
-            if args.world_file:
-                self._parameters.world_filename = args.world_file
-            if args.rounds > 0:
-                self._parameters.number_of_rounds = args.rounds
-            if args.agent:
-                self._parameters.agent = args.agent
-            if args.group_name:
-                self._parameters.group_name = args.group_name
-            if args.client:
-                self._ws_server.set_wait_for_client(args.client)
-
-            return True
-        except SystemExit:
-            return False
 
     def start_up(self) -> bool:
         if is_feature_enabled("ENABLE_PREDICTIONS"):

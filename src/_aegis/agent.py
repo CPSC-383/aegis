@@ -169,6 +169,7 @@ class Agent:
         return self._command_manager.get_messages()
 
     def send(self, command: AgentCommand) -> None:
+        self.log(f"Command sent: {command}")
         command.set_agent_id(self.get_agent_id())
         self._command_manager.send(command)
 
