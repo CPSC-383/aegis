@@ -15,6 +15,7 @@ wheels = [
 name = "aegis"
 source = { editable = "." }
 dependencies = [
+    { name = "flatbuffers" },
     { name = "websocket-server" },
 ]
 
@@ -32,6 +33,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "flatbuffers", specifier = ">=24.3.25" },
     { name = "numpy", marker = "extra == 'comp'", specifier = ">=1.26.4" },
     { name = "tensorflow", marker = "extra == 'comp'", specifier = ">=2.18.1" },
     { name = "websocket-server", specifier = "==0.6.4" },
