@@ -19,23 +19,16 @@ from _aegis.assist.parameters import Parameters
 from _aegis.assist.state import State
 from _aegis.common import (
     AgentIDList,
-    Constants,
-    LifeSignals,
 )
 from _aegis.common.commands.aegis_commands import (
-    OBSERVE_RESULT,
     PREDICT_RESULT,
     SEND_MESSAGE_RESULT,
-    SLEEP_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
-    OBSERVE,
     PREDICT,
     SEND_MESSAGE,
-    SLEEP,
 )
-from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
@@ -62,11 +55,7 @@ class Aegis:
         self._agent_handler: AgentHandler = AgentHandler()
         self._agent_commands: list[AgentCommand] = []
         self._PREDICT_list: list[PREDICT] = []
-        self._SLEEP_list: list[SLEEP] = []
-        self._OBSERVE_list: list[OBSERVE] = []
-        self._SLEEP_RESULT_list: AgentIDList = AgentIDList()
         self._PREDICT_RESULT_list: AgentIDList = AgentIDList()
-        self._OBSERVE_RESULT_list: list[OBSERVE] = []
         self._aegis_world: AegisWorld = AegisWorld()
         self._ws_server: WebSocketServer = WebSocketServer()
         self._prediction_handler: PredictionHandler | None = None
@@ -184,7 +173,7 @@ class Aegis:
             agent_id = self._agent_handler.agent_info(self._parameters.group_name)
             agent = self._aegis_world.add_agent_by_id(agent_id)
             if agent is None:
-                raise Exception("Agent should not be of `none` type during creating")
+                raise Exception("Agent should not be of `none` type during creation")
             agent.set_agent_state(AgentStates.CONNECTED)
             agent.load_agent(self._parameters.agent)
             self._agents.append(agent)
@@ -270,7 +259,6 @@ class Aegis:
                 return
 
             self._command_processor.run_turn()
-
             # self._aegis_world.run_simulators()
             self._grim_reaper()
             after_json_world = self.get_aegis_world().convert_to_json()
@@ -289,10 +277,6 @@ class Aegis:
     def _process_command(self, command: AgentCommand) -> None:
         if isinstance(command, PREDICT):
             self._PREDICT_list.append(command)
-        elif isinstance(command, SLEEP):
-            self._SLEEP_list.append(command)
-        elif isinstance(command, OBSERVE):
-            self._OBSERVE_list.append(command)
         elif isinstance(command, SEND_MESSAGE):
             send_message: SEND_MESSAGE = command
             send_message_result = SEND_MESSAGE_RESULT(
@@ -310,15 +294,6 @@ class Aegis:
                         )
             else:
                 self._agent_handler.forward_message(send_message_result)
-
-    def _process_commands(self) -> None:
-        if (
-            self._parameters.config_settings is not None
-            and self._parameters.config_settings.predictions_enabled
-        ):
-            self._process_PREDICT()
-        self._process_SLEEP()
-        self._process_OBSERVE()
 
     def _process_PREDICT(self) -> None:
         for prediction in self._PREDICT_list:
@@ -359,38 +334,6 @@ class Aegis:
             self._PREDICT_RESULT_list.add(agent.get_agent_id())
         self._PREDICT_list.clear()
 
-    def _process_SLEEP(self) -> None:
-        for sleep in self._SLEEP_list:
-            agent = self._aegis_world.get_agent(sleep.get_agent_id())
-            if agent is None:
-                continue
-
-            agent_cell = self._aegis_world.get_cell_at(agent.get_location())
-            config_settings = self._parameters.config_settings
-
-            if (config_settings and config_settings.sleep_everywhere) or (
-                agent_cell and agent_cell.is_charging_cell()
-            ):
-                if (
-                    agent.get_energy_level() + Constants.NORMAL_CHARGE
-                    > Constants.DEFAULT_MAX_ENERGY_LEVEL
-                ):
-                    agent.set_energy_level(Constants.DEFAULT_MAX_ENERGY_LEVEL)
-                else:
-                    agent.add_energy(Constants.NORMAL_CHARGE)
-            self._SLEEP_RESULT_list.add(sleep.get_agent_id())
-        self._SLEEP_list.clear()
-
-    def _process_OBSERVE(self) -> None:
-        for observe in self._OBSERVE_list:
-            agent = self._aegis_world.get_agent(observe.get_agent_id())
-            if agent is None:
-                continue
-
-            agent.remove_energy(self._parameters.OBSERVE_ENERGY_COST)
-            self._OBSERVE_RESULT_list.append(observe)
-        self._OBSERVE_list.clear()
-
     def _create_results(self) -> None:
         if (
             self._parameters.config_settings is not None
@@ -419,46 +362,6 @@ class Aegis:
                 )
 
             self._PREDICT_RESULT_list.clear()
-
-        for agent_id in self._SLEEP_RESULT_list:
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is None:
-                continue
-
-            success = False
-            agent_cell = self._aegis_world.get_cell_at(agent.get_location())
-            config_settings = self._parameters.config_settings
-
-            if (config_settings and config_settings.sleep_everywhere) or (
-                agent_cell and agent_cell.is_charging_cell()
-            ):
-                success = True
-            sleep_result = SLEEP_RESULT(success, agent.get_energy_level())
-            self._agent_handler.set_result_of_command(
-                agent.get_agent_id(), sleep_result
-            )
-        self._SLEEP_RESULT_list.clear()
-
-        for observe in self._OBSERVE_RESULT_list:
-            agent = self._aegis_world.get_agent(observe.get_agent_id())
-            if agent is None:
-                continue
-
-            cell_info = CellInfo()
-            life_signals = LifeSignals()
-            cell = self._aegis_world.get_cell_at(observe.location)
-
-            if cell is not None:
-                cell_info = cell.get_cell_info()
-                life_signals = cell.get_generated_life_signals()
-            observe_result = OBSERVE_RESULT(
-                agent.get_energy_level(), cell_info, life_signals
-            )
-
-            self._agent_handler.set_result_of_command(
-                agent.get_agent_id(), observe_result
-            )
-        self._OBSERVE_RESULT_list.clear()
 
     def _grim_reaper(self) -> None:
         dead_agents = self._aegis_world.grim_reaper()

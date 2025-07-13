@@ -24,10 +24,10 @@ class Survivor(WorldObject):
 
         Args:
             id: The id of the survivor.
-            energy_level: The energy_level of the survivor.
+            health: The energy_level of the survivor.
         """
         super().__init__()
-        self._state = self.State.ALIVE
+        self._state: Survivor.State = self.State.ALIVE
         self.id: int = id
         self.set_energy_level(energy_level)
 
@@ -59,10 +59,6 @@ class Survivor(WorldObject):
     @override
     def get_name(self) -> str:
         return "Survivor"
-
-    @override
-    def get_life_signal(self) -> int:
-        return self._energy_level
 
     @override
     def file_output_string(self) -> str:

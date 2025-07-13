@@ -12,7 +12,7 @@ __all__ = [
     "ROUND_START",
     "SAVE_SURV_RESULT",
     "PREDICT_RESULT",
-    "SLEEP_RESULT",
+    "RECHARGE_RESULT",
     "TEAM_DIG_RESULT",
 ]
 
@@ -31,5 +31,5 @@ from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RES
 from _aegis.common.commands.aegis_commands.SEND_MESSAGE_RESULT import (
     SEND_MESSAGE_RESULT,
 )
-from _aegis.common.commands.aegis_commands.SLEEP_RESULT import SLEEP_RESULT
+from _aegis.common.commands.aegis_commands.RECHARGE_RESULT import RECHARGE_RESULT
 from _aegis.common.commands.aegis_commands.TEAM_DIG_RESULT import TEAM_DIG_RESULT

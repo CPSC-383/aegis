@@ -5,10 +5,7 @@ from typing import override
 from _aegis.common import (
     AgentIDList,
     CellType,
-    Constants,
-    LifeSignals,
     Location,
-    Utility,
 )
 from _aegis.common.world.info import CellInfo
 from _aegis.common.world.objects import Survivor, WorldObject
@@ -153,33 +150,6 @@ class Cell:
             if isinstance(layer, Survivor):
                 count += 1
         return count
-
-    def get_generated_life_signals(self) -> LifeSignals:
-        layer = self.number_of_layers() - 1
-        i = 0
-        if not self._cell_layer_list:
-            return LifeSignals()
-        life_signals: list[int] = [0] * self.number_of_layers()
-        life_signals[i] = self._cell_layer_list[layer].get_life_signal()
-        i += 1
-        layer -= 1
-
-        low_range = Constants.DEPTH_LOW_START
-        high_range = Constants.DEPTH_HIGH_START
-        while layer >= 0:
-            lss = self._cell_layer_list[layer].get_life_signal()
-            distortion = Utility.random_in_range(low_range, high_range)
-            if distortion > lss:
-                lss = 0
-            else:
-                lss -= distortion
-            life_signals[i] = lss
-            i += 1
-            layer -= 1
-            low_range += Constants.DEPTH_LOW_INC
-            high_range += Constants.DEPTH_HIGH_INC
-
-        return LifeSignals(life_signals)
 
     @override
     def __str__(self) -> str:

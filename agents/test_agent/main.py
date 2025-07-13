@@ -1,7 +1,6 @@
 from aegis import (
     MOVE,
     SAVE_SURV,
-    TEAM_DIG,
     AgentCommand,
     Direction,
     Survivor,
@@ -40,7 +39,7 @@ class SocketAgent:
         # If a survivor is present, save it and end the turn.
         top_layer = cell.get_top_layer()
         if isinstance(top_layer, Survivor):
-            self.send_and_end_turn(TEAM_DIG())
+            self.send_and_end_turn(SAVE_SURV())
             return
 
         # Default action: Move the agent north if no other specific conditions are met.

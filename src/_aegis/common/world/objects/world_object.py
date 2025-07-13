@@ -77,10 +77,6 @@ class WorldObject(ABC):
         pass
 
     @abstractmethod
-    def get_life_signal(self) -> int:
-        pass
-
-    @abstractmethod
     def file_output_string(self) -> str:
         pass
 

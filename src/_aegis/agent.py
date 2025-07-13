@@ -24,7 +24,7 @@ from _aegis.common.commands.aegis_commands import (
     ROUND_START,
     SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
-    SLEEP_RESULT,
+    RECHARGE_RESULT,
     TEAM_DIG_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
@@ -226,10 +226,10 @@ class Agent:
         #     pred_req: PREDICT_RESULT = aegis_command
         #     self.handle_predict_result(pred_req)
 
-        elif isinstance(aegis_command, SLEEP_RESULT):
-            sleep_result: SLEEP_RESULT = aegis_command
-            if sleep_result.was_successful:
-                self.set_energy_level(sleep_result.charge_energy)
+        elif isinstance(aegis_command, RECHARGE_RESULT):
+            recharge_result: RECHARGE_RESULT = aegis_command
+            if recharge_result.was_successful:
+                self.set_energy_level(recharge_result.charge_energy)
         # elif isinstance(aegis_command, OBSERVE_RESULT):
         #     ovr: OBSERVE_RESULT = aegis_command
         #     self.handle_observe_result(ovr)

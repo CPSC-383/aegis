@@ -5,6 +5,8 @@ from _aegis.common.agent_id import AgentID
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     MOVE_RESULT,
+    OBSERVE_RESULT,
+    RECHARGE_RESULT,
     SAVE_SURV_RESULT,
     TEAM_DIG_RESULT,
 )
@@ -14,7 +16,7 @@ from _aegis.common.commands.agent_commands import (
     OBSERVE,
     PREDICT,
     SEND_MESSAGE,
-    SLEEP,
+    RECHARGE,
     TEAM_DIG,
 )
 from _aegis.common.commands.agent_commands.SAVE_SURV import SAVE_SURV
@@ -22,6 +24,7 @@ from _aegis.common.constants import Constants
 from _aegis.common.direction import Direction
 from _aegis.common.utility import Utility
 from _aegis.common.world.cell import Cell
+from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.common.world.objects.rubble import Rubble
 from _aegis.common.world.objects.survivor import Survivor
 from _aegis.common.world.objects.world_object import WorldObject
@@ -69,14 +72,31 @@ class CommandProcessor:
                     pass
                 case MOVE():
                     self._handle_move(cmd)
-                case SLEEP():
-                    pass
+                case RECHARGE():
+                    self._handle_recharge(cmd)
                 case OBSERVE():
-                    pass
+                    agent = self._world.get_agent(cmd.get_agent_id())
+                    if agent is None:
+                        return
+                    agent.remove_energy(Constants.OBSERVE_ENERGY_COST)
                 case SEND_MESSAGE():
                     pass
                 case _:
                     raise Exception("Got unknown command")
+
+    def _handle_recharge(self, cmd: RECHARGE) -> None:
+        agent = self._world.get_agent(cmd.get_agent_id())
+        if agent is None:
+            return
+        cell = self._world.get_cell_at(agent.get_location())
+        if cell and cell.is_charging_cell():
+            if (
+                agent.get_energy_level() + Constants.NORMAL_CHARGE
+                > Constants.DEFAULT_MAX_ENERGY_LEVEL
+            ):
+                agent.set_energy_level(Constants.DEFAULT_MAX_ENERGY_LEVEL)
+            else:
+                agent.add_energy(Constants.NORMAL_CHARGE)
 
     def _handle_dig(self, cmd: TEAM_DIG) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
@@ -172,6 +192,21 @@ class CommandProcessor:
                         result = SAVE_SURV_RESULT(energy, surround_info, pred_info)
                     case TEAM_DIG():
                         result = TEAM_DIG_RESULT(energy, surround_info)
+                    case RECHARGE():
+                        agent_cell = self._world.get_cell_at(location)
+                        success = (
+                            agent_cell is not None and agent_cell.is_charging_cell()
+                        )
+                        result = RECHARGE_RESULT(success, energy)
+                    case OBSERVE():
+                        cell_info = CellInfo()
+                        layers: list[WorldObject] = []
+                        cell = self._world.get_cell_at(cmd.location)
+                        if cell is not None:
+                            cell_info = cell.get_cell_info()
+                            layers = cell.get_cell_layers()
+
+                        result = OBSERVE_RESULT(energy, cell_info, layers)
                     case _:
                         result = AEGIS_UNKNOWN()
             agent.handle_aegis_command(result)

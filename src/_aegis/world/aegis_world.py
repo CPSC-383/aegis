@@ -392,7 +392,6 @@ class AegisWorld:
         cell = self._world.get_cell_at(location)
         if cell is None:
             return
-        surround_info.life_signals = cell.get_generated_life_signals()
         surround_info.set_current_info(cell.get_cell_info())
 
         for direction in Direction:
