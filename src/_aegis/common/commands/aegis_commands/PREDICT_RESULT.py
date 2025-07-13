@@ -20,8 +20,8 @@ class PREDICT_RESULT(AegisCommand):
             surv_id: The id of the survivor (predictions are based on saved survivors, so this is the id of the survivor associated with the prediction).
             prediction_correct: If the agent's prediction was correct or not.
         """
-        self.surv_id = surv_id
-        self.prediction_correct = prediction_correct
+        self.surv_id: int = surv_id
+        self.prediction_correct: bool = prediction_correct
 
     @override
     def __str__(self) -> str:

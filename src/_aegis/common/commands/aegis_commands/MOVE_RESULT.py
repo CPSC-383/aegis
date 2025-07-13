@@ -21,8 +21,8 @@ class MOVE_RESULT(AegisCommand):
             energy_level: The energy_level of the agent.
             surround_info: The surrounding info of the agent.
         """
-        self.energy_level = energy_level
-        self.surround_info = surround_info
+        self.energy_level: int = energy_level
+        self.surround_info: SurroundInfo = surround_info
 
     @override
     def __str__(self) -> str:

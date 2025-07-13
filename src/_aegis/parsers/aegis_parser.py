@@ -11,7 +11,6 @@ from numpy.typing import NDArray
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.common import (
     AgentID,
-    AgentIDList,
     CellType,
     Direction,
     Location,
@@ -40,7 +39,7 @@ from _aegis.common.commands.agent_commands import (
     TEAM_DIG,
 )
 from _aegis.common.commands.command import Command
-from _aegis.common.parsers.aegis_parser_exception import AegisParserException
+from _aegis.parsers.aegis_parser_exception import AegisParserException
 from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import (
     CellInfo,
