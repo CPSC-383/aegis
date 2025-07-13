@@ -10,11 +10,8 @@ class State(Enum):
     SHUT_DOWN = 2
     """The simulation is shutting down."""
 
-    CONNECT_AGENTS = 3
-    """Connecting agents to the simulation."""
-
-    RUN_SIMULATION = 4
+    RUN_SIMULATION = 3
     """The simulation is running."""
 
-    NONE = 5
+    NONE = 4
     """No state."""

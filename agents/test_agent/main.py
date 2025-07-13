@@ -1,24 +1,18 @@
-from typing import override
-
-# If you need to import anything, add it to the import below.
 from aegis import (
-    END_TURN,
     MOVE,
     SAVE_SURV,
     AgentCommand,
-    BaseAgent,
-    Brain,
     Direction,
     Survivor,
+    Agent,
 )
 
 
-class ExampleAgent(Brain):
-    def __init__(self) -> None:
+class SocketAgent:
+    def __init__(self, agent: Agent) -> None:
         super().__init__()
-        self._agent: BaseAgent = BaseAgent.get_agent()
+        self._agent: Agent = agent
 
-    @override
     def think(self) -> None:
         self._agent.log("Thinking")
 
@@ -29,7 +23,7 @@ class ExampleAgent(Brain):
             return
 
         # Retrieve the current state of the world.
-        world = self.get_world()
+        world = self._agent.get_world()
         if world is None:
             self.send_and_end_turn(MOVE(Direction.CENTER))
             return
@@ -55,4 +49,8 @@ class ExampleAgent(Brain):
         """Send a command and end your turn."""
         self._agent.log(f"SENDING {command}")
         self._agent.send(command)
-        self._agent.send(END_TURN())
+        self._agent.end_turn()
+
+
+def main(agent: Agent) -> SocketAgent:
+    return SocketAgent(agent)

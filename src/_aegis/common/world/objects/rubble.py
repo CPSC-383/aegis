@@ -45,10 +45,6 @@ class Rubble(WorldObject):
         return "Rubble"
 
     @override
-    def get_life_signal(self) -> int:
-        return 0
-
-    @override
     def file_output_string(self) -> str:
         return f"RB({self.remove_energy},{self.remove_agents})"
 

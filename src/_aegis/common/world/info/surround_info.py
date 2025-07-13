@@ -1,21 +1,19 @@
 from typing import override
 
-from _aegis.common import Direction, LifeSignals
+from _aegis.common.direction import Direction
 from _aegis.common.world.info.cell_info import CellInfo
 
 
 class SurroundInfo:
     """
     Represents the information about the surrounding cells of the agent.
-
-    Attributes:
-        life_signals (LifeSignals): The life signals in each surrounding cell.
     """
 
     def __init__(self) -> None:
         """Initializes a new instance of SurroundInfo."""
-        self.life_signals = LifeSignals()
-        self._surround_info = [[CellInfo() for _ in range(3)] for _ in range(3)]
+        self._surround_info: list[list[CellInfo]] = [
+            [CellInfo() for _ in range(3)] for _ in range(3)
+        ]
 
     def get_current_info(self) -> CellInfo:
         """Returns the cell info for the current cell."""
@@ -52,8 +50,8 @@ class SurroundInfo:
     @override
     def __str__(self) -> str:
         return (
-            f"CURR_CELL ( {self.get_current_info()} ) , NUM_SIG {self.life_signals.size()} , "
-            f"LIFE_SIG {self.life_signals} , NORTH_WEST ( {self.get_surround_info(Direction.NORTH_WEST)} ) , "
+            f"CURR_CELL ( {self.get_current_info()} ) , "
+            f"NORTH_WEST ( {self.get_surround_info(Direction.NORTH_WEST)} ) , "
             f"NORTH ( {self.get_surround_info(Direction.NORTH)} ) , "
             f"NORTH_EAST ( {self.get_surround_info(Direction.NORTH_EAST)} ) , "
             f"EAST ( {self.get_surround_info(Direction.EAST)} ) , "

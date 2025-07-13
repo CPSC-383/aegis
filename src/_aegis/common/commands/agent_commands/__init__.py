@@ -6,7 +6,7 @@ from _aegis.common.commands.agent_commands.OBSERVE import OBSERVE
 from _aegis.common.commands.agent_commands.PREDICT import PREDICT
 from _aegis.common.commands.agent_commands.SAVE_SURV import SAVE_SURV
 from _aegis.common.commands.agent_commands.SEND_MESSAGE import SEND_MESSAGE
-from _aegis.common.commands.agent_commands.SLEEP import SLEEP
+from _aegis.common.commands.agent_commands.RECHARGE import RECHARGE
 from _aegis.common.commands.agent_commands.TEAM_DIG import TEAM_DIG
 
 __all__ = [
@@ -18,6 +18,6 @@ __all__ = [
     "SAVE_SURV",
     "PREDICT",
     "SEND_MESSAGE",
-    "SLEEP",
+    "RECHARGE",
     "TEAM_DIG",
 ]

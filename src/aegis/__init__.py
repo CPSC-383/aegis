@@ -1,4 +1,3 @@
-from _aegis.agent import BaseAgent, Brain
 from _aegis.cli import main
 from _aegis.common import Direction, Location
 from _aegis.common.commands.agent_command import AgentCommand
@@ -10,11 +9,12 @@ from _aegis.common.commands.agent_commands import (
     # PREDICT,
     SAVE_SURV,
     SEND_MESSAGE,
-    SLEEP,
+    RECHARGE,
     TEAM_DIG,
 )
 from _aegis.common.world.objects import Survivor
 from _aegis.common.world.world import World
+from _aegis.agent import Agent
 
 # To generate the list after adding imports,
 # use `uv run python -c` or `python -c` with the venv activated :
@@ -23,8 +23,6 @@ from _aegis.common.world.world import World
 __all__ = [
     "AGENT_UNKNOWN",
     "AgentCommand",
-    "BaseAgent",
-    "Brain",
     "Direction",
     "END_TURN",
     "Location",
@@ -32,11 +30,12 @@ __all__ = [
     "OBSERVE",
     "SAVE_SURV",
     "SEND_MESSAGE",
-    "SLEEP",
+    "RECHARGE",
     "Survivor",
     "TEAM_DIG",
     "World",
     "main",
+    "Agent",
 ]
 
 __version__ = "2.0.0"

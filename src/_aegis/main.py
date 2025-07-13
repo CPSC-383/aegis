@@ -33,7 +33,7 @@ def main() -> None:
         print("Aegis  : Waiting for agents.")
         _ = sys.stdout.flush()
 
-        aegis.connect_all_agents()
+        aegis.start_agents()
         aegis.run_state()
 
     except Exception as e:
