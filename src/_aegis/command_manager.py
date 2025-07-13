@@ -1,33 +1,28 @@
 from _aegis.common.commands.agent_command import AgentCommand
+from _aegis.common.commands.agent_commands import SEND_MESSAGE
 
 
 class CommandManager:
     def __init__(self) -> None:
         self._command: AgentCommand | None = None
-        self._ended_turn: bool = False
+        self._message_queue: list[SEND_MESSAGE] = []
 
-    def get_command_sent(self) -> AgentCommand | None:
+    def get_command(self) -> AgentCommand | None:
         return self._command
 
     def send(self, command: AgentCommand) -> None:
-        if self._ended_turn:
-            raise RuntimeError("Cannot send command after turn ended.")
-        self._command = command
+        if isinstance(command, SEND_MESSAGE):
+            self._message_queue.append(command)
+        else:
+            self._command = command
 
-    def end_turn(self) -> None:
-        if self._ended_turn:
-            raise RuntimeError("Turn already ended.")
-        self._ended_turn = True
+    def get_messages(self) -> list[SEND_MESSAGE]:
+        messages = self._message_queue[:]
+        self._message_queue.clear()
+        return messages
 
-    def get_commands(self) -> list[AgentCommand]:
-        if not self._ended_turn:
-            raise RuntimeError("Turn not ended. Call end_turn() first.")
-        commands: list[AgentCommand] = []
-        if self._command:
-            commands.append(self._command)
-        self._reset()
-        return commands
-
-    def _reset(self) -> None:
+    def reset_command(self) -> None:
         self._command = None
-        self._ended_turn = False
+
+    def reset_messages(self) -> None:
+        self._message_queue.clear()

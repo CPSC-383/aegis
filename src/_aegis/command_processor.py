@@ -8,6 +8,7 @@ from _aegis.common.commands.aegis_commands import (
     OBSERVE_RESULT,
     RECHARGE_RESULT,
     SAVE_SURV_RESULT,
+    SEND_MESSAGE_RESULT,
     TEAM_DIG_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
@@ -47,14 +48,45 @@ class CommandProcessor:
 
     def run_turn(self) -> None:
         commands: list[AgentCommand] = []
+        messages: list[SEND_MESSAGE] = []
 
         for agent in self._agents:
             agent.run()
-            command = agent.get_commands()[0]
-            commands.append(command)
+            command = agent.get_command()
+            if command is not None:
+                commands.append(command)
+
+            messages.extend(agent.get_messages())
 
         self._process(commands)
+        self._route_messages(messages)
         self._results(commands)
+
+    def _route_messages(self, messages: list[SEND_MESSAGE]) -> None:
+        for message in messages:
+            sender_id = message.get_agent_id()
+            sender = self._world.get_agent(sender_id)
+
+            if sender is None:
+                continue
+
+            recipients = message.agent_id_list
+
+            if len(recipients) == 0:
+                target_agents = self._agents
+            else:
+                target_agents: list[Agent] = []
+                for agent in self._agents:
+                    if agent.get_agent_id() in recipients:
+                        target_agents.append(agent)
+
+            target_agents = [
+                agent for agent in target_agents if agent.get_agent_id() != sender_id
+            ]
+
+            for recipient in target_agents:
+                res = SEND_MESSAGE_RESULT(sender_id, recipients, message.message)
+                recipient.handle_aegis_command(res)
 
     def _process(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:
@@ -79,8 +111,6 @@ class CommandProcessor:
                     if agent is None:
                         return
                     agent.remove_energy(Constants.OBSERVE_ENERGY_COST)
-                case SEND_MESSAGE():
-                    pass
                 case _:
                     raise Exception("Got unknown command")
 

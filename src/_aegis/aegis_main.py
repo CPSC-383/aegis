@@ -12,22 +12,10 @@ from _aegis.command_processor import CommandProcessor
 from _aegis.agent import Agent
 from _aegis.agent_control.agent_handler import AgentHandler
 
-from _aegis.agent_control.network.agent_crashed_exception import AgentCrashedException
 from _aegis.agent_predictions.prediction_handler import PredictionHandler
 from _aegis.assist.parameters import Parameters
 from _aegis.assist.state import State
-from _aegis.common import (
-    AgentIDList,
-)
-from _aegis.common.commands.aegis_commands import (
-    PREDICT_RESULT,
-    SEND_MESSAGE_RESULT,
-)
 from _aegis.common.commands.agent_command import AgentCommand
-from _aegis.common.commands.agent_commands import (
-    PREDICT,
-    SEND_MESSAGE,
-)
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
@@ -53,8 +41,6 @@ class Aegis:
         self._agents: list[Agent] = []
         self._agent_handler: AgentHandler = AgentHandler()
         self._agent_commands: list[AgentCommand] = []
-        self._PREDICT_list: list[PREDICT] = []
-        self._PREDICT_RESULT_list: AgentIDList = AgentIDList()
         self._aegis_world: AegisWorld = AegisWorld(self._agents)
         self._ws_server: WebSocketServer = WebSocketServer()
         self._prediction_handler: PredictionHandler | None = None
@@ -161,11 +147,7 @@ class Aegis:
         )
 
     def shutdown(self) -> None:
-        try:
-            self._agent_handler.print_group_survivor_saves()
-            self._agent_handler.shutdown()
-        except AgentCrashedException:
-            pass
+        self._agent_handler.print_group_survivor_saves()
 
     def start_agents(self) -> None:
         for _ in range(self._parameters.number_of_agents):
@@ -270,94 +252,78 @@ class Aegis:
         self._end_simulation()
 
     # TODO: Move th predict and messages to `command_processor.py`
-    def _process_command(self, command: AgentCommand) -> None:
-        if isinstance(command, PREDICT):
-            self._PREDICT_list.append(command)
-        elif isinstance(command, SEND_MESSAGE):
-            send_message: SEND_MESSAGE = command
-            send_message_result = SEND_MESSAGE_RESULT(
-                send_message.get_agent_id(),
-                send_message.agent_id_list,
-                send_message.message,
-            )
-            if send_message.agent_id_list.is_empty():
-                if self._parameters.config_settings is not None:
-                    if self._parameters.config_settings.send_messages_to_all_groups:
-                        self._agent_handler.forward_message_to_all(send_message_result)
-                    else:
-                        self._agent_handler.forward_message_to_group(
-                            send_message.get_agent_id().gid, send_message_result
-                        )
-            else:
-                self._agent_handler.forward_message(send_message_result)
 
-    def _process_PREDICT(self) -> None:
-        for prediction in self._PREDICT_list:
-            agent = self._aegis_world.get_agent(prediction.get_agent_id())
-            if agent is None:
-                continue
-
-            if self._prediction_handler is not None:
-                # does aegis recognize a saved surv with no prediction for this agents group?
-                if self._prediction_handler.is_group_in_no_pred_yet(
-                    agent.get_agent_id().gid, prediction.surv_id
-                ):
-                    # was this agent a part of the saving?
-                    if self._prediction_handler.is_agent_in_saving_group(
-                        agent.get_agent_id(), prediction.surv_id
-                    ):
-                        # record prediction result! (group, surv id entry is removed from no_pred_yet in set_pred_res)
-                        correct_prediction = (
-                            self._prediction_handler.check_agent_prediction(
-                                agent.get_agent_id(),
-                                prediction.surv_id,
-                                prediction.label,
-                            )
-                        )
-                        self._prediction_handler.set_prediction_result(
-                            agent.get_agent_id(),
-                            prediction.surv_id,
-                            correct_prediction,
-                        )
-
-                        self._agent_handler.increase_agent_group_predicted(
-                            agent.get_agent_id().gid,
-                            prediction.surv_id,
-                            prediction.label,
-                            correct_prediction,
-                        )
-
-            self._PREDICT_RESULT_list.add(agent.get_agent_id())
-        self._PREDICT_list.clear()
-
-    def _create_results(self) -> None:
-        if (
-            self._parameters.config_settings is not None
-            and self._parameters.config_settings.predictions_enabled
-            and self._prediction_handler is not None
-        ):
-            for agent_id in self._PREDICT_RESULT_list:
-                agent = self._aegis_world.get_agent(agent_id)
-                if agent is None:
-                    continue
-
-                # see if this agent (not group!) made a prediction and return its result
-                #    IMPORTANT    if they made a prediction, but another agent in their group beat them to it, they wont get a result for their prediction!!!
-                pred_res_info = self._prediction_handler.get_prediction_result(
-                    agent.get_agent_id()
-                )
-                if pred_res_info is not None:
-                    prediction_result = PREDICT_RESULT(
-                        pred_res_info[0], pred_res_info[1]
-                    )
-                else:
-                    prediction_result = PREDICT_RESULT(-1, False)
-
-                self._agent_handler.set_result_of_command(
-                    agent.get_agent_id(), prediction_result
-                )
-
-            self._PREDICT_RESULT_list.clear()
+    # def _process_command(self, command: AgentCommand) -> None:
+    #     if isinstance(command, PREDICT):
+    #         self._PREDICT_list.append(command)
+    #
+    # def _process_PREDICT(self) -> None:
+    #     for prediction in self._PREDICT_list:
+    #         agent = self._aegis_world.get_agent(prediction.get_agent_id())
+    #         if agent is None:
+    #             continue
+    #
+    #         if self._prediction_handler is not None:
+    #             # does aegis recognize a saved surv with no prediction for this agents group?
+    #             if self._prediction_handler.is_group_in_no_pred_yet(
+    #                 agent.get_agent_id().gid, prediction.surv_id
+    #             ):
+    #                 # was this agent a part of the saving?
+    #                 if self._prediction_handler.is_agent_in_saving_group(
+    #                     agent.get_agent_id(), prediction.surv_id
+    #                 ):
+    #                     # record prediction result! (group, surv id entry is removed from no_pred_yet in set_pred_res)
+    #                     correct_prediction = (
+    #                         self._prediction_handler.check_agent_prediction(
+    #                             agent.get_agent_id(),
+    #                             prediction.surv_id,
+    #                             prediction.label,
+    #                         )
+    #                     )
+    #                     self._prediction_handler.set_prediction_result(
+    #                         agent.get_agent_id(),
+    #                         prediction.surv_id,
+    #                         correct_prediction,
+    #                     )
+    #
+    #                     self._agent_handler.increase_agent_group_predicted(
+    #                         agent.get_agent_id().gid,
+    #                         prediction.surv_id,
+    #                         prediction.label,
+    #                         correct_prediction,
+    #                     )
+    #
+    #         self._PREDICT_RESULT_list.add(agent.get_agent_id())
+    #     self._PREDICT_list.clear()
+    #
+    # def _create_results(self) -> None:
+    #     if (
+    #         self._parameters.config_settings is not None
+    #         and self._parameters.config_settings.predictions_enabled
+    #         and self._prediction_handler is not None
+    #     ):
+    #         for agent_id in self._PREDICT_RESULT_list:
+    #             agent = self._aegis_world.get_agent(agent_id)
+    #             if agent is None:
+    #                 continue
+    #
+    #             # see if this agent (not group!) made a prediction and return its result
+    #             #    IMPORTANT    if they made a prediction, but another agent in their group beat them to it, they wont get a result for their prediction!!!
+    #             pred_res_info = self._prediction_handler.get_prediction_result(
+    #                 agent.get_agent_id()
+    #             )
+    #             if pred_res_info is not None:
+    #                 prediction_result = PREDICT_RESULT(
+    #                     pred_res_info[0], pred_res_info[1]
+    #                 )
+    #             else:
+    #                 prediction_result = PREDICT_RESULT(-1, False)
+    #
+    #             # self._agent_handler.set_result_of_command(
+    #             #     agent.get_agent_id(), prediction_result
+    #             # )
+    #
+    #         self._PREDICT_RESULT_list.clear()
 
     def _grim_reaper(self) -> None:
         dead_agents = self._aegis_world.grim_reaper()

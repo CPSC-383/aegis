@@ -9,7 +9,6 @@ from typing import TypedDict, cast
 from _aegis.assist.state import State
 from _aegis.common import (
     AgentID,
-    AgentIDList,
     Constants,
     Direction,
     Location,
@@ -234,14 +233,14 @@ class AegisWorld:
                 f"Aegis  : Unable to write agent world file to '{self._agent_world_filename}'!"
             )
 
-    def grim_reaper(self) -> AgentIDList:
-        dead_agents = AgentIDList()
+    def grim_reaper(self) -> list[AgentID]:
+        dead_agents: list[AgentID] = []
         for agent in self._agents:
             if agent.get_energy_level() <= 0:
                 print(
                     f"Aegis  : Agent {agent.get_agent_id()} ran out of energy and died.\n"
                 )
-                dead_agents.add(agent.get_agent_id())
+                dead_agents.append(agent.get_agent_id())
                 continue
 
             if self._world:
@@ -253,9 +252,10 @@ class AegisWorld:
                     print(
                         f"Aegis  : Agent {agent.get_agent_id()} ran into killer cell and died.\n"
                     )
-                    dead_agents.add(agent.get_agent_id())
+                    if agent.get_agent_id() not in dead_agents:
+                        dead_agents.append(agent.get_agent_id())
 
-        self._number_of_dead_agents += dead_agents.size()
+        self._number_of_dead_agents += len(dead_agents)
         return dead_agents
 
     def get_agent_world_filename(self) -> str:
@@ -299,7 +299,7 @@ class AegisWorld:
             if cell is None:
                 return
 
-            cell.agent_id_list.add(agent.get_agent_id())
+            cell.agent_id_list.append(agent.get_agent_id())
             self._number_of_alive_agents += 1
             print(f"Aegis  : Added agent {agent}")
 
@@ -321,7 +321,7 @@ class AegisWorld:
             return
 
         curr_cell.agent_id_list.remove(agent.get_agent_id())
-        dest_cell.agent_id_list.add(agent.get_agent_id())
+        dest_cell.agent_id_list.append(agent.get_agent_id())
         agent.set_location(dest_cell.location)
 
     def remove_layer_from_cell(self, location: Location) -> None:
@@ -415,13 +415,14 @@ class AegisWorld:
                     agent = agent_map.get(key)
 
                     if agent is not None:
+                        cmd = str(c) if (c := agent.get_command()) is not None else ""
                         agent_dict: AgentInfoDict = {
                             "id": agent.get_agent_id().id,
                             "gid": agent.get_agent_id().gid,
                             "x": x,
                             "y": y,
                             "energy_level": agent.get_energy_level(),
-                            "command_sent": agent.command_sent(),
+                            "command_sent": cmd,
                             "steps_taken": agent.steps_taken,
                         }
                         agent_data.append(agent_dict)

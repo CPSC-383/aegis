@@ -15,19 +15,14 @@ from _aegis.common import AgentID, Direction, Location
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
-    CMD_RESULT_END,
-    CMD_RESULT_START,
-    MESSAGES_END,
-    MESSAGES_START,
     MOVE_RESULT,
-    ROUND_END,
-    ROUND_START,
     SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     RECHARGE_RESULT,
     TEAM_DIG_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
+from _aegis.common.commands.agent_commands import SEND_MESSAGE
 from _aegis.common.world.info import SurroundInfo
 from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.common.world.world import World
@@ -46,6 +41,7 @@ class Agent:
         ] = deque()
         self._command_manager: CommandManager = CommandManager()
         self._module: ModuleType | None = None
+        self._inbox: list[SEND_MESSAGE_RESULT] = []
         self.steps_taken: int = 0
 
     def get_world(self) -> World | None:
@@ -58,7 +54,13 @@ class Agent:
         self._round += 1
         if self._module is None:
             raise RuntimeError("Module should not be of `None` type.")
-        self._module.main(self).think()  # pyright: ignore[reportAny]
+        self._send_messages()
+        self._module.think(self)  # pyright: ignore[reportAny]
+
+    def _send_messages(self) -> None:
+        if self._inbox and self._module and hasattr(self._module, "handle_messages"):
+            self._module.handle_messages(self, self._inbox)  # pyright: ignore[reportAny]
+        self._inbox.clear()
 
     def load_agent(self, agent_path: str) -> None:
         path = Path(agent_path).resolve()
@@ -75,8 +77,10 @@ class Agent:
         sys.modules[module_name] = module
         spec.loader.exec_module(module)
 
-        if not hasattr(module, "main"):
-            raise AttributeError(f"{path} does not define a `main()` function.")
+        if not hasattr(module, "think"):
+            raise AttributeError(
+                f"{path} does not define a `think(agent: Agent)` function."
+            )
 
         self._module = module
 
@@ -158,19 +162,15 @@ class Agent:
         self._prediction_info.clear()
         self.log("Cleared Prediction Info")
 
-    def command_sent(self) -> str:
-        cmd = self._command_manager.get_command_sent()
-        return str(cmd) if cmd is not None else ""
+    def get_command(self) -> AgentCommand | None:
+        return self._command_manager.get_command()
+
+    def get_messages(self) -> list[SEND_MESSAGE]:
+        return self._command_manager.get_messages()
 
     def send(self, command: AgentCommand) -> None:
         command.set_agent_id(self.get_agent_id())
         self._command_manager.send(command)
-
-    def end_turn(self) -> None:
-        self._command_manager.end_turn()
-
-    def get_commands(self) -> list[AgentCommand]:
-        return self._command_manager.get_commands()
 
     def log(self, message: str) -> None:
         agent_id = self.get_agent_id()
@@ -179,16 +179,7 @@ class Agent:
 
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SEND_MESSAGE_RESULT):
-            pass
-            # if self._brain is not None:
-            #     self._brain.handle_send_message_result(aegis_command)
-
-        elif isinstance(aegis_command, MESSAGES_END):
-            self.set_agent_state(AgentStates.IDLE)
-
-        elif isinstance(aegis_command, MESSAGES_START):
-            self.set_agent_state(AgentStates.READ_MAIL)
-
+            self._inbox.append(aegis_command)
         elif isinstance(aegis_command, MOVE_RESULT):
             move_result: MOVE_RESULT = aegis_command
             move_result_current_info: CellInfo = (
@@ -197,12 +188,6 @@ class Agent:
             self.set_energy_level(move_result.energy_level)
             self.set_location(move_result_current_info.location)
             self.update_surround(move_result.surround_info)
-
-        elif isinstance(aegis_command, ROUND_END):
-            self.set_agent_state(AgentStates.IDLE)
-
-        elif isinstance(aegis_command, ROUND_START):
-            self.set_agent_state(AgentStates.THINK)
 
         elif isinstance(aegis_command, SAVE_SURV_RESULT):
             save_surv_result: SAVE_SURV_RESULT = aegis_command
@@ -245,12 +230,6 @@ class Agent:
 
         elif isinstance(aegis_command, AEGIS_UNKNOWN):
             self.log("Brain: Got Unknown command reply from AEGIS.")
-
-        elif isinstance(aegis_command, CMD_RESULT_START):
-            self.set_agent_state(AgentStates.GET_CMD_RESULT)
-
-        elif isinstance(aegis_command, CMD_RESULT_END):
-            self.set_agent_state(AgentStates.IDLE)
 
         else:
             self.log(

@@ -9,8 +9,8 @@ class SurvivorHandler(ObjectHandler):
     def __init__(self) -> None:
         super().__init__()
         self.sv_map: dict[int, Survivor] = {}
-        self.alive = 0
-        self.dead = 0
+        self.alive: int = 0
+        self.dead: int = 0
 
     @override
     def get_keys(self) -> list[str]:
