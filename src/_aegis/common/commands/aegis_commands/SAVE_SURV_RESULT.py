@@ -60,3 +60,7 @@ class SAVE_SURV_RESULT(AegisCommand):
     @override
     def __str__(self) -> str:
         return f"{self.STR_SAVE_SURV_RESULT} ( ENG_LEV {self.energy_level} , SUR_INFO {self.surround_info} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

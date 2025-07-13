@@ -32,3 +32,7 @@ class SEND_MESSAGE_RESULT(AegisCommand):
     @override
     def __str__(self) -> str:
         return f"{self.STR_SEND_MESSAGE_RESULT} ( IDFrom ( {self.from_agent_id.id} , {self.from_agent_id.gid} ) , MsgSize {len(self.msg)} , NUM_TO {len(self.agent_id_list)} , IDS {self.agent_id_list} , MSG {self.msg} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

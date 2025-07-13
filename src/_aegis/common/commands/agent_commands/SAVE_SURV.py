@@ -17,5 +17,9 @@ class SAVE_SURV(AgentCommand):
         return self.STR_SAVE_SURV
 
     @override
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    @override
     def proc_string(self) -> str:
         return f"{self._agent_id.proc_string()}#Save SV"

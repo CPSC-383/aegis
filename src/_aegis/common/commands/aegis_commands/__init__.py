@@ -1,6 +1,5 @@
 __all__ = [
     "AEGIS_UNKNOWN",
-    "DEATH_CARD",
     "SEND_MESSAGE_RESULT",
     "MOVE_RESULT",
     "OBSERVE_RESULT",
@@ -11,7 +10,6 @@ __all__ = [
 ]
 
 from _aegis.common.commands.aegis_commands.AEGIS_UNKNOWN import AEGIS_UNKNOWN
-from _aegis.common.commands.aegis_commands.DEATH_CARD import DEATH_CARD
 from _aegis.common.commands.aegis_commands.MOVE_RESULT import MOVE_RESULT
 from _aegis.common.commands.aegis_commands.OBSERVE_RESULT import OBSERVE_RESULT
 from _aegis.common.commands.aegis_commands.PREDICT_RESULT import PREDICT_RESULT

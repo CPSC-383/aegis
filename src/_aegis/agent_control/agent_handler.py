@@ -1,24 +1,14 @@
-import socket
-
 import numpy as np
 
 from _aegis.agent_control.agent_group import AgentGroup
 from _aegis.common.agent_id import AgentID
-from _aegis.common.commands.aegis_commands import (
-    SEND_MESSAGE_RESULT,
-)
 from _aegis.common.constants import Constants
 
 
 class AgentHandler:
     def __init__(self) -> None:
         self.GID_counter: int = 1
-        self.current_agent: int = 0
         self.agent_group_list: list[AgentGroup] = []
-        self.current_mailbox: int = 1
-        self.forward_message_list: list[SEND_MESSAGE_RESULT] = []
-        self.send_messages_to_all_groups: bool = False
-        self.server_socket: socket.socket | None = None
 
     def agent_info(self, group_name: str) -> AgentID:
         group = self.get_group(group_name)

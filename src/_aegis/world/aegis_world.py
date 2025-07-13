@@ -415,7 +415,11 @@ class AegisWorld:
                     agent = agent_map.get(key)
 
                     if agent is not None:
-                        cmd = str(c) if (c := agent.get_command()) is not None else ""
+                        cmd = (
+                            str(c)
+                            if (c := agent.get_action_command()) is not None
+                            else ""
+                        )
                         agent_dict: AgentInfoDict = {
                             "id": agent.get_agent_id().id,
                             "gid": agent.get_agent_id().gid,

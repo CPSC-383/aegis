@@ -16,6 +16,8 @@ from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     MOVE_RESULT,
+    OBSERVE_RESULT,
+    PREDICT_RESULT,
     SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     RECHARGE_RESULT,
@@ -42,6 +44,7 @@ class Agent:
         self._command_manager: CommandManager = CommandManager()
         self._module: ModuleType | None = None
         self._inbox: list[SEND_MESSAGE_RESULT] = []
+        self._results: list[AegisCommand] = []
         self.steps_taken: int = 0
 
     def get_world(self) -> World | None:
@@ -55,7 +58,22 @@ class Agent:
         if self._module is None:
             raise RuntimeError("Module should not be of `None` type.")
         self._send_messages()
+        self._send_results()
         self._module.think(self)  # pyright: ignore[reportAny]
+
+    def _send_results(self) -> None:
+        if self._results and self._module:
+            for result in self._results:
+                if isinstance(result, OBSERVE_RESULT) and hasattr(
+                    self._module, "handle_observe"
+                ):
+                    self._module.handle_observe(self, result)  # pyright: ignore[reportAny]
+
+                elif isinstance(result, PREDICT_RESULT) and hasattr(
+                    self._module, "handle_predict"
+                ):
+                    self._module.handle_predict(self, result)  # pyright: ignore[reportAny]
+        self._results.clear()
 
     def _send_messages(self) -> None:
         if self._inbox and self._module and hasattr(self._module, "handle_messages"):
@@ -162,14 +180,16 @@ class Agent:
         self._prediction_info.clear()
         self.log("Cleared Prediction Info")
 
-    def get_command(self) -> AgentCommand | None:
-        return self._command_manager.get_command()
+    def get_action_command(self) -> AgentCommand | None:
+        return self._command_manager.get_action_command()
+
+    def get_directives(self) -> list[AgentCommand]:
+        return self._command_manager.get_directives()
 
     def get_messages(self) -> list[SEND_MESSAGE]:
         return self._command_manager.get_messages()
 
     def send(self, command: AgentCommand) -> None:
-        self.log(f"Command sent: {command}")
         command.set_agent_id(self.get_agent_id())
         self._command_manager.send(command)
 
@@ -204,21 +224,18 @@ class Agent:
                     save_surv_result.all_unique_labels,
                 )
                 self.add_prediction_info((surv_id, image, labels))
-
-            # self.handle_save_surv_result(save_surv_result)
             self.update_surround(save_surv_result.surround_info)
 
-        # elif isinstance(aegis_command, PREDICT_RESULT):
-        #     pred_req: PREDICT_RESULT = aegis_command
-        #     self.handle_predict_result(pred_req)
+        elif isinstance(aegis_command, PREDICT_RESULT):
+            self._results.append(aegis_command)
 
         elif isinstance(aegis_command, RECHARGE_RESULT):
             recharge_result: RECHARGE_RESULT = aegis_command
             if recharge_result.was_successful:
                 self.set_energy_level(recharge_result.charge_energy)
-        # elif isinstance(aegis_command, OBSERVE_RESULT):
-        #     ovr: OBSERVE_RESULT = aegis_command
-        #     self.handle_observe_result(ovr)
+
+        elif isinstance(aegis_command, OBSERVE_RESULT):
+            self._results.append(aegis_command)
 
         elif isinstance(aegis_command, TEAM_DIG_RESULT):
             team_dig_result: TEAM_DIG_RESULT = aegis_command

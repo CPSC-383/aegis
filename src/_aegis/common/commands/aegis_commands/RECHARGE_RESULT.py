@@ -26,3 +26,7 @@ class RECHARGE_RESULT(AegisCommand):
     @override
     def __str__(self) -> str:
         return f"{self.STR_RECHARGE_RESULT} ( RESULT {str(self.was_successful).upper()} , CH_ENG {self.charge_energy} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()
