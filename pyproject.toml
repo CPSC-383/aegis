@@ -28,5 +28,6 @@ comp = [
 [dependency-groups]
 dev = [
     "hatch>=1.14.1",
+    "mypy-protobuf>=3.6.0",
     "ruff>=0.12.2",
 ]

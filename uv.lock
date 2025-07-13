@@ -28,6 +28,7 @@ comp = [
 [package.dev-dependencies]
 dev = [
     { name = "hatch" },
+    { name = "mypy-protobuf" },
     { name = "ruff" },
 ]
 
@@ -43,6 +44,7 @@ provides-extras = ["comp"]
 [package.metadata.requires-dev]
 dev = [
     { name = "hatch", specifier = ">=1.14.1" },
+    { name = "mypy-protobuf", specifier = ">=3.6.0" },
     { name = "ruff", specifier = ">=0.12.2" },
 ]
 
@@ -537,6 +539,19 @@ wheels = [
 ]
 
 [[package]]
+name = "mypy-protobuf"
+version = "3.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "protobuf" },
+    { name = "types-protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4d/6f/282d64d66bf48ce60e38a6560753f784e0f88ab245ac2fb5e93f701a36cd/mypy-protobuf-3.6.0.tar.gz", hash = "sha256:02f242eb3409f66889f2b1a3aa58356ec4d909cdd0f93115622e9e70366eca3c", size = 24445, upload-time = "2024-04-01T20:24:42.837Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e8/73/d6b999782ae22f16971cc05378b3b33f6a89ede3b9619e8366aa23484bca/mypy_protobuf-3.6.0-py3-none-any.whl", hash = "sha256:56176e4d569070e7350ea620262478b49b7efceba4103d468448f1d21492fd6c", size = 16434, upload-time = "2024-04-01T20:24:40.583Z" },
+]
+
+[[package]]
 name = "namex"
 version = "0.0.8"
 source = { registry = "https://pypi.org/simple" }
@@ -892,6 +907,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/38/04/1cd43f72c241fedcf0d9a18d0783953ee301eac9e5d9db1df0f0f089d9af/trove_classifiers-2025.5.9.12.tar.gz", hash = "sha256:7ca7c8a7a76e2cd314468c677c69d12cc2357711fcab4a60f87994c1589e5cb5", size = 16940, upload-time = "2025-05-09T12:04:48.829Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/92/ef/c6deb083748be3bcad6f471b6ae983950c161890bf5ae1b2af80cc56c530/trove_classifiers-2025.5.9.12-py3-none-any.whl", hash = "sha256:e381c05537adac78881c8fa345fd0e9970159f4e4a04fcc42cfd3129cca640ce", size = 14119, upload-time = "2025-05-09T12:04:46.38Z" },
+]
+
+[[package]]
+name = "types-protobuf"
+version = "6.30.2.20250703"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/dc/54/d63ce1eee8e93c4d710bbe2c663ec68e3672cf4f2fca26eecd20981c0c5d/types_protobuf-6.30.2.20250703.tar.gz", hash = "sha256:609a974754bbb71fa178fc641f51050395e8e1849f49d0420a6281ed8d1ddf46", size = 62300, upload-time = "2025-07-03T03:14:05.74Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7e/2b/5d0377c3d6e0f49d4847ad2c40629593fee4a5c9ec56eba26a15c708fbc0/types_protobuf-6.30.2.20250703-py3-none-any.whl", hash = "sha256:fa5aff9036e9ef432d703abbdd801b436a249b6802e4df5ef74513e272434e57", size = 76489, upload-time = "2025-07-03T03:14:04.453Z" },
 ]
 
 [[package]]
