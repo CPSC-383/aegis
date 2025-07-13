@@ -82,7 +82,6 @@ class AegisWorld:
         self._agent_locations: dict[AgentID, Location] = {}
         self._spawn_manager: SpawnManger = SpawnManger()
         self._random_seed: int = 0
-        self.round: int = 0
         self._world: World | None = None
         self._agents: list[Agent] = agents
         self._normal_cell_list: list[Cell] = []
@@ -128,7 +127,6 @@ class AegisWorld:
             self._random_seed = aegis_world_file.random_seed
             self._initial_agent_energy = aegis_world_file.initial_agent_energy
             Utility.set_random_seed(aegis_world_file.random_seed)
-            self.round = 1
 
             # Create a world of known size
             self._world = World(

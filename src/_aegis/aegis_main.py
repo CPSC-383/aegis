@@ -236,8 +236,6 @@ class Aegis:
             if self._end:
                 break
 
-            self._aegis_world.round = round
-
             if self._state == State.SHUT_DOWN:
                 print("Aegis  : AEGIS has shutdown.")
                 self._end_simulation()
@@ -271,6 +269,7 @@ class Aegis:
 
         self._end_simulation()
 
+    # TODO: Move th predict and messages to `command_processor.py`
     def _process_command(self, command: AgentCommand) -> None:
         if isinstance(command, PREDICT):
             self._PREDICT_list.append(command)
