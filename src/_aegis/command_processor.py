@@ -72,7 +72,7 @@ class CommandProcessor:
 
             recipients = message.agent_id_list
 
-            if recipients.size() == 0:
+            if len(recipients) == 0:
                 target_agents = self._agents
             else:
                 target_agents: list[Agent] = []

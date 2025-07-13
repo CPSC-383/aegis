@@ -20,16 +20,18 @@ class WebSocketServer:
 
     def __init__(self, wait_for_client: bool = False) -> None:
         """Initializes a new server."""
-        self._host = "localhost"
-        self._port = 6003
-        self._wait_for_client = wait_for_client
-        self._connected = False
-        self._done = False
-        self._server = None
+        self._host: str = "localhost"
+        self._port: int = 6003
+        self._wait_for_client: bool = wait_for_client
+        self._connected: bool = False
+        self._done: bool = False
+        self._server: WebsocketServer | None = None
         self._previous_events: list[bytes] = []
         self._incoming_events: queue.Queue[bytes] = queue.Queue()
-        self._queue_thread = threading.Thread(target=self._process_queue)
-        self._lock = threading.Lock()
+        self._queue_thread: threading.Thread = threading.Thread(
+            target=self._process_queue
+        )
+        self._lock: threading.Lock = threading.Lock()
 
     def _process_queue(self) -> None:
         """Events to process that are in the event queue."""
@@ -109,7 +111,7 @@ class WebSocketServer:
         if self._server is None:
             return
         self._server.keep_alive = False
-        self._server._disconnect_clients_gracefully(1000, bytes("", encoding="utf-8"))
+        self._server._disconnect_clients_gracefully(1000, bytes("", encoding="utf-8"))  # pyright: ignore[reportPrivateUsage]
         # These bottom two are flipped from regular order in websocket_server
         self._server.shutdown()
         self._server.server_close()

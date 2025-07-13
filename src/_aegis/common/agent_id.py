@@ -20,8 +20,8 @@ class AgentID:
             id: The unique identifier of the agent.
             gid: The group identifier of the agent.
         """
-        self.id = id
-        self.gid = gid
+        self.id: int = id
+        self.gid: int = gid
 
     @override
     def __str__(self) -> str:
