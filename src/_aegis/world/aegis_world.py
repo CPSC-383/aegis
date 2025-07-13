@@ -75,7 +75,7 @@ class WorldDict(TypedDict):
 
 
 class AegisWorld:
-    def __init__(self) -> None:
+    def __init__(self, agents: list[Agent]) -> None:
         self._object_handlers: dict[str, ObjectHandler] = {}
         self.install_object_handler(RubbleHandler())
         self.install_object_handler(SurvivorHandler())
@@ -84,7 +84,7 @@ class AegisWorld:
         self._random_seed: int = 0
         self.round: int = 0
         self._world: World | None = None
-        self._agents: list[Agent] = []
+        self._agents: list[Agent] = agents
         self._normal_cell_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._top_layer_removed_cell_list: list[Location] = []
@@ -236,30 +236,6 @@ class AegisWorld:
                 f"Aegis  : Unable to write agent world file to '{self._agent_world_filename}'!"
             )
 
-    # def run_simulators(self) -> str:
-    #     s = "Sim_Events;\n"
-    #     s += self._survivor_simulator.run()
-    #     top_layer_remove_message = "Top_Layer_Rem; { "
-    #     if not self._top_layer_removed_cell_list:
-    #         top_layer_remove_message += "NONE"
-    #     else:
-    #         for location in self._top_layer_removed_cell_list:
-    #             top_layer_remove_message += f"{location.proc_string()},"
-    #     top_layer_remove_message += " };\n"
-    #     s += top_layer_remove_message
-    #     self._top_layer_removed_cell_list.clear()
-    #
-    #     agents_information_message = "Agents_Information; { "
-    #     if not self._agents:
-    #         agents_information_message += "NONE"
-    #     else:
-    #         for agent in self._agents:
-    #             agents_information_message += f"({agent.agent_id.id},{agent.agent_id.gid},{agent.get_energy_level()},{agent.location.x},{agent.location.y}),"
-    #     agents_information_message += " };\n"
-    #     s += agents_information_message
-    #     s += "End_Sim;\n"
-    #     return s
-
     def grim_reaper(self) -> AgentIDList:
         dead_agents = AgentIDList()
         for agent in self._agents:
@@ -349,16 +325,6 @@ class AegisWorld:
         curr_cell.agent_id_list.remove(agent.get_agent_id())
         dest_cell.agent_id_list.add(agent.get_agent_id())
         agent.set_location(dest_cell.location)
-
-    def remove_agent(self, agent: Agent | None) -> None:
-        if agent in self._agents and self._world is not None:
-            self._agents.remove(agent)
-            agent_cell = self._world.get_cell_at(agent.get_location())
-            if agent_cell is None:
-                return
-
-            agent_cell.agent_id_list.remove(agent.get_agent_id())
-            self._number_of_alive_agents -= 1
 
     def remove_layer_from_cell(self, location: Location) -> None:
         if self._world is None:

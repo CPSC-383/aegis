@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.assist.agent_states import AgentStates
 from _aegis.command_processor import CommandProcessor
-from _aegis.common.agent_id import AgentID
 from _aegis.agent import Agent
 from _aegis.agent_control.agent_handler import AgentHandler
 
@@ -56,7 +55,7 @@ class Aegis:
         self._agent_commands: list[AgentCommand] = []
         self._PREDICT_list: list[PREDICT] = []
         self._PREDICT_RESULT_list: AgentIDList = AgentIDList()
-        self._aegis_world: AegisWorld = AegisWorld()
+        self._aegis_world: AegisWorld = AegisWorld(self._agents)
         self._ws_server: WebSocketServer = WebSocketServer()
         self._prediction_handler: PredictionHandler | None = None
         self._command_processor: CommandProcessor = CommandProcessor(
@@ -176,7 +175,6 @@ class Aegis:
                 raise Exception("Agent should not be of `none` type during creation")
             agent.set_agent_state(AgentStates.CONNECTED)
             agent.load_agent(self._parameters.agent)
-            self._agents.append(agent)
         self._state = State.RUN_SIMULATION
 
     def _end_simulation(self) -> None:
@@ -259,7 +257,6 @@ class Aegis:
                 return
 
             self._command_processor.run_turn()
-            # self._aegis_world.run_simulators()
             self._grim_reaper()
             after_json_world = self.get_aegis_world().convert_to_json()
 
@@ -367,18 +364,10 @@ class Aegis:
         dead_agents = self._aegis_world.grim_reaper()
 
         for agent_id in dead_agents:
-            agent = self._get_agent_by_id(agent_id)
+            agent = self._aegis_world.get_agent(agent_id)
             if agent is None:
                 continue
-            world_agent = self._aegis_world.get_agent(agent_id)
-            self._aegis_world.remove_agent(world_agent)
             self._agents.remove(agent)
-
-    def _get_agent_by_id(self, agent_id: AgentID) -> Agent | None:
-        for agent in self._agents:
-            if agent.get_agent_id() == agent_id:
-                return agent
-        return None
 
     def get_aegis_world(self) -> AegisWorld:
         return self._aegis_world

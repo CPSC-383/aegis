@@ -59,7 +59,7 @@ class CommandProcessor:
     def _process(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:
             agent_id = cmd.get_agent_id()
-            agent = self._get_agent_by_id(agent_id)
+            agent = self._world.get_agent(agent_id)
             if agent is None:
                 continue
 
@@ -165,7 +165,7 @@ class CommandProcessor:
 
     def _results(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:
-            agent = self._get_agent_by_id(cmd.get_agent_id())
+            agent = self._world.get_agent(cmd.get_agent_id())
             if agent is None:
                 continue
 
@@ -210,12 +210,6 @@ class CommandProcessor:
                     case _:
                         result = AEGIS_UNKNOWN()
             agent.handle_aegis_command(result)
-
-    def _get_agent_by_id(self, agent_id: AgentID) -> Agent | None:
-        for agent in self._agents:
-            if agent.get_agent_id() == agent_id:
-                return agent
-        return None
 
     def _handle_top_layer(
         self,
