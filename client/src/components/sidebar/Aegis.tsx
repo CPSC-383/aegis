@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 import { Button } from '@/components/ui/button'
@@ -14,10 +14,26 @@ interface Props {
 
 function Aegis({ scaffold }: Props) {
     const { worlds, agents, startSimulation, killSim } = scaffold
-    const [world, setWorld] = useState<string>('')
-    const [rounds, setRounds] = useState<number>(0)
-    const [group, setGroup] = useState<string>('')
-    const [agent, setAgent] = useState<string>('')
+    const [world, setWorld] = useState<string>(() => localStorage.getItem('aegis_world') || '')
+    const [rounds, setRounds] = useState<number>(() => {
+        const val = localStorage.getItem('aegis_rounds')
+        return val ? Number(val) : 0
+    })
+    const [group, setGroup] = useState<string>(() => localStorage.getItem('aegis_group') || '')
+    const [agent, setAgent] = useState<string>(() => localStorage.getItem('aegis_agent') || '')
+
+    useEffect(() => {
+        localStorage.setItem('aegis_world', world)
+    }, [world])
+    useEffect(() => {
+        localStorage.setItem('aegis_rounds', rounds.toString())
+    }, [rounds])
+    useEffect(() => {
+        localStorage.setItem('aegis_group', group)
+    }, [group])
+    useEffect(() => {
+        localStorage.setItem('aegis_agent', agent)
+    }, [agent])
 
     const isButtonDisabled = useMemo(() => !world || !rounds || !group || !agent, [world, rounds, group, agent])
 

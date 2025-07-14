@@ -11,7 +11,9 @@ import { AgentInfoDict } from '@/core/simulation'
 
 function GameArea() {
     const { appState, setAppState } = useAppContext()
-    const { simulation } = appState
+    // Determine which simulation and selectedCell to use
+    const isEditor = Boolean(appState.editorSimulation)
+    const simulation = isEditor ? appState.editorSimulation : appState.simulation
     const worldCanvas = useRef<HTMLCanvasElement | null>(null)
     const agentCanvas = useRef<HTMLCanvasElement | null>(null)
     const stackCanvas = useRef<HTMLCanvasElement | null>(null)
@@ -153,7 +155,7 @@ function GameArea() {
 
         setAppState((prevState) => ({
             ...prevState,
-            selectedCell: coords
+            ...(isEditor ? { editorSelectedCell: coords } : { selectedCell: coords })
         }))
 
         dispatchEvent(EventType.TILE_CLICK, { selectedCell: coords, right })
@@ -197,6 +199,14 @@ function GameArea() {
     useEffect(() => {
         renderMap()
     }, [simulation])
+
+    // Render map and agents when switching away from map editor
+    useEffect(() => {
+        if (!isEditor && simulation) {
+            renderMap()
+            renderAgents()
+        }
+    }, [isEditor, simulation])
 
     listenEvent(EventType.RENDER_MAP, renderMap)
 

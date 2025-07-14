@@ -5,12 +5,16 @@ export interface AppContext {
     simulation: Simulation | undefined
     simPaused: boolean
     selectedCell: { x: number; y: number } | null
+    editorSimulation: Simulation | undefined // Used for the map editor, so it doesn't have to overwrite the game's simulation
+    editorSelectedCell: { x: number; y: number } | null // Independent selection for map editor
 }
 
 const DEFAULT_APP_CONTEXT: AppContext = {
     simulation: undefined,
     simPaused: true,
-    selectedCell: null
+    selectedCell: null,
+    editorSimulation: undefined,
+    editorSelectedCell: null
 }
 
 export interface AppState {

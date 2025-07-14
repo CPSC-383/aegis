@@ -6,6 +6,7 @@ import { useAppContext } from '@/contexts/AppContext'
 import { Simulation } from '@/core/simulation'
 import { WorldMap } from '@/core/world'
 import { WorldParams } from '@/types'
+import { EventType, listenEvent } from '@/events'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -21,26 +22,30 @@ import {
     DialogDescription
 } from '@/components/ui/dialog'
 import { Alert } from '@/components/ui/alert'
-import { exportWorld, importWorld } from './MapGenerator'
+import { exportWorld, importWorld, WorldSerializer } from './MapGenerator'
 import MapBrushes from './Map-brushes'
+
+// Clear map editor localStorage keys on every app start
+localStorage.removeItem('editor_worldName')
+localStorage.removeItem('editor_worldParams')
+localStorage.removeItem('editor_worldData')
 
 function MapEditor({ isOpen }: { isOpen: boolean }) {
     const MAP_MAX = 30
     const MAP_MIN = 3
 
     const { appState, setAppState } = useAppContext()
-    const [worldName, setWorldName] = useState<string>('')
-    const [worldParams, setWorldParams] = useState<WorldParams>({
-        width: 15,
-        height: 15,
-        initialEnergy: 500,
-        isInitialized: false
+    const [worldName, setWorldName] = useState<string>(() => localStorage.getItem('editor_worldName') || '')
+    const [worldParams, setWorldParams] = useState<WorldParams>(() => {
+        const saved = localStorage.getItem('editor_worldParams')
+        return saved ? JSON.parse(saved) : { width: 15, height: 15, initialEnergy: 100, isInitialized: false }
     })
     const [errMsg, setErrMsg] = useState<string>('')
     const simulation = useRef<Simulation | undefined>(undefined)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [resetDialogOpen, setResetDialogOpen] = useState(false)
 
-    const isWorldEmpty = !appState.simulation || appState.simulation.worldMap.isEmpty()
+    const isWorldEmpty = !appState.editorSimulation || appState.editorSimulation.worldMap.isEmpty()
 
     const handleParamChange = (key: keyof WorldParams, value: number) => {
         setWorldParams({
@@ -51,7 +56,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     }
 
     const handleExport = async () => {
-        const err = await exportWorld(appState.simulation!.worldMap, worldName)
+        const err = await exportWorld(appState.editorSimulation!.worldMap, worldName)
         setErrMsg(err || '')
     }
 
@@ -74,29 +79,60 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
         if (fileInputRef.current) fileInputRef.current.value = ''
     }
 
-    const handleReset = () => {
-        setWorldParams({ ...worldParams, isInitialized: false })
+    const handleMapEditorReset = () => {
+        localStorage.removeItem('editor_worldName')
+        localStorage.removeItem('editor_worldParams')
+        localStorage.removeItem('editor_worldData')
+        setWorldParams({ width: 15, height: 15, initialEnergy: 100, isInitialized: false })
+        setWorldName('')
         setErrMsg('')
+        setResetDialogOpen(false)
     }
+
+    // Keep worldName and worldParams in localStorage
+    useEffect(() => {
+        localStorage.setItem('editor_worldName', worldName)
+    }, [worldName])
+    useEffect(() => {
+        localStorage.setItem('editor_worldParams', JSON.stringify(worldParams))
+    }, [worldParams])
+
+    useEffect(() => {
+        const saveWorld = () => {
+            if (appState.editorSimulation) {
+                const worldData = WorldSerializer.toJSON(appState.editorSimulation.worldMap)
+                localStorage.setItem('editor_worldData', JSON.stringify(worldData))
+            }
+        }
+        document.addEventListener(EventType.RENDER_MAP, saveWorld)
+        return () => {
+            document.removeEventListener(EventType.RENDER_MAP, saveWorld)
+        }
+    }, [appState.editorSimulation])
 
     useEffect(() => {
         if (isOpen) {
             if (!simulation.current || !worldParams.isInitialized) {
-                const world = WorldMap.fromParams(worldParams.width, worldParams.height, worldParams.initialEnergy)
+                let world
+                const savedWorld = localStorage.getItem('editor_worldData')
+                if (savedWorld) {
+                    world = WorldMap.fromData(JSON.parse(savedWorld))
+                } else {
+                    world = WorldMap.fromParams(worldParams.width, worldParams.height, worldParams.initialEnergy)
+                }
                 simulation.current = new Simulation(world)
             }
-
             setAppState((prev) => ({
                 ...prev,
-                simulation: simulation.current,
-                selectedCell: null
+                editorSimulation: simulation.current,
+                editorSelectedCell: null
             }))
             worldParams.isInitialized = true
         } else {
             setAppState((prev) => ({
                 ...prev,
-                simulation: undefined,
-                selectedCell: null
+                editorSimulation: undefined,
+                editorSelectedCell: null
             }))
         }
     }, [worldParams, isOpen])
@@ -194,32 +230,36 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
                             disabled={!isWorldEmpty}
                         />
 
-                        {!isWorldEmpty && (
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="destructive" className="mt-2">
-                                        Reset to Change Settings
+                        {/* In the JSX, always render the Dialog, but disable the trigger button if needed */}
+                        <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    variant="destructive"
+                                    className="mt-2"
+                                    disabled={isWorldEmpty}
+                                    onClick={() => setResetDialogOpen(true)}
+                                >
+                                    Reset to Change Settings
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Reset World Settings?</DialogTitle>
+                                    <DialogDescription>
+                                        This will clear the current world and allow you to modify its settings. Are you
+                                        sure?
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button variant="secondary" onClick={() => setResetDialogOpen(false)}>
+                                        Cancel
                                     </Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>Reset World Settings?</DialogTitle>
-                                        <DialogDescription>
-                                            This will clear the current world and allow you to modify its settings. Are
-                                            you sure?
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter>
-                                        <Button variant="secondary" onClick={() => null}>
-                                            Cancel
-                                        </Button>
-                                        <Button variant="destructive" onClick={handleReset}>
-                                            Reset Settings
-                                        </Button>
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        )}
+                                    <Button variant="destructive" onClick={handleMapEditorReset}>
+                                        Reset Settings
+                                    </Button>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </CardContent>
             </Card>
