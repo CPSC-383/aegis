@@ -45,9 +45,9 @@ function MapBrushes() {
 
     const handleBrush = useCallback(
         (event: any) => {
-            if (!appState.simulation) return
+            if (!appState.editorSimulation) return
 
-            const handler = createHandler(appState.simulation.worldMap)
+            const handler = createHandler(appState.editorSimulation.worldMap)
             if (!handler) return
 
             const tile = event.detail.selectedCell as Location
@@ -56,7 +56,7 @@ function MapBrushes() {
             handler.handle(tile, rightClicked)
             dispatchEvent(EventType.RENDER_MAP, {})
         },
-        [appState.simulation, createHandler]
+        [appState.editorSimulation, createHandler]
     )
 
     listenEvent(EventType.TILE_CLICK, handleBrush)

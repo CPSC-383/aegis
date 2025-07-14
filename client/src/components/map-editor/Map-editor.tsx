@@ -40,7 +40,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     const simulation = useRef<Simulation | undefined>(undefined)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const isWorldEmpty = !appState.simulation || appState.simulation.worldMap.isEmpty()
+    const isWorldEmpty = !appState.editorSimulation || appState.editorSimulation.worldMap.isEmpty()
 
     const handleParamChange = (key: keyof WorldParams, value: number) => {
         setWorldParams({
@@ -51,7 +51,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     }
 
     const handleExport = async () => {
-        const err = await exportWorld(appState.simulation!.worldMap, worldName)
+        const err = await exportWorld(appState.editorSimulation!.worldMap, worldName)
         setErrMsg(err || '')
     }
 
@@ -88,15 +88,15 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
 
             setAppState((prev) => ({
                 ...prev,
-                simulation: simulation.current,
-                selectedCell: null
+                editorSimulation: simulation.current,
+                editorSelectedCell: null
             }))
             worldParams.isInitialized = true
         } else {
             setAppState((prev) => ({
                 ...prev,
-                simulation: undefined,
-                selectedCell: null
+                editorSimulation: undefined,
+                editorSelectedCell: null
             }))
         }
     }, [worldParams, isOpen])
