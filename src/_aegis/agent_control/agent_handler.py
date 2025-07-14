@@ -1,5 +1,3 @@
-import numpy as np
-
 from _aegis.agent_control.agent_group import AgentGroup
 from _aegis.common.agent_id import AgentID
 from _aegis.common.constants import Constants
@@ -76,7 +74,7 @@ class AgentHandler:
         )
 
     def increase_agent_group_predicted(
-        self, gid: int, surv_id: int, label: np.int64, pred_correct: bool
+        self, gid: int, surv_id: int, label: int, pred_correct: bool
     ) -> None:
         """called when group predicts, also updates group score accordingly
 

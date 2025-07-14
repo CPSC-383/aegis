@@ -1,13 +1,12 @@
+from typing import TYPE_CHECKING
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.agent_control.agent_handler import AgentHandler
-from _aegis.agent_predictions.prediction_handler import PredictionHandler
 from _aegis.common.agent_id import AgentID
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     OBSERVE_RESULT,
     RECHARGE_RESULT,
-    SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     WORLD_UPDATE,
 )
@@ -15,7 +14,6 @@ from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     MOVE,
     OBSERVE,
-    PREDICT,
     SEND_MESSAGE,
     RECHARGE,
     TEAM_DIG,
@@ -33,18 +31,33 @@ from _aegis.agent import Agent
 from _aegis.world.aegis_world import AegisWorld
 
 
+try:
+    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT
+    from _aegis.common.commands.agent_commands.PREDICT import PREDICT
+except ImportError:
+    SAVE_SURV_RESULT = None  # pyright: ignore[reportConstantRedefinition]
+    PREDICT = None  # pyright: ignore[reportConstantRedefinition]
+
+if TYPE_CHECKING:
+    from _aegis.agent_predictions.prediction_handler import (
+        PredictionHandler as PredictionHandlerType,
+    )
+else:
+    PredictionHandlerType = object
+
+
 class CommandProcessor:
     def __init__(
         self,
         agents: list[Agent],
         aegis_world: AegisWorld,
         agent_handler: AgentHandler,
-        prediction_handler: PredictionHandler | None,
+        prediction_handler: PredictionHandlerType | None,
     ) -> None:
         self._agents: list[Agent] = agents
         self._world: AegisWorld = aegis_world
         self._agent_handler: AgentHandler = agent_handler
-        self._prediction_handler: PredictionHandler | None = prediction_handler
+        self._prediction_handler: PredictionHandlerType | None = prediction_handler
 
     def run_turn(self) -> None:
         commands: list[AgentCommand] = []
@@ -100,24 +113,29 @@ class CommandProcessor:
             if agent is None:
                 continue
 
-            match cmd:
-                case TEAM_DIG():
-                    self._handle_dig(cmd)
-                case SAVE_SURV():
-                    self._handle_save(cmd)
-                case PREDICT() if is_feature_enabled("ENABLE_PREDICTIONS"):
-                    pass
-                case MOVE():
-                    self._handle_move(cmd)
-                case RECHARGE():
-                    self._handle_recharge(cmd)
-                case OBSERVE():
-                    agent = self._world.get_agent(cmd.get_agent_id())
-                    if agent is None:
-                        return
-                    agent.remove_energy(Constants.OBSERVE_ENERGY_COST)
-                case _:
-                    raise Exception("Got unknown command")
+            if (
+                PREDICT is not None
+                and isinstance(cmd, PREDICT)
+                and is_feature_enabled("ENABLE_PREDICTIONS")
+            ):
+                pass
+            else:
+                match cmd:
+                    case TEAM_DIG():
+                        self._handle_dig(cmd)
+                    case SAVE_SURV():
+                        self._handle_save(cmd)
+                    case MOVE():
+                        self._handle_move(cmd)
+                    case RECHARGE():
+                        self._handle_recharge(cmd)
+                    case OBSERVE():
+                        agent = self._world.get_agent(cmd.get_agent_id())
+                        if agent is None:
+                            return
+                        agent.remove_energy(Constants.OBSERVE_ENERGY_COST)
+                    case _:
+                        raise Exception("Got unknown command")
 
     def _handle_recharge(self, cmd: RECHARGE) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
@@ -217,6 +235,7 @@ class CommandProcessor:
                         if (
                             is_feature_enabled("ENABLE_PREDICTIONS")
                             and self._prediction_handler is not None
+                            and SAVE_SURV_RESULT is not None
                         ):
                             pred_info = (
                                 self._prediction_handler.get_pred_info_for_agent(

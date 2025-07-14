@@ -11,7 +11,6 @@ from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     OBSERVE_RESULT,
-    SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     RECHARGE_RESULT,
     WORLD_UPDATE,
@@ -20,6 +19,11 @@ from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import SEND_MESSAGE
 from _aegis.common.world.info import SurroundInfo
 from _aegis.common.world.world import World
+
+try:
+    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT
+except ImportError:
+    SAVE_SURV_RESULT = None  # pyright: ignore[reportConstantRedefinition]
 
 
 class Agent:
@@ -57,8 +61,10 @@ class Agent:
                 ):
                     self._module.handle_observe(self, result)  # pyright: ignore[reportAny]
 
-                elif isinstance(result, SAVE_SURV_RESULT) and hasattr(
-                    self._module, "handle_save"
+                elif (
+                    SAVE_SURV_RESULT is not None
+                    and isinstance(result, SAVE_SURV_RESULT)
+                    and hasattr(self._module, "handle_save")
                 ):
                     self._module.handle_save(self, result)  # pyright: ignore[reportAny]
         self._results.clear()
@@ -161,7 +167,9 @@ class Agent:
             self.set_energy_level(move_result.energy_level)
             self.set_location(curr_info.location)
             self.update_surround(move_result.surround_info)
-        elif isinstance(aegis_command, SAVE_SURV_RESULT):
+        elif SAVE_SURV_RESULT is not None and isinstance(
+            aegis_command, SAVE_SURV_RESULT
+        ):
             self._results.append(aegis_command)
         elif isinstance(aegis_command, RECHARGE_RESULT):
             recharge_result: RECHARGE_RESULT = aegis_command

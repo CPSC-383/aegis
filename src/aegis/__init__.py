@@ -3,14 +3,12 @@ from _aegis.main import main
 from _aegis.common import Direction, Location
 from _aegis.common.commands.aegis_commands import (
     OBSERVE_RESULT,
-    SAVE_SURV_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     AGENT_UNKNOWN,
     MOVE,
     OBSERVE,
-    PREDICT,
     RECHARGE,
     SAVE_SURV,
     SEND_MESSAGE,
@@ -31,9 +29,7 @@ __all__ = [
     "MOVE",
     "OBSERVE",
     "OBSERVE_RESULT",
-    "PREDICT",
     "SAVE_SURV",
-    "SAVE_SURV_RESULT",
     "SEND_MESSAGE",
     "RECHARGE",
     "Survivor",
@@ -42,5 +38,14 @@ __all__ = [
     "main",
     "Agent",
 ]
+
+try:
+    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT  # noqa: F401
+    from _aegis.common.commands.agent_commands.PREDICT import PREDICT  # noqa: F401
+except ImportError:
+    pass
+else:
+    __all__.append("SAVE_SURV_RESULT")
+    __all__.append("PREDICT")
 
 __version__ = "2.0.0"
