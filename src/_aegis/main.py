@@ -25,7 +25,7 @@ def main() -> None:
         _ = sys.stdout.flush()
 
         aegis.start_agents()
-        aegis.run_state()
+        aegis.run()
         aegis.shutdown()
         print("Aegis  : Done.")
 

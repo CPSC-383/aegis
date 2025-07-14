@@ -1,16 +1,13 @@
 import base64
 import sys
-import time
 
 from _aegis.aegis_config import is_feature_enabled
-from _aegis.assist.agent_states import AgentStates
 from _aegis.command_processor import CommandProcessor
 from _aegis.agent import Agent
 from _aegis.agent_control.agent_handler import AgentHandler
 
 from _aegis.agent_predictions.prediction_handler import PredictionHandler
 from _aegis.assist.parameters import Parameters
-from _aegis.assist.state import State
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
@@ -21,7 +18,6 @@ from _aegis.protobuf.protobuf_service import ProtobufService
 class Aegis:
     def __init__(self, parameters: Parameters, wait_for_client: bool) -> None:
         self._parameters: Parameters = parameters
-        self._state: State = State.NONE
         self._started_idling: int = -1
         self._end: bool = False
         self._agents: list[Agent] = []
@@ -58,9 +54,6 @@ class Aegis:
                 file=sys.stderr,
             )
             return False
-
-        self._state = State.IDLE
-        self._started_idling = 0
         return True
 
     def build_world(self) -> bool:
@@ -77,9 +70,7 @@ class Aegis:
             agent = self._aegis_world.add_agent_by_id(agent_id)
             if agent is None:
                 raise Exception("Agent should not be of `none` type during creation")
-            agent.set_agent_state(AgentStates.CONNECTED)
             agent.load_agent(self._parameters.agent)
-        self._state = State.RUN_SIMULATION
 
     def _end_simulation(self) -> None:
         print("Aegis  : Simulation Over.")
@@ -87,32 +78,10 @@ class Aegis:
         serialized_data = ProtobufService.serialize_simulation_complete()
         self._compress_and_send(serialized_data)
 
-        self._state = State.SHUT_DOWN
         self._end = True
         self._ws_server.finish()
 
-    def run_state(self) -> None:
-        match self._state:
-            case State.IDLE:
-                if self._started_idling == 0:
-                    self._started_idling = time.time_ns() // 1_000_000
-                else:
-                    current_time = time.time_ns() // 1_000_000
-                    diff = (current_time - self._started_idling) // 1000
-                    if diff >= 300:
-                        print(
-                            "Aegis  : AEGIS has been idle for too long and will now shut down.",
-                            file=sys.stderr,
-                        )
-                        self._end_simulation()
-            case State.RUN_SIMULATION:
-                self._run_simulation()
-            case State.SHUT_DOWN:
-                self._end_simulation()
-            case _:
-                pass
-
-    def _run_simulation(self) -> None:
+    def run(self) -> None:
         self._ws_server.start()
         print("Aegis  : Running simulation.")
 
@@ -135,11 +104,6 @@ class Aegis:
         for game_round in range(1, self._parameters.number_of_rounds + 1):
             if self._end:
                 break
-
-            if self._state == State.SHUT_DOWN:
-                print("Aegis  : AEGIS has shutdown.")
-                self._end_simulation()
-                return
 
             if len(self._agents) == 0:
                 print("Aegis  : All Agents are Dead !!!")

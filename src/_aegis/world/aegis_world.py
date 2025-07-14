@@ -5,7 +5,6 @@ import queue
 import random
 from typing import TypedDict, cast, Any
 
-from _aegis.assist.state import State
 from _aegis.common import (
     AgentID,
     Constants,
@@ -99,7 +98,6 @@ class AegisWorld:
         self._number_of_survivors_saved_alive: int = 0
         self._number_of_survivors_saved_dead: int = 0
         self._max_move_cost: int = 0
-        self._states: queue.Queue[State] = queue.Queue()
 
     def build_world_from_file(self, filename: str, ws_server: WebSocketServer) -> bool:
         try:
@@ -448,20 +446,6 @@ class AegisWorld:
         }
 
         return world_dict
-
-    def set_state(self, state: State) -> None:
-        self._states.put(state)
-
-    def get_state(self) -> State:
-        if self._states.empty():
-            return State.NONE
-        try:
-            return self._states.get(block=True)
-        except queue.Empty:
-            return State.NONE
-
-    def wait_state(self) -> State:
-        return self.get_state()
 
     def get_num_survivors(self) -> int:
         return self._number_of_survivors

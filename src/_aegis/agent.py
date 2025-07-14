@@ -9,7 +9,6 @@ from types import ModuleType
 import numpy as np
 from numpy.typing import NDArray
 
-from _aegis.assist.agent_states import AgentStates
 from _aegis.command_manager import CommandManager
 from _aegis.common import AgentID, Direction, Location
 from _aegis.common.commands.aegis_command import AegisCommand
@@ -34,7 +33,6 @@ class Agent:
     def __init__(self) -> None:
         self._round: int = 0
         self._world: World | None = None
-        self._agent_state: AgentStates = AgentStates.CONNECTING
         self._id: AgentID = AgentID(-1, -1)
         self._location: Location = Location(-1, -1)
         self._energy_level: int = -1
@@ -121,17 +119,6 @@ class Agent:
             cell.set_top_layer(cell_info.top_layer)
             if cell_info.top_layer is None and cell.has_survivors:
                 cell.has_survivors = False
-
-    def set_agent_state(self, agent_state: AgentStates) -> None:
-        self._agent_state = agent_state
-
-        if agent_state == AgentStates.READ_MAIL:
-            self._round += 1
-
-        self.log(f"New State: {self._agent_state}")
-
-    def get_agent_state(self) -> AgentStates:
-        return self._agent_state
 
     def get_round_number(self) -> int:
         return self._round
