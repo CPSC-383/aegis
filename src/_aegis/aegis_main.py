@@ -131,10 +131,6 @@ class Aegis:
 
     # TODO: Move th predict and messages to `command_processor.py`
 
-    # def _process_command(self, command: AgentCommand) -> None:
-    #     if isinstance(command, PREDICT):
-    #         self._PREDICT_list.append(command)
-    #
     # def _process_PREDICT(self) -> None:
     #     for prediction in self._PREDICT_list:
     #         agent = self._aegis_world.get_agent(prediction.get_agent_id())

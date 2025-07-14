@@ -18,13 +18,10 @@ from _aegis.common import (
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
-    MOVE_RESULT,
     OBSERVE_RESULT,
-    PREDICT_RESULT,
     SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     RECHARGE_RESULT,
-    TEAM_DIG_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (

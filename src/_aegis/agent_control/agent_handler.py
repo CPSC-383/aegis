@@ -84,7 +84,7 @@ class AgentHandler:
             gid (int): group id
         """
 
-        agent_group: AgentGroup | None = self.get_agent_group(gid)
+        agent_group = self.get_agent_group(gid)
         if agent_group is None:
             return
 

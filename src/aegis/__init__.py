@@ -1,7 +1,10 @@
 from _aegis.agent import Agent
 from _aegis.main import main
 from _aegis.common import Direction, Location
-from _aegis.common.commands.aegis_commands import OBSERVE_RESULT, PREDICT_RESULT
+from _aegis.common.commands.aegis_commands import (
+    OBSERVE_RESULT,
+    SAVE_SURV_RESULT,
+)
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     AGENT_UNKNOWN,
@@ -29,8 +32,8 @@ __all__ = [
     "OBSERVE",
     "OBSERVE_RESULT",
     "PREDICT",
-    "PREDICT_RESULT",
     "SAVE_SURV",
+    "SAVE_SURV_RESULT",
     "SEND_MESSAGE",
     "RECHARGE",
     "Survivor",

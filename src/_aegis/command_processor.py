@@ -5,12 +5,11 @@ from _aegis.common.agent_id import AgentID
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
-    MOVE_RESULT,
     OBSERVE_RESULT,
     RECHARGE_RESULT,
     SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
-    TEAM_DIG_RESULT,
+    WORLD_UPDATE,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
@@ -203,13 +202,18 @@ class CommandProcessor:
             energy = agent.get_energy_level()
             location = agent.get_location()
             surround_info = self._world.get_surround_info(location)
-            result: AegisCommand = AEGIS_UNKNOWN()
-            if surround_info is not None:
+            result_commands: list[AegisCommand] = []
+
+            if surround_info is None:
+                result_commands.append(AEGIS_UNKNOWN())
+            else:
                 match cmd:
-                    case MOVE():
-                        result = MOVE_RESULT(energy, surround_info)
+                    case MOVE() | TEAM_DIG():
+                        result_commands.append(WORLD_UPDATE(energy, surround_info))
+
                     case SAVE_SURV():
-                        pred_info = None
+                        result_commands.append(WORLD_UPDATE(energy, surround_info))
+
                         if (
                             is_feature_enabled("ENABLE_PREDICTIONS")
                             and self._prediction_handler is not None
@@ -219,15 +223,20 @@ class CommandProcessor:
                                     agent.get_agent_id()
                                 )
                             )
-                        result = SAVE_SURV_RESULT(energy, surround_info, pred_info)
-                    case TEAM_DIG():
-                        result = TEAM_DIG_RESULT(energy, surround_info)
+                            if pred_info is not None:
+                                result_commands.append(
+                                    SAVE_SURV_RESULT(
+                                        pred_info[0], pred_info[1], pred_info[2]
+                                    )
+                                )
+
                     case RECHARGE():
                         agent_cell = self._world.get_cell_at(location)
                         success = (
                             agent_cell is not None and agent_cell.is_charging_cell()
                         )
-                        result = RECHARGE_RESULT(success, energy)
+                        result_commands.append(RECHARGE_RESULT(success, energy))
+
                     case OBSERVE():
                         cell_info = CellInfo()
                         layers: list[WorldObject] = []
@@ -235,11 +244,15 @@ class CommandProcessor:
                         if cell is not None:
                             cell_info = cell.get_cell_info()
                             layers = cell.get_cell_layers()
+                        result_commands.append(
+                            OBSERVE_RESULT(energy, cell_info, layers)
+                        )
 
-                        result = OBSERVE_RESULT(energy, cell_info, layers)
                     case _:
-                        result = AEGIS_UNKNOWN()
-            agent.handle_aegis_command(result)
+                        result_commands.append(AEGIS_UNKNOWN())
+
+            for result in result_commands:
+                agent.handle_aegis_command(result)
 
     def _handle_top_layer(
         self,

@@ -4,21 +4,25 @@ from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.world.info import SurroundInfo
 
 
-class MOVE_RESULT(AegisCommand):
+class WORLD_UPDATE(AegisCommand):
     """
-    Represents the result of the agent moving.
+    Represents the result of saving a survivor.
 
     Attributes:
-        energy_level (int): The energy_level of the agent.
+        energy_level (int): The energy level of the agent.
         surround_info (SurroundInfo): The surrounding info of the agent.
     """
 
-    def __init__(self, energy_level: int, surround_info: SurroundInfo) -> None:
+    def __init__(
+        self,
+        energy_level: int,
+        surround_info: SurroundInfo,
+    ) -> None:
         """
-        Initializes a MOVE_RESULT instance.
+        Initializes a WORLD_UPDATE instance.
 
         Args:
-            energy_level: The energy_level of the agent.
+            energy_level: The energy level of the agent.
             surround_info: The surrounding info of the agent.
         """
         self.energy_level: int = energy_level
@@ -26,7 +30,7 @@ class MOVE_RESULT(AegisCommand):
 
     @override
     def __str__(self) -> str:
-        return f"{self.STR_MOVE_RESULT} ( ENG_LEV {self.energy_level} , {self.surround_info} )"
+        return f"{self.STR_WORLD_UPDATE} ( ENG_LEV {self.energy_level} , SUR_INFO {self.surround_info} )"
 
     @override
     def __repr__(self) -> str:
