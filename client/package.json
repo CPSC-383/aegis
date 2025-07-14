@@ -101,7 +101,8 @@
         "lucide-react": "^0.468.0",
         "protobufjs": "^7.5.3",
         "tailwind-merge": "^2.5.5",
-        "tailwindcss-animate": "^1.0.7"
+        "tailwindcss-animate": "^1.0.7",
+        "yaml": "^2.8.0"
     },
     "devDependencies": {
         "@electron-toolkit/eslint-config-prettier": "^2.0.0",

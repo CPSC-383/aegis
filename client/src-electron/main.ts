@@ -3,6 +3,7 @@ import { is } from '@electron-toolkit/utils'
 import path from 'path'
 import fs from 'fs'
 import child_process from 'child_process'
+import yaml from 'yaml'
 
 class ElectronApp {
     private mainWindow: BrowserWindow | null = null
@@ -125,7 +126,7 @@ class ElectronApp {
     private readConfig(filePath: string) {
         try {
             const fileContent = fs.readFileSync(filePath, 'utf8')
-            const config = JSON.parse(fileContent)
+            const config = yaml.parse(fileContent) as Record<string, any>
             return config
         } catch (error) {
             // @ts-ignore: error type
@@ -134,10 +135,11 @@ class ElectronApp {
         }
     }
     private updateConfig(filePath: string, updates: any) {
+        // TODO: Decide if we want to allow the client to edit the config file once it lives away from the system?
         try {
-            const config = this.readConfig(filePath)
+            const config = this.readConfig(filePath) as Record<string, any>
             Object.assign(config, updates)
-            fs.writeFileSync(filePath, JSON.stringify(config, null, 2))
+            fs.writeFileSync(filePath, yaml.stringify(config))
         } catch (error) {
             // @ts-ignore: error type
             console.error(`Error updating the config file: ${error.message}`)
