@@ -46,9 +46,7 @@ class AegisRunner:
         self.verbose: bool = verbose
 
         # Setup Python command based on platform
-        self.python_command: str = (
-            "python" if platform.system() == "Windows" else "python3"
-        )
+        self.python_command: str = "python" if platform.system() == "Windows" else "python3"
 
     def _log(self, message: str) -> None:
         """
@@ -75,9 +73,7 @@ class AegisRunner:
         if os.path.exists(python_executable):
             self.python_command = python_executable
         else:
-            raise FileNotFoundError(
-                f"Python executable not found in venv: {python_executable}"
-            )
+            raise FileNotFoundError(f"Python executable not found in venv: {python_executable}")
 
         project_root = os.path.abspath(os.path.join(self.curr_dir, "..", ".."))
         os.environ["PYTHONPATH"] = project_root
@@ -119,7 +115,7 @@ class AegisRunner:
         """
         Run AEGIS simulation with agents.
         """
-        # self._setup_environment()
+        self._setup_environment()
         self.run_aegis()
 
 
@@ -131,9 +127,7 @@ def main():
         description="Run AEGIS simulation with agents",
         epilog="Example: aegis --rounds 50 --agent agents/example_agent/main.py --world worlds/ExampleWorld --group Test",
     )
-    _ = parser.add_argument(
-        "--rounds", type=int, required=True, help="Number of simulation rounds"
-    )
+    _ = parser.add_argument("--rounds", type=int, required=True, help="Number of simulation rounds")
     _ = parser.add_argument(
         "--agent",
         type=str,
@@ -158,9 +152,7 @@ def main():
         required=True,
         help="Group name",
     )
-    _ = parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose logging"
-    )
+    _ = parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
 
     args: RunnerArgs = parser.parse_args()  # pyright: ignore[reportAssignmentType]
 
