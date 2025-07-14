@@ -6,6 +6,7 @@ import { useAppContext } from '@/contexts/AppContext'
 import { Simulation } from '@/core/simulation'
 import { WorldMap } from '@/core/world'
 import { WorldParams } from '@/types'
+import { EventType, listenEvent } from '@/events'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -21,7 +22,7 @@ import {
     DialogDescription
 } from '@/components/ui/dialog'
 import { Alert } from '@/components/ui/alert'
-import { exportWorld, importWorld } from './MapGenerator'
+import { exportWorld, importWorld, WorldSerializer } from './MapGenerator'
 import MapBrushes from './Map-brushes'
 
 function MapEditor({ isOpen }: { isOpen: boolean }) {
@@ -29,12 +30,10 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
     const MAP_MIN = 3
 
     const { appState, setAppState } = useAppContext()
-    const [worldName, setWorldName] = useState<string>('')
-    const [worldParams, setWorldParams] = useState<WorldParams>({
-        width: 15,
-        height: 15,
-        initialEnergy: 500,
-        isInitialized: false
+    const [worldName, setWorldName] = useState<string>(() => localStorage.getItem('editor_worldName') || '')
+    const [worldParams, setWorldParams] = useState<WorldParams>(() => {
+        const saved = localStorage.getItem('editor_worldParams')
+        return saved ? JSON.parse(saved) : { width: 15, height: 15, initialEnergy: 100, isInitialized: false }
     })
     const [errMsg, setErrMsg] = useState<string>('')
     const simulation = useRef<Simulation | undefined>(undefined)
@@ -79,13 +78,39 @@ function MapEditor({ isOpen }: { isOpen: boolean }) {
         setErrMsg('')
     }
 
+    // Keep worldName and worldParams in localStorage
+    useEffect(() => {
+        localStorage.setItem('editor_worldName', worldName)
+    }, [worldName])
+    useEffect(() => {
+        localStorage.setItem('editor_worldParams', JSON.stringify(worldParams))
+    }, [worldParams])
+
+    useEffect(() => {
+        const saveWorld = () => {
+            if (appState.editorSimulation) {
+                const worldData = WorldSerializer.toJSON(appState.editorSimulation.worldMap)
+                localStorage.setItem('editor_worldData', JSON.stringify(worldData))
+            }
+        }
+        document.addEventListener(EventType.RENDER_MAP, saveWorld)
+        return () => {
+            document.removeEventListener(EventType.RENDER_MAP, saveWorld)
+        }
+    }, [appState.editorSimulation])
+
     useEffect(() => {
         if (isOpen) {
             if (!simulation.current || !worldParams.isInitialized) {
-                const world = WorldMap.fromParams(worldParams.width, worldParams.height, worldParams.initialEnergy)
+                let world
+                const savedWorld = localStorage.getItem('editor_worldData')
+                if (savedWorld) {
+                    world = WorldMap.fromData(JSON.parse(savedWorld))
+                } else {
+                    world = WorldMap.fromParams(worldParams.width, worldParams.height, worldParams.initialEnergy)
+                }
                 simulation.current = new Simulation(world)
             }
-
             setAppState((prev) => ({
                 ...prev,
                 editorSimulation: simulation.current,

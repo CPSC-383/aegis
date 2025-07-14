@@ -114,6 +114,8 @@ class WorldSerializer {
     }
 }
 
+export { WorldSerializer }
+
 export async function importWorld(file: File): Promise<Simulation> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
