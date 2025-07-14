@@ -4,62 +4,39 @@ import numpy as np
 from numpy.typing import NDArray
 
 from _aegis.common.commands.aegis_command import AegisCommand
-from _aegis.common.world.info import SurroundInfo
 
 
 class SAVE_SURV_RESULT(AegisCommand):
     """
-    Represents the result of saving a survivor.
+    Represents prediction result data.
 
     Attributes:
-        energy_level (int): The energy level of the agent.
-        surround_info (SurroundInfo): The surrounding info of the agent.
-        pred_info (tuple[int, NDArray[np.float32], NDArray[np.int64]] | None): Has the below info
         surv_saved_id (int): The ID of the saved survivor.
-        image_to_predict (NDArray[np.float32] | None): The image to predict.
-        all_unique_labels (NDArray[np.int64] | None): An array of all unique labels for prediction.
+        image_to_predict (NDArray[np.float32]): The image to predict.
+        all_unique_labels (NDArray[np.int64]): An array of all unique labels for prediction.
     """
 
     def __init__(
         self,
-        energy_level: int,
-        surround_info: SurroundInfo,
-        pred_info: tuple[int, NDArray[np.float32], NDArray[np.int64]] | None = None,
+        surv_saved_id: int,
+        image_to_predict: NDArray[np.float32],
+        all_unique_labels: NDArray[np.int64],
     ) -> None:
         """
-        Initializes a SAVE_SURV_RESULT instance.
+        Initializes a PREDICT_RESULT instance.
 
         Args:
-            energy_level: The energy level of the agent.
-            surround_info: The surrounding info of the agent.
-            pred_info: The prediction information.
+            surv_saved_id: The ID of the saved survivor.
+            image_to_predict: The image to predict.
+            all_unique_labels: An array of all unique labels for prediction.
         """
-        self.energy_level: int = energy_level
-        self.surround_info: SurroundInfo = surround_info
-        self._pred_info: tuple[int, NDArray[np.float32], NDArray[np.int64]] | None = (
-            pred_info
-        )
-        if pred_info:
-            self.surv_saved_id: int = pred_info[0]
-            self.image_to_predict: NDArray[np.float32] | None = pred_info[1]
-            self.all_unique_labels: NDArray[np.int64] | None = pred_info[2]
-        else:
-            self.surv_saved_id = -1
-            self.image_to_predict = None
-            self.all_unique_labels = None
-
-    def has_pred_info(self) -> bool:
-        """
-        Checks if the prediction information is available.
-
-        Returns:
-            True if prediction information is present, False otherwise.
-        """
-        return self._pred_info is not None
+        self.surv_saved_id: int = surv_saved_id
+        self.image_to_predict: NDArray[np.float32] = image_to_predict
+        self.all_unique_labels: NDArray[np.int64] = all_unique_labels
 
     @override
     def __str__(self) -> str:
-        return f"{self.STR_SAVE_SURV_RESULT} ( ENG_LEV {self.energy_level} , SUR_INFO {self.surround_info} )"
+        return f"{self.STR_SAVE_SURV_RESULT} ( SURV_ID {self.surv_saved_id} )"
 
     @override
     def __repr__(self) -> str:

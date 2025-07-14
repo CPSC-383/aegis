@@ -1,18 +1,32 @@
 import base64
 import sys
+from typing import TYPE_CHECKING
 
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.command_processor import CommandProcessor
 from _aegis.agent import Agent
 from _aegis.agent_control.agent_handler import AgentHandler
 
-from _aegis.agent_predictions.prediction_handler import PredictionHandler
 from _aegis.assist.parameters import Parameters
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.server_websocket import WebSocketServer
 from _aegis.world.aegis_world import AegisWorld
 from _aegis.protobuf.protobuf_service import ProtobufService
+
+try:
+    from _aegis.agent_predictions.prediction_handler import PredictionHandler
+except ImportError:
+    _prediction_imported = False
+else:
+    _prediction_imported = True
+
+if TYPE_CHECKING:
+    from _aegis.agent_predictions.prediction_handler import (
+        PredictionHandler as PredictionHandlerType,
+    )
+else:
+    PredictionHandlerType = object
 
 
 class Aegis:
@@ -27,7 +41,7 @@ class Aegis:
         self._ws_server: WebSocketServer = WebSocketServer()
         if wait_for_client:
             self._ws_server.set_wait_for_client(True)
-        self._prediction_handler: PredictionHandler | None = None
+        self._prediction_handler: PredictionHandlerType | None = None
         self._command_processor: CommandProcessor = CommandProcessor(
             self._agents,
             self._aegis_world,
@@ -36,8 +50,8 @@ class Aegis:
         )
 
     def start_up(self) -> bool:
-        if is_feature_enabled("ENABLE_PREDICTIONS"):
-            self._prediction_handler = PredictionHandler()
+        if is_feature_enabled("ENABLE_PREDICTIONS") and _prediction_imported:
+            self._prediction_handler = PredictionHandler()  # pyright: ignore[reportPossiblyUnboundVariable]
         try:
             _aegis_world_file = WorldFileParser.parse_world_file(
                 self._parameters.world_filename
@@ -131,10 +145,6 @@ class Aegis:
 
     # TODO: Move th predict and messages to `command_processor.py`
 
-    # def _process_command(self, command: AgentCommand) -> None:
-    #     if isinstance(command, PREDICT):
-    #         self._PREDICT_list.append(command)
-    #
     # def _process_PREDICT(self) -> None:
     #     for prediction in self._PREDICT_list:
     #         agent = self._aegis_world.get_agent(prediction.get_agent_id())
@@ -167,7 +177,7 @@ class Aegis:
     #                     self._agent_handler.increase_agent_group_predicted(
     #                         agent.get_agent_id().gid,
     #                         prediction.surv_id,
-    #                         prediction.label,
+    #                         int(prediction.label),
     #                         correct_prediction,
     #                     )
     #

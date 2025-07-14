@@ -2,31 +2,28 @@ from __future__ import annotations
 
 import importlib.util
 import sys
-from collections import deque
 from pathlib import Path
 from types import ModuleType
-
-import numpy as np
-from numpy.typing import NDArray
 
 from _aegis.command_manager import CommandManager
 from _aegis.common import AgentID, Direction, Location
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
-    MOVE_RESULT,
     OBSERVE_RESULT,
-    PREDICT_RESULT,
-    SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     RECHARGE_RESULT,
-    TEAM_DIG_RESULT,
+    WORLD_UPDATE,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import SEND_MESSAGE
 from _aegis.common.world.info import SurroundInfo
-from _aegis.common.world.info.cell_info import CellInfo
 from _aegis.common.world.world import World
+
+try:
+    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT
+except ImportError:
+    SAVE_SURV_RESULT = None  # pyright: ignore[reportConstantRedefinition]
 
 
 class Agent:
@@ -36,9 +33,6 @@ class Agent:
         self._id: AgentID = AgentID(-1, -1)
         self._location: Location = Location(-1, -1)
         self._energy_level: int = -1
-        self._prediction_info: deque[
-            tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]
-        ] = deque()
         self._command_manager: CommandManager = CommandManager()
         self._module: ModuleType | None = None
         self._inbox: list[SEND_MESSAGE_RESULT] = []
@@ -67,10 +61,12 @@ class Agent:
                 ):
                     self._module.handle_observe(self, result)  # pyright: ignore[reportAny]
 
-                elif isinstance(result, PREDICT_RESULT) and hasattr(
-                    self._module, "handle_predict"
+                elif (
+                    SAVE_SURV_RESULT is not None
+                    and isinstance(result, SAVE_SURV_RESULT)
+                    and hasattr(self._module, "handle_save")
                 ):
-                    self._module.handle_predict(self, result)  # pyright: ignore[reportAny]
+                    self._module.handle_save(self, result)  # pyright: ignore[reportAny]
         self._results.clear()
 
     def _send_messages(self) -> None:
@@ -144,29 +140,6 @@ class Agent:
         self._energy_level = energy_level
         self.log(f"New Energy: {self._energy_level}")
 
-    def get_prediction_info_size(self) -> int:
-        return len(self._prediction_info)
-
-    def get_prediction_info(
-        self,
-    ) -> tuple[int, NDArray[np.float32] | None, NDArray[np.int64] | None]:
-        if len(self._prediction_info) == 0:
-            return -1, None, None
-        return self._prediction_info.popleft()
-
-    def add_prediction_info(
-        self,
-        prediction_info: tuple[
-            int, NDArray[np.float32] | None, NDArray[np.int64] | None
-        ],
-    ) -> None:
-        self._prediction_info.append(prediction_info)
-        self.log("New Prediction Info!")
-
-    def clear_prediction_info(self) -> None:
-        self._prediction_info.clear()
-        self.log("Cleared Prediction Info")
-
     def get_action_command(self) -> AgentCommand | None:
         return self._command_manager.get_action_command()
 
@@ -188,54 +161,24 @@ class Agent:
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SEND_MESSAGE_RESULT):
             self._inbox.append(aegis_command)
-        elif isinstance(aegis_command, MOVE_RESULT):
-            move_result: MOVE_RESULT = aegis_command
-            move_result_current_info: CellInfo = (
-                move_result.surround_info.get_current_info()
-            )
+        elif isinstance(aegis_command, WORLD_UPDATE):
+            move_result = aegis_command
+            curr_info = move_result.surround_info.get_current_info()
             self.set_energy_level(move_result.energy_level)
-            self.set_location(move_result_current_info.location)
+            self.set_location(curr_info.location)
             self.update_surround(move_result.surround_info)
-
-        elif isinstance(aegis_command, SAVE_SURV_RESULT):
-            save_surv_result: SAVE_SURV_RESULT = aegis_command
-            save_surv_result_current_info = (
-                save_surv_result.surround_info.get_current_info()
-            )
-            self.set_energy_level(save_surv_result.energy_level)
-            self.set_location(save_surv_result_current_info.location)
-            if save_surv_result.has_pred_info():
-                surv_id, image, labels = (
-                    save_surv_result.surv_saved_id,
-                    save_surv_result.image_to_predict,
-                    save_surv_result.all_unique_labels,
-                )
-                self.add_prediction_info((surv_id, image, labels))
-            self.update_surround(save_surv_result.surround_info)
-
-        elif isinstance(aegis_command, PREDICT_RESULT):
+        elif SAVE_SURV_RESULT is not None and isinstance(
+            aegis_command, SAVE_SURV_RESULT
+        ):
             self._results.append(aegis_command)
-
         elif isinstance(aegis_command, RECHARGE_RESULT):
             recharge_result: RECHARGE_RESULT = aegis_command
             if recharge_result.was_successful:
                 self.set_energy_level(recharge_result.charge_energy)
-
         elif isinstance(aegis_command, OBSERVE_RESULT):
             self._results.append(aegis_command)
-
-        elif isinstance(aegis_command, TEAM_DIG_RESULT):
-            team_dig_result: TEAM_DIG_RESULT = aegis_command
-            team_dig_result_current_info: CellInfo = (
-                team_dig_result.surround_info.get_current_info()
-            )
-            self.set_energy_level(team_dig_result.energy_level)
-            self.set_location(team_dig_result_current_info.location)
-            self.update_surround(team_dig_result.surround_info)
-
         elif isinstance(aegis_command, AEGIS_UNKNOWN):
             self.log("Brain: Got Unknown command reply from AEGIS.")
-
         else:
             self.log(
                 f"Brain: Got unrecognized reply from AEGIS: {aegis_command.__class__.__name__}.",

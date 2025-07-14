@@ -1,22 +1,19 @@
+from typing import TYPE_CHECKING
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.agent_control.agent_handler import AgentHandler
-from _aegis.agent_predictions.prediction_handler import PredictionHandler
 from _aegis.common.agent_id import AgentID
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
-    MOVE_RESULT,
     OBSERVE_RESULT,
     RECHARGE_RESULT,
-    SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
-    TEAM_DIG_RESULT,
+    WORLD_UPDATE,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     MOVE,
     OBSERVE,
-    PREDICT,
     SEND_MESSAGE,
     RECHARGE,
     TEAM_DIG,
@@ -34,18 +31,33 @@ from _aegis.agent import Agent
 from _aegis.world.aegis_world import AegisWorld
 
 
+try:
+    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT
+    from _aegis.common.commands.agent_commands.PREDICT import PREDICT
+except ImportError:
+    SAVE_SURV_RESULT = None  # pyright: ignore[reportConstantRedefinition]
+    PREDICT = None  # pyright: ignore[reportConstantRedefinition]
+
+if TYPE_CHECKING:
+    from _aegis.agent_predictions.prediction_handler import (
+        PredictionHandler as PredictionHandlerType,
+    )
+else:
+    PredictionHandlerType = object
+
+
 class CommandProcessor:
     def __init__(
         self,
         agents: list[Agent],
         aegis_world: AegisWorld,
         agent_handler: AgentHandler,
-        prediction_handler: PredictionHandler | None,
+        prediction_handler: PredictionHandlerType | None,
     ) -> None:
         self._agents: list[Agent] = agents
         self._world: AegisWorld = aegis_world
         self._agent_handler: AgentHandler = agent_handler
-        self._prediction_handler: PredictionHandler | None = prediction_handler
+        self._prediction_handler: PredictionHandlerType | None = prediction_handler
 
     def run_turn(self) -> None:
         commands: list[AgentCommand] = []
@@ -101,24 +113,29 @@ class CommandProcessor:
             if agent is None:
                 continue
 
-            match cmd:
-                case TEAM_DIG():
-                    self._handle_dig(cmd)
-                case SAVE_SURV():
-                    self._handle_save(cmd)
-                case PREDICT() if is_feature_enabled("ENABLE_PREDICTIONS"):
-                    pass
-                case MOVE():
-                    self._handle_move(cmd)
-                case RECHARGE():
-                    self._handle_recharge(cmd)
-                case OBSERVE():
-                    agent = self._world.get_agent(cmd.get_agent_id())
-                    if agent is None:
-                        return
-                    agent.remove_energy(Constants.OBSERVE_ENERGY_COST)
-                case _:
-                    raise Exception("Got unknown command")
+            if (
+                PREDICT is not None
+                and isinstance(cmd, PREDICT)
+                and is_feature_enabled("ENABLE_PREDICTIONS")
+            ):
+                pass
+            else:
+                match cmd:
+                    case TEAM_DIG():
+                        self._handle_dig(cmd)
+                    case SAVE_SURV():
+                        self._handle_save(cmd)
+                    case MOVE():
+                        self._handle_move(cmd)
+                    case RECHARGE():
+                        self._handle_recharge(cmd)
+                    case OBSERVE():
+                        agent = self._world.get_agent(cmd.get_agent_id())
+                        if agent is None:
+                            return
+                        agent.remove_energy(Constants.OBSERVE_ENERGY_COST)
+                    case _:
+                        raise Exception("Got unknown command")
 
     def _handle_recharge(self, cmd: RECHARGE) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
@@ -203,31 +220,42 @@ class CommandProcessor:
             energy = agent.get_energy_level()
             location = agent.get_location()
             surround_info = self._world.get_surround_info(location)
-            result: AegisCommand = AEGIS_UNKNOWN()
-            if surround_info is not None:
+            result_commands: list[AegisCommand] = []
+
+            if surround_info is None:
+                result_commands.append(AEGIS_UNKNOWN())
+            else:
                 match cmd:
-                    case MOVE():
-                        result = MOVE_RESULT(energy, surround_info)
+                    case MOVE() | TEAM_DIG():
+                        result_commands.append(WORLD_UPDATE(energy, surround_info))
+
                     case SAVE_SURV():
-                        pred_info = None
+                        result_commands.append(WORLD_UPDATE(energy, surround_info))
+
                         if (
                             is_feature_enabled("ENABLE_PREDICTIONS")
                             and self._prediction_handler is not None
+                            and SAVE_SURV_RESULT is not None
                         ):
                             pred_info = (
                                 self._prediction_handler.get_pred_info_for_agent(
                                     agent.get_agent_id()
                                 )
                             )
-                        result = SAVE_SURV_RESULT(energy, surround_info, pred_info)
-                    case TEAM_DIG():
-                        result = TEAM_DIG_RESULT(energy, surround_info)
+                            if pred_info is not None:
+                                result_commands.append(
+                                    SAVE_SURV_RESULT(
+                                        pred_info[0], pred_info[1], pred_info[2]
+                                    )
+                                )
+
                     case RECHARGE():
                         agent_cell = self._world.get_cell_at(location)
                         success = (
                             agent_cell is not None and agent_cell.is_charging_cell()
                         )
-                        result = RECHARGE_RESULT(success, energy)
+                        result_commands.append(RECHARGE_RESULT(success, energy))
+
                     case OBSERVE():
                         cell_info = CellInfo()
                         layers: list[WorldObject] = []
@@ -235,11 +263,15 @@ class CommandProcessor:
                         if cell is not None:
                             cell_info = cell.get_cell_info()
                             layers = cell.get_cell_layers()
+                        result_commands.append(
+                            OBSERVE_RESULT(energy, cell_info, layers)
+                        )
 
-                        result = OBSERVE_RESULT(energy, cell_info, layers)
                     case _:
-                        result = AEGIS_UNKNOWN()
-            agent.handle_aegis_command(result)
+                        result_commands.append(AEGIS_UNKNOWN())
+
+            for result in result_commands:
+                agent.handle_aegis_command(result)
 
     def _handle_top_layer(
         self,

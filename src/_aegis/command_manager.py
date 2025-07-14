@@ -1,6 +1,12 @@
 from _aegis.common.commands.agent_command import AgentCommand
-from _aegis.common.commands.agent_commands import OBSERVE, SEND_MESSAGE, PREDICT
+from _aegis.common.commands.agent_commands import OBSERVE, SEND_MESSAGE
 from _aegis.common.constants import Constants
+
+
+try:
+    from _aegis.common.commands.agent_commands.PREDICT import PREDICT
+except ImportError:
+    PREDICT = None  # pyright: ignore[reportConstantRedefinition]
 
 
 class CommandManager:
@@ -20,7 +26,9 @@ class CommandManager:
     def send(self, command: AgentCommand) -> None:
         if isinstance(command, SEND_MESSAGE):
             self._message_queue.append(command)
-        elif isinstance(command, (OBSERVE, PREDICT)):
+        elif isinstance(command, OBSERVE) or (
+            PREDICT is not None and isinstance(command, PREDICT)
+        ):
             if len(self._directive_commands) < Constants.MAX_DIRECTIVES:
                 self._directive_commands.append(command)
         else:
