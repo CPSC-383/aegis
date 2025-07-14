@@ -26,8 +26,8 @@ class WebSocketServer:
         self._connected: bool = False
         self._done: bool = False
         self._server: WebsocketServer | None = None
-        self._previous_events: list[bytes] = []
-        self._incoming_events: queue.Queue[bytes] = queue.Queue()
+        self._previous_events: list[str] = []
+        self._incoming_events: queue.Queue[str] = queue.Queue()
         self._queue_thread: threading.Thread = threading.Thread(
             target=self._process_queue
         )
@@ -49,7 +49,7 @@ class WebSocketServer:
         except Exception as e:
             print(f"Error processing queue: {e}")
 
-    def _process_event(self, event: bytes) -> None:
+    def _process_event(self, event: str) -> None:
         """
         Sends the events to the connected clients.
         Locks until the event is sent to all clients.
@@ -63,7 +63,7 @@ class WebSocketServer:
                     self._server.send_message(client, event)  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
                 self._previous_events.append(event)
 
-    def add_event(self, event: bytes) -> None:
+    def add_event(self, event: str) -> None:
         """
         Add an event to be sent to client in the future.
 

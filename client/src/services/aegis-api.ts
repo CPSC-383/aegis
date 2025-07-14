@@ -14,16 +14,18 @@ type AegisAPI = {
         isDirectory: (arg: string) => Promise<boolean>
     }
     aegis_child_process: {
-        spawn: (aegisPath: string, numOfRounds: string, numOfAgents: string, worldFile: string) => Promise<string>
+        spawn: (
+            rounds: string,
+            amount: string,
+            world: string,
+            group: string,
+            agent: string,
+            aegisPath: string
+        ) => Promise<string>
         kill: (aegisPid: string) => void
         onStdout: (callback: (data: string) => void) => void
         onStderr: (callback: (data: string) => void) => void
         onExit: (callback: () => void) => void
-    }
-    agent_child_process: {
-        spawn: (agentPath: string, groupName: string, numOfAgents: string, agent: string) => Promise<string>
-        onStdout: (callback: (data: string) => void) => void
-        onStderr: (callback: (data: string) => void) => void
     }
 }
 

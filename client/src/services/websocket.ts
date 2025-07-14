@@ -1,7 +1,6 @@
 import { Simulation } from '@/core/simulation'
 import { WorldMap } from '@/core/world'
 import { ProtobufService } from './protobuf'
-import pako from 'pako'
 
 export class ClientWebSocket {
     private url: string = 'ws://localhost:6003'
@@ -44,8 +43,7 @@ export class ClientWebSocket {
 
     private handleEvent(data: any) {
         const decodedBase64 = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
-        const decompressedData = pako.inflate(decodedBase64)
-        const event = this.protobufService.deserialize(decompressedData)
+        const event = this.protobufService.deserialize(decodedBase64)
 
         if (!this.simulation) {
             // First event should be the world data

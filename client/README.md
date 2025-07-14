@@ -13,7 +13,7 @@ npm install
 ```bash
 npm run dev        # Development for assignment 3
 # OR
-npm run dev:a1     # Development for assignment 1 
+npm run dev:a1     # Development for assignment 1
 ```
 
 ## Building
@@ -23,7 +23,7 @@ Build the Client:
 ```bash
 npm run build        # Build for assignment 3
 # OR
-npm run build:a1     # Build for assignment 1 
+npm run build:a1     # Build for assignment 1
 ```
 
 ## Deployment

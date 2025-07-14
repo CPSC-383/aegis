@@ -1,6 +1,5 @@
 export enum TabNames {
     Aegis = 'Aegis',
-    Agents = 'Agents',
     Game = 'Game',
     Editor = 'Editor',
     Settings = 'Settings'

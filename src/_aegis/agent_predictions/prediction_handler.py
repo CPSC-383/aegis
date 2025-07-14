@@ -1,9 +1,11 @@
-import os
+import importlib.resources
 import random
+from typing import ClassVar
 
 import numpy as np
 from numpy.typing import NDArray
 
+from _aegis.agent_predictions import model_testing_data
 from _aegis.common import AgentID
 from _aegis.common.constants import Constants
 
@@ -15,16 +17,13 @@ class PredictionHandler:
     # gid, {survivor_id: (agent_id, prediction_correct)}
     _pred_results: dict[int, dict[int, tuple[int, bool]]] = {}
 
-    aegis_testing_output_dir: str = os.path.join(
-        "src", "_aegis", "agent_predictions", "model_testing_data"
-    )
-    _x_test: NDArray[np.float32] = np.load(
-        os.path.join(aegis_testing_output_dir, "x_test_a3.npy")
-    )
-    _y_test: NDArray[np.int64] = np.load(
-        os.path.join(aegis_testing_output_dir, "y_test_a3.npy")
-    )
-    _unique_labels: NDArray[np.int64] = np.unique(_y_test)
+    with (
+        importlib.resources.path(model_testing_data, "x_test_a3.npy") as x_path,
+        importlib.resources.path(model_testing_data, "y_test_a3.npy") as y_path,
+    ):
+        _x_test: ClassVar[NDArray[np.float32]] = np.load(x_path)
+        _y_test: ClassVar[NDArray[np.int64]] = np.load(y_path)
+        _unique_labels: ClassVar[NDArray[np.int64]] = np.unique(_y_test)
 
     @staticmethod
     def initialize_testing_data() -> None:

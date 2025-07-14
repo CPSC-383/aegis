@@ -11,7 +11,7 @@ export type Scaffold = {
     worlds: string[]
     agents: string[]
     output: ConsoleLine[]
-    startSimulation: (numRounds: number, numAgentsAegis: number, worldFile: string) => void
+    startSimulation: (rounds: string, amount: string, world: string, group: string, agent: string) => void
     toggleMoveCost: (value: boolean) => void
     killSim: (() => void) | undefined
     readAegisConfig: () => Promise<string>
@@ -37,7 +37,7 @@ export function createScaffold(): Scaffold {
         if (path) setAegisPath(path)
     }
 
-    const startSimulation = async (numRounds: number, numAgentsAegis: number, worldFile: string) => {
+    const startSimulation = async (rounds: string, amount: string, world: string, group: string, agent: string) => {
         if (!aegisPath) {
             throw new Error("Can't find AEGIS path!")
         }
@@ -45,12 +45,7 @@ export function createScaffold(): Scaffold {
         // Reset output
         setOutput([])
 
-        const pid = await aegisAPI.aegis_child_process.spawn(
-            aegisPath,
-            numRounds.toString(),
-            numAgentsAegis.toString(),
-            worldFile
-        )
+        const pid = await aegisAPI.aegis_child_process.spawn(rounds, amount, world, group, agent, aegisPath)
         aegisPid.current = pid
         forceUpdate()
     }
@@ -103,15 +98,6 @@ export function createScaffold(): Scaffold {
         aegisAPI.aegis_child_process.onExit(() => {
             aegisPid.current = undefined
             forceUpdate()
-        })
-
-        // Setup agent listeners once
-        aegisAPI.agent_child_process.onStdout((data: string) => {
-            addOutput(data, false)
-        })
-
-        aegisAPI.agent_child_process.onStderr((data: string) => {
-            addOutput(data, true)
         })
 
         const onSimCreated = (sim: Simulation) => {
@@ -187,7 +173,7 @@ const getAgents = async (aegisPath: string) => {
     const fs = aegisAPI.fs
     const path = aegisAPI.path
 
-    const agentsPath = await path.join(aegisPath, 'src', 'agents')
+    const agentsPath = await path.join(aegisPath, 'agents')
     if (!(await fs.existsSync(agentsPath))) return []
 
     const agentsDirs = await fs.readdirSync(agentsPath)

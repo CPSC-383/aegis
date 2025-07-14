@@ -1,5 +1,5 @@
 from _aegis.agent import Agent
-from _aegis.cli import main
+from _aegis.main import main
 from _aegis.common import Direction, Location
 from _aegis.common.commands.aegis_commands import OBSERVE_RESULT, PREDICT_RESULT
 from _aegis.common.commands.agent_command import AgentCommand

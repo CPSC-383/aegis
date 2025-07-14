@@ -1,5 +1,4 @@
 import base64
-import gzip
 import sys
 import time
 
@@ -44,7 +43,9 @@ class Aegis:
         if is_feature_enabled("ENABLE_PREDICTIONS"):
             self._prediction_handler = PredictionHandler()
         try:
-            _aegis_world_file = WorldFileParser.parse_world_file(self._parameters.world_filename)
+            _aegis_world_file = WorldFileParser.parse_world_file(
+                self._parameters.world_filename
+            )
             if _aegis_world_file is None:
                 print(
                     f'Aegis  : Unable to parse world file from "{self._parameters.world_filename}"',
@@ -251,6 +252,5 @@ class Aegis:
         return self._aegis_world
 
     def _compress_and_send(self, event: bytes) -> None:
-        compressed_event = gzip.compress(event)
-        encoded_event = base64.b64encode(compressed_event).decode().encode()
-        self._ws_server.add_event(encoded_event)
+        encoded = base64.b64encode(event).decode("utf-8")
+        self._ws_server.add_event(encoded)

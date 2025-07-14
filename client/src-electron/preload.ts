@@ -44,19 +44,6 @@ const electronAPI = {
                 callback()
             })
         }
-    },
-    agent_child_process: {
-        spawn: (...args: any[]) => invoke('agent_child_process.spawn', ...args),
-        onStdout: (callback: any) => {
-            ipcRenderer.on('agent_child_process.stdout', (_, data) => {
-                callback(data)
-            })
-        },
-        onStderr: (callback: any) => {
-            ipcRenderer.on('agent_child_process.stderr', (_, data) => {
-                callback(data)
-            })
-        }
     }
 }
 

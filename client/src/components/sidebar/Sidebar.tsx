@@ -7,7 +7,6 @@ import { TabNames } from '@/types'
 import { ChevronRight } from 'lucide-react'
 
 import Aegis from './Aegis'
-import Agents from './Agents'
 import Console from '../Console'
 import InfoPanel from '../info-panel/Info-panel'
 import MapEditor from '../map-editor/Map-editor'
@@ -17,17 +16,10 @@ import { createScaffold } from '@/services'
 
 function Sidebar() {
     const scaffold = createScaffold()
-    const { aegisPath, setupAegisPath, agents, output } = scaffold
+    const { aegisPath, setupAegisPath, output } = scaffold
     const { appState } = useAppContext()
     const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
     const [isCollapsed, setIsCollapsed] = useState(false)
-
-    // These are here so the values don't reset on re-rerender when we switch tabs
-    const [worldFile, setWorldFile] = useState<string>('')
-    const [numRounds, setNumRounds] = useState<number>(0)
-    const [groupName, setGroupName] = useState<string>('')
-    const [agent, setAgent] = useState<string>('')
-
     const sidebarRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
@@ -82,23 +74,7 @@ function Sidebar() {
 
                                 <div className="overflow-auto scrollbar p-1">
                                     <TabsContent value={TabNames.Aegis}>
-                                        <Aegis
-                                            scaffold={scaffold}
-                                            worldFile={worldFile}
-                                            setWorldFile={setWorldFile}
-                                            numRounds={numRounds}
-                                            setNumRounds={setNumRounds}
-                                        />
-                                    </TabsContent>
-                                    <TabsContent value={TabNames.Agents}>
-                                        <Agents
-                                            aegisPath={aegisPath || ''}
-                                            agents={agents}
-                                            agent={agent}
-                                            setAgent={setAgent}
-                                            groupName={groupName}
-                                            setGroupName={setGroupName}
-                                        />
+                                        <Aegis scaffold={scaffold} />
                                     </TabsContent>
                                     <TabsContent value={TabNames.Game}>
                                         <Game />
@@ -112,9 +88,9 @@ function Sidebar() {
                                 </div>
                             </Tabs>
 
-                            {(selectedTab === TabNames.Aegis ||
-                                selectedTab === TabNames.Agents ||
-                                selectedTab === TabNames.Game) && <Console output={output} />}
+                            {(selectedTab === TabNames.Aegis || selectedTab === TabNames.Game) && (
+                                <Console output={output} />
+                            )}
                         </>
                     )}
                 </div>

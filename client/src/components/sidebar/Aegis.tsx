@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { Button } from '@/components/ui/button'
@@ -10,32 +10,42 @@ import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
 interface Props {
     scaffold: Scaffold
-    worldFile: string
-    setWorldFile: (value: string) => void
-    numRounds: number
-    setNumRounds: (value: number) => void
 }
 
-function Aegis({ scaffold, worldFile, setWorldFile, numRounds, setNumRounds }: Props) {
-    const { worlds, startSimulation, killSim } = scaffold
+function Aegis({ scaffold }: Props) {
+    const { worlds, agents, startSimulation, killSim } = scaffold
+    const [world, setWorld] = useState<string>('')
+    const [rounds, setRounds] = useState<number>(0)
+    const [group, setGroup] = useState<string>('')
+    const [agent, setAgent] = useState<string>('')
 
-    const isButtonDisabled = useMemo(() => !worldFile || !numRounds, [worldFile, numRounds])
+    const isButtonDisabled = useMemo(() => !world || !rounds || !group || !agent, [world, rounds, group, agent])
 
     const handleRoundBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value)
         if (!isNaN(value)) {
             const newValue = Math.max(1, value)
-            setNumRounds(newValue)
+            setRounds(newValue)
         }
     }
 
+    const handleGroupName = (value: string) => {
+        // don't allow space characters
+        setGroup(value.replace(/\s/g, ''))
+    }
+
     return (
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+        <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-4"
+        >
             <div>
                 <Label>Select a World</Label>
-                <Select value={worldFile} onValueChange={(value) => setWorldFile(value)}>
+                <Select value={world} onValueChange={(value) => setWorld(value)}>
                     <SelectTrigger>
-                        <SelectValue placeholder="Choose a world">{worldFile || 'Select a world'}</SelectValue>
+                        <SelectValue placeholder="Choose a world">{world || 'Select a world'}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                         {worlds.map((world) => (
@@ -47,19 +57,40 @@ function Aegis({ scaffold, worldFile, setWorldFile, numRounds, setNumRounds }: P
                 </Select>
             </div>
 
-            <div className="mt-4">
+            <div>
                 <Label>Number of Rounds</Label>
                 <Input
                     type="number"
-                    value={numRounds === 0 ? '' : numRounds}
+                    value={rounds === 0 ? '' : rounds}
                     onChange={(e) => {
                         const value = e.target.value === '' ? 0 : Number(e.target.value)
-                        setNumRounds(value)
+                        setRounds(value)
                     }}
                     onBlur={handleRoundBlur}
                     placeholder="Enter number of rounds"
                     className="w-full"
                 />
+            </div>
+
+            <div>
+                <Label>Select an Agent</Label>
+                <Select value={agent} onValueChange={(value) => setAgent(value)}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Choose an agent">{agent || 'Select an agent'}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                        {agents.map((agentName) => (
+                            <SelectItem key={agentName} value={agentName}>
+                                {agentName}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div>
+                <Label>Group Name</Label>
+                <Input value={group} onChange={(e) => handleGroupName(e.target.value)} placeholder="Enter group name" />
             </div>
 
             <div className="flex flex-col mt-4">
@@ -69,9 +100,10 @@ function Aegis({ scaffold, worldFile, setWorldFile, numRounds, setNumRounds }: P
                     </Button>
                 ) : (
                     <Button
-                        onClick={() =>
-                            startSimulation(numRounds, getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : 7, worldFile)
-                        }
+                        onClick={() => {
+                            const amount = getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : 7
+                            startSimulation(rounds.toString(), amount.toString(), world, group, agent)
+                        }}
                         disabled={isButtonDisabled}
                         className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}
                     >

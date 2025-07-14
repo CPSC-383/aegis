@@ -92,17 +92,12 @@ class ElectronApp {
                 return this.exportWorld(args[0], args[1])
             case 'aegis_child_process.spawn':
                 return this.spawnAegisProcess(
-                    args[0], // rootPath
-                    args[1], // numOfRounds
-                    args[2], // numOfAgents
-                    args[3] // worldFile
-                )
-            case 'agent_child_process.spawn':
-                return this.spawnAgentProcesses(
-                    args[0], // rootPath
-                    args[1], // groupName
-                    args[2], // numOfAgentsToSpawn
-                    args[3] // agent
+                    args[0], // rounds
+                    args[1], // amount
+                    args[2], // world
+                    args[3], // group
+                    args[4], // agent
+                    args[5] // aegis path
                 )
             case 'aegis_child_process.kill':
                 return this.killProcess(args[0])
@@ -125,12 +120,6 @@ class ElectronApp {
         if (!exportResult.canceled && exportResult.filePath) {
             fs.writeFileSync(exportResult.filePath, content)
         }
-    }
-
-    private getPythonExecutablePath(rootPath: string) {
-        const isWindows = process.platform === 'win32'
-        const venvSubpath = isWindows ? path.join('.venv', 'Scripts', 'python') : path.join('.venv', 'bin', 'python')
-        return path.join(rootPath, venvSubpath)
     }
 
     private readConfig(filePath: string) {
@@ -156,27 +145,28 @@ class ElectronApp {
         }
     }
 
-    private spawnAegisProcess(rootPath: string, numOfRounds: string, numOfAgents: string, worldFile: string) {
-        const srcPath = path.join(rootPath, 'src')
-        const proc = path.join(srcPath, '_aegis', 'main.py')
+    private spawnAegisProcess(
+        rounds: string,
+        amount: string,
+        world: string,
+        group: string,
+        agent: string,
+        aegisPath: string
+    ) {
         const procArgs = [
-            '--agent-amount',
-            numOfAgents,
-            '--replay-file',
-            'replay.txt',
-            '--world-file',
-            `worlds/${worldFile}`,
+            '--amount',
+            amount,
+            '--agent',
+            `agents/${agent}/main.py`,
+            '--world',
+            `worlds/${world}`,
             '--rounds',
-            numOfRounds,
+            rounds,
+            '--group',
+            group,
             '--client'
         ]
-        const options = {
-            cwd: rootPath,
-            env: { PYTHONPATH: srcPath }
-        }
-
-        const pythonExec = this.getPythonExecutablePath(rootPath)
-        const childAegis = child_process.spawn(pythonExec, [proc, ...procArgs], options)
+        const childAegis = child_process.spawn('aegis', [...procArgs], { cwd: aegisPath })
 
         return new Promise((resolve, reject) => {
             childAegis.on('error', reject)
@@ -202,47 +192,6 @@ class ElectronApp {
                 }
             })
         })
-    }
-
-    private spawnAgentProcesses(rootPath: string, groupName: string, numOfAgentsToSpawn: number, agent: string) {
-        const srcPath = path.join(rootPath, 'src')
-        const proc = path.join(srcPath, '_agents', agent, 'main.py')
-        const procArgs = [groupName]
-        const options = {
-            cwd: rootPath,
-            env: { PYTHONPATH: srcPath }
-        }
-
-        const pythonExec = this.getPythonExecutablePath(rootPath)
-
-        const spawnPromises = Array.from({ length: numOfAgentsToSpawn }, () => {
-            return new Promise<{ code: number | null }>((resolve, reject) => {
-                const childAgent = child_process.spawn(pythonExec, [proc, ...procArgs], options)
-
-                childAgent.on('error', reject)
-                childAgent.on('spawn', () => {
-                    const pid = childAgent.pid?.toString()
-                    if (pid) {
-                        this.processes.set(pid, childAgent)
-
-                        childAgent.stdout?.on('data', (data) => {
-                            this.mainWindow?.webContents.send('agent_child_process.stdout', data.toString())
-                        })
-
-                        childAgent.stderr?.on('data', (data) => {
-                            this.mainWindow?.webContents.send('agent_child_process.stderr', data.toString())
-                        })
-
-                        childAgent.on('close', (code) => {
-                            this.processes.delete(pid)
-                            resolve({ code })
-                        })
-                    }
-                })
-            })
-        })
-
-        return Promise.all(spawnPromises)
     }
 
     private killProcess(pid: string) {
