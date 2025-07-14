@@ -202,6 +202,106 @@ export interface RoundUpdate {
     groups: GroupData[];
 }
 /**
+ * Simulation state
+ *
+ * @generated from protobuf message aegis.SimulationState
+ */
+export interface SimulationState {
+    /**
+     * @generated from protobuf field: int32 current_round = 1
+     */
+    currentRound: number;
+    /**
+     * @generated from protobuf field: int32 max_rounds = 2
+     */
+    maxRounds: number;
+    /**
+     * @generated from protobuf field: bool is_round_zero = 3
+     */
+    isRoundZero: boolean;
+}
+/**
+ * World statistics
+ *
+ * @generated from protobuf message aegis.WorldStats
+ */
+export interface WorldStats {
+    /**
+     * @generated from protobuf field: int32 agents_alive = 1
+     */
+    agentsAlive: number;
+    /**
+     * @generated from protobuf field: int32 agents_dead = 2
+     */
+    agentsDead: number;
+    /**
+     * @generated from protobuf field: int32 total_survivors = 3
+     */
+    totalSurvivors: number;
+    /**
+     * @generated from protobuf field: int32 survivors_saved = 4
+     */
+    survivorsSaved: number;
+    /**
+     * @generated from protobuf field: int32 steps_taken = 5
+     */
+    stepsTaken: number;
+}
+/**
+ * Group statistics for UI display
+ *
+ * @generated from protobuf message aegis.GroupStats
+ */
+export interface GroupStats {
+    /**
+     * @generated from protobuf field: int32 gid = 1
+     */
+    gid: number;
+    /**
+     * @generated from protobuf field: string name = 2
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: int32 score = 3
+     */
+    score: number;
+    /**
+     * @generated from protobuf field: int32 survivors_saved = 4
+     */
+    survivorsSaved: number;
+    /**
+     * @generated from protobuf field: int32 correct_predictions = 5
+     */
+    correctPredictions: number;
+    /**
+     * @generated from protobuf field: int32 incorrect_predictions = 6
+     */
+    incorrectPredictions: number;
+}
+/**
+ * Round data
+ *
+ * @generated from protobuf message aegis.RoundData
+ */
+export interface RoundData {
+    /**
+     * @generated from protobuf field: string event_type = 1
+     */
+    eventType: string;
+    /**
+     * @generated from protobuf field: int32 round = 2
+     */
+    round: number;
+    /**
+     * @generated from protobuf field: aegis.WorldState after_world = 3
+     */
+    afterWorld?: WorldState;
+    /**
+     * @generated from protobuf field: repeated aegis.GroupData groups_data = 4
+     */
+    groupsData: GroupData[];
+}
+/**
  * Simulation events
  *
  * Empty message for completion event
@@ -841,6 +941,305 @@ class RoundUpdate$Type extends MessageType<RoundUpdate> {
  * @generated MessageType for protobuf message aegis.RoundUpdate
  */
 export const RoundUpdate = new RoundUpdate$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SimulationState$Type extends MessageType<SimulationState> {
+    constructor() {
+        super("aegis.SimulationState", [
+            { no: 1, name: "current_round", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "max_rounds", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "is_round_zero", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SimulationState>): SimulationState {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.currentRound = 0;
+        message.maxRounds = 0;
+        message.isRoundZero = false;
+        if (value !== undefined)
+            reflectionMergePartial<SimulationState>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SimulationState): SimulationState {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 current_round */ 1:
+                    message.currentRound = reader.int32();
+                    break;
+                case /* int32 max_rounds */ 2:
+                    message.maxRounds = reader.int32();
+                    break;
+                case /* bool is_round_zero */ 3:
+                    message.isRoundZero = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SimulationState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 current_round = 1; */
+        if (message.currentRound !== 0)
+            writer.tag(1, WireType.Varint).int32(message.currentRound);
+        /* int32 max_rounds = 2; */
+        if (message.maxRounds !== 0)
+            writer.tag(2, WireType.Varint).int32(message.maxRounds);
+        /* bool is_round_zero = 3; */
+        if (message.isRoundZero !== false)
+            writer.tag(3, WireType.Varint).bool(message.isRoundZero);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message aegis.SimulationState
+ */
+export const SimulationState = new SimulationState$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class WorldStats$Type extends MessageType<WorldStats> {
+    constructor() {
+        super("aegis.WorldStats", [
+            { no: 1, name: "agents_alive", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "agents_dead", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "total_survivors", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "survivors_saved", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "steps_taken", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<WorldStats>): WorldStats {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.agentsAlive = 0;
+        message.agentsDead = 0;
+        message.totalSurvivors = 0;
+        message.survivorsSaved = 0;
+        message.stepsTaken = 0;
+        if (value !== undefined)
+            reflectionMergePartial<WorldStats>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WorldStats): WorldStats {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 agents_alive */ 1:
+                    message.agentsAlive = reader.int32();
+                    break;
+                case /* int32 agents_dead */ 2:
+                    message.agentsDead = reader.int32();
+                    break;
+                case /* int32 total_survivors */ 3:
+                    message.totalSurvivors = reader.int32();
+                    break;
+                case /* int32 survivors_saved */ 4:
+                    message.survivorsSaved = reader.int32();
+                    break;
+                case /* int32 steps_taken */ 5:
+                    message.stepsTaken = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: WorldStats, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 agents_alive = 1; */
+        if (message.agentsAlive !== 0)
+            writer.tag(1, WireType.Varint).int32(message.agentsAlive);
+        /* int32 agents_dead = 2; */
+        if (message.agentsDead !== 0)
+            writer.tag(2, WireType.Varint).int32(message.agentsDead);
+        /* int32 total_survivors = 3; */
+        if (message.totalSurvivors !== 0)
+            writer.tag(3, WireType.Varint).int32(message.totalSurvivors);
+        /* int32 survivors_saved = 4; */
+        if (message.survivorsSaved !== 0)
+            writer.tag(4, WireType.Varint).int32(message.survivorsSaved);
+        /* int32 steps_taken = 5; */
+        if (message.stepsTaken !== 0)
+            writer.tag(5, WireType.Varint).int32(message.stepsTaken);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message aegis.WorldStats
+ */
+export const WorldStats = new WorldStats$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GroupStats$Type extends MessageType<GroupStats> {
+    constructor() {
+        super("aegis.GroupStats", [
+            { no: 1, name: "gid", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "score", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "survivors_saved", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "correct_predictions", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "incorrect_predictions", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GroupStats>): GroupStats {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.gid = 0;
+        message.name = "";
+        message.score = 0;
+        message.survivorsSaved = 0;
+        message.correctPredictions = 0;
+        message.incorrectPredictions = 0;
+        if (value !== undefined)
+            reflectionMergePartial<GroupStats>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GroupStats): GroupStats {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 gid */ 1:
+                    message.gid = reader.int32();
+                    break;
+                case /* string name */ 2:
+                    message.name = reader.string();
+                    break;
+                case /* int32 score */ 3:
+                    message.score = reader.int32();
+                    break;
+                case /* int32 survivors_saved */ 4:
+                    message.survivorsSaved = reader.int32();
+                    break;
+                case /* int32 correct_predictions */ 5:
+                    message.correctPredictions = reader.int32();
+                    break;
+                case /* int32 incorrect_predictions */ 6:
+                    message.incorrectPredictions = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GroupStats, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 gid = 1; */
+        if (message.gid !== 0)
+            writer.tag(1, WireType.Varint).int32(message.gid);
+        /* string name = 2; */
+        if (message.name !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* int32 score = 3; */
+        if (message.score !== 0)
+            writer.tag(3, WireType.Varint).int32(message.score);
+        /* int32 survivors_saved = 4; */
+        if (message.survivorsSaved !== 0)
+            writer.tag(4, WireType.Varint).int32(message.survivorsSaved);
+        /* int32 correct_predictions = 5; */
+        if (message.correctPredictions !== 0)
+            writer.tag(5, WireType.Varint).int32(message.correctPredictions);
+        /* int32 incorrect_predictions = 6; */
+        if (message.incorrectPredictions !== 0)
+            writer.tag(6, WireType.Varint).int32(message.incorrectPredictions);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message aegis.GroupStats
+ */
+export const GroupStats = new GroupStats$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RoundData$Type extends MessageType<RoundData> {
+    constructor() {
+        super("aegis.RoundData", [
+            { no: 1, name: "event_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "round", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "after_world", kind: "message", T: () => WorldState },
+            { no: 4, name: "groups_data", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => GroupData }
+        ]);
+    }
+    create(value?: PartialMessage<RoundData>): RoundData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.eventType = "";
+        message.round = 0;
+        message.groupsData = [];
+        if (value !== undefined)
+            reflectionMergePartial<RoundData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RoundData): RoundData {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string event_type */ 1:
+                    message.eventType = reader.string();
+                    break;
+                case /* int32 round */ 2:
+                    message.round = reader.int32();
+                    break;
+                case /* aegis.WorldState after_world */ 3:
+                    message.afterWorld = WorldState.internalBinaryRead(reader, reader.uint32(), options, message.afterWorld);
+                    break;
+                case /* repeated aegis.GroupData groups_data */ 4:
+                    message.groupsData.push(GroupData.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RoundData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string event_type = 1; */
+        if (message.eventType !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.eventType);
+        /* int32 round = 2; */
+        if (message.round !== 0)
+            writer.tag(2, WireType.Varint).int32(message.round);
+        /* aegis.WorldState after_world = 3; */
+        if (message.afterWorld)
+            WorldState.internalBinaryWrite(message.afterWorld, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated aegis.GroupData groups_data = 4; */
+        for (let i = 0; i < message.groupsData.length; i++)
+            GroupData.internalBinaryWrite(message.groupsData[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message aegis.RoundData
+ */
+export const RoundData = new RoundData$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SimulationComplete$Type extends MessageType<SimulationComplete> {
     constructor() {

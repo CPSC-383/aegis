@@ -1,5 +1,6 @@
 import { AgentInfoDict, CellDict, Groups, Round, RoundData, World } from '@/core/simulation/'
 import { SpawnZoneTypes, StackContent, WorldMap } from '@/core/world'
+import { Agent, Cell } from '@/generated/aegis'
 
 export class WorldDataManager {
     private currentRoundData?: World
@@ -13,7 +14,7 @@ export class WorldDataManager {
      * @param {RoundData} roundData - The data representing the new round.
      */
     addRound(roundData: RoundData): void {
-        this.rounds.push([roundData.after_world, roundData.groups_data as Groups])
+        this.rounds.push([roundData.afterWorld!, roundData.groupsData])
     }
 
     /**
@@ -57,9 +58,37 @@ export class WorldDataManager {
      * @returns {CellDict} The cell data dictionary from the current state.
      */
     private getCurrentCellInfo(x: number, y: number): CellDict {
-        return this.currentRoundData!.cell_data.find(
-            (cell) => cell.stack.cell_loc.x === x && cell.stack.cell_loc.y === y
-        )!
+        // Find the protobuf cell and convert to CellDict format
+        const protobufCell = this.currentRoundData!.cells.find(
+            (cell: Cell) => cell.location!.x === x && cell.location!.y === y
+        )
+
+        if (!protobufCell) {
+            throw new Error(`Cell not found at (${x}, ${y})`)
+        }
+
+        return {
+            cell_type: this.getCellTypeFromProtobuf(protobufCell),
+            stack: {
+                cell_loc: { x: protobufCell.location!.x, y: protobufCell.location!.y },
+                move_cost: protobufCell.moveCost,
+                contents: [] // Will need to be populated based on cell contents
+            }
+        }
+    }
+
+    /**
+     * Gets cell type from protobuf cell data.
+     * @param {Cell} cell - The protobuf cell data.
+     * @returns {string} The cell type.
+     */
+    private getCellTypeFromProtobuf(cell: Cell): string {
+        if (cell.topLayer.oneofKind === 'survivor') {
+            return 'CellType.SURVIVOR_CELL'
+        } else if (cell.topLayer.oneofKind === 'rubble') {
+            return 'CellType.RUBBLE_CELL'
+        }
+        return 'CellType.NORMAL_CELL'
     }
 
     /**
@@ -93,9 +122,9 @@ export class WorldDataManager {
      * @returns {StackContent[]} The initial stack contents.
      */
     private getCurrentLayers(x: number, y: number): StackContent[] {
-        return this.currentRoundData!.cell_data.find(
-            (cell) => cell.stack.cell_loc.x === x && cell.stack.cell_loc.y === y
-        )!.stack.contents
+        // For now, return empty array since protobuf doesn't have stack contents
+        // This will need to be enhanced when protobuf schema includes stack contents
+        return []
     }
 
     /**
@@ -105,7 +134,11 @@ export class WorldDataManager {
      * @returns {AgentInfoDict[]} An array of agents at the cell.
      */
     getAgentsAtLocation(x: number, y: number): AgentInfoDict[] {
-        return this.currentRoundData?.agent_data.filter((agent) => agent.x === x && agent.y === y) || []
+        return (
+            this.currentRoundData?.agents.filter(
+                (agent: Agent) => agent.location!.x === x && agent.location!.y === y
+            ) || []
+        )
     }
 
     /**
@@ -115,7 +148,9 @@ export class WorldDataManager {
      * @returns {AgentInfoDict | undefined} The agent information, or undefined if not found.
      */
     getAgentFromIds(id: number, gid: number): AgentInfoDict | undefined {
-        return this.currentRoundData?.agent_data.find((agent) => agent.id === id && agent.gid === gid)
+        return this.currentRoundData?.agents.find(
+            (agent: Agent) => agent.agentId!.id === id && agent.agentId!.gid === gid
+        )
     }
 
     /**

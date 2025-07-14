@@ -8,7 +8,7 @@ import {
 } from '@/core/simulation'
 import { WorldMap, StackContent } from '@/core/world'
 import { EventType, dispatchEvent } from '@/events'
-import { RoundUpdate } from '@/generated/aegis'
+import { RoundUpdate, WorldState } from '@/generated/aegis'
 
 export class Simulation {
     private stateManager: SimulationStateManager
@@ -32,70 +32,20 @@ export class Simulation {
      * @param {RoundUpdate} roundUpdate - The protobuf round update event to be added.
      */
     addProtobufEvent(roundUpdate: RoundUpdate): void {
-        // Convert protobuf data to the internal format
+        if (!roundUpdate.world) {
+            console.warn('RoundUpdate missing world data')
+            return
+        }
+
+        // Use protobuf types directly - no conversion needed!
         const roundData: RoundData = {
-            event_type: 'RoundUpdate',
+            eventType: 'RoundUpdate',
             round: roundUpdate.round,
-            after_world: this.convertProtobufWorldStateToWorld(roundUpdate.world!),
-            groups_data: roundUpdate.groups // Use the protobuf groups directly
+            afterWorld: roundUpdate.world, // Direct protobuf WorldState
+            groupsData: roundUpdate.groups // Direct protobuf Groups
         }
 
         this.addEvent(roundData)
-    }
-
-    /**
-     * Converts protobuf WorldState to internal World format.
-     * @param {WorldState} worldState - The protobuf world state.
-     * @returns {World} The internal world format.
-     */
-    private convertProtobufWorldStateToWorld(worldState: any): any {
-        // Convert protobuf cells to cell_data format
-        const cell_data = worldState.cells.map((cell: any) => ({
-            cell_type: this.getCellTypeFromProtobuf(cell),
-            stack: {
-                cell_loc: { x: cell.location!.x, y: cell.location!.y },
-                move_cost: cell.moveCost,
-                contents: [] // Will need to be populated based on cell contents
-            }
-        }))
-
-        // Convert protobuf agents to agent_data format
-        const agent_data = worldState.agents.map((agent: any) => ({
-            id: agent.agentId!.id,
-            gid: agent.agentId!.gid,
-            x: agent.location!.x,
-            y: agent.location!.y,
-            energy_level: agent.energyLevel,
-            command_sent: '', // Not available in protobuf
-            steps_taken: agent.stepsTaken
-        }))
-
-        return {
-            cell_data,
-            agent_data,
-            top_layer_rem_data: [], // Will need to be populated
-            number_of_alive_agents: agent_data.filter((a: any) => a.energy_level > 0).length,
-            number_of_dead_agents: agent_data.filter((a: any) => a.energy_level <= 0).length,
-            number_of_survivors: worldState.survivors.length,
-            number_of_survivors_alive: worldState.survivors.filter((s: any) => s.state === 0).length,
-            number_of_survivors_dead: worldState.survivors.filter((s: any) => s.state === 1).length,
-            number_of_survivors_saved_alive: 0, // Will need to be calculated
-            number_of_survivors_saved_dead: 0 // Will need to be calculated
-        }
-    }
-
-    /**
-     * Gets cell type from protobuf cell data.
-     * @param {any} cell - The protobuf cell data.
-     * @returns {string} The cell type.
-     */
-    private getCellTypeFromProtobuf(cell: any): string {
-        if (cell.topLayer.oneofKind === 'survivor') {
-            return 'CellType.SURVIVOR_CELL'
-        } else if (cell.topLayer.oneofKind === 'rubble') {
-            return 'CellType.RUBBLE_CELL'
-        }
-        return 'CellType.NORMAL_CELL'
     }
 
     /**
@@ -103,7 +53,7 @@ export class Simulation {
      * @param {RoundData} event - The round event to be added.
      */
     addEvent(event: RoundData): void {
-        if (!event.event_type.startsWith('Round')) return
+        if (!event.eventType.startsWith('Round')) return
 
         this.worldData.addRound(event)
         this.stateManager.incrementMaxRounds()
@@ -144,9 +94,10 @@ export class Simulation {
     private dispatchUpdates(): void {
         dispatchEvent(EventType.RENDER, {})
         const currentRoundData = this.worldData.getCurrentRoundData()
-        if (currentRoundData?.top_layer_rem_data) {
-            dispatchEvent(EventType.RENDER_STACK, {})
-        }
+        // Note: protobuf WorldState doesn't have top_layer_rem_data, so we skip this check
+        // if (currentRoundData?.top_layer_rem_data) {
+        //     dispatchEvent(EventType.RENDER_STACK, {})
+        // }
     }
 
     /**

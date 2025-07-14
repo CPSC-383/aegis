@@ -242,6 +242,119 @@ class RoundUpdate(google.protobuf.message.Message):
 global___RoundUpdate = RoundUpdate
 
 @typing.final
+class SimulationState(google.protobuf.message.Message):
+    """Simulation state"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CURRENT_ROUND_FIELD_NUMBER: builtins.int
+    MAX_ROUNDS_FIELD_NUMBER: builtins.int
+    IS_ROUND_ZERO_FIELD_NUMBER: builtins.int
+    current_round: builtins.int
+    max_rounds: builtins.int
+    is_round_zero: builtins.bool
+    def __init__(
+        self,
+        *,
+        current_round: builtins.int = ...,
+        max_rounds: builtins.int = ...,
+        is_round_zero: builtins.bool = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["current_round", b"current_round", "is_round_zero", b"is_round_zero", "max_rounds", b"max_rounds"]) -> None: ...
+
+global___SimulationState = SimulationState
+
+@typing.final
+class WorldStats(google.protobuf.message.Message):
+    """World statistics"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    AGENTS_ALIVE_FIELD_NUMBER: builtins.int
+    AGENTS_DEAD_FIELD_NUMBER: builtins.int
+    TOTAL_SURVIVORS_FIELD_NUMBER: builtins.int
+    SURVIVORS_SAVED_FIELD_NUMBER: builtins.int
+    STEPS_TAKEN_FIELD_NUMBER: builtins.int
+    agents_alive: builtins.int
+    agents_dead: builtins.int
+    total_survivors: builtins.int
+    survivors_saved: builtins.int
+    steps_taken: builtins.int
+    def __init__(
+        self,
+        *,
+        agents_alive: builtins.int = ...,
+        agents_dead: builtins.int = ...,
+        total_survivors: builtins.int = ...,
+        survivors_saved: builtins.int = ...,
+        steps_taken: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["agents_alive", b"agents_alive", "agents_dead", b"agents_dead", "steps_taken", b"steps_taken", "survivors_saved", b"survivors_saved", "total_survivors", b"total_survivors"]) -> None: ...
+
+global___WorldStats = WorldStats
+
+@typing.final
+class GroupStats(google.protobuf.message.Message):
+    """Group statistics for UI display"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    GID_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    SCORE_FIELD_NUMBER: builtins.int
+    SURVIVORS_SAVED_FIELD_NUMBER: builtins.int
+    CORRECT_PREDICTIONS_FIELD_NUMBER: builtins.int
+    INCORRECT_PREDICTIONS_FIELD_NUMBER: builtins.int
+    gid: builtins.int
+    name: builtins.str
+    score: builtins.int
+    survivors_saved: builtins.int
+    correct_predictions: builtins.int
+    incorrect_predictions: builtins.int
+    def __init__(
+        self,
+        *,
+        gid: builtins.int = ...,
+        name: builtins.str = ...,
+        score: builtins.int = ...,
+        survivors_saved: builtins.int = ...,
+        correct_predictions: builtins.int = ...,
+        incorrect_predictions: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["correct_predictions", b"correct_predictions", "gid", b"gid", "incorrect_predictions", b"incorrect_predictions", "name", b"name", "score", b"score", "survivors_saved", b"survivors_saved"]) -> None: ...
+
+global___GroupStats = GroupStats
+
+@typing.final
+class RoundData(google.protobuf.message.Message):
+    """Round data"""
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    EVENT_TYPE_FIELD_NUMBER: builtins.int
+    ROUND_FIELD_NUMBER: builtins.int
+    AFTER_WORLD_FIELD_NUMBER: builtins.int
+    GROUPS_DATA_FIELD_NUMBER: builtins.int
+    event_type: builtins.str
+    round: builtins.int
+    @property
+    def after_world(self) -> global___WorldState: ...
+    @property
+    def groups_data(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___GroupData]: ...
+    def __init__(
+        self,
+        *,
+        event_type: builtins.str = ...,
+        round: builtins.int = ...,
+        after_world: global___WorldState | None = ...,
+        groups_data: collections.abc.Iterable[global___GroupData] | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["after_world", b"after_world"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["after_world", b"after_world", "event_type", b"event_type", "groups_data", b"groups_data", "round", b"round"]) -> None: ...
+
+global___RoundData = RoundData
+
+@typing.final
 class SimulationComplete(google.protobuf.message.Message):
     """Simulation events
     Empty message for completion event

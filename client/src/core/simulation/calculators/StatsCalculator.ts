@@ -1,6 +1,7 @@
-import { GroupStats, Groups, World, WorldDataManager, WorldStats } from '@/core/simulation'
-import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
-import { Footprints, Heart, PersonStanding, Skull, Users } from 'lucide-react'
+import { UIWorldStats, GroupStats, Groups } from '@/core/simulation'
+import { WorldDataManager } from '@/core/simulation'
+import { getCurrentAssignment, ASSIGNMENT_A1 } from '@/utils/util'
+import { WorldState, Agent } from '@/generated/aegis'
 
 export class StatsCalculator {
     constructor(private readonly worldData: WorldDataManager) {}
@@ -9,7 +10,7 @@ export class StatsCalculator {
      * Calculates statistics for the current round of the simulation.
      * @returns An object containing worldStats and optionally groupStats.
      */
-    calculateStats(): { worldStats: WorldStats; groupStats?: GroupStats[] } {
+    calculateStats(): { worldStats: UIWorldStats; groupStats?: GroupStats[] } {
         const currentRoundData = this.worldData.getCurrentRoundData()
         const currentGroupsData = this.worldData.getCurrentGroupsData()
 
@@ -20,77 +21,70 @@ export class StatsCalculator {
     }
 
     /**
-     * Calculates statistics specific to Assignment A1.
-     * @param currentRoundData - The current world state data.
-     * @returns An object containing world-level statistics for Assignment A1.
+     * Calculates statistics for A1 assignment.
+     * @param currentRoundData - The current round data.
+     * @returns An object containing worldStats.
      */
-    private calculateA1Stats(currentRoundData?: World) {
-        const agent = currentRoundData?.agent_data.values().next().value
-        const steps_taken = agent?.steps_taken ?? 0
-
-        return {
-            worldStats: {
-                SurvivorsSaved: {
-                    value: this.calculateTotalSavedSurvivors(currentRoundData),
-                    icon: Heart
-                },
-                StepsTaken: {
-                    value: steps_taken,
-                    icon: Footprints
-                }
-            }
-        }
+    private calculateA1Stats(currentRoundData?: WorldState): { worldStats: UIWorldStats } {
+        const worldStats = this.calculateBaseStats(currentRoundData)
+        return { worldStats }
     }
 
     /**
-     * Calculates regular (non-A1) statistics for the simulation.
-     * @param currentRoundData - The current world state data.
+     * Calculates statistics for regular assignments.
+     * @param currentRoundData - The current round data.
      * @param currentGroupsData - The current group state data.
-     * @returns An object containing world-level and group-level statistics.
+     * @returns An object containing worldStats and groupStats.
      */
-    private calculateRegularStats(currentRoundData?: World, currentGroupsData?: Groups) {
-        return {
-            worldStats: this.calculateWorldStats(currentRoundData),
-            groupStats: this.calculateGroupStats(currentGroupsData)
-        }
+    private calculateRegularStats(
+        currentRoundData?: WorldState,
+        currentGroupsData?: Groups
+    ): { worldStats: UIWorldStats; groupStats?: GroupStats[] } {
+        const worldStats = this.calculateBaseStats(currentRoundData)
+        const groupStats = this.calculateGroupStats(currentGroupsData)
+        return { worldStats, groupStats }
     }
 
     /**
-     * Calculates world-level statistics.
-     * @param currentRoundData - The current world state data.
-     * @returns An object containing various world-level statistics.
+     * Calculates base statistics from world state data.
+     * @param currentRoundData - The current round data.
+     * @returns UIWorldStats object with calculated statistics.
      */
-    private calculateWorldStats(currentRoundData?: World): WorldStats {
-        return {
-            AgentsAlive: {
-                value: currentRoundData?.number_of_alive_agents ?? 0,
-                icon: Users
-            },
-            AgentsDead: {
-                value: currentRoundData?.number_of_dead_agents ?? 0,
-                icon: Skull
-            },
-            TotalSurvivors: {
-                value: currentRoundData?.number_of_survivors ?? 0,
-                icon: PersonStanding
-            },
-            SurvivorsSaved: {
-                value: this.calculateTotalSavedSurvivors(currentRoundData),
-                icon: Heart
-            }
+    private calculateBaseStats(currentRoundData?: WorldState): UIWorldStats {
+        const worldStats: UIWorldStats = {
+            agentsAlive: 0,
+            agentsDead: 0,
+            totalSurvivors: 0,
+            survivorsSaved: 0,
+            stepsTaken: 0,
+            AgentsAlive: { value: 0, icon: null },
+            AgentsDead: { value: 0, icon: null },
+            TotalSurvivors: { value: 0, icon: null },
+            SurvivorsSaved: { value: 0, icon: null },
+            StepsTaken: { value: 0, icon: null }
         }
-    }
 
-    /**
-     * Calculates the total number of survivors saved in the current world state.
-     * @param currentRoundData - The current world state data.
-     * @returns The total number of survivors saved (alive and dead).
-     */
-    private calculateTotalSavedSurvivors(currentRoundData?: World): number {
-        return (
-            (currentRoundData?.number_of_survivors_saved_alive ?? 0) +
-            (currentRoundData?.number_of_survivors_saved_dead ?? 0)
-        )
+        if (currentRoundData) {
+            // Calculate from protobuf data using proper types
+            const aliveAgents = currentRoundData.agents.filter((agent: Agent) => agent.energyLevel > 0)
+            const deadAgents = currentRoundData.agents.filter((agent: Agent) => agent.energyLevel <= 0)
+            const totalSteps = currentRoundData.agents.reduce((sum: number, agent: Agent) => sum + agent.stepsTaken, 0)
+
+            worldStats.agentsAlive = aliveAgents.length
+            worldStats.agentsDead = deadAgents.length
+            worldStats.totalSurvivors = currentRoundData.survivors.length
+            worldStats.survivorsSaved = 0 // Will need to be calculated
+            worldStats.stepsTaken = totalSteps
+
+            // UI-specific fields
+            worldStats.AgentsAlive!.value = aliveAgents.length
+            worldStats.AgentsDead!.value = deadAgents.length
+            worldStats.TotalSurvivors!.value = currentRoundData.survivors.length
+            worldStats.SurvivorsSaved!.value = 0 // Will need to be calculated
+            worldStats.StepsTaken!.value = totalSteps
+        }
+
+        return worldStats
     }
 
     /**
@@ -105,9 +99,9 @@ export class StatsCalculator {
             gid: group.gid,
             name: group.name,
             score: group.score,
-            SurvivorsSaved: group.numberSaved,
-            CorrectPredictions: group.numberPredictedRight,
-            IncorrectPredictions: group.numberPredictedWrong
+            survivorsSaved: group.numberSaved,
+            correctPredictions: group.numberPredictedRight,
+            incorrectPredictions: group.numberPredictedWrong
         }))
     }
 }

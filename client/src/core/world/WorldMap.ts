@@ -1,8 +1,31 @@
-import { Stack, Size, Spawn, SpawnZoneTypes, CellTypeMap } from '@/core/world'
+import { Location, Stack, Size, Spawn, SpawnZoneTypes, CellTypeMap } from '@/core/world'
 import { whatBucket } from '@/utils/util'
 import { shadesOfBrown, shadesOfBlue } from '@/types'
 import { renderCoords } from '@/utils/renderUtils'
-import { WorldState, Location } from '@/generated/aegis'
+import { WorldState } from '@/generated/aegis'
+
+// Interface for world data structure
+interface WorldData {
+    settings: {
+        world_info: {
+            size: { width: number; height: number }
+            seed: number
+            agent_energy: number
+        }
+    }
+    spawn_locs: Array<{
+        x: number
+        y: number
+        type: string
+        gid?: number
+    }>
+    stacks: Stack[]
+    cell_types: {
+        fire_cells: Location[]
+        killer_cells: Location[]
+        charging_cells: Location[]
+    }
+}
 
 export class WorldMap {
     private readonly cellTypes: CellTypeMap
@@ -47,11 +70,11 @@ export class WorldMap {
      * @returns A WorldMap instance.
      */
     static fromProtobufWorldState(worldState: WorldState): WorldMap {
-        // Convert protobuf cells to stacks
+        // Convert protobuf cells to stacks directly
         const stacks: Stack[] = worldState.cells.map((cell) => ({
             cell_loc: { x: cell.location!.x, y: cell.location!.y },
             move_cost: cell.moveCost,
-            contents: [] // We'll need to populate this from the world state
+            contents: [] // Will need to be populated based on cell contents
         }))
 
         const moveCosts = stacks.map((stack) => stack.move_cost)
@@ -78,12 +101,12 @@ export class WorldMap {
      * @param data - Serialized data representing the world map.
      * @returns A WorldMap instance.
      */
-    static fromData(data: any): WorldMap {
+    static fromData(data: WorldData): WorldMap {
         const { world_info } = data.settings
         const { size, seed, agent_energy } = world_info
 
         const spawnCells = new Map<string, { type: SpawnZoneTypes; groups: number[] }>(
-            data.spawn_locs.map((spawn: Spawn) => {
+            data.spawn_locs.map((spawn) => {
                 const key = JSON.stringify({ x: spawn.x, y: spawn.y })
                 return [
                     key,
