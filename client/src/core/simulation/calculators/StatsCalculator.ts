@@ -105,9 +105,9 @@ export class StatsCalculator {
             gid: group.gid,
             name: group.name,
             score: group.score,
-            SurvivorsSaved: group.number_saved ?? 0,
-            CorrectPredictions: group.number_predicted_right ?? 0,
-            IncorrectPredictions: group.number_predicted_wrong ?? 0
+            SurvivorsSaved: group.numberSaved,
+            CorrectPredictions: group.numberPredictedRight,
+            IncorrectPredictions: group.numberPredictedWrong
         }))
     }
 }

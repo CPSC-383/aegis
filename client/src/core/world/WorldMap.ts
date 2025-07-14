@@ -1,7 +1,8 @@
-import { Location, Stack, Size, Spawn, SpawnZoneTypes, CellTypeMap } from '@/core/world'
+import { Stack, Size, Spawn, SpawnZoneTypes, CellTypeMap } from '@/core/world'
 import { whatBucket } from '@/utils/util'
 import { shadesOfBrown, shadesOfBlue } from '@/types'
 import { renderCoords } from '@/utils/renderUtils'
+import { WorldState, Location } from '@/generated/aegis'
 
 export class WorldMap {
     private readonly cellTypes: CellTypeMap
@@ -38,6 +39,38 @@ export class WorldMap {
             killer: { color: '#cc0000', cells: killerCells },
             charging: { color: '', cells: chargingCells } // Color determined dynamically
         }
+    }
+
+    /**
+     * Creates a new WorldMap instance from protobuf WorldState data.
+     * @param worldState - Protobuf WorldState data.
+     * @returns A WorldMap instance.
+     */
+    static fromProtobufWorldState(worldState: WorldState): WorldMap {
+        // Convert protobuf cells to stacks
+        const stacks: Stack[] = worldState.cells.map((cell) => ({
+            cell_loc: { x: cell.location!.x, y: cell.location!.y },
+            move_cost: cell.moveCost,
+            contents: [] // We'll need to populate this from the world state
+        }))
+
+        const moveCosts = stacks.map((stack) => stack.move_cost)
+
+        // For now, create a basic world map with the protobuf data
+        // This will need to be enhanced based on the actual world structure
+        return new WorldMap(
+            worldState.width,
+            worldState.height,
+            0, // seed - not available in protobuf
+            [], // fireCells - not available in protobuf
+            [], // killerCells - not available in protobuf
+            [], // chargingCells - not available in protobuf
+            new Map(), // spawnCells - not available in protobuf
+            stacks,
+            100, // initialAgentEnergy - default value
+            Math.min(...moveCosts),
+            Math.max(...moveCosts)
+        )
     }
 
     /**

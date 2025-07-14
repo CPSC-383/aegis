@@ -1,9 +1,8 @@
-import protobuf from 'protobufjs'
+import { SimulationEvent } from '@/generated/aegis'
+import { BinaryReader, binaryReadOptions } from '@protobuf-ts/runtime'
 
 export class ProtobufService {
     private static instance: ProtobufService
-    private root: protobuf.Root | null = null
-    private SimulationEvent: protobuf.Type | null = null
 
     private constructor() {}
 
@@ -15,38 +14,21 @@ export class ProtobufService {
     }
 
     async initialize(): Promise<void> {
-        if (this.root) return // Already initialized
-
-        try {
-            // Load the .proto file from the client's protobuf directory
-            this.root = await protobuf.load('src/protobuf/aegis.proto')
-            this.SimulationEvent = this.root.lookupType('aegis.SimulationEvent')
-
-            if (!this.SimulationEvent) {
-                throw new Error('Could not find SimulationEvent type in proto file')
-            }
-
-            console.log('Protobuf service initialized successfully')
-        } catch (error) {
-            console.error('Failed to initialize protobuf service:', error)
-            throw error
-        }
+        // No initialization needed with protobuf-ts generated types
+        console.log('Protobuf service initialized successfully')
     }
 
-    deserialize(buffer: Uint8Array): any {
-        if (!this.SimulationEvent) {
-            throw new Error('Protobuf service not initialized')
-        }
-
+    deserialize(buffer: Uint8Array): SimulationEvent {
         try {
-            // Decode the buffer
-            const message = this.SimulationEvent.decode(buffer)
-            // Convert to plain object
-            return this.SimulationEvent.toObject(message, {
-                longs: String,
-                enums: String,
-                bytes: String
-            })
+            // Create a BinaryReader from the buffer
+            const reader = new BinaryReader(buffer)
+            // Decode the buffer using the generated protobuf-ts type
+            return SimulationEvent.internalBinaryRead(
+                reader,
+                buffer.length,
+                binaryReadOptions(),
+                SimulationEvent.create()
+            )
         } catch (error) {
             console.error('Failed to deserialize protobuf message:', error)
             throw error

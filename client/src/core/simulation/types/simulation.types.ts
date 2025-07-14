@@ -1,4 +1,5 @@
 import { Stack } from '@/core/world'
+import { AgentID, Location, GroupData as ProtobufGroupData } from '@/generated/aegis'
 
 export interface SimulationState {
     currentRound: number
@@ -42,15 +43,10 @@ export type World = {
     number_of_survivors_saved_dead: number
 }
 
-export type GroupData = {
-    gid: number
-    name: string
-    score: number
-    number_saved: number
-    number_predicted_right: number
-    number_predicted_wrong: number
-}
+// Use the protobuf GroupData type directly
+export type Groups = ProtobufGroupData[]
 
+// GroupStats type for UI display (converted from protobuf GroupData)
 export type GroupStats = {
     gid: number
     name: string
@@ -59,8 +55,6 @@ export type GroupStats = {
     CorrectPredictions: number
     IncorrectPredictions: number
 }
-
-export type Groups = GroupData[]
 
 export type Round = [World, Groups]
 
