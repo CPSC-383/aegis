@@ -200,6 +200,14 @@ function GameArea() {
         renderMap()
     }, [simulation])
 
+    // Render map and agents when switching away from map editor
+    useEffect(() => {
+        if (!isEditor && simulation) {
+            renderMap()
+            renderAgents()
+        }
+    }, [isEditor, simulation])
+
     listenEvent(EventType.RENDER_MAP, renderMap)
 
     if (!simulation) {
