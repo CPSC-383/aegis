@@ -1,39 +1,17 @@
-import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
-import { SearchProvider } from "@/contexts/SearchContext";
-import { AssignmentProvider } from "@/contexts/AssignmentContext";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { lexend, geistMono } from "./fonts";
-import "./globals.css";
+import '@/app/global.css';
+import { RootProvider } from 'fumadocs-ui/provider';
+import { Inter } from 'next/font/google';
+import type { ReactNode } from 'react';
 
-export const metadata: Metadata = {
-  title: "Aegis",
-  description: "Aegis Documentation for CPSC383",
-};
+const inter = Inter({
+  subsets: ['latin'],
+});
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head />
-      <body
-        className={`${lexend.variable} ${geistMono.variable} h-screen overflow-hidden flex flex-col font-sans antialiased scroll-smooth`}
-      >
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <AssignmentProvider>
-            <SearchProvider>
-              <Navbar />
-              <main className="flex-1 overflow-y-auto max-w-7xl w-full mx-auto flex flex-col items-center">
-                {children}
-              </main>
-              <Footer />
-            </SearchProvider>
-          </AssignmentProvider>
-        </ThemeProvider>
+    <html lang="en" className={inter.className} suppressHydrationWarning>
+      <body className="flex flex-col min-h-screen">
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
   );
