@@ -1,31 +1,32 @@
+# pyright: basic
+
 from functools import wraps
-from typing import Callable, ParamSpec, TypeVar
+from importlib.util import find_spec
+from typing import Callable, TypeVar, Type, Any, Union, cast
+import inspect
 
-P = ParamSpec("P")
-R = TypeVar("R")
+F = TypeVar("F", bound=Callable[..., Any])
+C = TypeVar("C", bound=Type[Any])
 
 
-def disabled_if(
-    flag: bool, reason: str = "Feature disabled"
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
-    """
-    Decorator to disable a function based on a runtime feature flag.
+def depends_on_optional(module_name: str) -> Callable[[Union[F, C]], Union[F, C]]:
+    def decorator(obj: Union[F, C]) -> Union[F, C]:
+        spec = find_spec(module_name)
+        if spec is None:
+            name = obj.__name__
+            raise ImportError(f"Optional dependency {module_name} not found ({name}).")
 
-    Args:
-        flag (bool): If False, the decorated function raises a RuntimeError.
-        reason (str): Error message shown when the function is disabled.
+        if inspect.isfunction(obj):
 
-    Returns:
-        Callable: A wrapped function that raises if the feature is disabled.
-    """
+            @wraps(obj)
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
+                return obj(*args, **kwargs)
 
-    def decorator(fn: Callable[P, R]) -> Callable[P, R]:
-        @wraps(fn)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-            if not flag:
-                raise RuntimeError(reason)
-            return fn(*args, **kwargs)
+            return cast(F, wrapper)
 
-        return wrapper
+        elif inspect.isclass(obj):
+            return cast(C, obj)
+
+        raise TypeError("depends_on_optional can only be used on functions or classes.")
 
     return decorator

@@ -5,8 +5,8 @@ import sys
 from collections.abc import Iterator
 from typing import TextIO
 
-import numpy as np
-from numpy.typing import NDArray
+# import numpy as np
+# from numpy.typing import NDArray
 
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.common import (
@@ -18,20 +18,17 @@ from _aegis.common import (
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
-    MOVE_RESULT,
     OBSERVE_RESULT,
-    PREDICT_RESULT,
-    SAVE_SURV_RESULT,
+    # SAVE_SURV_RESULT,
     SEND_MESSAGE_RESULT,
     RECHARGE_RESULT,
-    TEAM_DIG_RESULT,
 )
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     AGENT_UNKNOWN,
     MOVE,
     OBSERVE,
-    PREDICT,
+    # PREDICT,
     SAVE_SURV,
     SEND_MESSAGE,
     RECHARGE,
