@@ -69,6 +69,40 @@ message RoundUpdate {
   repeated GroupData groups = 3;
 }
 
+// Simulation state
+message SimulationState {
+  int32 current_round = 1;
+  int32 max_rounds = 2;
+  bool is_round_zero = 3;
+}
+
+// World statistics
+message WorldStats {
+  int32 agents_alive = 1;
+  int32 agents_dead = 2;
+  int32 total_survivors = 3;
+  int32 survivors_saved = 4;
+  int32 steps_taken = 5;
+}
+
+// Group statistics for UI display
+message GroupStats {
+  int32 gid = 1;
+  string name = 2;
+  int32 score = 3;
+  int32 survivors_saved = 4;
+  int32 correct_predictions = 5;
+  int32 incorrect_predictions = 6;
+}
+
+// Round data
+message RoundData {
+  string event_type = 1;
+  int32 round = 2;
+  WorldState after_world = 3;
+  repeated GroupData groups_data = 4;
+}
+
 // Simulation events
 message SimulationComplete {
   // Empty message for completion event

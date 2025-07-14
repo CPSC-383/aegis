@@ -59,7 +59,7 @@ function GameArea() {
                 const drawX = coords.x + col * agentSize
                 const drawY = coords.y + row * agentSize
 
-                drawAgent(ctx, agent.gid, drawX, drawY, agentSize)
+                drawAgent(ctx, agent.agentId!.gid, drawX, drawY, agentSize)
             })
         })
     }

@@ -15,7 +15,10 @@ function Timeline() {
         const rect = e.currentTarget.getBoundingClientRect()
         const x = e.clientX - rect.left
         const round = Math.floor((x / TIMELINE_WIDTH) * maxRounds)
-        simulation.jumpToRound(round)
+
+        // Ensure round is within valid bounds
+        const clampedRound = Math.max(0, Math.min(round, maxRounds))
+        simulation.jumpToRound(clampedRound)
     }
 
     if (!simulation) {

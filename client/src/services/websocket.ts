@@ -1,6 +1,7 @@
 import { Simulation } from '@/core/simulation'
 import { WorldMap } from '@/core/world'
 import { ProtobufService } from './protobuf'
+import { SimulationEvent, WorldState, RoundUpdate } from '@/generated/aegis'
 
 export class ClientWebSocket {
     private url: string = 'ws://localhost:6003'
@@ -41,20 +42,28 @@ export class ClientWebSocket {
         }
     }
 
-    private handleEvent(data: any) {
-        const decodedBase64 = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
-        const event = this.protobufService.deserialize(decodedBase64)
+    private handleEvent(data: string) {
+        try {
+            const decodedBase64 = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
+            const event: SimulationEvent = this.protobufService.deserialize(decodedBase64)
 
-        if (!this.simulation) {
-            // First event should be the world data
-            const world = WorldMap.fromData(event.data)
-            this.simulation = new Simulation(world)
-            this.onSimCreated(this.simulation)
-        }
-        this.simulation.addEvent(event)
-
-        if (event.event_type === 'SimulationComplete') {
-            this.simulation = undefined
+            if (!this.simulation) {
+                // First event should be the world init data
+                if (event.event.oneofKind === 'worldInit') {
+                    const world = WorldMap.fromProtobufWorldState(event.event.worldInit)
+                    this.simulation = new Simulation(world)
+                    this.onSimCreated(this.simulation)
+                }
+            } else {
+                // Handle round updates and completion
+                if (event.event.oneofKind === 'roundUpdate') {
+                    this.simulation.addProtobufEvent(event.event.roundUpdate)
+                } else if (event.event.oneofKind === 'complete') {
+                    this.simulation = undefined
+                }
+            }
+        } catch (error) {
+            console.error('Failed to handle websocket event:', error)
         }
     }
 }

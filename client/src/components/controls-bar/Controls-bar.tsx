@@ -24,7 +24,15 @@ function ControlsBar() {
 
     const handleRound = (step: number) => {
         if (!simulation) return
-        simulation.jumpToRound(simulation.getRoundNumber() + step)
+
+        const currentRound = simulation.getRoundNumber()
+        const maxRounds = simulation.getMaxRounds()
+        const newRound = currentRound + step
+
+        // Check bounds before jumping
+        if (newRound >= 0 && newRound <= maxRounds) {
+            simulation.jumpToRound(newRound)
+        }
     }
 
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -73,6 +81,11 @@ function ControlsBar() {
     // If maxRounds is -1, this means we are in the editor.
     // Don't show the control bar when there isn't a simulation as well.
     if (!simulation || simulation.getMaxRounds() == -1) return null
+
+    const currentRound = simulation.getRoundNumber()
+    const maxRounds = simulation.getMaxRounds()
+    const canGoBack = currentRound > 0
+    const canGoForward = currentRound < maxRounds
 
     return (
         <TooltipProvider>
@@ -137,7 +150,7 @@ function ControlsBar() {
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => handleRound(-1)}
-                                            disabled={!simulation}
+                                            disabled={!simulation || !canGoBack}
                                         >
                                             <SkipBack className="h-4 w-4" />
                                         </Button>
@@ -169,7 +182,7 @@ function ControlsBar() {
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => handleRound(1)}
-                                            disabled={!simulation}
+                                            disabled={!simulation || !canGoForward}
                                         >
                                             <SkipForward className="h-4 w-4" />
                                         </Button>

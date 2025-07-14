@@ -1,72 +1,48 @@
 import { Stack } from '@/core/world'
+import {
+    AgentID,
+    Location,
+    GroupData,
+    Agent,
+    WorldState,
+    SimulationState as ProtobufSimulationState,
+    WorldStats as ProtobufWorldStats,
+    GroupStats as ProtobufGroupStats,
+    RoundData as ProtobufRoundData
+} from '@/generated/aegis'
+import { ReactNode } from 'react'
 
-export interface SimulationState {
-    currentRound: number
-    maxRounds: number
-    isRoundZero: boolean
-}
+// Use protobuf types directly for everything that can be represented in the schema
+export type SimulationState = ProtobufSimulationState
+export type WorldStats = ProtobufWorldStats
+export type GroupStats = ProtobufGroupStats
+export type RoundData = ProtobufRoundData
 
-export interface WorldStats {
-    AgentsAlive?: { value: number; icon: any }
-    AgentsDead?: { value: number; icon: any }
-    TotalSurvivors?: { value: number; icon: any }
-    SurvivorsSaved?: { value: number; icon: any }
-    StepsTaken?: { value: number; icon: any }
-}
-
-export type CellDict = {
-    cell_type: string
-    stack: Stack
-}
-
-export type AgentInfoDict = {
-    id: number
-    gid: number
-    x: number
-    y: number
-    energy_level: number
-    command_sent: string
-    steps_taken: number
-}
-
-export type World = {
-    cell_data: CellDict[]
-    agent_data: AgentInfoDict[]
-    top_layer_rem_data: Location[]
-    number_of_alive_agents: number
-    number_of_dead_agents: number
-    number_of_survivors: number
-    number_of_survivors_alive: number
-    number_of_survivors_dead: number
-    number_of_survivors_saved_alive: number
-    number_of_survivors_saved_dead: number
-}
-
-export type GroupData = {
-    gid: number
-    name: string
-    score: number
-    number_saved: number
-    number_predicted_right: number
-    number_predicted_wrong: number
-}
-
-export type GroupStats = {
-    gid: number
-    name: string
-    score: number
-    SurvivorsSaved: number
-    CorrectPredictions: number
-    IncorrectPredictions: number
-}
-
+// Client-specific types that extend or combine protobuf types
 export type Groups = GroupData[]
+export type Agents = Agent[]
+export type AgentInfoDict = Agent
 
-export type Round = [World, Groups]
-
-export type RoundData = {
-    event_type: string
-    round: number
-    after_world: World
-    groups_data: Groups
+// UI-specific types that combine protobuf data with display logic
+export interface UIWorldStats {
+    agentsAlive: number
+    agentsDead: number
+    totalSurvivors: number
+    survivorsSaved: number
+    stepsTaken: number
+    AgentsAlive?: { value: number; icon: ReactNode }
+    AgentsDead?: { value: number; icon: ReactNode }
+    TotalSurvivors?: { value: number; icon: ReactNode }
+    SurvivorsSaved?: { value: number; icon: ReactNode }
+    StepsTaken?: { value: number; icon: ReactNode }
 }
+
+// Cell display information that combines protobuf data with UI logic (cannot put in schema due to dynamic nature)
+export interface CellDict {
+    cell_type: string
+    cell_loc: Location
+    move_cost: number
+    arguments: Record<string, unknown> // Dynamic object for UI-specific data
+}
+
+export type Round = [WorldState, Groups]

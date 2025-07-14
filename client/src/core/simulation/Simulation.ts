@@ -8,6 +8,7 @@ import {
 } from '@/core/simulation'
 import { WorldMap, StackContent } from '@/core/world'
 import { EventType, dispatchEvent } from '@/events'
+import { RoundUpdate, WorldState } from '@/generated/aegis'
 
 export class Simulation {
     private stateManager: SimulationStateManager
@@ -27,11 +28,32 @@ export class Simulation {
     }
 
     /**
+     * Adds a new protobuf round update event to the simulation.
+     * @param {RoundUpdate} roundUpdate - The protobuf round update event to be added.
+     */
+    addProtobufEvent(roundUpdate: RoundUpdate): void {
+        if (!roundUpdate.world) {
+            console.warn('RoundUpdate missing world data')
+            return
+        }
+
+        // Use protobuf types directly - no conversion needed!
+        const roundData: RoundData = {
+            eventType: 'RoundUpdate',
+            round: roundUpdate.round,
+            afterWorld: roundUpdate.world, // Direct protobuf WorldState
+            groupsData: roundUpdate.groups // Direct protobuf Groups
+        }
+
+        this.addEvent(roundData)
+    }
+
+    /**
      * Adds a new round event to the simulation.
      * @param {RoundData} event - The round event to be added.
      */
     addEvent(event: RoundData): void {
-        if (!event.event_type.startsWith('Round')) return
+        if (!event.eventType.startsWith('Round')) return
 
         this.worldData.addRound(event)
         this.stateManager.incrementMaxRounds()
@@ -72,9 +94,10 @@ export class Simulation {
     private dispatchUpdates(): void {
         dispatchEvent(EventType.RENDER, {})
         const currentRoundData = this.worldData.getCurrentRoundData()
-        if (currentRoundData?.top_layer_rem_data) {
-            dispatchEvent(EventType.RENDER_STACK, {})
-        }
+        // Note: protobuf WorldState doesn't have top_layer_rem_data, so we skip this check
+        // if (currentRoundData?.top_layer_rem_data) {
+        //     dispatchEvent(EventType.RENDER_STACK, {})
+        // }
     }
 
     /**

@@ -1,12 +1,12 @@
+import { Location as ProtobufLocation } from '@/generated/aegis'
+
 export type Size = {
     width: number
     height: number
 }
 
-export type Location = {
-    x: number
-    y: number
-}
+// Use the protobuf Location type
+export type Location = ProtobufLocation
 
 export type Arguments = 'energy_level' | 'number_of_survivors' | 'remove_energy' | 'remove_agents'
 
