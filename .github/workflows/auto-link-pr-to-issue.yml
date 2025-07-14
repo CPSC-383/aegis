@@ -1,0 +1,48 @@
+name: Auto-link PR to Issue
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  link-issue:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract issue number from branch name
+        id: extract
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "Branch name: $BRANCH_NAME"
+          if [[ "$BRANCH_NAME" =~ ^([0-9]+)- ]]; then
+            ISSUE_NUMBER="${BASH_REMATCH[1]}"
+            echo "Extracted issue number: $ISSUE_NUMBER"
+            echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+          else
+            echo "No issue number found in branch name."
+            echo "issue_number=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR with issue link
+        if: steps.extract.outputs.issue_number != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_NUMBER=${{ steps.extract.outputs.issue_number }}
+
+          PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          BODY=$(jq --raw-output .pull_request.body "$GITHUB_EVENT_PATH")
+
+          # Only add the Fixes line if it's not already there
+          if [[ "$BODY" != *"Fixes #$ISSUE_NUMBER"* ]]; then
+            NEW_BODY="$BODY\n\nFixes #$ISSUE_NUMBER"
+
+            echo "Updating PR body to include: Fixes #$ISSUE_NUMBER"
+            curl -s -X PATCH \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{\"body\":\"$NEW_BODY\"}" \
+              "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER"
+          else
+            echo "PR body already contains Fixes #$ISSUE_NUMBER"
+          fi
