@@ -89,7 +89,7 @@ function GameArea() {
                 if (layer.type.startsWith('rb')) {
                     const minMoveCost = simulation.worldMap.minMoveCost
                     const maxMoveCost = simulation.worldMap.maxMoveCost
-                    const moveCost = simulation.getInfoAtCell(x, y).stack.move_cost
+                    const moveCost = simulation.getInfoAtCell(x, y).move_cost
                     // whichShade should be between 0 and shadesOfBrown.length i hope
                     const whichShade = whatBucket(minMoveCost, maxMoveCost, moveCost, shadesOfBrown.length)
                     rowInSheet = 1

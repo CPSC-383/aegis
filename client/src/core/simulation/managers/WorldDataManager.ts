@@ -1,9 +1,10 @@
-import { AgentInfoDict, CellDict, Groups, Round, RoundData, World } from '@/core/simulation/'
+import { AgentInfoDict, CellDict, Groups, Round, RoundData } from '@/core/simulation/'
+import { WorldState } from '@/generated/aegis'
 import { SpawnZoneTypes, StackContent, WorldMap } from '@/core/world'
 import { Agent, Cell } from '@/generated/aegis'
 
 export class WorldDataManager {
-    private currentRoundData?: World
+    private currentRoundData?: WorldState
     private currentGroupsData?: Groups
     private rounds: Round[] = []
 
@@ -48,7 +49,7 @@ export class WorldDataManager {
     private getInitialCellInfo(x: number, y: number): CellDict {
         const cell_type = this.worldMap.getCellType(x, y)
         const stack = this.worldMap.stacks.find((g) => g.cell_loc.x === x && g.cell_loc.y === y)!
-        return { cell_type, stack }
+        return { cell_type, cell_loc: { x, y }, move_cost: stack.move_cost, arguments: {} }
     }
 
     /**
@@ -69,11 +70,9 @@ export class WorldDataManager {
 
         return {
             cell_type: this.getCellTypeFromProtobuf(protobufCell),
-            stack: {
-                cell_loc: { x: protobufCell.location!.x, y: protobufCell.location!.y },
-                move_cost: protobufCell.moveCost,
-                contents: [] // Will need to be populated based on cell contents
-            }
+            cell_loc: { x: protobufCell.location!.x, y: protobufCell.location!.y },
+            move_cost: protobufCell.moveCost,
+            arguments: {}
         }
     }
 
@@ -169,9 +168,9 @@ export class WorldDataManager {
 
     /**
      * Retrieves the data for the current round's world state.
-     * @returns {World | undefined} The current round data, or undefined if unavailable.
+     * @returns {WorldState | undefined} The current round data, or undefined if unavailable.
      */
-    getCurrentRoundData(): World | undefined {
+    getCurrentRoundData(): WorldState | undefined {
         return this.currentRoundData
     }
 

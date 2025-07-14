@@ -1,6 +1,6 @@
 import { aegisAPI } from '@/services'
 import { Simulation } from '@/core/simulation'
-import { Spawn, SpawnZoneTypes, Stack, WorldMap, Location } from '@/core/world'
+import { Spawn, SpawnZoneTypes, Stack, StackContent, WorldMap, Location } from '@/core/world'
 
 interface WorldFileData {
     settings: {
@@ -59,8 +59,8 @@ class WorldValidator {
     }
 
     private static hasSurvivors(world: WorldMap): boolean {
-        return world.stacks.some((stack) =>
-            stack.contents.some((content) => content.type === 'sv' || content.type === 'svg')
+        return world.stacks.some((stack: Stack) =>
+            stack.contents.some((content: StackContent) => content.type === 'sv')
         )
     }
 }
@@ -100,7 +100,7 @@ class WorldSerializer {
                 return [{ x, y, type: data.type }]
             }
 
-            return data.groups.map((gid) => ({
+            return data.groups.map((gid: number) => ({
                 x,
                 y,
                 gid,

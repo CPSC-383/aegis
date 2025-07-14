@@ -17,7 +17,7 @@ function CellPanel({ selectedCell, setSelectedAgent, cellInfo, agents, simulatio
 
     const groupedAgents = agents.reduce(
         (acc, agent) => {
-            const { gid } = agent
+            const { gid } = agent.agentId!
             acc[gid] = [...(acc[gid] || []), agent]
             return acc
         },
@@ -110,7 +110,7 @@ function CellPanel({ selectedCell, setSelectedAgent, cellInfo, agents, simulatio
                             Cell Type: <Badge variant="secondary">{cellInfo.cell_type.replace(/\w*\./, '')}</Badge>
                         </div>
                         <div>
-                            Move Cost: <Badge variant="secondary">{cellInfo.stack.move_cost}</Badge>
+                            Move Cost: <Badge variant="secondary">{cellInfo.move_cost}</Badge>
                         </div>
                     </div>
                 ) : (

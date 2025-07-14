@@ -88,7 +88,7 @@ function Game() {
                                     </td>
                                     {stats.groupStats!.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
-                                            {group.SurvivorsSaved}
+                                            {group.survivorsSaved}
                                         </td>
                                     ))}
                                 </tr>
@@ -100,7 +100,7 @@ function Game() {
                                     </td>
                                     {stats.groupStats!.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
-                                            {group.CorrectPredictions}
+                                            {group.correctPredictions}
                                         </td>
                                     ))}
                                 </tr>
@@ -112,7 +112,7 @@ function Game() {
                                     </td>
                                     {stats.groupStats!.map((group) => (
                                         <td key={group.gid} className="px-4 py-2">
-                                            {group.IncorrectPredictions}
+                                            {group.incorrectPredictions}
                                         </td>
                                     ))}
                                 </tr>

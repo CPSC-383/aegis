@@ -1,4 +1,3 @@
-import { Stack } from '@/core/world'
 import {
     AgentID,
     Location,
