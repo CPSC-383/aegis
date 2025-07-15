@@ -51,12 +51,12 @@ class SurroundInfo:
     def __str__(self) -> str:
         return (
             f"CURR_CELL ( {self.get_current_info()} ) , "
-            f"NORTH_WEST ( {self.get_surround_info(Direction.NORTH_WEST)} ) , "
+            f"NORTHWEST ( {self.get_surround_info(Direction.NORTHWEST)} ) , "
             f"NORTH ( {self.get_surround_info(Direction.NORTH)} ) , "
-            f"NORTH_EAST ( {self.get_surround_info(Direction.NORTH_EAST)} ) , "
+            f"NORTHEAST ( {self.get_surround_info(Direction.NORTHEAST)} ) , "
             f"EAST ( {self.get_surround_info(Direction.EAST)} ) , "
-            f"SOUTH_EAST ( {self.get_surround_info(Direction.SOUTH_EAST)} ) , "
+            f"SOUTHEAST ( {self.get_surround_info(Direction.SOUTHEAST)} ) , "
             f"SOUTH ( {self.get_surround_info(Direction.SOUTH)} ) , "
-            f"SOUTH_WEST ( {self.get_surround_info(Direction.SOUTH_WEST)} ) , "
+            f"SOUTHWEST ( {self.get_surround_info(Direction.SOUTHWEST)} ) , "
             f"WEST ( {self.get_surround_info(Direction.WEST)} )"
         )

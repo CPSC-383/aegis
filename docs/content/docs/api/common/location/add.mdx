@@ -1,0 +1,24 @@
+---
+title: add
+description: Adds the given direction to the current location.
+---
+
+## Signature
+
+```py
+def add(dir: Direction) -> Location
+```
+
+## Description
+
+Returns a new `Location` by adding the given `Direction` to the current location.  
+The direction determines how the coordinates change. (`Direction.NORTH` would increas the y-coordinate)
+This method does not modify the original location and is useful for computing adjacent positions.
+
+## Example
+
+```py
+loc = Location(3, 2)
+north_location = loc.add(Direction.NORTH)
+print(north_location) # Outputs: Location(3, 3)
+```

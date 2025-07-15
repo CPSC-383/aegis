@@ -1,0 +1,63 @@
+---
+title: Location
+description: A comprehensive coordinate management system.
+---
+
+## Signature
+
+```py
+Location(x: int, y: int)
+```
+
+## Attributes
+
+| Attribute | Type | Description                         |
+|-----------|------|-------------------------------------|
+| `x` | `int` | The x-coordinate position in the world. |
+| `y` | `int` | The y-coordinate position in the world. |
+
+## Example
+
+```py
+loc = Location(3, 1)
+print(loc) # Output: Location(3, 1)
+print(loc.x) # Output: 3
+
+loc1 = Location(12, 5)
+print(loc1) # Output: Location(12, 5)
+print(loc1.y) # Output: 5
+```
+
+## Notes
+
+The `Location` class is designed to support comparison operations. Locations can be compared
+using standard operators such as `==`, `!=`, `<`, `>`, `<=`, and `>=`. This allows for easy
+sorting and comparison of locations. For example, locations can be stored in sorted containers
+like lists, sets, and heaps.
+
+### Comparison Logic
+
+#### Equality
+
+Two locations are equal if both their `x` and `y` coordinates match exactly.
+
+Example:
+
+```py
+Location(1, 2) == Location(1, 2)  # True
+Location(1, 2) != Location(2, 3)  # True
+```
+
+#### Ordering
+
+Locations are ordered first by their `x` coordinate, then by their `y` coordinate if `x` values are equal.
+
+- `A < B` if `A.x < B.x`, or if `A.x == B.x` and `A.y < B.y`.
+- `A > B` if `A.x > B.x`, or if `A.x == B.x` and `A.y > B.y`.
+
+Example:
+
+```py
+Location(1, 5) < Location(2, 0)  # True (1 < 2)
+Location(2, 3) < Location(2, 4)  # True (x equal, 3 < 4)
+```

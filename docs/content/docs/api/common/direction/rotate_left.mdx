@@ -1,0 +1,23 @@
+---
+title: rotate_left
+description: Rotates the direction 45° counter-clockwise.
+---
+
+## Signature 
+
+```py
+def rotate_left() -> Direction
+```
+
+## Description
+
+Returns the direction resulting from rotating the current direction 45° counter-clockwise.  
+If called on `CENTER`, the method returns `CENTER`, as it has no rotational direction.
+
+## Example
+
+```py
+dir = Direction.NORTH
+left = dir.rotate_left()
+print(left) # Output: Direction.NORTH_WEST
+```

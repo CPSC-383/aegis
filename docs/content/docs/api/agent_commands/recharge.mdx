@@ -1,0 +1,23 @@
+---
+title: RECHARGE
+description: Represents a command for an agent to recharge.
+---
+
+## Signature
+
+```py
+RECHARGE()
+```
+
+## Description
+
+Represents a command for the agent to recharge its energy.  
+This command is effective only when the agent is located on a cell of type `CHARGING_CELL`.  
+If used elsewhere, the command will have no effect.
+
+## Example
+
+```py
+if cell.is_charging_cell():
+  agent.send(RECHARGE())
+```

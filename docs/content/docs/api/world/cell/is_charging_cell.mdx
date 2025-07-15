@@ -1,0 +1,27 @@
+---
+title: is_charging_cell
+description: Determines whether the cell is of type CHARGING_CELL.
+---
+
+## Signature
+
+```py
+def is_charging_cell() -> bool
+```
+
+## Description
+
+Returns `True` if the cell is of type `CHARGING_CELL`, otherwise returns `False`.  
+This method is typically used to check if a cell provides recharge functionality.
+
+## Example
+
+```py
+# The cell is a CHARGING_CELL
+print(cell.is_charging_cell())
+# Output: True
+ 
+# The cell is not a CHARGING_CELL
+print(cell.is_charging_cell())
+# Output: False
+```

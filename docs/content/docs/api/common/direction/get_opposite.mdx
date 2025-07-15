@@ -1,0 +1,23 @@
+---
+title: get_opposite
+description: Returns the opposite direction.
+---
+
+## Signature
+
+```py
+def get_opposite() -> Direction
+```
+
+## Description
+
+Returns the direction opposite to the current one, representing a 180° rotation.  
+If called on `CENTER`, it returns `CENTER` since it has no opposite direction.
+
+## Example
+
+```py
+dir = Direction.NORTH_EAST
+opposite = dir.get_opposite()
+print(opposite)  # Output: Direction.SOUTH_WEST
+```

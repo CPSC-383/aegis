@@ -32,7 +32,10 @@ def parse_args() -> tuple[Parameters, bool]:
         "--client", action="store_true", help="Set to wait for the client to connect"
     )
     _ = parser.add_argument(
-        "--config", type=str, default="default", help="Config preset to use (default: default)"
+        "--config",
+        type=str,
+        default="default",
+        help="Config preset to use (default: default)",
     )
 
     args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]

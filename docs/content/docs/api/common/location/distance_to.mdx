@@ -1,0 +1,29 @@
+---
+title: distance_to
+description: Calculates the squared distance between the current location and the given location.
+---
+
+<Callout title="Heuristic" type="error">
+This should not be used as your A* heuristic! Using an improper heuristic can lead to suboptimal
+or incorrect pathfinding results.
+</Callout>
+
+## Signature
+
+```py
+def distance_to(location: Location) -> int
+```
+
+## Description
+
+Calculates and returns the squared distance between the current location and the specified target `location`.  
+This is computed as the sum of the squared differences in the x and y coordinates.  
+
+## Example:
+
+```py
+start = Location(1, 2)
+goal = Location(3, 5)
+dist = start.distance_to(goal) 
+print(dist) # Output: 13
+```

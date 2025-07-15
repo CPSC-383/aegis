@@ -1,0 +1,47 @@
+---
+title: Direction 
+description: Enum representing different directions, used for navigating the world.
+---
+
+## Members
+
+| Direction     | dx  | dy  | Description        |
+|----------------|-----|-----|--------------------|
+| `NORTH`        | 0   | 1   | Upward             |
+| `NORTHEAST`   | 1   | 1   | Upward-Right       |
+| `EAST`         | 1   | 0   | Right              |
+| `SOUTHEAST`   | 1   | -1  | Downward-Right     |
+| `SOUTH`        | 0   | -1  | Downward           |
+| `SOUTHWEST`   | -1  | -1  | Downward-Left      |
+| `WEST`         | -1  | 0   | Left               |
+| `NORTHWEST`   | -1  | 1   | Upward-Left        |
+| `CENTER`       | 0   | 0   | No movement        |
+
+## Attributes
+
+| Attribute | Type | Description                          |
+|------------|------|--------------------------------------|
+| `dx`       | `int`  | The change in the x-direction.       |
+| `dy`       | `int`  | The change in the y-direction.       |
+
+## Example
+
+```py
+dir = Direction.NORTHEAST
+print(dir.dx) # Output: 1
+
+dir = Direction.SOUTH
+print(dir.dy) # Output: -1
+print(dir) # Output: Direction.SOUTH
+```
+
+## Notes
+
+The `Direction` enum supports iteration, allowing you to easily loop over all defined directions.
+This can be useful when you need to process each direction or perform operations on every direction.
+For example, you can loop over the directions like this:
+
+```py
+for dir in Direction:
+  print(dir)
+```

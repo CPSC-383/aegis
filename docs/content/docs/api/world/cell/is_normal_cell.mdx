@@ -1,0 +1,27 @@
+---
+title: is_normal_cell
+description: Determines whether the cell is of type NORMAL_CELL.
+---
+
+## Signature
+
+```py
+def is_normal_cell() -> bool
+```
+
+## Description
+
+Returns `True` if the cell is of type `NORMAL_CELL`, otherwise returns `False`.  
+`NORMAL_CELL`s represent standard, non-special cells without any unique effects.  
+
+## Example
+
+```py
+# The cell is a NORMAL_CELL
+print(cell.is_normal_cell())
+# Output: True
+ 
+# The cell is not a NORMAL_CELL
+print(cell.is_normal_cell())
+# Output: False
+```

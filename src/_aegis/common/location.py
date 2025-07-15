@@ -73,13 +73,13 @@ class Location:
         dy = location.y - self.y
 
         if dx > 0 and dy > 0:
-            return Direction.NORTH_EAST
+            return Direction.NORTHEAST
         elif dx > 0 and dy < 0:
-            return Direction.SOUTH_EAST
+            return Direction.SOUTHEAST
         elif dx < 0 and dy > 0:
-            return Direction.NORTH_WEST
+            return Direction.NORTHWEST
         elif dx < 0 and dy < 0:
-            return Direction.SOUTH_WEST
+            return Direction.SOUTHWEST
 
         if dx > 0:
             return Direction.EAST

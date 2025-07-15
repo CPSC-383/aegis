@@ -1,0 +1,29 @@
+---
+title: get_top_layer
+description: Returns the top layer of the cell.
+---
+
+## Signature
+
+```py
+def get_top_layer() -> WorldObject | None
+```
+
+## Description
+
+Returns the topmost `WorldObject` present in the cell, or `None` if the cell is empty.  
+The top layer represents the visible object occupying the cell.
+
+## Example
+
+```py
+# cell with survivor as top layer with default values
+top_layer = cell.get_top_layer()
+print(top_layer)
+# Output: SV(1)
+ 
+# cell with no top layer 
+top_layer = cell.get_top_layer()
+print(top_layer)
+# Output: None
+```

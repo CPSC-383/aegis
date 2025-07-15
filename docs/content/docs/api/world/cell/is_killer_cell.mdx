@@ -1,0 +1,27 @@
+---
+title: is_killer_cell
+description: Determines whether the cell is of type KILLER_CELL.
+---
+
+## Signature
+
+```py
+def is_killer_cell() -> bool
+```
+
+## Description
+
+Returns `True` if the cell is of type `KILLER_CELL`, otherwise returns `False`.  
+`KILLER_CELL`s typically represent hazardous areas on the map that destroy your agent.  
+
+## Example
+
+```py
+# The cell is a KILLER_CELL
+print(cell.is_killer_cell())
+# Output: True
+ 
+# The cell is not a KILLER_CELL
+print(cell.is_killer_cell())
+# Output: False
+```

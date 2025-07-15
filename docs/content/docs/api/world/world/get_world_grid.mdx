@@ -1,0 +1,34 @@
+---
+title: get_world_grid
+description: Returns the 2D grid representing the world.
+---
+
+## Signature
+
+```py
+def get_world_grid() -> list[list[Cell]]
+```
+
+## Description
+
+Returns the full 2D grid of `Cell` objects that make up the world map.  
+Each element of the outer list represents a row, and each inner list contains the cells in that row, ordered by column.
+
+## Example
+
+```py
+# world has height and width set to 3 for this example.
+ 
+for row in world.get_world_grid():
+  for cell in row:
+    print(cell)
+ 
+# Output: 
+Cell ( ... )
+Cell ( ... )
+.
+.
+.
+Cell ( ... )
+```
+
