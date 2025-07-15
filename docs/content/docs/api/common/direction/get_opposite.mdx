@@ -1,6 +1,6 @@
 ---
 title: get_opposite
-description: Returns the opposite direction (180° rotation). Returns CENTER if called on CENTER.
+description: Returns the opposite direction.
 ---
 
 ## Signature
@@ -8,6 +8,11 @@ description: Returns the opposite direction (180° rotation). Returns CENTER if 
 ```py
 def get_opposite() -> Direction
 ```
+
+## Description
+
+Returns the direction opposite to the current one, representing a 180° rotation.  
+If called on `CENTER`, it returns `CENTER` since it has no opposite direction.
 
 ## Example
 

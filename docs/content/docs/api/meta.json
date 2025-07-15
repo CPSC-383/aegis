@@ -7,6 +7,9 @@
     "---Common---",
     "common/agentid.mdx",
     "common/direction",
-    "common/location"
+    "common/location",
+    "---World---",
+    "world/cell",
+    "world/world"
   ]
 }
