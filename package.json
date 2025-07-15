@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "fumadocs-twoslash": "^3.1.4",
+    "twoslash": "^0.3.2"
+  }
+}

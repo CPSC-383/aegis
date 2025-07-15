@@ -1,0 +1,20 @@
+---
+title: get_direction_order
+---
+
+## Overview
+
+Returns a list of movement directions in clockwise order, excluding `CENTER`.
+
+## Signature
+
+```py
+get_direction_order() -> list[Direction]
+```
+
+## Example
+
+```py
+order = Direction.get_direction_order()
+print(order)  # Output: [Direction.NORTH, Direction.NORTH_EAST, ..., Direction.NORTH_WEST]
+```

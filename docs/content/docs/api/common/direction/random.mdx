@@ -1,0 +1,39 @@
+---
+title: get_random_direction
+---
+
+## Overview
+
+Returns a random direction.
+
+<Callout title="Static Method Usage" type="warn">
+
+This method should be called on the `Direction` class, not on an instance.
+
+Correct:
+
+```py
+Direction.get_random_direction()
+```
+
+Wrong:
+
+```py
+dir = Direction.NORTH
+dir.get_random_direction()
+```
+
+</Callout>
+
+## Signature
+
+```py
+get_random_direction() -> list[Direction]
+```
+
+## Example
+
+```py
+random_direction = Direction.get_random_direction()
+print(random_direction)
+```

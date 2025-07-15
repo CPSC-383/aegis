@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "title": "API Reference",
+  "description": "The Aegis API",
+  "icon": "Terminal",
+  "pages": [
+    "---Common---",
+    "common/agentid.mdx",
+    "common/direction",
+    "common/location"
+  ]
+}

@@ -1,0 +1,30 @@
+---
+title: AgentID 
+description: A data structure for uniquely identifying an agent.
+---
+
+## Overview
+
+The `AgentID` data structure is designed to uniquely identify an agent within a specific group. 
+It consists of two key attributes: an ID, which uniquely identifies the agent, and a Group ID (GID),
+which represents the group to which the agent belongs. This ensures that each agent can be distinctly
+recognized both within their own group and across potentially multiple groups.
+
+## Signature
+
+```py
+AgentID(id: int, gid: int)
+```
+
+| Param | Type | Description | 
+|------|------|-------------|
+| `id` | `int` | An integer that uniquely identifies the agent within a group. |
+| `gid` | `int` | An integer that represents the group identifier for the agent. |
+
+## Example
+
+```py
+agent_id = AgentID(3, 1)
+print(agent_id.id)   # Output: 3
+print(agent_id.gid)  # Output: 1
+```
