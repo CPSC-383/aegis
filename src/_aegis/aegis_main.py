@@ -55,10 +55,12 @@ class Aegis:
             and _prediction_imported
         ):
             self._prediction_handler = (
-                PredictionHandler()
-            )  # pyright: ignore[reportPossiblyUnboundVariable]
+                PredictionHandler()  # pyright: ignore[reportPossiblyUnboundVariable]
+            )
         try:
-            _aegis_world_file = WorldFileParser.parse_world_file(self._parameters.world_filename)
+            _aegis_world_file = WorldFileParser.parse_world_file(
+                self._parameters.world_filename
+            )
             if _aegis_world_file is None:
                 print(
                     f'Aegis  : Unable to parse world file from "{self._parameters.world_filename}"',

@@ -1,0 +1,17 @@
+---
+title: Rubble
+description: Represents a rubble layer in a cell.
+---
+
+## Attributes
+
+| Attribute | Type | Description                         |
+|-----------|------|-------------------------------------|
+| `energy_required` | `int` | The amount of energy to remove the rubble. |
+| `agents_required` | `int` | The amount of agents to remove the rubble. |
+
+## Notes
+
+Agents can move through cells even if rubble is present as the top layer. Removing rubble is optional
+and only necessary to access objects beneath it.
+
