@@ -10,6 +10,13 @@
     "common/location",
     "---World---",
     "world/cell",
-    "world/world"
+    "world/world",
+    "---Agent Commands---",
+    "agent_commands/dig.mdx",
+    "agent_commands/move.mdx",
+    "agent_commands/observe.mdx",
+    "agent_commands/recharge.mdx",
+    "agent_commands/save.mdx",
+    "agent_commands/send_message.mdx"
   ]
 }

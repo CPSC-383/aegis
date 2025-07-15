@@ -1,0 +1,24 @@
+---
+title: MOVE
+description: Represents a command for an agent to move in a specified direction.
+---
+
+## Signature
+
+```py
+MOVE(dir: Direction)
+```
+
+## Description
+
+Represents a command instructing an agent to move one step in the specified `Direction`.
+The `dir` parameter must be one of the defined directions (e.g., `NORTH`, `WEST`, `SOUTHWEST`).
+
+## Example
+
+```py
+start = Location(0, 0)
+goal = Location(2, 2)
+dir = start.direction_to(goal) # dir will be Direction.NORTHEAST
+agent.send(MOVE(dir))
+```
