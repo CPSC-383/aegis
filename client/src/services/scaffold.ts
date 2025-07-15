@@ -10,11 +10,19 @@ export type Scaffold = {
     setupAegisPath: () => Promise<void>
     worlds: string[]
     agents: string[]
+    configPresets: string[]
     output: ConsoleLine[]
-    startSimulation: (rounds: string, amount: string, world: string, group: string, agent: string) => void
-    toggleMoveCost: (value: boolean) => void
+    startSimulation: (
+        rounds: string,
+        amount: string,
+        world: string,
+        group: string,
+        agent: string,
+        config: string
+    ) => void
     killSim: (() => void) | undefined
     readAegisConfig: () => Promise<string>
+    refreshConfigPresets: () => Promise<void>
 }
 
 export function createScaffold(): Scaffold {
@@ -22,6 +30,8 @@ export function createScaffold(): Scaffold {
     const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
     const [worlds, setWorlds] = useState<string[]>([])
     const [agents, setAgents] = useState<string[]>([])
+    const [allConfigPresets, setAllConfigPresets] = useState<string[]>([])
+    const [configPresets, setConfigPresets] = useState<string[]>([])
     const [output, setOutput] = useState<ConsoleLine[]>([])
     const aegisPid = useRef<string | undefined>(undefined)
     const forceUpdate = useForceUpdate()
@@ -37,7 +47,14 @@ export function createScaffold(): Scaffold {
         if (path) setAegisPath(path)
     }
 
-    const startSimulation = async (rounds: string, amount: string, world: string, group: string, agent: string) => {
+    const startSimulation = async (
+        rounds: string,
+        amount: string,
+        world: string,
+        group: string,
+        agent: string,
+        config: string
+    ) => {
         if (!aegisPath) {
             throw new Error("Can't find AEGIS path!")
         }
@@ -45,20 +62,9 @@ export function createScaffold(): Scaffold {
         // Reset output
         setOutput([])
 
-        const pid = await aegisAPI.aegis_child_process.spawn(rounds, amount, world, group, agent, aegisPath)
+        const pid = await aegisAPI.aegis_child_process.spawn(rounds, amount, world, group, agent, aegisPath, config)
         aegisPid.current = pid
         forceUpdate()
-    }
-
-    const toggleMoveCost = async (value: boolean) => {
-        if (!aegisPath) {
-            throw new Error("Can't find AEGIS path!")
-        }
-
-        const path = aegisAPI.path
-
-        const config_path = await path.join(aegisPath, 'config', 'config.yaml')
-        aegisAPI.toggleMoveCost(config_path, value)
     }
 
     const readAegisConfig = async () => {
@@ -72,6 +78,45 @@ export function createScaffold(): Scaffold {
         const config_path = await path.join(aegisPath, 'config', 'config.yaml')
         const config = await fs.readFileSync(config_path)
         return config
+    }
+
+    const getAllConfigPresets = async () => {
+        if (!aegisPath) {
+            return []
+        }
+
+        try {
+            // Always get all presets initially
+            const presets = await aegisAPI.read_config_presets(aegisPath, 'all')
+            return presets
+        } catch (error) {
+            console.error('Error reading config presets:', error)
+            return []
+        }
+    }
+
+    const getFilteredConfigPresets = async (context: string) => {
+        if (!aegisPath) {
+            return []
+        }
+
+        try {
+            const presets = await aegisAPI.read_config_presets(aegisPath, context)
+            return presets
+        } catch (error) {
+            console.error('Error reading filtered config presets:', error)
+            return []
+        }
+    }
+
+    const refreshConfigPresets = async () => {
+        const compMode = localStorage.getItem('aegis_comp_mode') === 'true'
+        const context = compMode ? 'competition' : 'assignments'
+        const filteredPresets = await getFilteredConfigPresets(context)
+        setConfigPresets(filteredPresets)
+
+        // Always clear selected config when toggle changes
+        localStorage.removeItem('aegis_config')
     }
 
     const killSimulation = () => {
@@ -112,12 +157,25 @@ export function createScaffold(): Scaffold {
     useEffect(() => {
         if (!aegisPath) return
 
-        getWorlds(aegisPath).then((worlds) => {
-            setWorlds(worlds)
-        })
-        getAgents(aegisPath).then((agents) => {
-            setAgents(agents)
-        })
+        const loadData = async () => {
+            const [worldsData, agentsData, allPresets] = await Promise.all([
+                getWorlds(aegisPath),
+                getAgents(aegisPath),
+                getAllConfigPresets()
+            ])
+
+            setWorlds(worldsData)
+            setAgents(agentsData)
+            setAllConfigPresets(allPresets)
+
+            // Initial filtering based on current comp mode
+            const compMode = localStorage.getItem('aegis_comp_mode') === 'true'
+            const context = compMode ? 'competition' : 'assignments'
+            const filteredPresets = await getFilteredConfigPresets(context)
+            setConfigPresets(filteredPresets)
+        }
+
+        loadData()
         localStorage.setItem('aegisPath', aegisPath)
     }, [aegisPath])
 
@@ -127,11 +185,12 @@ export function createScaffold(): Scaffold {
         setupAegisPath,
         worlds,
         agents,
+        configPresets,
         output,
         startSimulation,
-        toggleMoveCost,
         killSim,
-        readAegisConfig
+        readAegisConfig,
+        refreshConfigPresets
     }
 }
 
@@ -165,7 +224,7 @@ const getWorlds = async (aegisPath: string) => {
     if (!(await fs.existsSync(worldsPath))) return []
 
     const worlds = await fs.readdirSync(worldsPath)
-    const filtered_worlds = worlds.filter((world) => world.endsWith('.world'))
+    const filtered_worlds = worlds.filter((world: string) => world.endsWith('.world'))
     return filtered_worlds
 }
 

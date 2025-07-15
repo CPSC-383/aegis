@@ -4,19 +4,23 @@ import yaml
 
 from _aegis.aegis_types import Config, FeatureFlagName
 
-CONFIG_PATH = Path("config/config.yaml")
+CONFIG_PRESETS_PATH = Path("config/presets")
+DEFAULT_CONFIG = "default"
 
 
-def load_config(path: Path = CONFIG_PATH) -> Config:
-    if not path.exists():
-        raise FileNotFoundError(f"Config not found: {path}")
+def load_config(config_name: str = DEFAULT_CONFIG) -> Config:
+    # Construct the path to the config preset file
+    config_path = CONFIG_PRESETS_PATH / f"{config_name}.yaml"
 
-    with open(path, "r") as f:
+    if not config_path.exists():
+        raise FileNotFoundError(f"Config preset not found: {config_path}")
+
+    with open(config_path, "r") as f:
         config = cast(Config, yaml.safe_load(f))
 
     return config
 
 
-def is_feature_enabled(feature: FeatureFlagName) -> bool:
-    config = load_config()
+def is_feature_enabled(feature: FeatureFlagName, config_name: str = DEFAULT_CONFIG) -> bool:
+    config = load_config(config_name)
     return config.get(feature, False)

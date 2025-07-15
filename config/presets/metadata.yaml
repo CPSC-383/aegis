@@ -1,0 +1,18 @@
+# Config preset visibility metadata
+# This file defines which config presets should be visible in different contexts
+
+presets:
+  pathfinding-assignment:
+    visible_for:
+      - assignments
+    description: "Configuration for pathfinding assignment"
+
+  multi-agent-assignment:
+    visible_for:
+      - assignments
+    description: "Configuration for multi-agent assignment"
+
+  competition:
+    visible_for:
+      - competition
+    description: "Configuration for competition mode"

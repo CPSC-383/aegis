@@ -1,40 +1,35 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { SettingsIcon, Folder } from 'lucide-react'
+import { SettingsIcon, Folder, Trophy } from 'lucide-react'
 
 import { Scaffold } from '@/services'
 import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
-import { Config } from '@/types'
-import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
+import { Switch } from '@/components/ui/switch'
 
 type Props = {
     scaffold: Scaffold
 }
 
 function Settings({ scaffold }: Props) {
-    const [moveCostToggle, setMoveCostToggle] = useState(true)
-    const { aegisPath, setupAegisPath, toggleMoveCost, readAegisConfig } = scaffold
+    const { aegisPath, setupAegisPath, refreshConfigPresets } = scaffold
+    const [compMode, setCompMode] = useState<boolean>(() => {
+        const saved = localStorage.getItem('aegis_comp_mode')
+        return saved === 'true' ? true : false
+    })
 
-    const fetchMoveCostConfig = async () => {
-        const config = await readAegisConfig()
-        const { Enable_Move_Cost } = JSON.parse(config) as Config
-        return Enable_Move_Cost
-    }
-
-    // Initialize default move cost toggle value when the settings load
     useEffect(() => {
-        const initToggle = async () => {
-            const value = await fetchMoveCostConfig()
-            setMoveCostToggle(value)
-        }
-        initToggle()
-    }, [])
+        localStorage.setItem('aegis_comp_mode', JSON.stringify(compMode))
+    }, [compMode])
 
-    const handleToggle = (checked: boolean) => {
-        toggleMoveCost(checked)
-        setMoveCostToggle(checked)
+    const handleCompModeToggle = async (checked: boolean) => {
+        setCompMode(checked)
+        // Save the comp mode setting
+        localStorage.setItem('aegis_comp_mode', checked.toString())
+        // Clear the selected config when toggle changes
+        localStorage.removeItem('aegis_config')
+        // Refresh config presets when comp mode changes
+        await refreshConfigPresets()
     }
 
     return (
@@ -60,24 +55,34 @@ function Settings({ scaffold }: Props) {
                     </Button>
                 </div>
 
-                {getCurrentAssignment() === ASSIGNMENT_A1 && (
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                            <SettingsIcon className="w-6 h-6" />
-                            <h2 className="text-lg font-semibold">Config Settings</h2>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <Label>Move Cost</Label>
-                                <p className="text-xs text-muted-foreground">
-                                    Know all move costs at the start of the game
-                                </p>
-                            </div>
-                            <Switch checked={moveCostToggle} onCheckedChange={handleToggle} />
-                        </div>
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                        <Trophy className="w-6 h-6" />
+                        <h2 className="text-lg font-semibold">Competitive Mode</h2>
                     </div>
-                )}
+
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <Label>Enable Comp Mode</Label>
+                            <p className="text-xs text-muted-foreground">
+                                Enable competitive mode settings and configs
+                            </p>
+                        </div>
+                        <Switch checked={compMode} onCheckedChange={handleCompModeToggle} />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                        <SettingsIcon className="w-6 h-6" />
+                        <h2 className="text-lg font-semibold">Config Settings</h2>
+                    </div>
+
+                    <div className="text-sm text-muted-foreground">
+                        <p>Config settings are now managed through config presets.</p>
+                        <p>Select a config preset in the Aegis tab to configure your simulation.</p>
+                    </div>
+                </div>
             </div>
         </motion.div>
     )
