@@ -1,19 +1,19 @@
 import { useMemo, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
+import { Scaffold } from '@/services'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Scaffold } from '@/services'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 
-interface Props {
+type Props = {
     scaffold: Scaffold
 }
 
 function Aegis({ scaffold }: Props) {
-    const { worlds, agents, startSimulation, killSim } = scaffold
+    const { worlds, agents, configPresets, startSimulation, killSim } = scaffold
     const [world, setWorld] = useState<string>(() => localStorage.getItem('aegis_world') || '')
     const [rounds, setRounds] = useState<number>(() => {
         const val = localStorage.getItem('aegis_rounds')
@@ -21,6 +21,19 @@ function Aegis({ scaffold }: Props) {
     })
     const [group, setGroup] = useState<string>(() => localStorage.getItem('aegis_group') || '')
     const [agent, setAgent] = useState<string>(() => localStorage.getItem('aegis_agent') || '')
+    const [config, setConfig] = useState<string>(() => localStorage.getItem('aegis_config') || '')
+
+    // Update config when configPresets change or when config is cleared
+    useEffect(() => {
+        const savedConfig = localStorage.getItem('aegis_config')
+        if (savedConfig && configPresets.includes(savedConfig)) {
+            setConfig(savedConfig)
+        } else {
+            // Don't auto-select, keep it blank
+            setConfig('')
+            localStorage.removeItem('aegis_config')
+        }
+    }, [configPresets])
 
     useEffect(() => {
         localStorage.setItem('aegis_world', world)
@@ -34,8 +47,16 @@ function Aegis({ scaffold }: Props) {
     useEffect(() => {
         localStorage.setItem('aegis_agent', agent)
     }, [agent])
+    useEffect(() => {
+        if (config) {
+            localStorage.setItem('aegis_config', config)
+        }
+    }, [config])
 
-    const isButtonDisabled = useMemo(() => !world || !rounds || !group || !agent, [world, rounds, group, agent])
+    const isButtonDisabled = useMemo(
+        () => !world || !rounds || !group || !agent || !config,
+        [world, rounds, group, agent, config]
+    )
 
     const handleRoundBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value)
@@ -55,7 +76,7 @@ function Aegis({ scaffold }: Props) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="space-y-4"
+            className="w-full space-y-4"
         >
             <div>
                 <Label>Select a World</Label>
@@ -64,9 +85,9 @@ function Aegis({ scaffold }: Props) {
                         <SelectValue placeholder="Choose a world">{world || 'Select a world'}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                        {worlds.map((world) => (
-                            <SelectItem key={world} value={world}>
-                                {world}
+                        {worlds.map((worldName) => (
+                            <SelectItem key={worldName} value={worldName}>
+                                {worldName}
                             </SelectItem>
                         ))}
                     </SelectContent>
@@ -77,14 +98,10 @@ function Aegis({ scaffold }: Props) {
                 <Label>Number of Rounds</Label>
                 <Input
                     type="number"
-                    value={rounds === 0 ? '' : rounds}
-                    onChange={(e) => {
-                        const value = e.target.value === '' ? 0 : Number(e.target.value)
-                        setRounds(value)
-                    }}
+                    value={rounds}
+                    onChange={(e) => setRounds(parseInt(e.target.value) || 0)}
                     onBlur={handleRoundBlur}
                     placeholder="Enter number of rounds"
-                    className="w-full"
                 />
             </div>
 
@@ -109,6 +126,24 @@ function Aegis({ scaffold }: Props) {
                 <Input value={group} onChange={(e) => handleGroupName(e.target.value)} placeholder="Enter group name" />
             </div>
 
+            <div>
+                <Label>Config Preset</Label>
+                <Select value={config} onValueChange={(value) => setConfig(value)}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Choose a config preset">
+                            {config || 'Select a config preset'}
+                        </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                        {configPresets.map((configName) => (
+                            <SelectItem key={configName} value={configName}>
+                                {configName}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
             <div className="flex flex-col mt-4">
                 {killSim ? (
                     <Button variant="destructive" onClick={killSim}>
@@ -118,7 +153,7 @@ function Aegis({ scaffold }: Props) {
                     <Button
                         onClick={() => {
                             const amount = getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : 7
-                            startSimulation(rounds.toString(), amount.toString(), world, group, agent)
+                            startSimulation(rounds.toString(), amount.toString(), world, group, agent, config)
                         }}
                         disabled={isButtonDisabled}
                         className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}

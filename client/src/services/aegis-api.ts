@@ -20,13 +20,15 @@ type AegisAPI = {
             world: string,
             group: string,
             agent: string,
-            aegisPath: string
+            aegisPath: string,
+            config: string
         ) => Promise<string>
         kill: (aegisPid: string) => void
         onStdout: (callback: (data: string) => void) => void
         onStderr: (callback: (data: string) => void) => void
         onExit: (callback: () => void) => void
     }
+    read_config_presets: (aegisPath: string, context?: string) => Promise<string[]>
 }
 
 // @ts-ignore

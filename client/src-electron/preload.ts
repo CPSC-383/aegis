@@ -27,24 +27,25 @@ const electronAPI = {
         isDirectory: (...args: any[]) => invoke('fs.isDirectory', ...args)
     },
     aegis_child_process: {
-        spawn: (...args: any[]) => invoke('aegis_child_process.spawn', ...args),
-        kill: (...args: any[]) => invoke('aegis_child_process.kill', ...args),
-        onStdout: (callback: any) => {
-            ipcRenderer.on('aegis_child_process.stdout', (_, data) => {
-                callback(data)
-            })
-        },
-        onStderr: (callback: any) => {
-            ipcRenderer.on('aegis_child_process.stderr', (_, data) => {
-                callback(data)
-            })
-        },
-        onExit: (callback: any) => {
-            ipcRenderer.on('aegis_child_process.exit', () => {
-                callback()
-            })
-        }
-    }
+        spawn: (
+            rounds: string,
+            amount: string,
+            world: string,
+            group: string,
+            agent: string,
+            aegisPath: string,
+            config: string
+        ) => ipcRenderer.invoke('aegis_child_process.spawn', rounds, amount, world, group, agent, aegisPath, config),
+        kill: (pid: string) => ipcRenderer.invoke('aegis_child_process.kill', pid),
+        onStdout: (callback: (data: string) => void) =>
+            ipcRenderer.on('aegis_child_process.stdout', (event, data) => callback(data)),
+        onStderr: (callback: (data: string) => void) =>
+            ipcRenderer.on('aegis_child_process.stderr', (event, data) => callback(data)),
+        onExit: (callback: () => void) => ipcRenderer.on('aegis_child_process.exit', () => callback())
+    },
+
+    read_config_presets: (aegisPath: string, context?: string) =>
+        ipcRenderer.invoke('read_config_presets', aegisPath, context)
 }
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI)
