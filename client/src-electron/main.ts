@@ -58,6 +58,26 @@ class ElectronApp {
         ipcMain.handle('electronAPI', async (_, command: string, ...args: any[]) => {
             return this.handleElectronAPI(command, ...args)
         })
+
+        ipcMain.handle('aegis_child_process.spawn', async (event, ...args) => {
+            return await this.spawnAegisProcess(
+                args[0], // rounds
+                args[1], // amount
+                args[2], // world
+                args[3], // group
+                args[4], // agent
+                args[5], // aegis path
+                args[6] // config
+            )
+        })
+
+        ipcMain.handle('aegis_child_process.kill', async (event, pid) => {
+            this.killProcess(pid)
+        })
+
+        ipcMain.handle('read_config_presets', async (event, aegisPath, context) => {
+            return this.readConfigPresets(aegisPath, context)
+        })
     }
 
     private killAllProcesses() {
@@ -98,7 +118,8 @@ class ElectronApp {
                     args[2], // world
                     args[3], // group
                     args[4], // agent
-                    args[5] // aegis path
+                    args[5], // aegis path
+                    args[6] // config
                 )
             case 'aegis_child_process.kill':
                 return this.killProcess(args[0])
@@ -153,7 +174,8 @@ class ElectronApp {
         world: string,
         group: string,
         agent: string,
-        aegisPath: string
+        aegisPath: string,
+        config: string
     ) {
         const procArgs = [
             '--amount',
@@ -166,6 +188,8 @@ class ElectronApp {
             rounds,
             '--group',
             group,
+            '--config',
+            config,
             '--client'
         ]
         const childAegis = child_process.spawn('aegis', [...procArgs], { cwd: aegisPath })
@@ -194,6 +218,47 @@ class ElectronApp {
                 }
             })
         })
+    }
+
+    private readConfigPresets(aegisPath: string, context: string = 'all') {
+        try {
+            const presetsDir = path.join(aegisPath, 'config', 'presets')
+            if (!fs.existsSync(presetsDir)) {
+                return []
+            }
+
+            // Read metadata file to determine visibility
+            const metadataPath = path.join(presetsDir, 'metadata.yaml')
+            let metadata: any = {}
+
+            if (fs.existsSync(metadataPath)) {
+                const metadataContent = fs.readFileSync(metadataPath, 'utf8')
+                metadata = yaml.parse(metadataContent)
+            }
+
+            const files = fs.readdirSync(presetsDir)
+            const yamlFiles = files.filter((file) => file.endsWith('.yaml') && file !== 'metadata.yaml')
+            const allPresets = yamlFiles.map((file) => file.replace('.yaml', ''))
+
+            // If context is 'all', return all presets
+            if (context === 'all') {
+                return allPresets
+            }
+
+            // Filter presets based on metadata
+            const visiblePresets = allPresets.filter((preset) => {
+                const presetMetadata = metadata.presets?.[preset]
+                if (!presetMetadata || !presetMetadata.visible_for) {
+                    return false // Default to not visible if no metadata
+                }
+                return presetMetadata.visible_for.includes(context)
+            })
+
+            return visiblePresets
+        } catch (error) {
+            console.error(`Error reading config presets: ${error}`)
+            return []
+        }
     }
 
     private killProcess(pid: string) {
