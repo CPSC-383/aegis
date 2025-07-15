@@ -1,0 +1,19 @@
+---
+title: direction_to
+description: Calculate the direction between the current location and a target location.
+---
+
+## Signature
+
+```py
+def direction_to(location: Location) -> Direction
+```
+
+## Example:
+
+```py
+start = Location(0, 0)
+goal = Location(0, 5)
+dir = start.direction_to(goal)
+print(dir) # Output: Direction.NORTH
+```

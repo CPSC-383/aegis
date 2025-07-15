@@ -19,7 +19,6 @@ export const docs = defineDocs({
 export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
-      lazy: true,
       themes: {
         light: "catppuccin-latte",
         dark: "catppuccin-mocha"

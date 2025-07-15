@@ -1,0 +1,18 @@
+---
+title: add
+description: Adds the given direction to the current location.
+---
+
+## Signature
+
+```py
+def add(dir: Direction) -> Location
+```
+
+## Example
+
+```py
+loc = Location(3, 2)
+north_location = loc.add(Direction.NORTH)
+print(north_location) # Outputs: Location(3, 3)
+```
