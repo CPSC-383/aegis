@@ -56,9 +56,7 @@ class Agent:
     def _send_results(self) -> None:
         if self._results and self._module:
             for result in self._results:
-                if isinstance(result, OBSERVE_RESULT) and hasattr(
-                    self._module, "handle_observe"
-                ):
+                if isinstance(result, OBSERVE_RESULT) and hasattr(self._module, "handle_observe"):
                     self._module.handle_observe(self, result)  # pyright: ignore[reportAny]
 
                 elif (
@@ -90,9 +88,7 @@ class Agent:
         spec.loader.exec_module(module)
 
         if not hasattr(module, "think"):
-            raise AttributeError(
-                f"{path} does not define a `think(agent: Agent)` function."
-            )
+            raise AttributeError(f"{path} does not define a `think(agent: Agent)` function.")
 
         self._module = module
 
@@ -113,8 +109,6 @@ class Agent:
             cell.agent_id_list = cell_info.agent_id_list
             cell.move_cost = cell_info.move_cost
             cell.set_top_layer(cell_info.top_layer)
-            if cell_info.top_layer is None and cell.has_survivors:
-                cell.has_survivors = False
 
     def get_round_number(self) -> int:
         return self._round
@@ -167,9 +161,7 @@ class Agent:
             self.set_energy_level(move_result.energy_level)
             self.set_location(curr_info.location)
             self.update_surround(move_result.surround_info)
-        elif SAVE_SURV_RESULT is not None and isinstance(
-            aegis_command, SAVE_SURV_RESULT
-        ):
+        elif SAVE_SURV_RESULT is not None and isinstance(aegis_command, SAVE_SURV_RESULT):
             self._results.append(aegis_command)
         elif isinstance(aegis_command, RECHARGE_RESULT):
             recharge_result: RECHARGE_RESULT = aegis_command

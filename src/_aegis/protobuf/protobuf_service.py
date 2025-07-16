@@ -24,7 +24,6 @@ class ProtobufService:
             cell.location.x = cell_data.get("location", {}).get("x", 0)
             cell.location.y = cell_data.get("location", {}).get("y", 0)
             cell.move_cost = cell_data.get("move_cost", 0)
-            cell.has_survivors = cell_data.get("has_survivors", False)
 
             # Add agent IDs
             for agent_id_data in cell_data.get("agent_ids", []):
@@ -84,7 +83,6 @@ class ProtobufService:
             cell.location.x = cell_data.get("location", {}).get("x", 0)
             cell.location.y = cell_data.get("location", {}).get("y", 0)
             cell.move_cost = cell_data.get("move_cost", 0)
-            cell.has_survivors = cell_data.get("has_survivors", False)
 
             # Add agent IDs
             for agent_id_data in cell_data.get("agent_ids", []):

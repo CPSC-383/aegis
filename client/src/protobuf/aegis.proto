@@ -27,7 +27,6 @@ message Cell {
   Location location = 1;
   int32 move_cost = 2;
   repeated AgentID agent_ids = 3;
-  bool has_survivors = 4;
   
   oneof top_layer {
     Survivor survivor = 5;

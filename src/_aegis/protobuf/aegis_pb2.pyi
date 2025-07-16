@@ -93,11 +93,9 @@ class Cell(google.protobuf.message.Message):
     LOCATION_FIELD_NUMBER: builtins.int
     MOVE_COST_FIELD_NUMBER: builtins.int
     AGENT_IDS_FIELD_NUMBER: builtins.int
-    HAS_SURVIVORS_FIELD_NUMBER: builtins.int
     SURVIVOR_FIELD_NUMBER: builtins.int
     RUBBLE_FIELD_NUMBER: builtins.int
     move_cost: builtins.int
-    has_survivors: builtins.bool
     @property
     def location(self) -> global___Location: ...
     @property
@@ -112,12 +110,11 @@ class Cell(google.protobuf.message.Message):
         location: global___Location | None = ...,
         move_cost: builtins.int = ...,
         agent_ids: collections.abc.Iterable[global___AgentID] | None = ...,
-        has_survivors: builtins.bool = ...,
         survivor: global___Survivor | None = ...,
         rubble: global___Rubble | None = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["location", b"location", "rubble", b"rubble", "survivor", b"survivor", "top_layer", b"top_layer"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["agent_ids", b"agent_ids", "has_survivors", b"has_survivors", "location", b"location", "move_cost", b"move_cost", "rubble", b"rubble", "survivor", b"survivor", "top_layer", b"top_layer"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["agent_ids", b"agent_ids", "location", b"location", "move_cost", b"move_cost", "rubble", b"rubble", "survivor", b"survivor", "top_layer", b"top_layer"]) -> None: ...
     def WhichOneof(self, oneof_group: typing.Literal["top_layer", b"top_layer"]) -> typing.Literal["survivor", "rubble"] | None: ...
 
 global___Cell = Cell

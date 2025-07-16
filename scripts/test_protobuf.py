@@ -120,7 +120,6 @@ def test_world_state_serialization():
         cell.location.x = 1
         cell.location.y = 2
         cell.move_cost = 3
-        cell.has_survivors = True
 
         # Add a survivor to the cell
         survivor = cell.survivor
@@ -237,7 +236,6 @@ def test_protobuf_service_methods():
                     "location": {"x": 1, "y": 2},
                     "move_cost": 3,
                     "agent_ids": [{"id": 1, "gid": 1}],
-                    "has_survivors": True,
                     "survivor": {"id": 1, "state": 0},
                 }
             ],
