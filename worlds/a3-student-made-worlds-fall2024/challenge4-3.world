@@ -969,8 +969,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
+            "energy_required": 0,
+            "agents_required": 2
           }
         }
       ]
@@ -1623,15 +1623,15 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 4
+            "energy_required": 0,
+            "agents_required": 4
           }
         },
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 4
+            "energy_required": 0,
+            "agents_required": 4
           }
         }
       ]

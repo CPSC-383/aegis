@@ -1,30 +1,11 @@
 from typing import override
 
 from _aegis.common import Direction
-from _aegis.common.commands.agent_command import AgentCommand
+from ..agent_command import AgentCommand
 
 
 class MOVE(AgentCommand):
-    """
-    Represents a command for an agent to move in a specified direction.
-
-    Examples:
-        >>> dir = Direction.EAST
-        >>> MOVE(dir)
-        MOVE ( EAST )
-
-
-    Attributes:
-        direction (Direction): The direction to move.
-    """
-
     def __init__(self, direction: Direction) -> None:
-        """
-        Initializes a MOVE instance.
-
-        Args:
-            direction: The direction to move.
-        """
         self.direction: Direction = direction
 
     @override

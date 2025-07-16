@@ -479,8 +479,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 10,
-            "remove_agents": 0
+            "energy_required": 10,
+            "agents_required": 0
           }
         },
         {
@@ -1197,8 +1197,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 10,
-            "remove_agents": 2
+            "energy_required": 10,
+            "agents_required": 2
           }
         },
         {
@@ -1523,8 +1523,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 10,
-            "remove_agents": 3
+            "energy_required": 10,
+            "agents_required": 3
           }
         },
         {

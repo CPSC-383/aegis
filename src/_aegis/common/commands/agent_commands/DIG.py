@@ -1,12 +1,12 @@
 from typing import override
 
-from ..aegis_command import AegisCommand
+from ..agent_command import AgentCommand
 
 
-class AEGIS_UNKNOWN(AegisCommand):
+class DIG(AgentCommand):
     @override
     def __str__(self) -> str:
-        return self.STR_UNKNOWN
+        return self.STR_DIG
 
     @override
     def __repr__(self) -> str:

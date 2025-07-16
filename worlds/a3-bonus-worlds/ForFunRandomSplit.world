@@ -346,8 +346,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 12,
-            "remove_agents": 1
+            "energy_required": 12,
+            "agents_required": 1
           }
         },
         {
@@ -412,8 +412,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 3,
-            "remove_agents": 2
+            "energy_required": 3,
+            "agents_required": 2
           }
         },
         {
@@ -425,8 +425,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 8,
-            "remove_agents": 1
+            "energy_required": 8,
+            "agents_required": 1
           }
         },
         {
@@ -487,29 +487,29 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 20,
-            "remove_agents": 1
+            "energy_required": 20,
+            "agents_required": 1
           }
         },
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 5,
-            "remove_agents": 1
+            "energy_required": 5,
+            "agents_required": 1
           }
         },
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 5,
-            "remove_agents": 1
+            "energy_required": 5,
+            "agents_required": 1
           }
         },
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 5,
-            "remove_agents": 1
+            "energy_required": 5,
+            "agents_required": 1
           }
         },
         {
@@ -974,8 +974,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 3,
-            "remove_agents": 0
+            "energy_required": 3,
+            "agents_required": 0
           }
         }
       ]
@@ -1052,8 +1052,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 16,
-            "remove_agents": 1
+            "energy_required": 16,
+            "agents_required": 1
           }
         },
         {
@@ -1549,8 +1549,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 14,
-            "remove_agents": 1
+            "energy_required": 14,
+            "agents_required": 1
           }
         },
         {
@@ -1664,8 +1664,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 3,
-            "remove_agents": 1
+            "energy_required": 3,
+            "agents_required": 1
           }
         },
         {
@@ -1884,8 +1884,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 6,
-            "remove_agents": 1
+            "energy_required": 6,
+            "agents_required": 1
           }
         },
         {
@@ -2229,15 +2229,15 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 11,
-            "remove_agents": 0
+            "energy_required": 11,
+            "agents_required": 0
           }
         },
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 16,
-            "remove_agents": 2
+            "energy_required": 16,
+            "agents_required": 2
           }
         }
       ]

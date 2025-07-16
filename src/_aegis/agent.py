@@ -20,9 +20,9 @@ from _aegis.common.world.info import SurroundInfo
 from _aegis.common.world.world import World
 
 try:
-    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT
+    from _aegis.common.commands.aegis_commands.SAVE_RESULT import SAVE_RESULT
 except ImportError:
-    SAVE_SURV_RESULT = None  # pyright: ignore[reportConstantRedefinition]
+    SAVE_RESULT = None  # pyright: ignore[reportConstantRedefinition]
 
 
 class Agent:
@@ -57,12 +57,14 @@ class Agent:
     def _send_results(self) -> None:
         if self._results and self._module:
             for result in self._results:
-                if isinstance(result, OBSERVE_RESULT) and hasattr(self._module, "handle_observe"):
+                if isinstance(result, OBSERVE_RESULT) and hasattr(
+                    self._module, "handle_observe"
+                ):
                     self._module.handle_observe(self, result)  # pyright: ignore[reportAny]
 
                 elif (
-                    SAVE_SURV_RESULT is not None
-                    and isinstance(result, SAVE_SURV_RESULT)
+                    SAVE_RESULT is not None
+                    and isinstance(result, SAVE_RESULT)
                     and hasattr(self._module, "handle_save")
                 ):
                     self._module.handle_save(self, result)  # pyright: ignore[reportAny]
@@ -93,7 +95,7 @@ class Agent:
         module.__dict__.update(self.create_methods())
 
         if not hasattr(module, "think"):
-            raise AttributeError(f"{path} does not define a `think(agent: Agent)` function.")
+            raise AttributeError(f"{path} does not define a `think()` function.")
 
         self._module = module
 
@@ -137,7 +139,7 @@ class Agent:
             self.set_energy_level(move_result.energy_level)
             self.set_location(curr_info.location)
             self.update_surround(move_result.surround_info)
-        elif SAVE_SURV_RESULT is not None and isinstance(aegis_command, SAVE_SURV_RESULT):
+        elif SAVE_RESULT is not None and isinstance(aegis_command, SAVE_RESULT):
             self._results.append(aegis_command)
         elif isinstance(aegis_command, RECHARGE_RESULT):
             recharge_result: RECHARGE_RESULT = aegis_command

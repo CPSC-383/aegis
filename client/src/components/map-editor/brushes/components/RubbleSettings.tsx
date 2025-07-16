@@ -16,7 +16,7 @@ function RubbleSettings({ rubbleInfo, setRubbleInfo }: Props) {
             const newValue = Math.max(0, value)
             setRubbleInfo({
                 ...rubbleInfo,
-                remove_energy: newValue
+                energy_required: newValue
             })
         }
     }
@@ -27,7 +27,7 @@ function RubbleSettings({ rubbleInfo, setRubbleInfo }: Props) {
             const newValue = Math.max(0, value)
             setRubbleInfo({
                 ...rubbleInfo,
-                remove_agents: newValue
+                agents_required: newValue
             })
         }
     }
@@ -42,12 +42,12 @@ function RubbleSettings({ rubbleInfo, setRubbleInfo }: Props) {
                 <Input
                     id="remove-energy"
                     type="number"
-                    value={rubbleInfo.remove_energy}
+                    value={rubbleInfo.energy_required}
                     onChange={(e) => {
                         const value = e.target.value === '' ? 0 : Number(e.target.value)
                         setRubbleInfo({
                             ...rubbleInfo,
-                            remove_energy: value
+                            energy_required: value
                         })
                     }}
                     onBlur={handleEnergyBlur}
@@ -63,12 +63,12 @@ function RubbleSettings({ rubbleInfo, setRubbleInfo }: Props) {
                 <Input
                     id="remove-agents"
                     type="number"
-                    value={rubbleInfo.remove_agents}
+                    value={rubbleInfo.agents_required}
                     onChange={(e) => {
                         const value = e.target.value === '' ? 0 : Number(e.target.value)
                         setRubbleInfo({
                             ...rubbleInfo,
-                            remove_agents: value
+                            agents_required: value
                         })
                     }}
                     onBlur={handleAgentsBlur}

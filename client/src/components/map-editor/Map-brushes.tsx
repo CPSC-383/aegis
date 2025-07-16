@@ -22,7 +22,7 @@ function MapBrushes() {
     const [gid, setGid] = useState<number>(0)
     const [spawnZoneType, setSpawnZoneType] = useState<SpawnZoneTypes>(SpawnZoneTypes.Any)
     const [stackType, setStackType] = useState<StackContentBrushTypes>(StackContentBrushTypes.Survivor)
-    const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({ remove_energy: 0, remove_agents: 0 })
+    const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({ energy_required: 0, agents_required: 0 })
     const [survivorInfo, _] = useState<SurvivorInfo>({
         energy_level: 100
     })

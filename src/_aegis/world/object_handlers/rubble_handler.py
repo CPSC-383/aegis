@@ -18,13 +18,13 @@ class RubbleHandler(ObjectHandler):
     def create_world_object(self, params: dict[Arguments, int]) -> WorldObject | None:
         if len(params) < 2:
             print(
-                "WARNING: RubbleHandler: incorrect Parameter setting: missing remove_energy and/or remove_agents"
+                "WARNING: RubbleHandler: incorrect Parameter setting: missing energy_required and/or agents_required"
             )
             return None
 
-        remove_energy = params["remove_energy"]
-        remove_agents = params["remove_agents"]
-        rubble = Rubble(self.world_object_count, remove_energy, remove_agents)
+        energy_required = params["energy_required"]
+        agents_required = params["agents_required"]
+        rubble = Rubble(self.world_object_count, energy_required, agents_required)
         self.rb_map[self.world_object_count] = rubble
         self.world_object_count += 1
         return rubble

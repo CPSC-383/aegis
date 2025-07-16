@@ -606,8 +606,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
+            "energy_required": 0,
+            "agents_required": 2
           }
         },
         {
@@ -1460,8 +1460,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
+            "energy_required": 0,
+            "agents_required": 0
           }
         },
         {

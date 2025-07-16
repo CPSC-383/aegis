@@ -134,8 +134,8 @@ def generate_random_stack_contents():
                 {
                     "type": "rb",
                     "arguments": {
-                        "remove_energy": random.randint(0, 20),
-                        "remove_agents": random.randint(0, 2),
+                        "energy_required": random.randint(0, 20),
+                        "agents_required": random.randint(0, 2),
                     },
                 }
             )

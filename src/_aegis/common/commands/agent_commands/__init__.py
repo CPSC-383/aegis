@@ -1,20 +1,17 @@
-from _aegis.common.commands.agent_commands.AGENT_UNKNOWN import AGENT_UNKNOWN
-from _aegis.common.commands.agent_commands.MOVE import MOVE
-from _aegis.common.commands.agent_commands.OBSERVE import OBSERVE
-
-# from _aegis.common.commands.agent_commands.PREDICT import PREDICT
-from _aegis.common.commands.agent_commands.SAVE_SURV import SAVE_SURV
-from _aegis.common.commands.agent_commands.SEND_MESSAGE import SEND_MESSAGE
-from _aegis.common.commands.agent_commands.RECHARGE import RECHARGE
-from _aegis.common.commands.agent_commands.TEAM_DIG import TEAM_DIG
+from .AGENT_UNKNOWN import AGENT_UNKNOWN
+from .DIG import DIG
+from .MOVE import MOVE
+from .OBSERVE import OBSERVE
+from .RECHARGE import RECHARGE
+from .SAVE import SAVE
+from .SEND_MESSAGE import SEND_MESSAGE
 
 __all__ = [
     "AGENT_UNKNOWN",
     "MOVE",
     "OBSERVE",
-    "SAVE_SURV",
-    # "PREDICT",
+    "SAVE",
     "SEND_MESSAGE",
     "RECHARGE",
-    "TEAM_DIG",
+    "DIG",
 ]

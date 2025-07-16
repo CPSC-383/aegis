@@ -1,8 +1,8 @@
 from aegis import (
     MOVE,
     OBSERVE_RESULT,
-    SAVE_SURV,
-    SAVE_SURV_RESULT,
+    SAVE,
+    SAVE_RESULT,
     SEND_MESSAGE,
     Agent,
     Direction,
@@ -27,7 +27,7 @@ def handle_observe(agent: Agent, ovr: OBSERVE_RESULT) -> None:
     agent.log(f"OVR: {ovr}")
 
 
-def handle_save(agent: Agent, svr: SAVE_SURV_RESULT) -> None:
+def handle_save(agent: Agent, svr: SAVE_RESULT) -> None:
     """
     Function to handle survivor result.
     This is called after `handle_messages()` and before `think()` if there are results to process.
@@ -65,7 +65,7 @@ def think(agent: Agent) -> None:
     # If a survivor is present, save it and end the turn.
     top_layer = cell.get_top_layer()
     if isinstance(top_layer, Survivor):
-        agent.send(SAVE_SURV())
+        agent.send(SAVE())
         return
 
     # Default action: Move the agent north if no other specific conditions are met.

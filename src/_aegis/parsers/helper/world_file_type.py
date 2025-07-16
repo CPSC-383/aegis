@@ -45,8 +45,8 @@ class CellTypes(TypedDict):
 Arguments = Literal[
     "energy_level",
     "number_of_survivors",
-    "remove_energy",
-    "remove_agents",
+    "energy_required",
+    "agents_required",
 ]
 
 

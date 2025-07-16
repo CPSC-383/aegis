@@ -9,9 +9,9 @@ from _aegis.common.commands.agent_commands import (
     MOVE,
     OBSERVE,
     RECHARGE,
-    SAVE_SURV,
+    SAVE,
     SEND_MESSAGE,
-    TEAM_DIG,
+    DIG,
 )
 from _aegis.common.world.objects import Survivor
 from _aegis.common.world.world import World
@@ -30,23 +30,23 @@ __all__ = [
     "MOVE",
     "OBSERVE",
     "OBSERVE_RESULT",
-    "SAVE_SURV",
+    "SAVE",
     "SEND_MESSAGE",
     "RECHARGE",
     "Survivor",
-    "TEAM_DIG",
+    "DIG",
     "World",
     "Cell",
     "main",
 ]
 
 try:
-    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT  # noqa: F401
+    from _aegis.common.commands.aegis_commands.SAVE_RESULT import SAVE_RESULT  # noqa: F401
     from _aegis.common.commands.agent_commands.PREDICT import PREDICT  # noqa: F401
 except ImportError:
     pass
 else:
-    __all__.append("SAVE_SURV_RESULT")
+    __all__.append("SAVE_RESULT")
     __all__.append("PREDICT")
 
 __version__ = "2.0.0"

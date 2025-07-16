@@ -1,9 +1,7 @@
 from abc import ABC
 
-from _aegis.common.commands.command import Command
+from .command import Command
 
 
 class AegisCommand(Command, ABC):
-    """The base class that represents all commands coming from AEGIS."""
-
     pass
