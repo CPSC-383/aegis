@@ -1,6 +1,5 @@
 import base64
 import json
-import os
 import random
 from typing import Any, TypedDict, cast
 
@@ -17,7 +16,6 @@ from ..common.world.cell import Cell
 from ..common.world.info import CellInfo, SurroundInfo
 from ..common.world.objects import Survivor
 from ..common.world.world import World
-from ..parsers.aegis_parser import AegisParser
 from ..parsers.aegis_world_file import AegisWorldFile
 from ..parsers.helper.world_file_type import StackContent, WorldFileType
 from ..parsers.world_file_parser import WorldFileParser
@@ -179,7 +177,7 @@ class AegisWorld:
                 self._number_of_survivors_alive + self._number_of_survivors_dead
             )
             self._survivors_list = survivor_handler.sv_map
-            self._write_agent_world_file()
+            # self._write_agent_world_file()
             return True
         except Exception as e:
             print(f"Error in building world: {e}")
@@ -190,38 +188,34 @@ class AegisWorld:
         for key in keys:
             self._object_handlers[key.upper()] = object_handler
 
-    def _write_agent_world_file(self) -> None:
-        try:
-            file = "WorldInfoFile.out"
-            with open(file, "w") as writer:
-                if self._world is None:
-                    return
+    def _build_agent_world(self) -> list[list[Cell]]:
+        if self._world is None:
+            raise ValueError("World is not initialized")
 
-                width = self._world.width
-                height = self._world.height
-                _ = writer.write(f"Size: ( WIDTH {width} , HEIGHT {height} )\n")
-                for x in range(self._world.width):
-                    for y in range(self._world.height):
-                        cell = self._world.get_cell_at(Location(x, y))
-                        if cell is None:
-                            _ = writer.write(f"[({x},{y}),No Cell]\n")
-                            continue
+        width, height = self._world.width, self._world.height
+        world: list[list[Cell]] = [
+            [Cell(x, y) for y in range(height)] for x in range(width)
+        ]
 
-                        killer = "+K" if cell.is_killer_cell() else "-K"
-                        charging = "+C" if cell.is_charging_cell() else "-C"
+        for x in range(width):
+            for y in range(height):
+                source_cell = self._world.get_cell_at(Location(x, y))
+                cell = world[x][y]
 
-                        if is_feature_enabled("ENABLE_MOVE_COST"):
-                            _ = writer.write(
-                                f"[({x},{y}),({killer},{charging}),{cell.move_cost}]\n"
-                            )
-                        else:
-                            _ = writer.write(f"[({x},{y}),({killer},{charging})]\n")
-            path = os.path.realpath(os.getcwd())
-            self._agent_world_filename = os.path.join(path, file)
-        except Exception:
-            print(
-                f"Aegis  : Unable to write agent world file to '{self._agent_world_filename}'!"
-            )
+                if source_cell is None:
+                    continue
+
+                if source_cell.is_killer_cell():
+                    cell.set_killer_cell()
+                elif source_cell.is_charging_cell():
+                    cell.set_charging_cell()
+                else:
+                    cell.set_normal_cell()
+
+                if is_feature_enabled("ENABLE_MOVE_COST"):
+                    cell.move_cost = source_cell.move_cost
+
+        return world
 
     def grim_reaper(self) -> list[AgentID]:
         dead_agents: list[AgentID] = []
@@ -271,7 +265,7 @@ class AegisWorld:
         if cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")
 
-        world = World(AegisParser.build_world(self._agent_world_filename))
+        world = World(self._build_agent_world())
         agent = Agent(
             world, self._world, agent_id, cell.location, self._initial_agent_energy
         )
