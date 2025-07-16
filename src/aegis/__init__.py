@@ -41,12 +41,12 @@ __all__ = [
 ]
 
 try:
-    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT  # noqa: F401
+    from _aegis.common.commands.aegis_commands.SAVE_RESULT import SAVE_RESULT  # noqa: F401
     from _aegis.common.commands.agent_commands.PREDICT import PREDICT  # noqa: F401
 except ImportError:
     pass
 else:
-    __all__.append("SAVE_SURV_RESULT")
+    __all__.append("SAVE_RESULT")
     __all__.append("PREDICT")
 
 __version__ = "2.0.0"

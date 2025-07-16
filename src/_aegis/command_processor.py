@@ -32,10 +32,10 @@ from _aegis.world.aegis_world import AegisWorld
 
 
 try:
-    from _aegis.common.commands.aegis_commands.SAVE_SURV_RESULT import SAVE_SURV_RESULT
+    from _aegis.common.commands.aegis_commands.SAVE_RESULT import SAVE_RESULT
     from _aegis.common.commands.agent_commands.PREDICT import PREDICT
 except ImportError:
-    SAVE_SURV_RESULT = None  # pyright: ignore[reportConstantRedefinition]
+    SAVE_RESULT = None  # pyright: ignore[reportConstantRedefinition]
     PREDICT = None  # pyright: ignore[reportConstantRedefinition]
 
 if TYPE_CHECKING:
@@ -206,7 +206,7 @@ class CommandProcessor:
             gid_counter[aid.gid] += 1
 
         top_layer = cell.get_top_layer()
-        agent.remove_energy(Constants.SAVE_SURV_ENERGY_COST)
+        agent.remove_energy(Constants.SAVE_ENERGY_COST)
         if top_layer is None:
             return
         self._handle_top_layer(top_layer, cell, agents_here, gid_counter)
@@ -235,7 +235,7 @@ class CommandProcessor:
                         if (
                             is_feature_enabled("ENABLE_PREDICTIONS")
                             and self._prediction_handler is not None
-                            and SAVE_SURV_RESULT is not None
+                            and SAVE_RESULT is not None
                         ):
                             pred_info = (
                                 self._prediction_handler.get_pred_info_for_agent(
@@ -244,7 +244,7 @@ class CommandProcessor:
                             )
                             if pred_info is not None:
                                 result_commands.append(
-                                    SAVE_SURV_RESULT(
+                                    SAVE_RESULT(
                                         pred_info[0], pred_info[1], pred_info[2]
                                     )
                                 )
@@ -297,7 +297,7 @@ class CommandProcessor:
             for aid in agents_here:
                 agent = self._world.get_agent(aid)
                 if agent is not None:
-                    agent.remove_energy(Constants.SAVE_SURV_ENERGY_COST)
+                    agent.remove_energy(Constants.SAVE_ENERGY_COST)
 
     def _calculate_survivor_stats(self, survivor: Survivor) -> tuple[int, int]:
         self._world.remove_survivor(survivor)

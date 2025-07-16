@@ -12,7 +12,7 @@ class Constants:
     SCORE_CORRECT_PRED: int = 10
     NUM_OF_TESTING_IMAGES: int = 704
     OBSERVE_ENERGY_COST: int = 1
-    SAVE_SURV_ENERGY_COST: int = 1
+    SAVE_ENERGY_COST: int = 1
     PREDICTION_ENERGY_COST: int = 1
     DIG_ENERGY_COST: int = 1
     MOVE_ENERGY_COST: int = 1
