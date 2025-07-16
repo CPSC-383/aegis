@@ -51,7 +51,7 @@ class Agent:
             raise RuntimeError("Module should not be of `None` type.")
         self._send_messages()
         self._send_results()
-        self._module.think(self)  # pyright: ignore[reportAny]
+        self._module.think()  # pyright: ignore[reportAny]
 
     def _send_results(self) -> None:
         if self._results and self._module:
@@ -88,6 +88,10 @@ class Agent:
         module = importlib.util.module_from_spec(spec)
         sys.modules[module_name] = module
         spec.loader.exec_module(module)
+
+        # This must be injected after spec.loader, or else all these methods won't
+        # exist in the agent
+        module.__dict__.update(self.create_methods())
 
         if not hasattr(module, "think"):
             raise AttributeError(
@@ -196,3 +200,11 @@ class Agent:
 
     def add_step_taken(self) -> None:
         self.steps_taken += 1
+
+    def create_methods(self):
+        return {
+            "get_location": self.get_location,
+            "get_round_number": self.get_round_number,
+            "send": self.send,
+            "get_world": self.get_world,
+        }
