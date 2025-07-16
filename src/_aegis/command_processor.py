@@ -1,45 +1,45 @@
 from typing import TYPE_CHECKING
-from _aegis.aegis_config import is_feature_enabled
-from _aegis.agent_control.agent_handler import AgentHandler
-from _aegis.common.agent_id import AgentID
-from _aegis.common.commands.aegis_command import AegisCommand
-from _aegis.common.commands.aegis_commands import (
+
+from .aegis_config import is_feature_enabled
+from .agent import Agent
+from .agent_handler import AgentHandler
+from .common.agent_id import AgentID
+from .common.commands.aegis_command import AegisCommand
+from .common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
     OBSERVE_RESULT,
     RECHARGE_RESULT,
     SEND_MESSAGE_RESULT,
     WORLD_UPDATE,
 )
-from _aegis.common.commands.agent_command import AgentCommand
-from _aegis.common.commands.agent_commands import (
+from .common.commands.agent_command import AgentCommand
+from .common.commands.agent_commands import (
+    DIG,
     MOVE,
     OBSERVE,
-    SEND_MESSAGE,
     RECHARGE,
-    DIG,
+    SAVE,
+    SEND_MESSAGE,
 )
-from _aegis.common.commands.agent_commands.SAVE import SAVE
-from _aegis.common.constants import Constants
-from _aegis.common.direction import Direction
-from _aegis.common.utility import Utility
-from _aegis.common.world.cell import Cell
-from _aegis.common.world.info.cell_info import CellInfo
-from _aegis.common.world.objects.rubble import Rubble
-from _aegis.common.world.objects.survivor import Survivor
-from _aegis.common.world.objects.world_object import WorldObject
-from _aegis.agent import Agent
-from _aegis.world.aegis_world import AegisWorld
-
+from .common.constants import Constants
+from .common.direction import Direction
+from .common.utility import Utility
+from .common.world.cell import Cell
+from .common.world.info.cell_info import CellInfo
+from .common.world.objects.rubble import Rubble
+from .common.world.objects.survivor import Survivor
+from .common.world.objects.world_object import WorldObject
+from .world.aegis_world import AegisWorld
 
 try:
-    from _aegis.common.commands.aegis_commands.SAVE_RESULT import SAVE_RESULT
-    from _aegis.common.commands.agent_commands.PREDICT import PREDICT
+    from .common.commands.aegis_commands.SAVE_RESULT import SAVE_RESULT
+    from .common.commands.agent_commands.PREDICT import PREDICT
 except ImportError:
     SAVE_RESULT = None  # pyright: ignore[reportConstantRedefinition]
     PREDICT = None  # pyright: ignore[reportConstantRedefinition]
 
 if TYPE_CHECKING:
-    from _aegis.agent_predictions.prediction_handler import (
+    from .agent_predictions.prediction_handler import (
         PredictionHandler as PredictionHandlerType,
     )
 else:

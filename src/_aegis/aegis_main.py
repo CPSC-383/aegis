@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from .aegis_config import is_feature_enabled
 from .command_processor import CommandProcessor
 from .agent import Agent
-from .agent_control.agent_handler import AgentHandler
+from .agent_handler import AgentHandler
 
 from .assist.parameters import Parameters
 from .common.commands.agent_command import AgentCommand

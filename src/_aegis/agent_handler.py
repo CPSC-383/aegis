@@ -1,6 +1,6 @@
-from ..group import AgentGroup
-from ..common.agent_id import AgentID
-from ..common.constants import Constants
+from .common.agent_id import AgentID
+from .common.constants import Constants
+from .group import AgentGroup
 
 
 class AgentHandler:

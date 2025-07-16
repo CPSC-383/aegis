@@ -149,11 +149,17 @@ class Cell:
 
     @override
     def __str__(self) -> str:
-        s = f"Cell ( ({self.location.x},{self.location.y}), Move_Cost {self.move_cost}) \n\t\t{{\n"
-        for layer in self._cell_layer_list:
-            s += f"\t\t    {layer.file_output_string()};\n"
-        s += "\t\t}\n\n"
-        return s
+        if not self._cell_layer_list:
+            layers_str = "  (no layers)"
+        else:
+            layers_str = "\n".join(
+                f"  {i + 1} - {layer}"
+                for i, layer in enumerate(reversed(self._cell_layer_list))
+            )
+        return f"""Cell at ({self.location.x}, {self.location.y}) - Move Cost: {self.move_cost}
+Layers:
+{layers_str}
+    """
 
     @override
     def __repr__(self) -> str:
