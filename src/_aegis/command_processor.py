@@ -164,13 +164,13 @@ class CommandProcessor:
         top_layer = cell.get_top_layer()
 
         if isinstance(top_layer, Rubble):
-            if top_layer.remove_agents <= len(agents_here) and all(
+            if top_layer.agents_required <= len(agents_here) and all(
                 (a := self._world.get_agent(aid)) is not None
-                and a.get_energy_level() >= top_layer.remove_energy
+                and a.get_energy_level() >= top_layer.energy_required
                 for aid in agents_here
             ):
                 self._world.remove_layer_from_cell(cell.location)
-                agent.remove_energy(top_layer.remove_energy)
+                agent.remove_energy(top_layer.energy_required)
         else:
             agent.remove_energy(Constants.TEAM_DIG_ENERGY_COST)
 

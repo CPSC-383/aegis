@@ -876,8 +876,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 5,
-            "remove_agents": 2
+            "energy_required": 5,
+            "agents_required": 2
           }
         },
         {

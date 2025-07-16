@@ -8,7 +8,7 @@ export type Size = {
 // Use the protobuf Location type
 export type Location = ProtobufLocation
 
-export type Arguments = 'energy_level' | 'number_of_survivors' | 'remove_energy' | 'remove_agents'
+export type Arguments = 'energy_level' | 'number_of_survivors' | 'energy_required' | 'agents_required'
 
 export type StackContent = {
     type: string
@@ -31,8 +31,8 @@ export type Spawn = {
 }
 
 export type RubbleInfo = {
-    remove_energy: number
-    remove_agents: number
+    energy_required: number
+    agents_required: number
 }
 
 export type SurvivorInfo = {
