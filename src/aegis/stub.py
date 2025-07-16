@@ -7,7 +7,7 @@ from . import (
     World,
     Location,
     MOVE,
-    SAVE_SURV,
+    SAVE,
     Direction,
     Survivor,
     AgentID,

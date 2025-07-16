@@ -9,9 +9,9 @@ from _aegis.common.commands.agent_commands import (
     MOVE,
     OBSERVE,
     RECHARGE,
-    SAVE_SURV,
+    SAVE,
     SEND_MESSAGE,
-    TEAM_DIG,
+    DIG,
 )
 from _aegis.common.world.objects import Survivor
 from _aegis.common.world.world import World
@@ -30,11 +30,11 @@ __all__ = [
     "MOVE",
     "OBSERVE",
     "OBSERVE_RESULT",
-    "SAVE_SURV",
+    "SAVE",
     "SEND_MESSAGE",
     "RECHARGE",
     "Survivor",
-    "TEAM_DIG",
+    "DIG",
     "World",
     "Cell",
     "main",

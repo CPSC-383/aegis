@@ -1,24 +1,11 @@
 from typing import override
 
 from _aegis.common import Location
-from _aegis.common.commands.agent_command import AgentCommand
+from ..agent_command import AgentCommand
 
 
 class OBSERVE(AgentCommand):
-    """
-    Represents a command for an agent to observe a cell in the world.
-
-    Attributes:
-        location (Location): The location to observe.
-    """
-
     def __init__(self, location: Location) -> None:
-        """
-        Initializes a OBSERVE instance.
-
-        Args:
-            location: The location to observe.
-        """
         self.location: Location = location
 
     @override

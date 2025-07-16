@@ -16,9 +16,9 @@ from _aegis.common.commands.agent_commands import (
     OBSERVE,
     SEND_MESSAGE,
     RECHARGE,
-    TEAM_DIG,
+    DIG,
 )
-from _aegis.common.commands.agent_commands.SAVE_SURV import SAVE_SURV
+from _aegis.common.commands.agent_commands.SAVE import SAVE
 from _aegis.common.constants import Constants
 from _aegis.common.direction import Direction
 from _aegis.common.utility import Utility
@@ -121,9 +121,9 @@ class CommandProcessor:
                 pass
             else:
                 match cmd:
-                    case TEAM_DIG():
+                    case DIG():
                         self._handle_dig(cmd)
-                    case SAVE_SURV():
+                    case SAVE():
                         self._handle_save(cmd)
                     case MOVE():
                         self._handle_move(cmd)
@@ -151,7 +151,7 @@ class CommandProcessor:
             else:
                 agent.add_energy(Constants.NORMAL_CHARGE)
 
-    def _handle_dig(self, cmd: TEAM_DIG) -> None:
+    def _handle_dig(self, cmd: DIG) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
         if agent is None:
             return
@@ -172,7 +172,7 @@ class CommandProcessor:
                 self._world.remove_layer_from_cell(cell.location)
                 agent.remove_energy(top_layer.energy_required)
         else:
-            agent.remove_energy(Constants.TEAM_DIG_ENERGY_COST)
+            agent.remove_energy(Constants.DIG_ENERGY_COST)
 
     def _handle_move(self, cmd: MOVE) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
@@ -191,7 +191,7 @@ class CommandProcessor:
         else:
             agent.remove_energy(Constants.MOVE_ENERGY_COST)
 
-    def _handle_save(self, cmd: SAVE_SURV) -> None:
+    def _handle_save(self, cmd: SAVE) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
         if agent is None:
             return
@@ -226,10 +226,10 @@ class CommandProcessor:
                 result_commands.append(AEGIS_UNKNOWN())
             else:
                 match cmd:
-                    case MOVE() | TEAM_DIG():
+                    case MOVE() | DIG():
                         result_commands.append(WORLD_UPDATE(energy, surround_info))
 
-                    case SAVE_SURV():
+                    case SAVE():
                         result_commands.append(WORLD_UPDATE(energy, surround_info))
 
                         if (

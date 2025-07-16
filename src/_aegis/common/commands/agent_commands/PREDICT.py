@@ -2,26 +2,11 @@ from typing import override
 
 import numpy as np
 
-from _aegis.common.commands.agent_command import AgentCommand
+from ..agent_command import AgentCommand
 
 
 class PREDICT(AgentCommand):
-    """
-    Represents the prediction of an agent.
-
-    Attributes:
-        surv_id (int): The id of the survivor (predictions are based on saved survivors, so this is the id of the survivor associated with the prediction).
-        label (np.int64): The label of the prediction.
-    """
-
     def __init__(self, surv_id: int, label: np.int64):
-        """
-        Initializes a PREDICT instance.
-
-        Args:
-            surv_id: The id of the survivor (predictions are based on saved survivors, so this is the id of the survivor associated with the prediction).
-            label: The label of the prediction.
-        """
         super().__init__()
         self.surv_id: int = surv_id
         self.label: np.int64 = label
