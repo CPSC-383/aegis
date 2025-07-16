@@ -2,7 +2,7 @@ from typing import override
 
 from _aegis.common.world.objects import Rubble, WorldObject
 from _aegis.parsers.helper.world_file_type import Arguments
-from _aegis.world.object_handlers.object_handler import ObjectHandler
+from .object_handler import ObjectHandler
 
 
 class RubbleHandler(ObjectHandler):

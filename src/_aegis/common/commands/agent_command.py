@@ -15,7 +15,3 @@ class AgentCommand(Command, ABC):
 
     def set_agent_id(self, agent_id: AgentID) -> None:
         self._agent_id = agent_id
-
-    @abstractmethod
-    def proc_string(self) -> str:
-        pass

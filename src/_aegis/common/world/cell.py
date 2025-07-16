@@ -18,7 +18,6 @@ class Cell:
     Attributes:
         move_cost (int): The movement cost associated with the cell.
         agent_id_list (list[AgentID]): List of agent IDs present in the cell.
-        has_survivors (bool): If there are survivors in the cell.
         location (Location): The location of the cell on the map.
     """
 
@@ -38,7 +37,6 @@ class Cell:
         self.move_cost: int = 1
         self.agent_id_list: list[AgentID] = []
         self._cell_layer_list: list[WorldObject] = []
-        self.has_survivors: bool = False
 
         if x is not None and y is not None:
             self.location: Location = Location(x, y)
@@ -125,9 +123,6 @@ class Cell:
             return
         self._cell_layer_list.append(top_layer)
 
-    def number_of_layers(self) -> int:
-        return len(self._cell_layer_list)
-
     def get_cell_info(self) -> CellInfo:
         cell_type = CellType.NORMAL_CELL
 
@@ -136,11 +131,12 @@ class Cell:
         elif self.is_charging_cell():
             cell_type = CellType.CHARGING_CELL
 
+        loc = Location(self.location.x, self.location.y)
         return CellInfo(
             cell_type,
-            self.location.clone(),
+            loc,
             self.move_cost,
-            [agent_id.clone() for agent_id in self.agent_id_list],
+            [AgentID(agent_id.id, agent_id.gid) for agent_id in self.agent_id_list],
             self.get_top_layer(),
         )
 
@@ -162,13 +158,3 @@ class Cell:
     @override
     def __repr__(self) -> str:
         return self.__str__()
-
-    def clone(self) -> Cell:
-        cell = Cell()
-        cell._type = self._type
-        cell.location = self.location
-        cell.agent_id_list = [agent_id.clone() for agent_id in self.agent_id_list]
-        cell._cell_layer_list = [layer.clone() for layer in self._cell_layer_list]
-        cell.move_cost = self.move_cost
-        cell.has_survivors = self.has_survivors
-        return cell

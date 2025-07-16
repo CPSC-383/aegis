@@ -2,34 +2,34 @@ import base64
 import json
 import os
 import random
-from typing import TypedDict, cast, Any
+from typing import Any, TypedDict, cast
 
-from _aegis.common import (
+from ..aegis_config import is_feature_enabled
+from ..agent import Agent
+from ..common import (
     AgentID,
     Constants,
     Direction,
     Location,
     Utility,
 )
-from _aegis.agent import Agent
-from _aegis.common.world.cell import Cell
-from _aegis.common.world.info import CellInfo, SurroundInfo
-from _aegis.common.world.objects import Survivor
-from _aegis.common.world.world import World
-from _aegis.aegis_config import is_feature_enabled
-from _aegis.parsers.aegis_parser import AegisParser
-from _aegis.parsers.aegis_world_file import AegisWorldFile
-from _aegis.parsers.helper.world_file_type import StackContent, WorldFileType
-from _aegis.parsers.world_file_parser import WorldFileParser
-from _aegis.server_websocket import WebSocketServer
-from _aegis.world.object_handlers import (
+from ..common.world.cell import Cell
+from ..common.world.info import CellInfo, SurroundInfo
+from ..common.world.objects import Survivor
+from ..common.world.world import World
+from ..parsers.aegis_parser import AegisParser
+from ..parsers.aegis_world_file import AegisWorldFile
+from ..parsers.helper.world_file_type import StackContent, WorldFileType
+from ..parsers.world_file_parser import WorldFileParser
+from ..protobuf.protobuf_service import ProtobufService
+from ..server_websocket import WebSocketServer
+from ..world.spawn_manager import SpawnManger
+from .object_handlers import (
     ObjectHandler,
     RubbleHandler,
     SurvivorHandler,
 )
-from _aegis.world.simulators.survivor_simulator import SurvivorSimulator
-from _aegis.world.spawn_manager import SpawnManger
-from _aegis.protobuf.protobuf_service import ProtobufService
+from .simulators.survivor_simulator import SurvivorSimulator
 
 
 class LocationDict(TypedDict):
@@ -207,21 +207,15 @@ class AegisWorld:
                             _ = writer.write(f"[({x},{y}),No Cell]\n")
                             continue
 
-                        has_survivors = True
-                        if cell.number_of_survivors() <= 0:
-                            has_survivors = False
-
                         killer = "+K" if cell.is_killer_cell() else "-K"
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
                         if is_feature_enabled("ENABLE_MOVE_COST"):
                             _ = writer.write(
-                                f"[({x},{y}),({killer},{charging}),{has_survivors},{cell.move_cost}]\n"
+                                f"[({x},{y}),({killer},{charging}),{cell.move_cost}]\n"
                             )
                         else:
-                            _ = writer.write(
-                                f"[({x},{y}),({killer},{charging}),{has_survivors}]\n"
-                            )
+                            _ = writer.write(f"[({x},{y}),({killer},{charging})]\n")
             path = os.path.realpath(os.getcwd())
             self._agent_world_filename = os.path.join(path, file)
         except Exception:
@@ -277,11 +271,10 @@ class AegisWorld:
         if cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")
 
-        agent = Agent()
-        agent.set_agent_id(agent_id)
-        agent.set_location(cell.location)
-        agent.set_energy_level(self._initial_agent_energy)
-        agent.set_world(World(AegisParser.build_world(self._agent_world_filename)))
+        world = World(AegisParser.build_world(self._agent_world_filename))
+        agent = Agent(
+            world, self._world, agent_id, cell.location, self._initial_agent_energy
+        )
         self.add_agent(agent)
         return agent
 
@@ -487,7 +480,6 @@ class AegisWorld:
                     "agent_ids": [
                         {"id": aid.id, "gid": aid.gid} for aid in cell.agent_id_list
                     ],
-                    "has_survivors": cell.number_of_survivors() > 0,
                 }
 
                 # Add top layer if present

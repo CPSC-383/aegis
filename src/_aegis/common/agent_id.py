@@ -31,18 +31,6 @@ class AgentID:
     def __repr__(self) -> str:
         return self.__str__()
 
-    def proc_string(self) -> str:
-        return f"({self.id}, {self.gid})"
-
-    def clone(self) -> AgentID:
-        """
-        Creates and returns a new AgentID with the same ID and GID.
-
-        Returns:
-            A new AgentID object with same ID and GID as the current instance.
-        """
-        return AgentID(self.id, self.gid)
-
     @override
     def __hash__(self) -> int:
         hash_code = 3
