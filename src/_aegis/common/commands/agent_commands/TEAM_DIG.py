@@ -19,7 +19,3 @@ class TEAM_DIG(AgentCommand):
     @override
     def __repr__(self) -> str:
         return self.__str__()
-
-    @override
-    def proc_string(self) -> str:
-        return f"{self._agent_id.proc_string()}#Team Dig"

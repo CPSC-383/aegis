@@ -2,34 +2,34 @@ import base64
 import json
 import os
 import random
-from typing import TypedDict, cast, Any
+from typing import Any, TypedDict, cast
 
-from _aegis.common import (
+from ..aegis_config import is_feature_enabled
+from ..agent import Agent
+from ..common import (
     AgentID,
     Constants,
     Direction,
     Location,
     Utility,
 )
-from _aegis.agent import Agent
-from _aegis.common.world.cell import Cell
-from _aegis.common.world.info import CellInfo, SurroundInfo
-from _aegis.common.world.objects import Survivor
-from _aegis.common.world.world import World
-from _aegis.aegis_config import is_feature_enabled
-from _aegis.parsers.aegis_parser import AegisParser
-from _aegis.parsers.aegis_world_file import AegisWorldFile
-from _aegis.parsers.helper.world_file_type import StackContent, WorldFileType
-from _aegis.parsers.world_file_parser import WorldFileParser
-from _aegis.server_websocket import WebSocketServer
-from _aegis.world.object_handlers import (
+from ..common.world.cell import Cell
+from ..common.world.info import CellInfo, SurroundInfo
+from ..common.world.objects import Survivor
+from ..common.world.world import World
+from ..parsers.aegis_parser import AegisParser
+from ..parsers.aegis_world_file import AegisWorldFile
+from ..parsers.helper.world_file_type import StackContent, WorldFileType
+from ..parsers.world_file_parser import WorldFileParser
+from ..protobuf.protobuf_service import ProtobufService
+from ..server_websocket import WebSocketServer
+from ..world.spawn_manager import SpawnManger
+from .object_handlers import (
     ObjectHandler,
     RubbleHandler,
     SurvivorHandler,
 )
-from _aegis.world.simulators.survivor_simulator import SurvivorSimulator
-from _aegis.world.spawn_manager import SpawnManger
-from _aegis.protobuf.protobuf_service import ProtobufService
+from .simulators.survivor_simulator import SurvivorSimulator
 
 
 class LocationDict(TypedDict):
