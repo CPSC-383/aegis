@@ -180,6 +180,7 @@ class Agent:
             "send": self.send,
             "on_map": self.on_map,
             "get_cell_at": self.get_cell_at,
+            "get_energy_cells": self._world.get_energy_cells,
             "get_survs": self._aegis_world.get_survs,
             "log": self.log,
         }
