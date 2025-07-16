@@ -84,7 +84,6 @@ class AegisParser:
         y = int(tokens[1])
         killer = tokens[2]
         charging = tokens[3]
-        has_survivors = tokens[4] == "True"
         cell = Cell(x, y)
 
         cell.set_normal_cell()
@@ -94,10 +93,8 @@ class AegisParser:
         if charging[0] == "+":
             cell.set_charging_cell()
 
-        cell.has_survivors = has_survivors
-
         if is_feature_enabled("ENABLE_MOVE_COST"):
-            cell.move_cost = int(tokens[5])
+            cell.move_cost = int(tokens[4])
         return cell
 
     # @staticmethod

@@ -6,7 +6,8 @@ from pathlib import Path
 from types import ModuleType
 
 from _aegis.command_manager import CommandManager
-from _aegis.common import AgentID, Direction, Location
+from _aegis.common.world.cell import Cell
+from .common import AgentID, Direction, Location
 from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.commands.aegis_commands import (
     AEGIS_UNKNOWN,
@@ -27,23 +28,25 @@ except ImportError:
 
 
 class Agent:
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        world: World,
+        aegis_world: World,
+        id: AgentID,
+        location: Location,
+        energy_level: int,
+    ) -> None:
         self._round: int = 0
-        self._world: World | None = None
-        self._id: AgentID = AgentID(-1, -1)
-        self._location: Location = Location(-1, -1)
-        self._energy_level: int = -1
+        self._world: World = world
+        self._aegis_world: World = aegis_world
+        self._id: AgentID = id
+        self._location: Location = location
+        self._energy_level: int = energy_level
         self._command_manager: CommandManager = CommandManager()
         self._module: ModuleType | None = None
         self._inbox: list[SEND_MESSAGE_RESULT] = []
         self._results: list[AegisCommand] = []
         self.steps_taken: int = 0
-
-    def get_world(self) -> World | None:
-        return self._world
-
-    def set_world(self, world: World) -> None:
-        self._world = world
 
     def run(self) -> None:
         self._round += 1
@@ -101,44 +104,22 @@ class Agent:
         self._module = module
 
     def update_surround(self, surround_info: SurroundInfo) -> None:
-        world = self.get_world()
-        if world is None:
-            return
-
         for dir in Direction:
             cell_info = surround_info.get_surround_info(dir)
             if cell_info is None:
                 continue
 
-            cell = world.get_cell_at(cell_info.location)
+            cell = self._world.get_cell_at(cell_info.location)
             if cell is None:
                 continue
 
             cell.agent_id_list = cell_info.agent_id_list
             cell.move_cost = cell_info.move_cost
             cell.set_top_layer(cell_info.top_layer)
-            if cell_info.top_layer is None and cell.has_survivors:
-                cell.has_survivors = False
-
-    def get_round_number(self) -> int:
-        return self._round
-
-    def get_agent_id(self) -> AgentID:
-        return self._id
-
-    def set_agent_id(self, id: AgentID) -> None:
-        self._id = id
-        self.log(f"New ID: {self._id}")
-
-    def get_location(self) -> Location:
-        return self._location
 
     def set_location(self, location: Location) -> None:
         self._location = location
         self.log(f"New Location: {self._location}")
-
-    def get_energy_level(self) -> int:
-        return self._energy_level
 
     def set_energy_level(self, energy_level: int) -> None:
         self._energy_level = energy_level
@@ -152,15 +133,6 @@ class Agent:
 
     def get_messages(self) -> list[SEND_MESSAGE]:
         return self._command_manager.get_messages()
-
-    def send(self, command: AgentCommand) -> None:
-        command.set_agent_id(self.get_agent_id())
-        self._command_manager.send(command)
-
-    def log(self, message: str) -> None:
-        agent_id = self.get_agent_id()
-        id_str = f"[Agent#({agent_id.id}:{agent_id.gid})]@{self.get_round_number()}"
-        print(f"{id_str}: {message}")
 
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SEND_MESSAGE_RESULT):
@@ -203,8 +175,44 @@ class Agent:
 
     def create_methods(self):
         return {
-            "get_location": self.get_location,
             "get_round_number": self.get_round_number,
+            "get_agent_id": self.get_agent_id,
+            "get_location": self.get_location,
+            "get_energy_level": self.get_energy_level,
             "send": self.send,
-            "get_world": self.get_world,
+            "on_map": self.on_map,
+            "get_cell_at": self.get_cell_at,
+            "get_survs": self._aegis_world.get_survs,
+            "log": self.log,
         }
+
+    ###################################
+    # ===== Public User Methods ===== #
+    ###################################
+
+    def get_round_number(self) -> int:
+        return self._round
+
+    def get_agent_id(self) -> AgentID:
+        return self._id
+
+    def get_location(self) -> Location:
+        return self._location
+
+    def get_energy_level(self) -> int:
+        return self._energy_level
+
+    def send(self, command: AgentCommand) -> None:
+        command.set_agent_id(self.get_agent_id())
+        self._command_manager.send(command)
+
+    def on_map(self, loc: Location) -> bool:
+        return self._world.on_map(loc)
+
+    def get_cell_at(self, loc: Location) -> Cell | None:
+        return self._world.get_cell_at(loc)
+
+    def log(self, message: str) -> None:
+        agent_id = self.get_agent_id()
+        id_str = f"[Agent#({agent_id.id}:{agent_id.gid})]@{self.get_round_number()}"
+        print(f"{id_str}: {message}")

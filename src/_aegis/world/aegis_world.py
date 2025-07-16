@@ -207,21 +207,15 @@ class AegisWorld:
                             _ = writer.write(f"[({x},{y}),No Cell]\n")
                             continue
 
-                        has_survivors = True
-                        if cell.number_of_survivors() <= 0:
-                            has_survivors = False
-
                         killer = "+K" if cell.is_killer_cell() else "-K"
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
                         if is_feature_enabled("ENABLE_MOVE_COST"):
                             _ = writer.write(
-                                f"[({x},{y}),({killer},{charging}),{has_survivors},{cell.move_cost}]\n"
+                                f"[({x},{y}),({killer},{charging}),{cell.move_cost}]\n"
                             )
                         else:
-                            _ = writer.write(
-                                f"[({x},{y}),({killer},{charging}),{has_survivors}]\n"
-                            )
+                            _ = writer.write(f"[({x},{y}),({killer},{charging})]\n")
             path = os.path.realpath(os.getcwd())
             self._agent_world_filename = os.path.join(path, file)
         except Exception:
@@ -277,11 +271,10 @@ class AegisWorld:
         if cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")
 
-        agent = Agent()
-        agent.set_agent_id(agent_id)
-        agent.set_location(cell.location)
-        agent.set_energy_level(self._initial_agent_energy)
-        agent.set_world(World(AegisParser.build_world(self._agent_world_filename)))
+        world = World(AegisParser.build_world(self._agent_world_filename))
+        agent = Agent(
+            world, self._world, agent_id, cell.location, self._initial_agent_energy
+        )
         self.add_agent(agent)
         return agent
 
@@ -487,7 +480,6 @@ class AegisWorld:
                     "agent_ids": [
                         {"id": aid.id, "gid": aid.gid} for aid in cell.agent_id_list
                     ],
-                    "has_survivors": cell.number_of_survivors() > 0,
                 }
 
                 # Add top layer if present
