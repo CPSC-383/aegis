@@ -1,6 +1,6 @@
-from _aegis.agent_control.agent_group import AgentGroup
-from _aegis.common.agent_id import AgentID
-from _aegis.common.constants import Constants
+from ..group import AgentGroup
+from ..common.agent_id import AgentID
+from ..common.constants import Constants
 
 
 class AgentHandler:
