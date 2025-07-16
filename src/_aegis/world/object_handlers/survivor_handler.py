@@ -33,7 +33,7 @@ class SurvivorHandler(ObjectHandler):
 
         self.sv_map[self.world_object_count] = survivor
         self.world_object_count += 1
-        if survivor.get_energy_level() > 0:
+        if survivor.get_health() > 0:
             self.alive += 1
         else:
             self.dead += 1

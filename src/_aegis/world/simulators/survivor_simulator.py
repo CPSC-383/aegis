@@ -24,8 +24,8 @@ class SurvivorSimulator:
             if survivor.is_dead():
                 continue
             changed_count += 1
-            survivor.remove_energy(1)
-            s += f"({survivor.id},{survivor.get_energy_level()})"
+            survivor.remove_health(1)
+            s += f"({survivor.id},{survivor.get_health()})"
         if changed_count <= 0:
             s += "NONE"
         s += " };"
