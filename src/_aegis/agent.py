@@ -95,9 +95,7 @@ class Agent:
         module.__dict__.update(self.create_methods())
 
         if not hasattr(module, "think"):
-            raise AttributeError(
-                f"{path} does not define a `think(agent: Agent)` function."
-            )
+            raise AttributeError(f"{path} does not define a `think()` function.")
 
         self._module = module
 
