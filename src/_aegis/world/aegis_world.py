@@ -2,34 +2,34 @@ import base64
 import json
 import os
 import random
-from typing import TypedDict, cast, Any
+from typing import Any, TypedDict, cast
 
-from _aegis.common import (
+from ..aegis_config import is_feature_enabled
+from ..agent import Agent
+from ..common import (
     AgentID,
     Constants,
     Direction,
     Location,
     Utility,
 )
-from _aegis.agent import Agent
-from _aegis.common.world.cell import Cell
-from _aegis.common.world.info import CellInfo, SurroundInfo
-from _aegis.common.world.objects import Survivor
-from _aegis.common.world.world import World
-from _aegis.aegis_config import is_feature_enabled
-from _aegis.parsers.aegis_parser import AegisParser
-from _aegis.parsers.aegis_world_file import AegisWorldFile
-from _aegis.parsers.helper.world_file_type import StackContent, WorldFileType
-from _aegis.parsers.world_file_parser import WorldFileParser
-from _aegis.server_websocket import WebSocketServer
-from _aegis.world.object_handlers import (
+from ..common.world.cell import Cell
+from ..common.world.info import CellInfo, SurroundInfo
+from ..common.world.objects import Survivor
+from ..common.world.world import World
+from ..parsers.aegis_parser import AegisParser
+from ..parsers.aegis_world_file import AegisWorldFile
+from ..parsers.helper.world_file_type import StackContent, WorldFileType
+from ..parsers.world_file_parser import WorldFileParser
+from ..protobuf.protobuf_service import ProtobufService
+from ..server_websocket import WebSocketServer
+from ..world.spawn_manager import SpawnManger
+from .object_handlers import (
     ObjectHandler,
     RubbleHandler,
     SurvivorHandler,
 )
-from _aegis.world.simulators.survivor_simulator import SurvivorSimulator
-from _aegis.world.spawn_manager import SpawnManger
-from _aegis.protobuf.protobuf_service import ProtobufService
+from .simulators.survivor_simulator import SurvivorSimulator
 
 
 class LocationDict(TypedDict):
@@ -169,9 +169,7 @@ class AegisWorld:
             self._number_of_survivors_alive = survivor_handler.alive
             self._number_of_survivors_dead = survivor_handler.dead
 
-            self._number_of_survivors = (
-                self._number_of_survivors_alive + self._number_of_survivors_dead
-            )
+            self._number_of_survivors = self._number_of_survivors_alive + self._number_of_survivors_dead
             self._survivors_list = survivor_handler.sv_map
             self._write_agent_world_file()
             return True
@@ -205,9 +203,7 @@ class AegisWorld:
                         charging = "+C" if cell.is_charging_cell() else "-C"
 
                         if is_feature_enabled("ENABLE_MOVE_COST"):
-                            _ = writer.write(
-                                f"[({x},{y}),({killer},{charging}),{cell.move_cost}]\n"
-                            )
+                            _ = writer.write(f"[({x},{y}),({killer},{charging}),{cell.move_cost}]\n")
                         else:
                             _ = writer.write(f"[({x},{y}),({killer},{charging})]\n")
             path = os.path.realpath(os.getcwd())
@@ -259,11 +255,8 @@ class AegisWorld:
         if cell.is_killer_cell():
             print("Aegis  : Warning, agent has been placed on a killer cell!")
 
-        agent = Agent()
-        agent.set_agent_id(agent_id)
-        agent.set_location(cell.location)
-        agent.set_energy_level(self._initial_agent_energy)
-        agent.set_world(World(AegisParser.build_world(self._agent_world_filename)))
+        world = World(AegisParser.build_world(self._agent_world_filename))
+        agent = Agent(world, self._world, agent_id, cell.location, self._initial_agent_energy)
         self.add_agent(agent)
         return agent
 
@@ -354,9 +347,7 @@ class AegisWorld:
 
     def convert_to_json(self) -> WorldDict:
         if self._world is None:
-            raise Exception(
-                "Aegis  : World is not initialized! Cannot send world object to client!"
-            )
+            raise Exception("Aegis  : World is not initialized! Cannot send world object to client!")
 
         agent_data: list[AgentInfoDict] = []
         cell_data: list[CellDict] = []
@@ -435,17 +426,13 @@ class AegisWorld:
 
     def get_protobuf_world_data(self) -> dict[str, Any]:
         if self._world is None:
-            raise Exception(
-                "Aegis  : World is not initialized! Cannot send world object to client!"
-            )
+            raise Exception("Aegis  : World is not initialized! Cannot send world object to client!")
 
         cells = []
         agents = []
         survivors = []
 
-        agent_map = {
-            (agent.get_agent_id().id, agent.get_agent_id().gid): agent for agent in self._agents
-        }
+        agent_map = {(agent.get_agent_id().id, agent.get_agent_id().gid): agent for agent in self._agents}
 
         for x in range(self._world.width):
             for y in range(self._world.height):
@@ -468,9 +455,7 @@ class AegisWorld:
                     if isinstance(top_layer, Survivor):
                         cell_data["survivor"] = {
                             "id": top_layer.id,
-                            "state": (
-                                0 if top_layer.get_energy_level() > 0 else 1
-                            ),  # 0=alive, 1=dead
+                            "state": (0 if top_layer.get_energy_level() > 0 else 1),  # 0=alive, 1=dead
                         }
                         survivors.append(
                             {

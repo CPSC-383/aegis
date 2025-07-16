@@ -1,7 +1,7 @@
 import argparse
 from dataclasses import dataclass
 
-from _aegis.assist.parameters import Parameters
+from ..assist.parameters import Parameters
 
 
 @dataclass
@@ -18,15 +18,21 @@ class Args:
 def parse_args() -> tuple[Parameters, bool]:
     parser = argparse.ArgumentParser(description="AEGIS Simulation Configuration")
 
-    _ = parser.add_argument("--amount", type=int, default=1, help="Number of agents to run")
+    _ = parser.add_argument(
+        "--amount", type=int, default=1, help="Number of agents to run"
+    )
     _ = parser.add_argument(
         "--world",
         type=str,
         required=True,
         help="Indicates the file AEGIS should use to build the world from upon startup.",
     )
-    _ = parser.add_argument("--rounds", type=int, required=True, help="Number of simulation rounds")
-    _ = parser.add_argument("--agent", type=str, required=True, help="Path to the agent file")
+    _ = parser.add_argument(
+        "--rounds", type=int, required=True, help="Number of simulation rounds"
+    )
+    _ = parser.add_argument(
+        "--agent", type=str, required=True, help="Path to the agent file"
+    )
     _ = parser.add_argument("--group", type=str, required=True, help="Group name")
     _ = parser.add_argument(
         "--client", action="store_true", help="Set to wait for the client to connect"

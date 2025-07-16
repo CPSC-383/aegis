@@ -9,7 +9,3 @@ class AGENT_UNKNOWN(AgentCommand):
     @override
     def __str__(self) -> str:
         return self.STR_UNKNOWN
-
-    @override
-    def proc_string(self) -> str:
-        return f"{self._agent_id.proc_string()}#??"

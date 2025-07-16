@@ -25,27 +25,6 @@ class Location:
         self.x: int = x
         self.y: int = y
 
-    @override
-    def __str__(self) -> str:
-        return f"( X {self.x} , Y {self.y} )"
-
-    @override
-    def __repr__(self) -> str:
-        return self.__str__()
-
-    def proc_string(self) -> str:
-        return f"( {self.x}, {self.y} )"
-
-    def clone(self) -> Location:
-        return Location(self.x, self.y)
-
-    @override
-    def __hash__(self) -> int:
-        hash = 3
-        hash = 89 * hash + self.x
-        hash = 89 * hash + self.y
-        return hash
-
     def add(self, direction: Direction) -> Location:
         """
         Adds the given direction to the current location.
@@ -106,6 +85,21 @@ class Location:
         dx = self.x - location.x
         dy = self.y - location.y
         return dx * dx + dy * dy
+
+    @override
+    def __str__(self) -> str:
+        return f"( X {self.x} , Y {self.y} )"
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    @override
+    def __hash__(self) -> int:
+        hash = 3
+        hash = 89 * hash + self.x
+        hash = 89 * hash + self.y
+        return hash
 
     @override
     def __eq__(self, other: object) -> bool:

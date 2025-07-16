@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 
-from _aegis.common.location import Location
+from ..common.location import Location
 
 
 class SpawnZoneType(Enum):

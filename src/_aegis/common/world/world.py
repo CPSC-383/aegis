@@ -68,15 +68,6 @@ class World:
         if self.height > Constants.WORLD_MAX:
             raise ValueError(f"World height must be beneath {Constants.WORLD_MAX}")
 
-    def get_world_grid(self) -> list[list[Cell]]:
-        """Returns the 2D grid representing the world."""
-        return self._world
-
-    def set_world_grid(self, world: list[list[Cell]]) -> None:
-        self.height = len(world[0])
-        self.width = len(world)
-        self._world = world
-
     def on_map(self, location: Location) -> bool:
         """
         Checks if a given location is on the map.
@@ -94,10 +85,6 @@ class World:
             and location.y < self.height
         )
 
-    def set_cell_at(self, location: Location, cell: Cell) -> None:
-        if self.on_map(location):
-            self._world[location.x][location.y] = cell
-
     def get_cell_at(self, location: Location) -> Cell | None:
         """
         Returns the cell at the given location if it exists.
@@ -108,3 +95,21 @@ class World:
         if not self.on_map(location):
             return None
         return self._world[location.x][location.y]
+
+    def get_survs(self) -> list[Location]:
+        res: list[Location] = []
+        for row in self._world:
+            for cell in row:
+                if cell.number_of_survivors() <= 0:
+                    continue
+                res.append(cell.location)
+        return res
+
+    def get_energy_cells(self) -> list[Location]:
+        res: list[Location] = []
+        for row in self._world:
+            for cell in row:
+                if not cell.is_charging_cell():
+                    continue
+                res.append(cell.location)
+        return res

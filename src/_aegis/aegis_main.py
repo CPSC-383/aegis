@@ -2,27 +2,27 @@ import base64
 import sys
 from typing import TYPE_CHECKING
 
-from _aegis.aegis_config import is_feature_enabled
-from _aegis.command_processor import CommandProcessor
-from _aegis.agent import Agent
-from _aegis.agent_control.agent_handler import AgentHandler
+from .aegis_config import is_feature_enabled
+from .command_processor import CommandProcessor
+from .agent import Agent
+from .agent_control.agent_handler import AgentHandler
 
-from _aegis.assist.parameters import Parameters
-from _aegis.common.commands.agent_command import AgentCommand
-from _aegis.parsers.world_file_parser import WorldFileParser
-from _aegis.server_websocket import WebSocketServer
-from _aegis.world.aegis_world import AegisWorld
-from _aegis.protobuf.protobuf_service import ProtobufService
+from .assist.parameters import Parameters
+from .common.commands.agent_command import AgentCommand
+from .parsers.world_file_parser import WorldFileParser
+from .server_websocket import WebSocketServer
+from .world.aegis_world import AegisWorld
+from .protobuf.protobuf_service import ProtobufService
 
 try:
-    from _aegis.agent_predictions.prediction_handler import PredictionHandler
+    from .agent_predictions.prediction_handler import PredictionHandler
 except ImportError:
     _prediction_imported = False
 else:
     _prediction_imported = True
 
 if TYPE_CHECKING:
-    from _aegis.agent_predictions.prediction_handler import (
+    from .agent_predictions.prediction_handler import (
         PredictionHandler as PredictionHandlerType,
     )
 else:
@@ -58,7 +58,9 @@ class Aegis:
                 PredictionHandler()  # pyright: ignore[reportPossiblyUnboundVariable]
             )
         try:
-            _aegis_world_file = WorldFileParser.parse_world_file(self._parameters.world_filename)
+            _aegis_world_file = WorldFileParser.parse_world_file(
+                self._parameters.world_filename
+            )
             if _aegis_world_file is None:
                 print(
                     f'Aegis  : Unable to parse world file from "{self._parameters.world_filename}"',

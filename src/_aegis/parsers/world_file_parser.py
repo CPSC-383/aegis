@@ -1,11 +1,11 @@
 import json
 from typing import cast
 
-from _aegis.common import AgentID, Location
-from _aegis.parsers.aegis_world_file import AegisWorldFile
-from _aegis.parsers.helper.cell_info_settings import CellInfoSettings
-from _aegis.parsers.helper.cell_type_info import CellTypeInfo
-from _aegis.parsers.helper.world_file_type import (
+from ..common import AgentID, Location
+from .aegis_world_file import AegisWorldFile
+from .helper.cell_info_settings import CellInfoSettings
+from .helper.cell_type_info import CellTypeInfo
+from .helper.world_file_type import (
     AgentInfo,
     CellLoc,
     CellTypes,
@@ -13,7 +13,7 @@ from _aegis.parsers.helper.world_file_type import (
     StackInfo,
     WorldFileType,
 )
-from _aegis.world.spawn_manager import SpawnZone, SpawnZoneType
+from ..world.spawn_manager import SpawnZone, SpawnZoneType
 
 
 class WorldFileParser:

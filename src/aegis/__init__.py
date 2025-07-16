@@ -1,6 +1,5 @@
-from _aegis.agent import Agent
 from _aegis.main import main
-from _aegis.common import Direction, Location
+from _aegis.common import Direction, Location, AgentID
 from _aegis.common.commands.aegis_commands import (
     OBSERVE_RESULT,
 )
@@ -16,6 +15,7 @@ from _aegis.common.commands.agent_commands import (
 )
 from _aegis.common.world.objects import Survivor
 from _aegis.common.world.world import World
+from _aegis.common.world.cell import Cell
 
 # To generate the list after adding imports,
 # use `uv run python -c` or `python -c` with the venv activated :
@@ -24,6 +24,7 @@ from _aegis.common.world.world import World
 __all__ = [
     "AGENT_UNKNOWN",
     "AgentCommand",
+    "AgentID",
     "Direction",
     "Location",
     "MOVE",
@@ -35,8 +36,8 @@ __all__ = [
     "Survivor",
     "TEAM_DIG",
     "World",
+    "Cell",
     "main",
-    "Agent",
 ]
 
 try:
