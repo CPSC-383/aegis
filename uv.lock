@@ -21,6 +21,7 @@ source = { editable = "." }
 dependencies = [
     { name = "protobuf" },
     { name = "pyyaml" },
+    { name = "restrictedpython" },
     { name = "websocket-server" },
 ]
 
@@ -42,6 +43,7 @@ requires-dist = [
     { name = "numpy", marker = "extra == 'comp'", specifier = ">=1.26.4" },
     { name = "protobuf", specifier = "==5.29.5" },
     { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "restrictedpython", specifier = ">=8.0" },
     { name = "tensorflow", marker = "extra == 'comp'", specifier = ">=2.18.1" },
     { name = "websocket-server", specifier = "==0.6.4" },
 ]
@@ -846,6 +848,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e1/0a/929373653770d8a0d7ea76c37de6e41f11eb07559b103b1c02cafb3f7cf8/requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422", size = 135258, upload-time = "2025-06-09T16:43:07.34Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/e4/56027c4a6b4ae70ca9de302488c5ca95ad4a39e190093d6c1a8ace08341b/requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c", size = 64847, upload-time = "2025-06-09T16:43:05.728Z" },
+]
+
+[[package]]
+name = "restrictedpython"
+version = "8.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/76/f3/3cfd684abf456f536a842e4fabe1ca360a8e94d1fc329f261c34c1d98825/restrictedpython-8.0.tar.gz", hash = "sha256:3af2312bc67e5fced887fb85b006c89861da72488128b155beea81eb6a0a9b24", size = 448747, upload-time = "2025-01-23T07:15:53.14Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/df/31/b33804f873742ab20c8ed82a75652bf60a6205116dfec8bb092a6ebef084/RestrictedPython-8.0-py3-none-any.whl", hash = "sha256:ed3d894efd7d6cac0a5f13f75583b8458378d400d7dd4c083b59233eba85fe69", size = 27238, upload-time = "2025-01-23T07:15:50.428Z" },
 ]
 
 [[package]]
