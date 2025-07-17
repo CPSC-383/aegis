@@ -98,7 +98,7 @@ function Aegis({ scaffold }: Props) {
                 <Label>Number of Rounds</Label>
                 <Input
                     type="number"
-                    value={rounds}
+                    value={rounds === 0 ? '' : rounds}
                     onChange={(e) => setRounds(parseInt(e.target.value) || 0)}
                     onBlur={handleRoundBlur}
                     placeholder="Enter number of rounds"
