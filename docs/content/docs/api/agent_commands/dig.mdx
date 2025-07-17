@@ -1,12 +1,12 @@
 ---
-title: DIG 
+title: Dig 
 description: Represents a command for an agent to dig rubble.
 ---
 
 ## Signature
 
 ```py
-DIG()
+Dig()
 ```
 
 ## Description
@@ -19,5 +19,5 @@ This command will only succeed if the top layer of the cell is rubble.
 ```py
 top_layer = cell.get_top_layer()
 if isinstance(top_layer, Rubble):
-  agent.send(DIG())
+  agent.send(Dig())
 ```

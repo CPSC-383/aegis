@@ -1,17 +1,17 @@
 ---
-title: OBSERVE
+title: Observe
 description: Represents a command for an agent to observe a cell in the world.
 ---
 
 ## Signature
 
 ```py
-OBSERVE(location: Location)
+Observe(location: Location)
 ```
 
 ## Description
 
-Represents a command for an agent to observe a specific cell at the given `location` in the world.  
+Represents a command for an agent to observe a specific cell at the given location in the world.  
 When executed, the agent receives detailed information about the cell, including all layers present
 and relevant cell attributes.
 
@@ -19,5 +19,5 @@ and relevant cell attributes.
 
 ```py
 loc = Location(6, 5)
-agent.send(OBSERVE(loc))
+agent.send(Observe(loc))
 ```

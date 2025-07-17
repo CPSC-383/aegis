@@ -1,12 +1,12 @@
 ---
-title: SEND_MESSAGE
+title: SendMessage
 description: Represents a command for an agent to send a message to other agents.
 ---
 
 ## Signature
 
 ```py
-SEND_MESSAGE(agent_id_list: list[AgentID], message: str)
+SendMessage(agent_id_list: list[AgentID], message: str)
 ```
 
 ## Description
@@ -24,8 +24,8 @@ they become available at the start of the next turn.
 
 ```py
 # Using an empty list will send the message to all group members.
-agent.send(SEND_MESSAGE([], "Hello, World!"))
+agent.send(SendMessage([], "Hello, World!"))
  
 # Send message to Agent with ID 1 and group ID 1.
-agent.send(SEND_MESSAGE([AgentID(1,1)], "Hello, World!"))
+agent.send(SendMessage([AgentID(1,1)], "Hello, World!"))
 ```
