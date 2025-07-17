@@ -20,12 +20,12 @@ A location is considered on the map if both its x and y coordinates are greater 
 # world has height and width set to 3 for this example.
  
 # Invalid Location
-is_on_map = world.on_map(create_location(3,3))
+is_on_map = on_map(create_location(3,3))
 print(is_on_map)
 # Output: False
  
 # Valid Location
-is_on_map = world.on_map(create_location(1, 2))
+is_on_map = on_map(create_location(1, 2))
 print(is_on_map)
 # Output: True
 ```
