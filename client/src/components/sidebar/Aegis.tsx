@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 
 import { Scaffold } from '@/services'
@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
 type Props = {
     scaffold: Scaffold
@@ -14,44 +15,11 @@ type Props = {
 
 function Aegis({ scaffold }: Props) {
     const { worlds, agents, configPresets, startSimulation, killSim } = scaffold
-    const [world, setWorld] = useState<string>(() => localStorage.getItem('aegis_world') || '')
-    const [rounds, setRounds] = useState<number>(() => {
-        const val = localStorage.getItem('aegis_rounds')
-        return val ? Number(val) : 0
-    })
-    const [group, setGroup] = useState<string>(() => localStorage.getItem('aegis_group') || '')
-    const [agent, setAgent] = useState<string>(() => localStorage.getItem('aegis_agent') || '')
-    const [config, setConfig] = useState<string>(() => localStorage.getItem('aegis_config') || '')
-
-    // Update config when configPresets change or when config is cleared
-    useEffect(() => {
-        const savedConfig = localStorage.getItem('aegis_config')
-        if (savedConfig && configPresets.includes(savedConfig)) {
-            setConfig(savedConfig)
-        } else {
-            // Don't auto-select, keep it blank
-            setConfig('')
-            localStorage.removeItem('aegis_config')
-        }
-    }, [configPresets])
-
-    useEffect(() => {
-        localStorage.setItem('aegis_world', world)
-    }, [world])
-    useEffect(() => {
-        localStorage.setItem('aegis_rounds', rounds.toString())
-    }, [rounds])
-    useEffect(() => {
-        localStorage.setItem('aegis_group', group)
-    }, [group])
-    useEffect(() => {
-        localStorage.setItem('aegis_agent', agent)
-    }, [agent])
-    useEffect(() => {
-        if (config) {
-            localStorage.setItem('aegis_config', config)
-        }
-    }, [config])
+    const [world, setWorld] = useLocalStorage<string>('aegis_world', '')
+    const [rounds, setRounds] = useLocalStorage<number>('aegis_rounds', 0)
+    const [group, setGroup] = useLocalStorage<string>('aegis_group', '')
+    const [agent, setAgent] = useLocalStorage<string>('aegis_agent', '')
+    const [config, setConfig] = useLocalStorage<string>('aegis_config', '')
 
     const isButtonDisabled = useMemo(
         () => !world || !rounds || !group || !agent || !config,
