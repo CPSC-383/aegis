@@ -40,8 +40,11 @@ class WebSocketServer:
         """Events to process that are in the event queue."""
         try:
             while not self._done:
-                event = self._incoming_events.get(timeout=0.3)
-                self._process_event(event)
+                try:
+                    event = self._incoming_events.get(timeout=0.3)
+                    self._process_event(event)
+                except queue.Empty:
+                    pass
 
             while not self._incoming_events.empty():
                 event = self._incoming_events.get()
