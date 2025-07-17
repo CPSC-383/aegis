@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-from . import LOGGER
+from .logger import LOGGER
 from .main import Aegis
 from .parsers.args_parser import parse_args
 

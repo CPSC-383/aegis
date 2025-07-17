@@ -2,7 +2,6 @@ from pathlib import Path
 
 from _aegis.sandbox import Sandbox
 
-from . import LOGGER
 from .command_manager import CommandManager
 from .common import AgentID, Direction, Location
 from .common.commands.aegis_command import AegisCommand
@@ -18,6 +17,7 @@ from .common.world.cell import Cell
 from .common.world.info import SurroundInfo
 from .common.world.objects import Survivor
 from .common.world.world import World
+from .logger import LOGGER
 
 try:
     from _aegis.common.commands.aegis_commands.save_result import SaveResult

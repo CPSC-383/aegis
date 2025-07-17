@@ -3,10 +3,10 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from . import LOGGER
 from .aegis_config import is_feature_enabled
 from .agent_handler import AgentHandler
 from .command_processor import CommandProcessor
+from .logger import LOGGER
 from .parameters import Parameters
 from .parsers.world_file_parser import WorldFileParser
 from .protobuf.protobuf_service import ProtobufService
