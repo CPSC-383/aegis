@@ -13,7 +13,7 @@ from .common.commands.aegis_commands import (
     WorldUpdate,
 )
 from .common.commands.agent_command import AgentCommand
-from .common.commands.agent_commands import Move, Save, SendMessage
+from .common.commands.agent_commands import Move, Observe, Save, SendMessage
 from .common.world.cell import Cell
 from .common.world.info import SurroundInfo
 from .common.world.objects import Survivor
@@ -164,11 +164,15 @@ class Agent:
         self.steps_taken += 1
 
     def create_methods(self):  # noqa: ANN202
-        return {
-            "Move": Move,
+        methods = {
             "Direction": Direction,
+            "Move": Move,
+            "Observe": Observe,
             "Save": Save,
+            "SendMessage": SendMessage,
             "Survivor": Survivor,
+            "ObserveResult": ObserveResult,
+            "SendMessageResult": SendMessageResult,
             "get_round_number": self.get_round_number,
             "get_agent_id": self.get_agent_id,
             "get_location": self.get_location,
@@ -180,6 +184,11 @@ class Agent:
             "get_survs": self._aegis_world.get_survs,
             "log": self.log,
         }
+
+        if SaveResult is not None:
+            methods["SaveResult"] = SaveResult  # pyright: ignore[reportArgumentType]
+
+        return methods
 
     ###################################
     # ===== Public User Methods ===== #

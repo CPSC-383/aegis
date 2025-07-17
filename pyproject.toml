@@ -32,7 +32,7 @@ ignore = [
 ]
 
 [project.scripts]
-aegis = "aegis:main"
+aegis = "aegis:cli"
 
 [project.optional-dependencies]
 comp = [

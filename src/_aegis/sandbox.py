@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+import builtins as py_builtins
 
 from RestrictedPython import (
     Guards,
@@ -18,19 +19,23 @@ class Sandbox:
 
     def _create_globals(self):
         builtins = dict(i for d in [safe_builtins, limited_builtins] for i in d.items())
-        builtins.update(
-            {
+        builtins.update({
+            "list": py_builtins.list,
+            "dict": py_builtins.dict,
+            "tuple": py_builtins.tuple,
+            "set": py_builtins.set,
+            "enumerate": py_builtins.enumerate,
+        })
+        builtins.update({
+            "_getiter_": lambda i: i,
+            "_getitem_": self._deny_private_items,
                 "enumerate": enumerate,
                 "set": set,
-                "_getiter_": lambda i: i,
-                "_getitem_": self._deny_private_items,
-                "_getattr_": self._deny_private_attrs,
-                "__import__": self._custom_import,
-                "_unpack_sequence_": Guards.guarded_unpack_sequence,
-                "_iter_unpack_sequence_": Guards.guarded_iter_unpack_sequence,
-                **self.methods,
-            }
-        )
+            "__import__": self._custom_import,
+            "_unpack_sequence_": Guards.guarded_unpack_sequence,
+            "_iter_unpack_sequence_": Guards.guarded_iter_unpack_sequence,
+            **self.methods,
+        })
         return {
             "__builtins__": builtins,
             "__name__": "__main__",
@@ -51,17 +56,12 @@ class Sandbox:
         return __import__(name, globals, locals, fromlist, level)
 
     @staticmethod
-    def _deny_private_attrs(obj, attr):
-        if attr.startswith("_"):
-            error = f"Access to private attribute '{attr}' is denied."
-            raise AttributeError(error)
-        return getattr(obj, attr)
-
-    @staticmethod
     def _deny_private_items(obj, item):
-        if isinstance(item, str) and item.startswith("_"):
-            error = f"Access to private key '{item}' is denied."
-            raise KeyError(error)
+        if isinstance(item, str) and len(item) > 0:
+            if item[0] == "_":
+                error = f"Access to private key '{item}' is denied."
+                raise KeyError(error)
+
         return obj[item]
 
     def load_and_compile(self, path: Path):
@@ -92,6 +92,7 @@ class Sandbox:
         return callable(self.globals.get("handle_save"))
 
     def has_handle_messages(self) -> bool:
+        print(f"HAS: {callable(self.globals.get("handle_messages"))}")
         return callable(self.globals.get("handle_messages"))
 
     def has_handle_observe(self) -> bool:

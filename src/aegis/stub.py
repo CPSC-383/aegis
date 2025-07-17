@@ -11,7 +11,12 @@ from . import (
     Direction,
     Location,
     Move,
+    Observe,
+    ObserveResult,
     Save,
+    SaveResult,
+    SendMessage,
+    SendMessageResult,
     Survivor,
 )
 
