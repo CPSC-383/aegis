@@ -1,10 +1,10 @@
 from typing import override
 
-from ..aegis_command import AegisCommand
+from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.world.info import SurroundInfo
 
 
-class WORLD_UPDATE(AegisCommand):
+class WorldUpdate(AegisCommand):
     def __init__(
         self,
         energy_level: int,
@@ -15,7 +15,10 @@ class WORLD_UPDATE(AegisCommand):
 
     @override
     def __str__(self) -> str:
-        return f"{self.STR_WORLD_UPDATE} ( ENG_LEV {self.energy_level} , SUR_INFO {self.surround_info} )"
+        return (
+            f"{self.STR_WORLD_UPDATE} ( ENG_LEV {self.energy_level} , "
+            f"SUR_INFO {self.surround_info} )"
+        )
 
     @override
     def __repr__(self) -> str:

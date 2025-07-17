@@ -1,9 +1,9 @@
 from typing import override
 
-from ..agent_command import AgentCommand
+from _aegis.common.commands.agent_command import AgentCommand
 
 
-class SAVE(AgentCommand):
+class Save(AgentCommand):
     @override
     def __str__(self) -> str:
         return self.STR_SAVE

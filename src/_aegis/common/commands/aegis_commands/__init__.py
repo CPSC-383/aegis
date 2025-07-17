@@ -1,15 +1,13 @@
-from _aegis.common.commands.aegis_commands.AEGIS_UNKNOWN import AEGIS_UNKNOWN
-from _aegis.common.commands.aegis_commands.OBSERVE_RESULT import OBSERVE_RESULT
-from _aegis.common.commands.aegis_commands.RECHARGE_RESULT import RECHARGE_RESULT
-from _aegis.common.commands.aegis_commands.SEND_MESSAGE_RESULT import (
-    SEND_MESSAGE_RESULT,
+from .observe_result import ObserveResult
+from .recharge_result import RechargeResult
+from .send_message_result import (
+    SendMessageResult,
 )
-from _aegis.common.commands.aegis_commands.WORLD_UPDATE import WORLD_UPDATE
+from .world_update import WorldUpdate
 
 __all__ = [
-    "AEGIS_UNKNOWN",
-    "SEND_MESSAGE_RESULT",
-    "OBSERVE_RESULT",
-    "RECHARGE_RESULT",
-    "WORLD_UPDATE",
+    "ObserveResult",
+    "RechargeResult",
+    "SendMessageResult",
+    "WorldUpdate",
 ]

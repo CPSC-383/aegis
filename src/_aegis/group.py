@@ -23,6 +23,4 @@ class AgentGroup:
 
     @override
     def __hash__(self) -> int:
-        hash = 7
-        hash = 67 * hash + self.GID
-        return hash
+        return 67 * 7 + self.GID

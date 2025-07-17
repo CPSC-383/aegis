@@ -6,17 +6,6 @@ from _aegis.common.world.objects import WorldObject
 
 
 class CellInfo:
-    """
-    Represents the information of a cell in the world.
-
-    Attributes:
-        cell_type (CellType): The type of the cell.
-        location (Location): The location of the cell in the world.
-        move_cost (int): The cost to move through the cell.
-        agent_id_list (list[AgentID]): A list of agent IDs on the cell.
-        top_layer (WorldObject | None): Information about the top layer object.
-    """
-
     def __init__(
         self,
         cell_type: CellType = CellType.NO_CELL,
@@ -25,16 +14,6 @@ class CellInfo:
         agent_id_list: list[AgentID] | None = None,
         top_layer: WorldObject | None = None,
     ) -> None:
-        """
-        Initializes a CellInfo instance.
-
-        Args:
-            cell_type: The type of the cell.
-            location: The location of the cell.
-            move_cost: The cost to move through the cell.
-            agent_id_list: List of agent IDs on the cell.
-            top_layer: Information about the top layer object.
-        """
         self.cell_type: CellType = cell_type
         self.location: Location = location if location is not None else Location(-1, -1)
         self.move_cost: int = move_cost
@@ -52,5 +31,5 @@ class CellInfo:
         return (
             f"{self.cell_type.name} ( X {self.location.x} , Y {self.location.y} , "
             f"MV_COST {self.move_cost} , NUM_AGT {len(self.agent_id_list)} , "
-            f"ID_LIST {str(self.agent_id_list)} , TOP_LAYER ( {self.top_layer} ) )"
+            f"ID_LIST {self.agent_id_list} , TOP_LAYER ( {self.top_layer} ) )"
         )

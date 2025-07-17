@@ -1,10 +1,10 @@
 from typing import override
 
 from _aegis.common import Direction
-from ..agent_command import AgentCommand
+from _aegis.common.commands.agent_command import AgentCommand
 
 
-class MOVE(AgentCommand):
+class Move(AgentCommand):
     def __init__(self, direction: Direction) -> None:
         self.direction: Direction = direction
 

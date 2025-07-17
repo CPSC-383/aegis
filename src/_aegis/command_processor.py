@@ -1,4 +1,8 @@
+import logging
 from typing import TYPE_CHECKING
+
+from _aegis.common.location import Location
+from _aegis.common.world.info.surround_info import SurroundInfo
 
 from .aegis_config import is_feature_enabled
 from .agent import Agent
@@ -6,20 +10,19 @@ from .agent_handler import AgentHandler
 from .common.agent_id import AgentID
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
-    AEGIS_UNKNOWN,
-    OBSERVE_RESULT,
-    RECHARGE_RESULT,
-    SEND_MESSAGE_RESULT,
-    WORLD_UPDATE,
+    ObserveResult,
+    RechargeResult,
+    SendMessageResult,
+    WorldUpdate,
 )
 from .common.commands.agent_command import AgentCommand
 from .common.commands.agent_commands import (
-    DIG,
-    MOVE,
-    OBSERVE,
-    RECHARGE,
-    SAVE,
-    SEND_MESSAGE,
+    Dig,
+    Move,
+    Observe,
+    Recharge,
+    Save,
+    SendMessage,
 )
 from .common.constants import Constants
 from .common.direction import Direction
@@ -32,11 +35,11 @@ from .common.world.objects.world_object import WorldObject
 from .world.aegis_world import AegisWorld
 
 try:
-    from .common.commands.aegis_commands.SAVE_RESULT import SAVE_RESULT
-    from .common.commands.agent_commands.PREDICT import PREDICT
+    from .common.commands.aegis_commands.save_result import SaveResult
+    from .common.commands.agent_commands.predict import Predict
 except ImportError:
-    SAVE_RESULT = None  # pyright: ignore[reportConstantRedefinition]
-    PREDICT = None  # pyright: ignore[reportConstantRedefinition]
+    SaveResult = None
+    Predict = None
 
 if TYPE_CHECKING:
     from .agent_predictions.prediction_handler import (
@@ -44,6 +47,8 @@ if TYPE_CHECKING:
     )
 else:
     PredictionHandlerType = object
+
+LOGGER = logging.getLogger("aegis")
 
 
 class CommandProcessor:
@@ -61,7 +66,7 @@ class CommandProcessor:
 
     def run_turn(self) -> None:
         commands: list[AgentCommand] = []
-        messages: list[SEND_MESSAGE] = []
+        messages: list[SendMessage] = []
 
         for agent in self._agents:
             agent.run()
@@ -80,7 +85,7 @@ class CommandProcessor:
         self._route_messages(messages)
         self._results(commands)
 
-    def _route_messages(self, messages: list[SEND_MESSAGE]) -> None:
+    def _route_messages(self, messages: list[SendMessage]) -> None:
         for message in messages:
             sender_id = message.get_agent_id()
             sender = self._world.get_agent(sender_id)
@@ -103,7 +108,7 @@ class CommandProcessor:
             ]
 
             for recipient in target_agents:
-                res = SEND_MESSAGE_RESULT(sender_id, recipients, message.message)
+                res = SendMessageResult(sender_id, recipients, message.message)
                 recipient.handle_aegis_command(res)
 
     def _process(self, commands: list[AgentCommand]) -> None:
@@ -114,30 +119,30 @@ class CommandProcessor:
                 continue
 
             if (
-                PREDICT is not None
-                and isinstance(cmd, PREDICT)
+                Predict is not None
+                and isinstance(cmd, Predict)
                 and is_feature_enabled("ENABLE_PREDICTIONS")
             ):
                 pass
             else:
                 match cmd:
-                    case DIG():
+                    case Dig():
                         self._handle_dig(cmd)
-                    case SAVE():
+                    case Save():
                         self._handle_save(cmd)
-                    case MOVE():
+                    case Move():
                         self._handle_move(cmd)
-                    case RECHARGE():
+                    case Recharge():
                         self._handle_recharge(cmd)
-                    case OBSERVE():
+                    case Observe():
                         agent = self._world.get_agent(cmd.get_agent_id())
                         if agent is None:
                             return
                         agent.remove_energy(Constants.OBSERVE_ENERGY_COST)
                     case _:
-                        raise Exception("Got unknown command")
+                        LOGGER.warning("Aegis received an unknown command: %s", cmd)
 
-    def _handle_recharge(self, cmd: RECHARGE) -> None:
+    def _handle_recharge(self, cmd: Recharge) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
         if agent is None:
             return
@@ -151,7 +156,7 @@ class CommandProcessor:
             else:
                 agent.add_energy(Constants.NORMAL_CHARGE)
 
-    def _handle_dig(self, cmd: DIG) -> None:
+    def _handle_dig(self, cmd: Dig) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
         if agent is None:
             return
@@ -174,7 +179,7 @@ class CommandProcessor:
         else:
             agent.remove_energy(Constants.DIG_ENERGY_COST)
 
-    def _handle_move(self, cmd: MOVE) -> None:
+    def _handle_move(self, cmd: Move) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
         if agent is None:
             return
@@ -191,7 +196,7 @@ class CommandProcessor:
         else:
             agent.remove_energy(Constants.MOVE_ENERGY_COST)
 
-    def _handle_save(self, cmd: SAVE) -> None:
+    def _handle_save(self, cmd: Save) -> None:
         agent = self._world.get_agent(cmd.get_agent_id())
         if agent is None:
             return
@@ -220,58 +225,62 @@ class CommandProcessor:
             energy = agent.get_energy_level()
             location = agent.get_location()
             surround_info = self._world.get_surround_info(location)
-            result_commands: list[AegisCommand] = []
 
-            if surround_info is None:
-                result_commands.append(AEGIS_UNKNOWN())
-            else:
-                match cmd:
-                    case MOVE() | DIG():
-                        result_commands.append(WORLD_UPDATE(energy, surround_info))
-
-                    case SAVE():
-                        result_commands.append(WORLD_UPDATE(energy, surround_info))
-
-                        if (
-                            is_feature_enabled("ENABLE_PREDICTIONS")
-                            and self._prediction_handler is not None
-                            and SAVE_RESULT is not None
-                        ):
-                            pred_info = (
-                                self._prediction_handler.get_pred_info_for_agent(
-                                    agent.get_agent_id()
-                                )
-                            )
-                            if pred_info is not None:
-                                result_commands.append(
-                                    SAVE_RESULT(
-                                        pred_info[0], pred_info[1], pred_info[2]
-                                    )
-                                )
-
-                    case RECHARGE():
-                        agent_cell = self._world.get_cell_at(location)
-                        success = (
-                            agent_cell is not None and agent_cell.is_charging_cell()
-                        )
-                        result_commands.append(RECHARGE_RESULT(success, energy))
-
-                    case OBSERVE():
-                        cell_info = CellInfo()
-                        layers: list[WorldObject] = []
-                        cell = self._world.get_cell_at(cmd.location)
-                        if cell is not None:
-                            cell_info = cell.get_cell_info()
-                            layers = cell.get_cell_layers()
-                        result_commands.append(
-                            OBSERVE_RESULT(energy, cell_info, layers)
-                        )
-
-                    case _:
-                        result_commands.append(AEGIS_UNKNOWN())
+            result_commands = self._handle_command(
+                cmd,
+                agent,
+                energy,
+                location,
+                surround_info,
+            )
 
             for result in result_commands:
                 agent.handle_aegis_command(result)
+
+    def _handle_command(
+        self,
+        cmd: AgentCommand,
+        agent: Agent,
+        energy: int,
+        location: Location,
+        surround_info: SurroundInfo,
+    ) -> list[AegisCommand]:
+        match cmd:
+            case Move() | Dig() | Save():
+                results: list[AegisCommand] = [WorldUpdate(energy, surround_info)]
+                if isinstance(cmd, Save):
+                    results.extend(self._handle_save_cmd(agent))
+                return results
+
+            case Recharge():
+                agent_cell = self._world.get_cell_at(location)
+                success = agent_cell is not None and agent_cell.is_charging_cell()
+                return [RechargeResult(energy, was_successful=success)]
+
+            case Observe():
+                cell_info, layers = CellInfo(), []
+                cell = self._world.get_cell_at(cmd.location)
+                if cell:
+                    cell_info = cell.get_cell_info()
+                    layers = cell.get_cell_layers()
+                return [ObserveResult(energy, cell_info, layers)]
+
+            case _:
+                return []
+
+    def _handle_save_cmd(self, agent: Agent) -> list[AegisCommand]:
+        results: list[AegisCommand] = []
+        if (
+            is_feature_enabled("ENABLE_PREDICTIONS")
+            and self._prediction_handler is not None
+            and SaveResult is not None
+        ):
+            pred_info = self._prediction_handler.get_pred_info_for_agent(
+                agent.get_agent_id(),
+            )
+            if pred_info:
+                results.append(SaveResult(pred_info[0], pred_info[1], pred_info[2]))
+        return results
 
     def _handle_top_layer(
         self,
@@ -290,7 +299,8 @@ class CommandProcessor:
                 and self._prediction_handler is not None
             ):
                 self._prediction_handler.add_agent_to_no_pred_yet(
-                    agents_here[0], top_layer.id
+                    agents_here[0],
+                    top_layer.id,
                 )
 
         else:
@@ -310,12 +320,6 @@ class CommandProcessor:
         dead_count: int,
         gid_counter: list[int],
     ) -> None:
-        # points_config = self._parameters.config_settings.points_for_saving_survivors
-        # points_tie_config = (
-        #     self._parameters.config_settings.points_for_saving_survivors_tie
-        # )
-
-        # if points_config == ConfigSettings.POINTS_FOR_ALL_SAVING_GROUPS:
         for gid, count in enumerate(gid_counter):
             if count > 0:
                 if alive_count > 0:
@@ -325,60 +329,6 @@ class CommandProcessor:
                     state = Constants.SAVE_STATE_DEAD
                     amount = dead_count
                 self._agent_handler.increase_agent_group_saved(gid, amount, state)
-
-        # elif points_config == ConfigSettings.POINTS_FOR_RANDOM_SAVING_GROUPS:
-        #     random_id = temp_cell_agent_list[
-        #         Utility.next_int() % len(temp_cell_agent_list)
-        #     ]
-        #     if alive_count > 0:
-        #         state = Constants.SAVE_STATE_ALIVE
-        #         amount = alive_count
-        #     else:
-        #         state = Constants.SAVE_STATE_DEAD
-        #         amount = dead_count
-        #     self._agent_handler.increase_agent_group_saved(random_id.gid, amount, state)
-        # elif points_config == ConfigSettings.POINTS_FOR_LARGEST_SAVING_GROUPS:
-        #     largest_group_gid = 0
-        #     max_group_size = 0
-        #     tie = False
-        #
-        #     for gid, count in enumerate(gid_counter):
-        #         if count > max_group_size:
-        #             largest_group_gid = gid
-        #             max_group_size = count
-        #
-        #     for gid, count in enumerate(gid_counter):
-        #         if gid != largest_group_gid and count == max_group_size:
-        #             tie = True
-        #             break
-        #
-        #     if not tie:
-        #         if alive_count > 0:
-        #             state = Constants.SAVE_STATE_ALIVE
-        #             amount = alive_count
-        #         else:
-        #             state = Constants.SAVE_STATE_DEAD
-        #             amount = dead_count
-        #         self._agent_handler.increase_agent_group_saved(
-        #             largest_group_gid,
-        #             amount,
-        #             state,
-        #         )
-        #     else:
-        #         if points_tie_config == ConfigSettings.POINTS_TIE_RANDOM_SAVING_GROUPS:
-        #             self._handle_random_tie(
-        #                 alive_count, dead_count, gid_counter, max_group_size
-        #             )
-        #         elif points_tie_config == ConfigSettings.POINTS_TIE_ALL_SAVING_GROUPS:
-        #             self._handle_all_tie(
-        #                 alive_count, dead_count, gid_counter, max_group_size
-        #             )
-        #
-        # for agent_on_cell_id in temp_cell_agent_list:
-        #     agent = self._aegis_world.get_agent(agent_on_cell_id)
-        #     if agent is not None:
-        #         agent.remove_energy(self._parameters.SAVE_SURV_ENERGY_COST)
-        #         self._SAVE_SURV_RESULT_list.add(agent_on_cell_id)
 
     def _handle_random_tie(
         self,

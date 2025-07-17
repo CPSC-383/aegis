@@ -1,6 +1,7 @@
 from abc import ABC
 
-from ..agent_id import AgentID
+from _aegis.common.agent_id import AgentID
+
 from .command import Command
 
 

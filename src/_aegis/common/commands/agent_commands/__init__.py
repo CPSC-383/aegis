@@ -1,17 +1,15 @@
-from .AGENT_UNKNOWN import AGENT_UNKNOWN
-from .DIG import DIG
-from .MOVE import MOVE
-from .OBSERVE import OBSERVE
-from .RECHARGE import RECHARGE
-from .SAVE import SAVE
-from .SEND_MESSAGE import SEND_MESSAGE
+from .dig import Dig
+from .move import Move
+from .observe import Observe
+from .recharge import Recharge
+from .save import Save
+from .send_message import SendMessage
 
 __all__ = [
-    "AGENT_UNKNOWN",
-    "MOVE",
-    "OBSERVE",
-    "SAVE",
-    "SEND_MESSAGE",
-    "RECHARGE",
-    "DIG",
+    "Dig",
+    "Move",
+    "Observe",
+    "Recharge",
+    "Save",
+    "SendMessage",
 ]

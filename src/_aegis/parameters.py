@@ -9,3 +9,4 @@ class Parameters:
     agent: str = ""
     group_name: str = ""
     config_file: str = "default"
+    debug: bool = False

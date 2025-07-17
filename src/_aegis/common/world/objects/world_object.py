@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import override
+from typing import TYPE_CHECKING, override
 
-from _aegis.parsers.helper.world_file_type import StackContent
+if TYPE_CHECKING:
+    from _aegis.parsers.helper.world_file_type import StackContent
 
 
 class WorldObject(ABC):

@@ -1,7 +1,10 @@
 import json
+from pathlib import Path
 from typing import cast
 
-from ..common import AgentID, Location
+from _aegis.common import AgentID, Location
+from _aegis.world.spawn_manager import SpawnZone, SpawnZoneType
+
 from .aegis_world_file import AegisWorldFile
 from .helper.cell_info_settings import CellInfoSettings
 from .helper.cell_type_info import CellTypeInfo
@@ -13,15 +16,14 @@ from .helper.world_file_type import (
     StackInfo,
     WorldFileType,
 )
-from ..world.spawn_manager import SpawnZone, SpawnZoneType
 
 
 class WorldFileParser:
     @staticmethod
-    def parse_world_file(filename: str) -> AegisWorldFile | None:
+    def parse_world_file(filename: Path) -> AegisWorldFile | None:
         try:
-            with open(filename, "r") as file:
-                data = cast(WorldFileType, json.load(file))
+            with Path.open(filename) as file:
+                data = cast("WorldFileType", json.load(file))
                 width = data["settings"]["world_info"]["size"]["width"]
                 height = data["settings"]["world_info"]["size"]["height"]
                 agent_energy = data["settings"]["world_info"]["agent_energy"]
@@ -30,7 +32,7 @@ class WorldFileParser:
                 cell_settings = WorldFileParser._parse_cell_settings(data["cell_types"])
                 cell_stack_info = WorldFileParser._parse_cell_stack_info(data["stacks"])
                 agent_spawn_locations = WorldFileParser._parse_spawn_locations(
-                    data["spawn_locs"]
+                    data["spawn_locs"],
                 )
                 return AegisWorldFile(
                     width,
@@ -41,8 +43,7 @@ class WorldFileParser:
                     cell_settings,
                     agent_spawn_locations,
                 )
-        except Exception as e:
-            print(f"Error: {e}")
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
             return None
 
     @staticmethod
@@ -65,7 +66,7 @@ class WorldFileParser:
                 name,
                 [
                     Location(loc["x"], loc["y"])
-                    for loc in cast(list[CellLoc], cell_locs)
+                    for loc in cast("list[CellLoc]", cell_locs)
                 ],
             )
             for name, cell_locs in cell_types.items()
@@ -75,7 +76,8 @@ class WorldFileParser:
     def _parse_agents(agents: list[AgentInfo]) -> dict[AgentID, Location]:
         return {
             AgentID(agent_info["id"], agent_info["gid"]): Location(
-                agent_info["x"], agent_info["y"]
+                agent_info["x"],
+                agent_info["y"],
             )
             for agent_info in agents
         }

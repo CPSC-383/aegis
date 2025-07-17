@@ -4,23 +4,8 @@ from typing import override
 
 
 class AgentID:
-    """
-    Represents an agent with a unique ID and group ID.
-
-    Attributes:
-        id (int): An integer that uniquely identifies the agent within a group.
-        gid (int): An integer that represents the group identifier for the agent.
-    """
-
-    def __init__(self, id: int, gid: int) -> None:
-        """
-        Initializes an AgentID with the given ID and GID.
-
-        Args:
-            id: The unique identifier of the agent.
-            gid: The group identifier of the agent.
-        """
-        self.id: int = id
+    def __init__(self, agent_id: int, gid: int) -> None:
+        self.id: int = agent_id
         self.gid: int = gid
 
     @override
@@ -35,8 +20,7 @@ class AgentID:
     def __hash__(self) -> int:
         hash_code = 3
         hash_code = 89 * hash_code + self.id
-        hash_code = 89 * hash_code + self.gid
-        return hash_code
+        return 89 * hash_code + self.gid
 
     @override
     def __eq__(self, other: object) -> bool:
@@ -54,7 +38,7 @@ class AgentID:
         if isinstance(other, AgentID):
             if self.gid < other.gid:
                 return True
-            elif self.gid == other.gid:
+            if self.gid == other.gid:
                 return self.id < other.id
         return False
 
@@ -62,7 +46,7 @@ class AgentID:
         if isinstance(other, AgentID):
             if self.gid > other.gid:
                 return True
-            elif self.gid == other.gid:
+            if self.gid == other.gid:
                 return self.id > other.id
         return False
 

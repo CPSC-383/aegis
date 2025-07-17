@@ -1,7 +1,7 @@
 import argparse
 from dataclasses import dataclass
 
-from ..assist.parameters import Parameters
+from _aegis.parameters import Parameters
 
 
 @dataclass
@@ -13,35 +13,57 @@ class Args:
     agent: str
     group: str
     config: str
+    debug: bool
 
 
 def parse_args() -> tuple[Parameters, bool]:
     parser = argparse.ArgumentParser(description="AEGIS Simulation Configuration")
 
     _ = parser.add_argument(
-        "--amount", type=int, default=1, help="Number of agents to run"
+        "--amount",
+        type=int,
+        default=1,
+        help="Number of agents to run",
     )
     _ = parser.add_argument(
         "--world",
         type=str,
         required=True,
-        help="Indicates the file AEGIS should use to build the world from upon startup.",
+        help="World file to use.",
     )
     _ = parser.add_argument(
-        "--rounds", type=int, required=True, help="Number of simulation rounds"
+        "--rounds",
+        type=int,
+        required=True,
+        help="Number of simulation rounds",
     )
     _ = parser.add_argument(
-        "--agent", type=str, required=True, help="Path to the agent file"
+        "--agent",
+        type=str,
+        required=True,
+        help="Path to the agent file",
     )
-    _ = parser.add_argument("--group", type=str, required=True, help="Group name")
     _ = parser.add_argument(
-        "--client", action="store_true", help="Set to wait for the client to connect"
+        "--group",
+        type=str,
+        required=True,
+        help="Group name",
+    )
+    _ = parser.add_argument(
+        "--client",
+        action="store_true",
+        help="Set to wait for the client to connect",
     )
     _ = parser.add_argument(
         "--config",
         type=str,
         default="default",
         help="Config preset to use (default: default)",
+    )
+    _ = parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug logging output",
     )
 
     args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]
@@ -53,5 +75,6 @@ def parse_args() -> tuple[Parameters, bool]:
     params.agent = args.agent
     params.group_name = args.group
     params.config_file = args.config
+    params.debug = args.debug
 
     return params, args.client

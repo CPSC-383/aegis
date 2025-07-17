@@ -6,82 +6,34 @@ from _aegis.common.direction import Direction
 
 
 class Location:
-    """
-    Represents a location in the world.
-
-    Attributes:
-        x (int): The x-coordinate of the location.
-        y (int): The y-coordinate of the location.
-    """
-
     def __init__(self, x: int, y: int) -> None:
-        """
-        Initializes a new Location instance.
-
-        Args:
-            x: The x-coordinate of the location.
-            y: The y-coordinate of the location.
-        """
         self.x: int = x
         self.y: int = y
 
     def add(self, direction: Direction) -> Location:
-        """
-        Adds the given direction to the current location.
-
-        Args:
-            direction: The direction to add to the current location.
-
-        Returns:
-            A new Location object one unit away in the given direction.
-        """
         return Location(self.x + direction.dx, self.y + direction.dy)
 
     def direction_to(self, location: Location) -> Direction:
-        """
-        Returns the direction from the this location to the target location.
-
-        Args:
-            location: The target location.
-
-        Returns:
-            The direction to the target location.
-        """
-
         dx = location.x - self.x
         dy = location.y - self.y
 
-        if dx > 0 and dy > 0:
-            return Direction.NORTHEAST
-        elif dx > 0 and dy < 0:
-            return Direction.SOUTHEAST
-        elif dx < 0 and dy > 0:
-            return Direction.NORTHWEST
-        elif dx < 0 and dy < 0:
-            return Direction.SOUTHWEST
+        key = (dx > 0) - (dx < 0), (dy > 0) - (dy < 0)
 
-        if dx > 0:
-            return Direction.EAST
-        elif dx < 0:
-            return Direction.WEST
-        elif dy > 0:
-            return Direction.NORTH
-        elif dy < 0:
-            return Direction.SOUTH
+        direction_map = {
+            (1, 1): Direction.NORTHEAST,
+            (1, -1): Direction.SOUTHEAST,
+            (-1, 1): Direction.NORTHWEST,
+            (-1, -1): Direction.SOUTHWEST,
+            (1, 0): Direction.EAST,
+            (-1, 0): Direction.WEST,
+            (0, 1): Direction.NORTH,
+            (0, -1): Direction.SOUTH,
+            (0, 0): Direction.CENTER,
+        }
 
-        return Direction.CENTER
+        return direction_map.get(key, Direction.CENTER)
 
     def distance_to(self, location: Location) -> int:
-        """
-        Calculates the squared distance between the current location
-        and the given location.
-
-        Args:
-            location: The location to which the distance is calculated.
-
-        Returns:
-            The squared distance to the given location.
-        """
         dx = self.x - location.x
         dy = self.y - location.y
         return dx * dx + dy * dy
@@ -96,10 +48,9 @@ class Location:
 
     @override
     def __hash__(self) -> int:
-        hash = 3
-        hash = 89 * hash + self.x
-        hash = 89 * hash + self.y
-        return hash
+        value = 3
+        value = 89 * value + self.x
+        return 89 * value + self.y
 
     @override
     def __eq__(self, other: object) -> bool:
@@ -117,7 +68,7 @@ class Location:
         if isinstance(other, Location):
             if self.x < other.x:
                 return True
-            elif self.x == other.x:
+            if self.x == other.x:
                 return self.y < other.y
         return False
 
@@ -125,7 +76,7 @@ class Location:
         if isinstance(other, Location):
             if self.x > other.x:
                 return True
-            elif self.x == other.x:
+            if self.x == other.x:
                 return self.y > other.y
         return False
 

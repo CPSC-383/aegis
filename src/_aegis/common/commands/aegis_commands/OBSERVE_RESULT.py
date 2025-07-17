@@ -1,11 +1,11 @@
 from typing import override
 
-from ..aegis_command import AegisCommand
+from _aegis.common.commands.aegis_command import AegisCommand
 from _aegis.common.world.info import CellInfo
 from _aegis.common.world.objects.world_object import WorldObject
 
 
-class OBSERVE_RESULT(AegisCommand):
+class ObserveResult(AegisCommand):
     def __init__(
         self, energy_level: int, cell_info: CellInfo, layers: list[WorldObject]
     ) -> None:
@@ -15,7 +15,10 @@ class OBSERVE_RESULT(AegisCommand):
 
     @override
     def __str__(self) -> str:
-        return f"{self.STR_OBSERVE_RESULT} ( ENG_LEV {self.energy_level} , CELL_INFO ( {self.cell_info} ) , LAYERS {self.layers} )"
+        return (
+            f"{self.STR_OBSERVE_RESULT} ( ENG_LEV {self.energy_level} , "
+            f"CELL_INFO ( {self.cell_info} ) , LAYERS {self.layers} )"
+        )
 
     @override
     def __repr__(self) -> str:

@@ -1,55 +1,62 @@
 import importlib.util
 import sys
 from pathlib import Path
-from types import ModuleType
+from typing import TYPE_CHECKING
 
-from _aegis.command_manager import CommandManager
-from _aegis.common.world.cell import Cell
+from . import LOGGER
+from .command_manager import CommandManager
 from .common import AgentID, Direction, Location
-from _aegis.common.commands.aegis_command import AegisCommand
-from _aegis.common.commands.aegis_commands import (
-    AEGIS_UNKNOWN,
-    OBSERVE_RESULT,
-    SEND_MESSAGE_RESULT,
-    RECHARGE_RESULT,
-    WORLD_UPDATE,
+from .common.commands.aegis_command import AegisCommand
+from .common.commands.aegis_commands import (
+    ObserveResult,
+    RechargeResult,
+    SendMessageResult,
+    WorldUpdate,
 )
-from _aegis.common.commands.agent_command import AgentCommand
-from _aegis.common.commands.agent_commands import SEND_MESSAGE
-from _aegis.common.world.info import SurroundInfo
-from _aegis.common.world.world import World
+from .common.commands.agent_command import AgentCommand
+from .common.commands.agent_commands import SendMessage
+from .common.world.cell import Cell
+from .common.world.info import SurroundInfo
+from .common.world.world import World
+
+if TYPE_CHECKING:
+    from types import ModuleType
 
 try:
-    from _aegis.common.commands.aegis_commands.SAVE_RESULT import SAVE_RESULT
+    from _aegis.common.commands.aegis_commands.save_result import SaveResult
 except ImportError:
-    SAVE_RESULT = None  # pyright: ignore[reportConstantRedefinition]
+    SaveResult = None
 
 
 class Agent:
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         world: World,
         aegis_world: World,
-        id: AgentID,
+        agent_id: AgentID,
         location: Location,
         energy_level: int,
+        *,
+        debug: bool,
     ) -> None:
         self._round: int = 0
         self._world: World = world
         self._aegis_world: World = aegis_world
-        self._id: AgentID = id
+        self._id: AgentID = agent_id
         self._location: Location = location
         self._energy_level: int = energy_level
         self._command_manager: CommandManager = CommandManager()
         self._module: ModuleType | None = None
-        self._inbox: list[SEND_MESSAGE_RESULT] = []
+        self._inbox: list[SendMessageResult] = []
         self._results: list[AegisCommand] = []
         self.steps_taken: int = 0
+        self._debug: bool = debug
 
     def run(self) -> None:
         self._round += 1
         if self._module is None:
-            raise RuntimeError("Module should not be of `None` type.")
+            error = "Module should not be of `None` type."
+            raise RuntimeError(error)
         self._send_messages()
         self._send_results()
         self._module.think()  # pyright: ignore[reportAny]
@@ -57,14 +64,15 @@ class Agent:
     def _send_results(self) -> None:
         if self._results and self._module:
             for result in self._results:
-                if isinstance(result, OBSERVE_RESULT) and hasattr(
-                    self._module, "handle_observe"
+                if isinstance(result, ObserveResult) and hasattr(
+                    self._module,
+                    "handle_observe",
                 ):
                     self._module.handle_observe(self, result)  # pyright: ignore[reportAny]
 
                 elif (
-                    SAVE_RESULT is not None
-                    and isinstance(result, SAVE_RESULT)
+                    SaveResult is not None
+                    and isinstance(result, SaveResult)
                     and hasattr(self._module, "handle_save")
                 ):
                     self._module.handle_save(self, result)  # pyright: ignore[reportAny]
@@ -78,13 +86,15 @@ class Agent:
     def load_agent(self, agent_path: str) -> None:
         path = Path(agent_path).resolve()
         if not path.exists():
-            raise FileNotFoundError("Agent not found")
+            error = "Agent not found"
+            raise FileNotFoundError(error)
 
         module_name = path.stem
 
         spec = importlib.util.spec_from_file_location(module_name, str(path))
         if spec is None or spec.loader is None:
-            raise ImportError(f"Could not load spec from {path}")
+            error = f"Could not load spec from {path}"
+            raise ImportError(error)
 
         module = importlib.util.module_from_spec(spec)
         sys.modules[module_name] = module
@@ -95,13 +105,14 @@ class Agent:
         module.__dict__.update(self.create_methods())
 
         if not hasattr(module, "think"):
-            raise AttributeError(f"{path} does not define a `think()` function.")
+            error = f"{path} does not define a `think()` function."
+            raise AttributeError(error)
 
         self._module = module
 
     def update_surround(self, surround_info: SurroundInfo) -> None:
-        for dir in Direction:
-            cell_info = surround_info.get_surround_info(dir)
+        for d in Direction:
+            cell_info = surround_info.get_surround_info(d)
             if cell_info is None:
                 continue
 
@@ -127,31 +138,30 @@ class Agent:
     def get_directives(self) -> list[AgentCommand]:
         return self._command_manager.get_directives()
 
-    def get_messages(self) -> list[SEND_MESSAGE]:
+    def get_messages(self) -> list[SendMessage]:
         return self._command_manager.get_messages()
 
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
-        if isinstance(aegis_command, SEND_MESSAGE_RESULT):
+        if isinstance(aegis_command, SendMessageResult):
             self._inbox.append(aegis_command)
-        elif isinstance(aegis_command, WORLD_UPDATE):
+        elif isinstance(aegis_command, WorldUpdate):
             move_result = aegis_command
             curr_info = move_result.surround_info.get_current_info()
             self.set_energy_level(move_result.energy_level)
             self.set_location(curr_info.location)
             self.update_surround(move_result.surround_info)
-        elif SAVE_RESULT is not None and isinstance(aegis_command, SAVE_RESULT):
+        elif SaveResult is not None and isinstance(aegis_command, SaveResult):
             self._results.append(aegis_command)
-        elif isinstance(aegis_command, RECHARGE_RESULT):
-            recharge_result: RECHARGE_RESULT = aegis_command
+        elif isinstance(aegis_command, RechargeResult):
+            recharge_result: RechargeResult = aegis_command
             if recharge_result.was_successful:
                 self.set_energy_level(recharge_result.charge_energy)
-        elif isinstance(aegis_command, OBSERVE_RESULT):
+        elif isinstance(aegis_command, ObserveResult):
             self._results.append(aegis_command)
-        elif isinstance(aegis_command, AEGIS_UNKNOWN):
-            self.log("Brain: Got Unknown command reply from AEGIS.")
         else:
-            self.log(
-                f"Brain: Got unrecognized reply from AEGIS: {aegis_command.__class__.__name__}.",
+            LOGGER.warning(
+                "Got unrecognized reply from AEGIS: ",
+                f"{aegis_command.__class__.__name__}.",
             )
 
     def add_energy(self, energy: int) -> None:
@@ -167,7 +177,7 @@ class Agent:
     def add_step_taken(self) -> None:
         self.steps_taken += 1
 
-    def create_methods(self):
+    def create_methods(self):  # noqa: ANN202
         return {
             "get_round_number": self.get_round_number,
             "get_agent_id": self.get_agent_id,
@@ -207,7 +217,12 @@ class Agent:
     def get_cell_at(self, loc: Location) -> Cell | None:
         return self._world.get_cell_at(loc)
 
-    def log(self, message: str) -> None:
+    def log(self, *args: object) -> None:
+        if not self._debug:
+            return
+
         agent_id = self.get_agent_id()
-        id_str = f"[Agent#({agent_id.id}:{agent_id.gid})]@{self.get_round_number()}"
-        print(f"{id_str}: {message}")
+        print(  # noqa: T201
+            f"[Agent#({agent_id.id}:{agent_id.gid})]@{self.get_round_number()}", end=""
+        )
+        print(*args)  # noqa: T201

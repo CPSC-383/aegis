@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import cast
+
 import yaml
 
 from .aegis_types import Config, FeatureFlagName
@@ -9,16 +10,14 @@ DEFAULT_CONFIG = "default"
 
 
 def load_config(config_name: str = DEFAULT_CONFIG) -> Config:
-    # Construct the path to the config preset file
     config_path = CONFIG_PRESETS_PATH / f"{config_name}.yaml"
 
     if not config_path.exists():
-        raise FileNotFoundError(f"Config preset not found: {config_path}")
+        error = f"Config preset not found: {config_path}"
+        raise FileNotFoundError(error)
 
-    with open(config_path, "r") as f:
-        config = cast(Config, yaml.safe_load(f))
-
-    return config
+    with Path.open(config_path) as f:
+        return cast("Config", yaml.safe_load(f))
 
 
 def is_feature_enabled(

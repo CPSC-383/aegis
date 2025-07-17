@@ -1,11 +1,9 @@
-# flake8: noqa F403 F405
+# ruff: noqa: F403 F405, INP001, D100
 from aegis.stub import *
 
 
 def think() -> None:
-    """
-    This function must be defined.
-    """
+    """Do not remove this function, it must always be defined."""
     log("Thinking")
 
     # On the first round, send a request for surrounding information
@@ -14,14 +12,14 @@ def think() -> None:
         send(MOVE(Direction.CENTER))
         return
 
-    # Fetch the cell at the agent’s current location. If the location is outside the world’s bounds,
-    # return a default move action and end the turn.
+    # Fetch the cell at the agent's current location. If the location is outside
+    # the world's bounds, return a default move action and end the turn.
     cell = get_cell_at(get_location())
     if cell is None:
         send(MOVE(Direction.CENTER))
         return
 
-    # Get the top layer at the agent’s current location.
+    # Get the top layer at the agent's current location.
     # If a survivor is present, save it and end the turn.
     top_layer = cell.get_top_layer()
     if isinstance(top_layer, Survivor):

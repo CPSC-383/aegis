@@ -3,10 +3,10 @@ from typing import override
 import numpy as np
 from numpy.typing import NDArray
 
-from ..aegis_command import AegisCommand
+from _aegis.common.commands.aegis_command import AegisCommand
 
 
-class SAVE_RESULT(AegisCommand):
+class SaveResult(AegisCommand):
     def __init__(
         self,
         surv_saved_id: int,

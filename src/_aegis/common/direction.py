@@ -24,27 +24,18 @@ class Direction(Enum):
         return self.value[1]
 
     def rotate_left(self) -> Direction:
-        """
-        Rotate the direction 45 degrees left/counter-clockwise.
-        """
         if self == Direction.CENTER:
             return self
         new_index = (dir_to_index[self] - 1) % 8
         return dir_order[new_index]
 
     def rotate_right(self) -> Direction:
-        """
-        Rotate the direction 45 degrees right/clockwise.
-        """
         if self == Direction.CENTER:
             return self
         new_index = (dir_to_index[self] + 1) % 8
         return dir_order[new_index]
 
     def get_opposite(self) -> Direction:
-        """
-        Get the opposite direction (180 degrees rotation).
-        """
         if self == Direction.CENTER:
             return self
         new_index = (dir_to_index[self] + 4) % 8

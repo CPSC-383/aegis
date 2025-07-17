@@ -1,21 +1,19 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from _aegis.common.world.objects.world_object import WorldObject
-from _aegis.parsers.helper.world_file_type import StackContent
+
+if TYPE_CHECKING:
+    from _aegis.parsers.helper.world_file_type import StackContent
 
 
 class Survivor(WorldObject):
-    def __init__(
-        self,
-        id: int = -1,
-        health: int = 1,
-    ) -> None:
+    def __init__(self, survivor_id: int = -1, health: int = 1) -> None:
         super().__init__()
         self._state: Survivor.State = self.State.ALIVE
-        self.id: int = id
+        self.id: int = survivor_id
         self.set_health(health)
 
     def get_health(self) -> int:

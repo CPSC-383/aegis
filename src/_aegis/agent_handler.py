@@ -1,6 +1,10 @@
+import logging
+
 from .common.agent_id import AgentID
 from .common.constants import Constants
 from .group import AgentGroup
+
+LOGGER = logging.getLogger("aegis")
 
 
 class AgentHandler:
@@ -33,11 +37,11 @@ class AgentHandler:
 
     def get_agent_group(self, gid: int) -> AgentGroup | None:
         for group in self.agent_group_list:
-            if group.GID == gid:
+            if gid == group.GID:
                 return group
         return None
 
-    def get_groups_data(self):
+    def get_groups_data(self):  # noqa: ANN202
         groups_data: list[dict[str, str | int]] = []
         for group in self.agent_group_list:
             data = {
@@ -53,10 +57,18 @@ class AgentHandler:
         return groups_data
 
     def increase_agent_group_saved(
-        self, gid: int, number_saved: int, save_state: int
+        self,
+        gid: int,
+        number_saved: int,
+        save_state: int,
     ) -> None:
         state_message = "alive" if save_state == Constants.SAVE_STATE_ALIVE else "dead"
-        print(f"Aegis  : Group {gid} saved {number_saved} survivors {state_message}.")
+        LOGGER.info(
+            "Aegis  : Group %s saved %s survivors %s.",
+            gid,
+            number_saved,
+            state_message,
+        )
         agent_group: AgentGroup | None = self.get_agent_group(gid)
         if agent_group is None:
             return
@@ -67,21 +79,17 @@ class AgentHandler:
         elif save_state == Constants.SAVE_STATE_DEAD:
             agent_group.number_saved_dead += number_saved
 
-        # update agent group score (BASE for first survivor saved, EXTRA for any additional survivors saved (surv groups))
-        agent_group.score += (
-            Constants.SCORE_SURV_SAVED_BASE
-            + (number_saved - 1) * Constants.SCORE_ANY_EXTRA_SURV_SAVED
-        )
+        # update agent group score
+        agent_group.score += Constants.SCORE_SURV_SAVED_BASE
 
     def increase_agent_group_predicted(
-        self, gid: int, surv_id: int, label: int, pred_correct: bool
+        self,
+        gid: int,
+        surv_id: int,
+        label: int,
+        *,
+        pred_correct: bool,
     ) -> None:
-        """called when group predicts, also updates group score accordingly
-
-        Args:
-            gid (int): group id
-        """
-
         agent_group = self.get_agent_group(gid)
         if agent_group is None:
             return
@@ -95,16 +103,24 @@ class AgentHandler:
             agent_group.number_predicted_wrong += 1
         agent_group.number_predicted += 1
 
-        print(
-            f"Aegis  : Group {gid} predicted symbol {label} from survivor {surv_id} {correct_string}"
+        LOGGER.info(
+            "Aegis  : Group %s predicted symbol %s from survivor %s %s",
+            gid,
+            label,
+            surv_id,
+            correct_string,
         )
 
     def print_group_survivor_saves(self) -> None:
-        print("=================================================")
-        print("Results for each Group")
-        print("(Score, Number Saved, Correct Predictions)")
-        print("=================================================")
+        LOGGER.info("=================================================")
+        LOGGER.info("Results for each Group")
+        LOGGER.info("(Score, Number Saved, Correct Predictions)")
+        LOGGER.info("=================================================")
         for group in self.agent_group_list:
-            print(
-                f"{group.name} : ({group.score}, {group.number_saved}, {group.number_predicted_right})"
+            LOGGER.info(
+                "%s : (%s, %s, %s)",
+                group.name,
+                group.score,
+                group.number_saved,
+                group.number_predicted_right,
             )

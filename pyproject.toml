@@ -17,6 +17,18 @@ dynamic = ["version"]
 [tool.hatch.version]
 path = "src/aegis/__init__.py"
 
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  "S311", # suspicious-non-cryptographic-random-usage
+  "D203", # incorrect-blank-line-before-class
+  "D212", # multi-line-summary-first-line
+  "COM812", # missing-trailing-comma
+]
+
 [project.scripts]
 aegis = "aegis:main"
 

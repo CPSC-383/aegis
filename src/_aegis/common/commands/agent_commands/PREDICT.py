@@ -2,11 +2,11 @@ from typing import override
 
 import numpy as np
 
-from ..agent_command import AgentCommand
+from _aegis.common.commands.agent_command import AgentCommand
 
 
-class PREDICT(AgentCommand):
-    def __init__(self, surv_id: int, label: np.int64):
+class Predict(AgentCommand):
+    def __init__(self, surv_id: int, label: np.int64) -> None:
         super().__init__()
         self.surv_id: int = surv_id
         self.label: np.int64 = label

@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 
-from ..common.location import Location
+from _aegis.common.location import Location
 
 
 class SpawnZoneType(Enum):
@@ -38,7 +38,8 @@ class SpawnManger:
 
     def add_spawn_zone(self, spawn: SpawnZone) -> None:
         if spawn.zone_type == SpawnZoneType.GROUP and spawn.allowed_group is None:
-            raise ValueError("Group spawn zones require a group id!")
+            error = "Group spawn zones require a group id!"
+            raise ValueError(error)
 
         self.spawn_locations.append(spawn)
 

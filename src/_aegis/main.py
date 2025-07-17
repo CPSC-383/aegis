@@ -1,36 +1,36 @@
-import traceback
 import sys
+import traceback
 
-from _aegis.aegis_main import Aegis
-from _aegis.parsers.args_parser import parse_args
+from . import LOGGER
+from .aegis_main import Aegis
+from .parsers.args_parser import parse_args
 
 
 def main() -> None:
     try:
-        print("Aegis  : Initializing.")
+        LOGGER.info("Aegis  : Initializing.")
 
         parameters, wait_for_client = parse_args()
-        aegis = Aegis(parameters, wait_for_client)
+        aegis = Aegis(parameters, wait_for_client=wait_for_client)
 
-        print("Aegis  : Starting Up.")
+        LOGGER.info("Aegis  : Starting Up.")
         if not aegis.start_up():
-            print("Aegis  : Unable to start up.", file=sys.stderr)
+            LOGGER.error("Aegis  : Unable to start up.")
             sys.exit(1)
 
         if not aegis.build_world():
-            print("Aegis  : Error building world.", file=sys.stderr)
+            LOGGER.error("Aegis  : Error building world.")
             sys.exit(1)
 
-        print("Aegis  : Waiting for agents.")
+        LOGGER.info("Aegis  : Waiting for agents.")
         _ = sys.stdout.flush()
 
         aegis.start_agents()
         aegis.run()
         aegis.shutdown()
-        print("Aegis  : Done.")
+        LOGGER.info("Aegis  : Done.")
 
-    except Exception as e:
-        print(f"Exception: {e}", file=sys.stderr)
+    except Exception:  # noqa: BLE001
         traceback.print_exc()
         sys.exit(1)
 

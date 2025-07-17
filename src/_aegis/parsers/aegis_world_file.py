@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
+from _aegis.world.spawn_manager import SpawnZone
+
 from .helper.cell_info_settings import CellInfoSettings
 from .helper.cell_type_info import CellTypeInfo
-from ..world.spawn_manager import SpawnZone
 
 
 @dataclass

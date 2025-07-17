@@ -12,27 +12,7 @@ from _aegis.common.world.objects import Survivor, WorldObject
 
 
 class Cell:
-    """
-    Represents a cell in the world.
-
-    Attributes:
-        move_cost (int): The movement cost associated with the cell.
-        agent_id_list (list[AgentID]): List of agent IDs present in the cell.
-        location (Location): The location of the cell on the map.
-    """
-
-    def __init__(
-        self,
-        x: int | None = None,
-        y: int | None = None,
-    ) -> None:
-        """
-        Initializes an Cell instance.
-
-        Args:
-            x: The x-coordinate of the cell.
-            y: The y-coordinate of the cell.
-        """
+    def __init__(self, x: int | None = None, y: int | None = None) -> None:
         self._type: CellType = CellType.NO_CELL
         self.move_cost: int = 1
         self.agent_id_list: list[AgentID] = []
@@ -54,30 +34,12 @@ class Cell:
             self._type = CellType.KILLER_CELL
 
     def is_charging_cell(self) -> bool:
-        """
-        Checks if the cell is of type CHARGING_CELL.
-
-        Returns:
-            True if the cell type is CHARGING_CELL, False otherwise.
-        """
         return self._type == CellType.CHARGING_CELL
 
     def is_killer_cell(self) -> bool:
-        """
-        Checks if the cell is of type KILLER_CELL.
-
-        Returns:
-            True if the cell type is KILLER_CELL, False otherwise.
-        """
         return self._type == CellType.KILLER_CELL
 
     def is_normal_cell(self) -> bool:
-        """
-        Checks if the cell is of type NORMAL_CELL.
-
-        Returns:
-            True if the cell type is NORMAL_CELL, False otherwise.
-        """
         return self._type == CellType.NORMAL_CELL
 
     def set_normal_cell(self) -> None:
@@ -101,23 +63,11 @@ class Cell:
         return self._cell_layer_list.pop()
 
     def get_top_layer(self) -> WorldObject | None:
-        """
-        Returns the top layer of the cell without removing it if the cell has layers.
-
-        Returns:
-            The top layer, or None if the cell has no layers.
-        """
         if not self._cell_layer_list:
             return None
         return self._cell_layer_list[-1]
 
     def set_top_layer(self, top_layer: WorldObject | None) -> None:
-        """
-        Sets the top layer of the cell, replacing any existing layers.
-
-        Args:
-            top_layer: The new top layer for the cell.
-        """
         self._cell_layer_list.clear()
         if top_layer is None:
             return
@@ -156,10 +106,13 @@ class Cell:
                 f"  {i + 1} - {layer}"
                 for i, layer in enumerate(reversed(self._cell_layer_list))
             )
-        return f"""Cell at ({self.location.x}, {self.location.y}) - Move Cost: {self.move_cost}
-Layers:
-{layers_str}
-    """
+
+        return (
+            f"Cell at ({self.location.x}, {self.location.y}) - "
+            f"Move Cost: {self.move_cost}\n"
+            f"Layers:\n"
+            f"{layers_str}\n"
+        )
 
     @override
     def __repr__(self) -> str:

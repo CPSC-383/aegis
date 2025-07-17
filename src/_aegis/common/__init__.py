@@ -1,10 +1,10 @@
 __all__ = [
     "AgentID",
+    "CellType",
     "Constants",
     "Direction",
     "Location",
     "Utility",
-    "CellType",
 ]
 
 from _aegis.common.agent_id import AgentID

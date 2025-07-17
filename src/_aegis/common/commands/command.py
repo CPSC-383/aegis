@@ -19,8 +19,6 @@ class Command(ABC):
     STR_RECHARGE_RESULT: str = "RECHARGE_RESULT"
     STR_WORLD_UPDATE: str = "WORLD_UDPATE"
 
-    STR_UNKNOWN: str = "UNKNOWN"
-
     @abstractmethod
     @override
     def __str__(self) -> str:

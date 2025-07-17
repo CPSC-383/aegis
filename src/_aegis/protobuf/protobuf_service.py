@@ -1,8 +1,5 @@
-"""
-Protobuf service for AEGIS server-side serialization.
-"""
-
 from typing import Any
+
 from . import aegis_pb2
 
 

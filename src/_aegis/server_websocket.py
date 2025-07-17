@@ -1,10 +1,13 @@
 # pyright: reportMissingTypeStubs = false
+import logging
 import queue
 import threading
 import time
 from typing import NamedTuple
 
 from websocket_server import WebsocketServer
+
+LOGGER = logging.getLogger("aegis")
 
 
 class Client(NamedTuple):
@@ -18,18 +21,18 @@ class Client(NamedTuple):
 class WebSocketServer:
     """Serve a AEGIS Simulation over a websocket connection."""
 
-    def __init__(self, wait_for_client: bool = False) -> None:
-        """Initializes a new server."""
+    def __init__(self) -> None:
+        """Initialize a new server."""
         self._host: str = "localhost"
         self._port: int = 6003
-        self._wait_for_client: bool = wait_for_client
+        self._wait_for_client: bool = False
         self._connected: bool = False
         self._done: bool = False
         self._server: WebsocketServer | None = None
         self._previous_events: list[str] = []
         self._incoming_events: queue.Queue[str] = queue.Queue()
         self._queue_thread: threading.Thread = threading.Thread(
-            target=self._process_queue
+            target=self._process_queue,
         )
         self._lock: threading.Lock = threading.Lock()
 
@@ -37,26 +40,16 @@ class WebSocketServer:
         """Events to process that are in the event queue."""
         try:
             while not self._done:
-                try:
-                    event = self._incoming_events.get(timeout=0.3)
-                    self._process_event(event)
-                except Exception:
-                    pass
+                event = self._incoming_events.get(timeout=0.3)
+                self._process_event(event)
 
             while not self._incoming_events.empty():
                 event = self._incoming_events.get()
                 self._process_event(event)
-        except Exception as e:
-            print(f"Error processing queue: {e}")
+        except Exception:
+            LOGGER.exception("Error processing queue")
 
     def _process_event(self, event: str) -> None:
-        """
-        Sends the events to the connected clients.
-        Locks until the event is sent to all clients.
-
-        Args:
-            event: The event to send.
-        """
         if self._server is not None:
             with self._lock:
                 for client in self._server.clients:  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
@@ -64,30 +57,17 @@ class WebSocketServer:
                 self._previous_events.append(event)
 
     def add_event(self, event: str) -> None:
-        """
-        Add an event to be sent to client in the future.
-
-        Args:
-            event: The event to add.
-        """
         if self._done:
-            raise RuntimeError("Can't add event, server already finished!")
+            error = "Can't add event, server already finished!"
+            raise RuntimeError(error)
         self._incoming_events.put(event)
 
     def _on_open(self, client: Client, server: WebsocketServer) -> None:
-        """
-        Handle actions upon client connection.
-
-        Args:
-            client: The client object.
-            server: The WebsocketServer currently being used.
-        """
         self._connected = True
         for event in self._previous_events:
             server.send_message(client, event)  # pyright: ignore[reportUnknownMemberType]
 
     def start(self) -> None:
-        """Run the server."""
         if not self._wait_for_client:
             return
 
@@ -97,42 +77,27 @@ class WebSocketServer:
         self._queue_thread.start()
         self._server.run_forever(threaded=True)
 
-        print("Waiting for connection from client...")
         while not self._connected:
             time.sleep(0.3)
 
-        print("Connection received!")
-
-    def shutdown_gracefully(self):
-        """
-        Send a CLOSE handshake to all connected clients before terminating server
-        """
-
+    def shutdown_gracefully(self) -> None:
         if self._server is None:
             return
         self._server.keep_alive = False
-        self._server._disconnect_clients_gracefully(1000, bytes("", encoding="utf-8"))  # pyright: ignore[reportPrivateUsage]
+        self._server._disconnect_clients_gracefully(1000, bytes("", encoding="utf-8"))  # pyright: ignore[reportPrivateUsage]  # noqa: SLF001
         # These bottom two are flipped from regular order in websocket_server
         self._server.shutdown()
         self._server.server_close()
 
     def finish(self) -> None:
-        """Send all queued events and shutdown the server."""
         if not self._wait_for_client:
             return
         self._done = True
-        print("shutting down server...")
         try:
             self._queue_thread.join()
             self.shutdown_gracefully()
-        except Exception as e:
-            print(f"Error shutting down server: {e}")
+        except Exception:
+            LOGGER.exception("Error shutting down server")
 
-    def set_wait_for_client(self, wait_for_client: bool) -> None:
-        """
-        Set whether to wait for the client to connect to AEGIS.
-
-        Args:
-            wait_for_client: Whether to wait for the client.
-        """
-        self._wait_for_client = wait_for_client
+    def set_wait_for_client(self) -> None:
+        self._wait_for_client = True

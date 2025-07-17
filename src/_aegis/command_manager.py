@@ -1,18 +1,17 @@
-from _aegis.common.commands.agent_command import AgentCommand
-from _aegis.common.commands.agent_commands import OBSERVE, SEND_MESSAGE
-from _aegis.common.constants import Constants
-
+from .common.commands.agent_command import AgentCommand
+from .common.commands.agent_commands import Observe, SendMessage
+from .common.constants import Constants
 
 try:
-    from _aegis.common.commands.agent_commands.PREDICT import PREDICT
+    from _aegis.common.commands.agent_commands.predict import Predict
 except ImportError:
-    PREDICT = None  # pyright: ignore[reportConstantRedefinition]
+    Predict = None
 
 
 class CommandManager:
     def __init__(self) -> None:
         self._action_command: AgentCommand | None = None
-        self._message_queue: list[SEND_MESSAGE] = []
+        self._message_queue: list[SendMessage] = []
         self._directive_commands: list[AgentCommand] = []
 
     def get_action_command(self) -> AgentCommand | None:
@@ -24,17 +23,17 @@ class CommandManager:
         return directives
 
     def send(self, command: AgentCommand) -> None:
-        if isinstance(command, SEND_MESSAGE):
+        if isinstance(command, SendMessage):
             self._message_queue.append(command)
-        elif isinstance(command, OBSERVE) or (
-            PREDICT is not None and isinstance(command, PREDICT)
+        elif isinstance(command, Observe) or (
+            Predict is not None and isinstance(command, Predict)
         ):
             if len(self._directive_commands) < Constants.MAX_DIRECTIVES:
                 self._directive_commands.append(command)
         else:
             self._action_command = command
 
-    def get_messages(self) -> list[SEND_MESSAGE]:
+    def get_messages(self) -> list[SendMessage]:
         messages = self._message_queue[:]
         self._message_queue.clear()
         return messages

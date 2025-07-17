@@ -8,7 +8,6 @@ class Constants:
     WORLD_MIN: int = 3
     WORLD_MAX: int = 30
     SCORE_SURV_SAVED_BASE: int = 100
-    SCORE_ANY_EXTRA_SURV_SAVED: int = 0
     SCORE_CORRECT_PRED: int = 10
     NUM_OF_TESTING_IMAGES: int = 704
     OBSERVE_ENERGY_COST: int = 1

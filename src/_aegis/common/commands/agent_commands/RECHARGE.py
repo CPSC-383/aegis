@@ -1,9 +1,9 @@
 from typing import override
 
-from ..agent_command import AgentCommand
+from _aegis.common.commands.agent_command import AgentCommand
 
 
-class RECHARGE(AgentCommand):
+class Recharge(AgentCommand):
     @override
     def __str__(self) -> str:
         return self.STR_RECHARGE
