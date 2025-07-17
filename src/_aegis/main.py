@@ -87,8 +87,8 @@ class Aegis:
                 raise RuntimeError(error)
             agent.load_agent(self._parameters.agent)
 
-    def _end_simulation(self) -> None:
-        LOGGER.info("Aegis  : Simulation Over.")
+    def _end_simulation(self, last_round: int) -> None:
+        LOGGER.info("Aegis  : Simulation Over. Final Round: %s", last_round)
 
         serialized_data = ProtobufService.serialize_simulation_complete()
         self._compress_and_send(serialized_data)
@@ -116,19 +116,6 @@ class Aegis:
             if self._end:
                 break
 
-            if len(self._agents) == 0:
-                LOGGER.info("Aegis  : All Agents are Dead !!!")
-                self._end_simulation()
-                return
-
-            survivors_saved = self._aegis_world.get_total_saved_survivors()
-            total_survivors = self._aegis_world.get_num_survivors()
-
-            if survivors_saved == total_survivors:
-                LOGGER.info("Aegis  : All Survivors Saved")
-                self._end_simulation()
-                return
-
             self._command_processor.run_turn()
             self._grim_reaper()
             world_data = self.get_aegis_world().get_protobuf_world_data()
@@ -138,7 +125,24 @@ class Aegis:
             )
             self._compress_and_send(serialized_data)
 
-        self._end_simulation()
+            if self._is_game_over():
+                self._end_simulation(game_round)
+                return
+
+        self._end_simulation(self._parameters.number_of_rounds)
+
+    def _is_game_over(self) -> bool:
+        if len(self._agents) == 0:
+            LOGGER.info("Aegis  : All Agents are Dead !!!")
+            return True
+
+        survivors_saved = self._aegis_world.get_total_saved_survivors()
+        total_survivors = self._aegis_world.get_num_survivors()
+        if survivors_saved == total_survivors:
+            LOGGER.info("Aegis  : All Survivors Saved")
+            return True
+
+        return False
 
     def _grim_reaper(self) -> None:
         dead_agents = self._aegis_world.grim_reaper()
