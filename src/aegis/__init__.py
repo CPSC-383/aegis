@@ -1,9 +1,8 @@
 """Public Aegis export stuff."""
 
+from _aegis.cli import main
 from _aegis.common import AgentID, Direction, Location
-from _aegis.common.commands.aegis_commands import (
-    ObserveResult,
-)
+from _aegis.common.commands.aegis_commands import ObserveResult, SendMessageResult
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     Dig,
@@ -16,7 +15,6 @@ from _aegis.common.commands.agent_commands import (
 from _aegis.common.world.cell import Cell
 from _aegis.common.world.objects import Survivor
 from _aegis.common.world.world import World
-from _aegis.main import main
 
 # To generate the list after adding imports,
 # use `uv run scripts/sort.py`
@@ -34,6 +32,7 @@ __all__ = [  # noqa: RUF022
     "Location",
     "ObserveResult",
     "SendMessage",
+    "SendMessageResult",
     "Survivor",
     "World",
     "main",

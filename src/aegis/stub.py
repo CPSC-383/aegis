@@ -11,9 +11,13 @@ from . import (
     Direction,
     Location,
     Move,
+    Observe,
+    ObserveResult,
     Save,
+    SaveResult,
+    SendMessage,
+    SendMessageResult,
     Survivor,
-    World,
 )
 
 
@@ -77,11 +81,5 @@ def get_energy_cells() -> list[Location]:
     """Return a list of locations where charging cells are present."""
 
 
-def log(message: str) -> None:
-    """
-    Log a message to the console.
-
-    Args:
-        message: The message string to log.
-
-    """
+def log(*args: object) -> None:
+    """Log a message to the console."""

@@ -1,7 +1,6 @@
-import importlib.util
-import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+
+from _aegis.sandbox import Sandbox
 
 from . import LOGGER
 from .command_manager import CommandManager
@@ -14,13 +13,11 @@ from .common.commands.aegis_commands import (
     WorldUpdate,
 )
 from .common.commands.agent_command import AgentCommand
-from .common.commands.agent_commands import SendMessage
+from .common.commands.agent_commands import Move, Observe, Save, SendMessage
 from .common.world.cell import Cell
 from .common.world.info import SurroundInfo
+from .common.world.objects import Survivor
 from .common.world.world import World
-
-if TYPE_CHECKING:
-    from types import ModuleType
 
 try:
     from _aegis.common.commands.aegis_commands.save_result import SaveResult
@@ -46,7 +43,7 @@ class Agent:
         self._location: Location = location
         self._energy_level: int = energy_level
         self._command_manager: CommandManager = CommandManager()
-        self._module: ModuleType | None = None
+        self._sandbox: Sandbox | None = None
         self._inbox: list[SendMessageResult] = []
         self._results: list[AegisCommand] = []
         self.steps_taken: int = 0
@@ -54,33 +51,33 @@ class Agent:
 
     def run(self) -> None:
         self._round += 1
-        if self._module is None:
+        if self._sandbox is None:
             error = "Module should not be of `None` type."
             raise RuntimeError(error)
         self._send_messages()
         self._send_results()
-        self._module.think()  # pyright: ignore[reportAny]
+        self._sandbox.think()
 
     def _send_results(self) -> None:
-        if self._results and self._module:
+        if self._results and self._sandbox:
             for result in self._results:
-                if isinstance(result, ObserveResult) and hasattr(
-                    self._module,
-                    "handle_observe",
+                if (
+                    isinstance(result, ObserveResult)
+                    and self._sandbox.has_handle_observe()
                 ):
-                    self._module.handle_observe(self, result)  # pyright: ignore[reportAny]
+                    self._sandbox.handle_observe(result)  # pyright: ignore[reportUnknownMemberType]
 
                 elif (
                     SaveResult is not None
                     and isinstance(result, SaveResult)
-                    and hasattr(self._module, "handle_save")
+                    and self._sandbox.has_handle_save()
                 ):
-                    self._module.handle_save(self, result)  # pyright: ignore[reportAny]
+                    self._sandbox.handle_save(result)  # pyright: ignore[reportUnknownMemberType]
         self._results.clear()
 
     def _send_messages(self) -> None:
-        if self._inbox and self._module and hasattr(self._module, "handle_messages"):
-            self._module.handle_messages(self, self._inbox)  # pyright: ignore[reportAny]
+        if self._inbox and self._sandbox and self._sandbox.has_handle_messages():
+            self._sandbox.handle_messages(self._inbox)  # pyright: ignore[reportUnknownMemberType]
         self._inbox.clear()
 
     def load_agent(self, agent_path: str) -> None:
@@ -89,26 +86,15 @@ class Agent:
             error = "Agent not found"
             raise FileNotFoundError(error)
 
-        module_name = path.stem
+        sandbox = Sandbox(self.create_methods())
+        sandbox.load_and_compile(path)
+        sandbox.init()
 
-        spec = importlib.util.spec_from_file_location(module_name, str(path))
-        if spec is None or spec.loader is None:
-            error = f"Could not load spec from {path}"
-            raise ImportError(error)
-
-        module = importlib.util.module_from_spec(spec)
-        sys.modules[module_name] = module
-        spec.loader.exec_module(module)
-
-        # This must be injected after spec.loader, or else all these methods won't
-        # exist in the agent
-        module.__dict__.update(self.create_methods())
-
-        if not hasattr(module, "think"):
+        if not sandbox.has_think():
             error = f"{path} does not define a `think()` function."
             raise AttributeError(error)
 
-        self._module = module
+        self._sandbox = sandbox
 
     def update_surround(self, surround_info: SurroundInfo) -> None:
         for d in Direction:
@@ -178,7 +164,15 @@ class Agent:
         self.steps_taken += 1
 
     def create_methods(self):  # noqa: ANN202
-        return {
+        methods = {
+            "Direction": Direction,
+            "Move": Move,
+            "Observe": Observe,
+            "Save": Save,
+            "SendMessage": SendMessage,
+            "Survivor": Survivor,
+            "ObserveResult": ObserveResult,
+            "SendMessageResult": SendMessageResult,
             "get_round_number": self.get_round_number,
             "get_agent_id": self.get_agent_id,
             "get_location": self.get_location,
@@ -190,6 +184,11 @@ class Agent:
             "get_survs": self._aegis_world.get_survs,
             "log": self.log,
         }
+
+        if SaveResult is not None:
+            methods["SaveResult"] = SaveResult  # pyright: ignore[reportArgumentType]
+
+        return methods
 
     ###################################
     # ===== Public User Methods ===== #
@@ -223,6 +222,6 @@ class Agent:
 
         agent_id = self.get_agent_id()
         print(  # noqa: T201
-            f"[Agent#({agent_id.id}:{agent_id.gid})]@{self.get_round_number()}", end=""
+            f"[Agent#({agent_id.id}:{agent_id.gid})@{self.get_round_number()}] ", end=""
         )
         print(*args)  # noqa: T201

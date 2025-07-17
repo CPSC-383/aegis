@@ -26,5 +26,7 @@ def think() -> None:
         send(Save())
         return
 
+    print(cell._type)
+
     # Default action: Move the agent north if no other specific conditions are met.
     send(Move(Direction.NORTH))

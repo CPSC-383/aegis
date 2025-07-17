@@ -20,4 +20,4 @@ jobs:
         run: pip install ruff
 
       - name: Run ruff
-        run: ruff check src --exclude src/_aegis/protobuf
+        run: ruff check src 

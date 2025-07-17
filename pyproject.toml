@@ -10,6 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     "protobuf==5.29.5",
     "pyyaml>=6.0.2",
+    "restrictedpython>=8.0",
     "websocket-server==0.6.4",
 ]
 dynamic = ["version"]
@@ -19,6 +20,7 @@ path = "src/aegis/__init__.py"
 
 [tool.ruff]
 line-length = 88
+exclude = ["src/_aegis/sandbox.py", "src/_aegis/protobuf/**"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -30,7 +32,7 @@ ignore = [
 ]
 
 [project.scripts]
-aegis = "aegis:main"
+aegis = "aegis:cli"
 
 [project.optional-dependencies]
 comp = [
