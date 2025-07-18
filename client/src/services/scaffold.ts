@@ -18,7 +18,8 @@ export type Scaffold = {
         world: string,
         group: string,
         agent: string,
-        config: string
+        config: string,
+        debug: boolean
     ) => void
     killSim: (() => void) | undefined
     readAegisConfig: () => Promise<string>
@@ -53,7 +54,8 @@ export function createScaffold(): Scaffold {
         world: string,
         group: string,
         agent: string,
-        config: string
+        config: string,
+        debug: boolean
     ) => {
         if (!aegisPath) {
             throw new Error("Can't find AEGIS path!")
@@ -62,7 +64,16 @@ export function createScaffold(): Scaffold {
         // Reset output
         setOutput([])
 
-        const pid = await aegisAPI.aegis_child_process.spawn(rounds, amount, world, group, agent, aegisPath, config)
+        const pid = await aegisAPI.aegis_child_process.spawn(
+            rounds,
+            amount,
+            world,
+            group,
+            agent,
+            aegisPath,
+            config,
+            debug
+        )
         aegisPid.current = pid
         forceUpdate()
     }
