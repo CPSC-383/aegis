@@ -1,12 +1,14 @@
 import {
   AgentInfoDict,
   CellDict,
+  GroupStats,
   RoundData,
   SimulationStateManager,
   StatsCalculator,
+  UIWorldStats,
   WorldDataManager
 } from '@/core/simulation'
-import { CellContent, WorldMap } from '@/core/world'
+import { CellContent, SpawnZoneData, WorldMap } from '@/core/world'
 import { EventType, dispatchEvent } from '@/events'
 import { RoundUpdate } from '@/generated/aegis'
 
@@ -93,7 +95,6 @@ export class Simulation {
    */
   private dispatchUpdates(): void {
     dispatchEvent(EventType.RENDER, {})
-    const currentRoundData = this.worldData.getCurrentRoundData()
     // Note: protobuf WorldState doesn't have top_layer_rem_data, so we skip this check
     // if (currentRoundData?.top_layer_rem_data) {
     //     dispatchEvent(EventType.RENDER_STACK, {})
@@ -104,7 +105,7 @@ export class Simulation {
    * Retrieves calculated statistics for the current simulation state.
    * @returns Statistics for the simulation.
    */
-  getStats() {
+  getStats(): { worldStats: UIWorldStats; groupStats?: GroupStats[] } {
     return this.statsCalculator.calculateStats()
   }
 
@@ -154,7 +155,7 @@ export class Simulation {
    * @param {number} y - The y-coordinate of the cell.
    * @returns Spawn information at the cell location.
    */
-  getSpawns(x: number, y: number) {
+  getSpawns(x: number, y: number): SpawnZoneData | undefined {
     return this.worldData.getSpawnInfo(x, y)
   }
 

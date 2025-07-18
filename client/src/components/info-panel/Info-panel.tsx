@@ -1,6 +1,6 @@
 import { useAppContext } from '@/contexts/AppContext'
 import { AgentInfoDict, CellDict } from '@/core/simulation'
-import { CellContent, SpawnZoneTypes } from '@/core/world'
+import { CellContent, SpawnZoneData, SpawnZoneTypes } from '@/core/world'
 import { EventType, listenEvent } from '@/events'
 import { useEffect, useState } from 'react'
 import AgentPanel from './Agent-panel'
@@ -13,9 +13,7 @@ const InfoPanel = (): JSX.Element => {
   const [cellLayers, setCellLayers] = useState<CellContent[]>([])
   const [agents, setAgents] = useState<AgentInfoDict[]>([])
   const [selectedAgent, setSelectedAgent] = useState<AgentInfoDict | undefined>()
-  const [spawns, setSpawns] = useState<
-    { type: SpawnZoneTypes; groups: number[] } | undefined
-  >(undefined)
+  const [spawns, setSpawns] = useState<SpawnZoneData | undefined>(undefined)
 
   const gatherData = (): void => {
     if (!simulation || !selectedCell) return

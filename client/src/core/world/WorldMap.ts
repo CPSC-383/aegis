@@ -1,8 +1,15 @@
-import { Location, Stack, Size, Spawn, SpawnZoneTypes, CellTypeMap } from '@/core/world'
-import { whatBucket } from '@/utils/util'
-import { shadesOfBrown, shadesOfBlue } from '@/types'
-import { renderCoords } from '@/utils/renderUtils'
+import {
+  CellTypeMap,
+  Location,
+  Size,
+  SpawnZoneData,
+  SpawnZoneTypes,
+  Stack
+} from '@/core/world'
 import { WorldState } from '@/generated/aegis'
+import { shadesOfBlue, shadesOfBrown } from '@/types'
+import { renderCoords } from '@/utils/renderUtils'
+import { whatBucket } from '@/utils/util'
 
 // Interface for world data structure
 interface WorldData {
@@ -51,7 +58,7 @@ export class WorldMap {
     public readonly fireCells: Location[],
     public readonly killerCells: Location[],
     public readonly chargingCells: Location[],
-    public readonly spawnCells: Map<string, { type: SpawnZoneTypes; groups: number[] }>,
+    public readonly spawnCells: Map<string, SpawnZoneData>,
     public readonly stacks: Stack[],
     public readonly initialAgentEnergy: number,
     public minMoveCost: number,
@@ -105,7 +112,7 @@ export class WorldMap {
     const { world_info } = data.settings
     const { size, seed, agent_energy } = world_info
 
-    const spawnCells = new Map<string, { type: SpawnZoneTypes; groups: number[] }>(
+    const spawnCells = new Map<string, SpawnZoneData>(
       data.spawn_locs.map((spawn) => {
         const key = JSON.stringify({ x: spawn.x, y: spawn.y })
         return [

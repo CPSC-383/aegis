@@ -1,5 +1,5 @@
 import { AgentInfoDict, CellDict, Groups, Round, RoundData } from '@/core/simulation/'
-import { CellContent, SpawnZoneTypes, WorldMap } from '@/core/world'
+import { CellContent, SpawnZoneData, WorldMap } from '@/core/world'
 import { Agent, Cell, WorldState } from '@/generated/aegis'
 
 export class WorldDataManager {
@@ -186,12 +186,9 @@ export class WorldDataManager {
    * Retrieves spawn zone information for a specific cell.
    * @param {number} x - The x-coordinate of the cell.
    * @param {number} y - The y-coordinate of the cell.
-   * @returns {{ type: SpawnZoneTypes; groups: number[] } | undefined} Spawn zone data or undefined.
+   * @returns {SpawnZoneData | undefined} Spawn zone data or undefined.
    */
-  getSpawnInfo(
-    x: number,
-    y: number
-  ): { type: SpawnZoneTypes; groups: number[] } | undefined {
+  getSpawnInfo(x: number, y: number): SpawnZoneData | undefined {
     if (!this.currentRoundData) {
       const key = JSON.stringify({ x, y })
       return this.worldMap.spawnCells.get(key)

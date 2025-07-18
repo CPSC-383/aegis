@@ -48,6 +48,11 @@ export enum SpawnZoneTypes {
   Group = 'group'
 }
 
+export type SpawnZoneData = {
+  type: SpawnZoneTypes
+  groups: number[]
+}
+
 export interface CellTypeMap {
   [key: string]: {
     color: string
