@@ -1,60 +1,69 @@
+import {
+  Location,
+  RubbleInfo,
+  Stack,
+  StackContent,
+  SurvivorInfo,
+  WorldMap
+} from '@/core/world'
 import { StackContentBrushTypes } from '@/types'
-import { RubbleInfo, SurvivorInfo, Location, Stack, StackContent } from '@/core/world'
-import BrushHandler from './BrushHandler'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
+import BrushHandler from './BrushHandler'
 
 class StackContentHandler extends BrushHandler {
-    constructor(
-        worldMap: any,
-        private stackType: StackContentBrushTypes,
-        private rubbleInfo: RubbleInfo,
-        private survivorInfo: SurvivorInfo
-    ) {
-        super(worldMap)
+  constructor(
+    worldMap: WorldMap,
+    private stackType: StackContentBrushTypes,
+    private rubbleInfo: RubbleInfo,
+    private survivorInfo: SurvivorInfo
+  ) {
+    super(worldMap)
+  }
+
+  handle(tile: Location, rightClicked: boolean): void {
+    const stack = this.getStack(tile)
+    if (!stack) return
+
+    if (rightClicked && stack.contents.length > 0) {
+      stack.contents.pop()
+      return
     }
 
-    handle(tile: Location, rightClicked: boolean): void {
-        const stack = this.getStack(tile)
-        if (!stack) return
+    if (!this.isOccupied(tile)) {
+      this.addStackContent(stack)
+    }
+  }
 
-        if (rightClicked && stack.contents.length > 0) {
-            stack.contents.pop()
-            return
-        }
+  private addStackContent(stack: Stack): void {
+    const { spawnCells } = this.worldMap
+    const key = JSON.stringify(stack.cell_loc)
 
-        if (!this.isOccupied(tile)) {
-            this.addStackContent(stack)
-        }
+    if (spawnCells.get(key)) return
+    if (getCurrentAssignment() === ASSIGNMENT_A1) {
+      const hasSurvivorOnMap = this.worldMap.stacks.some((stack) =>
+        stack.contents.some(
+          (content: StackContent) => content.type.toLowerCase() === 'sv'
+        )
+      )
+
+      if (hasSurvivorOnMap) return
     }
 
-    private addStackContent(stack: Stack): void {
-        const { spawnCells } = this.worldMap
-        const key = JSON.stringify(stack.cell_loc)
+    const content = {
+      [StackContentBrushTypes.Rubble]: {
+        type: 'rb',
+        arguments: this.rubbleInfo
+      },
+      [StackContentBrushTypes.Survivor]: {
+        type: 'sv',
+        arguments: this.survivorInfo
+      }
+    }[this.stackType]
 
-        if (spawnCells.get(key)) return
-        if (getCurrentAssignment() === ASSIGNMENT_A1) {
-            const hasSurvivorOnMap = this.worldMap.stacks.some((stack) =>
-                stack.contents.some((content: StackContent) => content.type.toLowerCase() === 'sv')
-            )
-
-            if (hasSurvivorOnMap) return
-        }
-
-        const content = {
-            [StackContentBrushTypes.Rubble]: {
-                type: 'rb',
-                arguments: this.rubbleInfo
-            },
-            [StackContentBrushTypes.Survivor]: {
-                type: 'sv',
-                arguments: this.survivorInfo
-            }
-        }[this.stackType]
-
-        if (content) {
-            stack.contents.push(content)
-        }
+    if (content) {
+      stack.contents.push(content)
     }
+  }
 }
 
 export default StackContentHandler

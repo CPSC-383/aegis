@@ -1,21 +1,21 @@
+import { Location, WorldMap } from '@/core/world'
 import BrushHandler from './BrushHandler'
-import { Location } from '@/core/world'
 
 class MoveCostHandler extends BrushHandler {
-    constructor(
-        worldMap: any,
-        private moveCost: number
-    ) {
-        super(worldMap)
-    }
+  constructor(
+    worldMap: WorldMap,
+    private moveCost: number
+  ) {
+    super(worldMap)
+  }
 
-    handle(tile: Location, rightClicked: boolean): void {
-        const stack = this.getStack(tile)
-        if (stack) {
-            stack.move_cost = rightClicked ? 1 : this.moveCost
-            this.worldMap.updateMinMaxMoveCosts()
-        }
+  handle(tile: Location, rightClicked: boolean): void {
+    const stack = this.getStack(tile)
+    if (stack) {
+      stack.move_cost = rightClicked ? 1 : this.moveCost
+      this.worldMap.updateMinMaxMoveCosts()
     }
+  }
 }
 
 export default MoveCostHandler
