@@ -185,7 +185,7 @@ export class WorldMap {
    * @returns The type of the cell as a string.
    */
   getCellType(x: number, y: number): string {
-    const matchLocation = (cell: Location) => cell.x === x && cell.y === y
+    const matchLocation = (cell: Location): boolean => cell.x === x && cell.y === y
 
     if (this.fireCells.some(matchLocation)) return 'CellType.FIRE_CELL'
     if (this.killerCells.some(matchLocation)) return 'CellType.KILLER_CELL'

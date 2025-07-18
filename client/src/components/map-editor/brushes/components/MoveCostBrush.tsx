@@ -8,23 +8,24 @@ interface Props {
 }
 
 function MoveCostBrush({ moveCost, setMoveCost }: Props): JSX.Element {
+  const clampMoveCost = (value: number): number => {
+    return Math.max(1, Math.min(1000, value))
+  }
+
   return (
     <Card className="w-full">
       <CardContent className="pt-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Move Cost</span>
-          <div className="flex space-x-2">
-            {[2, 3, 4, 5].map((cost) => (
-              <Button
-                key={cost}
-                variant={moveCost === cost ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setMoveCost(cost)}
-              >
-                {cost}
-              </Button>
-            ))}
-          </div>
+        <div className="grid grid-cols-5 grid-rows-2 gap-2">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((cost) => (
+            <Button
+              key={cost}
+              variant={moveCost === cost ? 'default' : 'outline'}
+              onClick={() => setMoveCost(cost)}
+              className="w-6 h-6 text-sm p-0"
+            >
+              {cost}
+            </Button>
+          ))}
         </div>
 
         <div className="flex items-center space-x-2">
@@ -37,9 +38,8 @@ function MoveCostBrush({ moveCost, setMoveCost }: Props): JSX.Element {
               setMoveCost(value)
             }}
             onBlur={(e) => {
-              let value = e.target.value === '' ? 0 : Number(e.target.value)
-              if (value < 2) value = 2
-              setMoveCost(value)
+              const value = e.target.value === '' ? 0 : Number(e.target.value)
+              setMoveCost(clampMoveCost(value)) // Just clamp number after they stop typing
             }}
             className="w-20"
           />
