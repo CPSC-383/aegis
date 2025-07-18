@@ -34,8 +34,20 @@ const electronAPI = {
             group: string,
             agent: string,
             aegisPath: string,
-            config: string
-        ) => ipcRenderer.invoke('aegis_child_process.spawn', rounds, amount, world, group, agent, aegisPath, config),
+            config: string,
+            debug: boolean
+        ) =>
+            ipcRenderer.invoke(
+                'aegis_child_process.spawn',
+                rounds,
+                amount,
+                world,
+                group,
+                agent,
+                aegisPath,
+                config,
+                debug
+            ),
         kill: (pid: string) => ipcRenderer.invoke('aegis_child_process.kill', pid),
         onStdout: (callback: (data: string) => void) =>
             ipcRenderer.on('aegis_child_process.stdout', (event, data) => callback(data)),

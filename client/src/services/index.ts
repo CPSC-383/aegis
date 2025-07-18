@@ -18,7 +18,8 @@ export interface Scaffold {
         world: string,
         group: string,
         agent: string,
-        config: string
+        config: string,
+        debug: boolean
     ) => void
     killSim: (() => void) | undefined
     readAegisConfig: () => Promise<string>

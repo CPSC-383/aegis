@@ -21,7 +21,8 @@ type AegisAPI = {
             group: string,
             agent: string,
             aegisPath: string,
-            config: string
+            config: string,
+            debug: boolean
         ) => Promise<string>
         kill: (aegisPid: string) => void
         onStdout: (callback: (data: string) => void) => void

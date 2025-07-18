@@ -67,7 +67,8 @@ class ElectronApp {
                 args[3], // group
                 args[4], // agent
                 args[5], // aegis path
-                args[6] // config
+                args[6], // config
+                args[7] // debug
             )
         })
 
@@ -119,7 +120,8 @@ class ElectronApp {
                     args[3], // group
                     args[4], // agent
                     args[5], // aegis path
-                    args[6] // config
+                    args[6], // config
+                    args[7] // debug
                 )
             case 'aegis_child_process.kill':
                 return this.killProcess(args[0])
@@ -175,7 +177,8 @@ class ElectronApp {
         group: string,
         agent: string,
         aegisPath: string,
-        config: string
+        config: string,
+        debug: boolean
     ) {
         const procArgs = [
             '--amount',
@@ -191,7 +194,7 @@ class ElectronApp {
             '--config',
             config,
             '--client',
-            '--debug'
+            ...(debug ? ['--debug'] : [])
         ]
         const childAegis = child_process.spawn('aegis', [...procArgs], { cwd: aegisPath })
 

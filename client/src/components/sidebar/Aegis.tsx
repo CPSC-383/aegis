@@ -20,6 +20,7 @@ function Aegis({ scaffold }: Props) {
     const [group, setGroup] = useLocalStorage<string>('aegis_group', '')
     const [agent, setAgent] = useLocalStorage<string>('aegis_agent', '')
     const [config, setConfig] = useLocalStorage<string>('aegis_config', '')
+    const [debug] = useLocalStorage<boolean>('aegis_debug_mode', false)
 
     const isButtonDisabled = useMemo(
         () => !world || !rounds || !group || !agent || !config,
@@ -121,7 +122,7 @@ function Aegis({ scaffold }: Props) {
                     <Button
                         onClick={() => {
                             const amount = getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : 7
-                            startSimulation(rounds.toString(), amount.toString(), world, group, agent, config)
+                            startSimulation(rounds.toString(), amount.toString(), world, group, agent, config, debug)
                         }}
                         disabled={isButtonDisabled}
                         className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}
