@@ -1,29 +1,29 @@
 import { Simulation } from '@/core/simulation'
 
 export interface ConsoleLine {
-    has_error: boolean
-    message: string
+  has_error: boolean
+  message: string
 }
 
 export interface Scaffold {
-    aegisPath: string | undefined
-    setupAegisPath: () => void
-    worlds: string[]
-    agents: string[]
-    configPresets: string[]
-    output: ConsoleLine[]
-    startSimulation: (
-        rounds: string,
-        amount: string,
-        world: string,
-        group: string,
-        agent: string,
-        config: string,
-        debug: boolean
-    ) => void
-    killSim: (() => void) | undefined
-    readAegisConfig: () => Promise<string>
-    refreshConfigPresets: () => Promise<void>
+  aegisPath: string | undefined
+  setupAegisPath: () => void
+  worlds: string[]
+  agents: string[]
+  configPresets: string[]
+  output: ConsoleLine[]
+  startSimulation: (
+    rounds: string,
+    amount: string,
+    world: string,
+    group: string,
+    agent: string,
+    config: string,
+    debug: boolean
+  ) => void
+  killSim: (() => void) | undefined
+  readAegisConfig: () => Promise<string>
+  refreshConfigPresets: () => Promise<void>
 }
 
 export { createScaffold } from './scaffold'
