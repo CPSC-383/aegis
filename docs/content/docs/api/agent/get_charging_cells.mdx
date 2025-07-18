@@ -1,0 +1,32 @@
+---
+title: get_charging_cells
+description: Return a list of locations where charging cells are present.
+---
+
+## Signature
+
+```py
+def get_charging_cells() -> list[Location] 
+```
+
+## Description
+
+Returns a list of `Location` objects where charging cells are present in the world.
+If there are no charging cells available in the world, the function returns an empty list.
+
+## Example
+
+```py
+charging_cells = get_kcharging_cells()
+agent_loc = get_location()
+
+closest_charging = charging_cells[0]
+closest_dist = agent_loc.distance_to(closest_charging)
+for cell in charging_cells:
+  dist = agent_loc.distance_to(cell)
+  if dist >= closest_dist:
+    continue
+
+  closest_charging = cell 
+  closest_dist = dist 
+```

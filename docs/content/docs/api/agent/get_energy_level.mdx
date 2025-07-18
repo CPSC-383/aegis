@@ -1,0 +1,25 @@
+---
+title: get_energy_level
+description: Return the current energy level of the agent.
+---
+
+## Signature
+
+```py
+def get_energy_level() -> int
+```
+
+## Description
+
+Returns the current energy level of the agent.
+This value decreases as the agent performs actions and moves around the world.
+Monitoring the energy level is crucial, as agents are eliminated when their energy reaches zero.
+
+## Example
+
+```py
+energy_level = get_energy_level()
+
+if energy_level < dist_to_closest_charging:
+  print("I'm cooked")
+```

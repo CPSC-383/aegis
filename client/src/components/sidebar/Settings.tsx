@@ -66,7 +66,7 @@ function Settings({ scaffold }: Props) {
                     </div>
                     <div className="flex items-center justify-between">
                         <div>
-                            <Label>Enable Debug Mode</Label>
+                            <Label>Enable Agent Debug Mode</Label>
                             <p className="text-xs text-muted-foreground">Enables detailed logs</p>
                         </div>
                         <Switch checked={debugMode} onCheckedChange={(checked) => setDebugMode(checked)} />

@@ -23,7 +23,7 @@ def parse_args() -> tuple[Parameters, bool]:
         "--amount",
         type=int,
         default=1,
-        help="Number of agents to run",
+        help="Number of agents to run (default = 1)",
     )
     _ = parser.add_argument(
         "--world",
@@ -63,7 +63,7 @@ def parse_args() -> tuple[Parameters, bool]:
     _ = parser.add_argument(
         "--debug",
         action="store_true",
-        help="Enable debug logging output",
+        help="Enable agent debug logging output",
     )
 
     args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]

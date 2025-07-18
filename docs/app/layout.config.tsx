@@ -1,28 +1,42 @@
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import type { BaseLayoutProps, LinkItemType } from 'fumadocs-ui/layouts/shared';
+import { AlbumIcon, Book, CircleAlert } from 'lucide-react';
+import Image from 'next/image';
+import Logo from "./favicon.ico"
 
-/**
- * Shared layout configurations
- *
- * you can customise layouts individually from:
- * Home Layout: app/(home)/layout.tsx
- * Docs Layout: app/docs/layout.tsx
- */
+export const linkItems: LinkItemType[] = [
+  {
+    text: 'Docs',
+    url: '/docs',
+    icon: <Book />,
+    active: 'nested-url',
+  },
+  {
+    icon: <AlbumIcon />,
+    text: 'Guides',
+    url: '/guides',
+    active: 'nested-url',
+  },
+  {
+    text: 'Common Errors',
+    url: '/errors',
+    icon: <CircleAlert />,
+    active: 'nested-url',
+  },
+];
+
 export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <>
-        <svg
-          width="24"
-          height="24"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-label="Logo"
-        >
-          <circle cx={12} cy={12} r={12} fill="currentColor" />
-        </svg>
+        <Image
+          src={Logo}
+          alt="Aegis Logo"
+          width={18}
+          height={18}
+          className="mr-2 inline-block" />
         Aegis Docs
       </>
     ),
   },
-  // see https://fumadocs.dev/docs/ui/navigation/links
-  links: [],
+  links: linkItems
 };

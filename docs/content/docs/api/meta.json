@@ -5,23 +5,14 @@
   "icon": "Terminal",
   "pages": [
     "---Agent---",
-    "agent/get_cell_at.mdx",
-    "agent/on_map.mdx",
+    "...agent",
     "---Common---",
-    "common/agentid.mdx",
-    "common/direction",
-    "common/location",
+    "...common",
     "---World---",
-    "world/cell",
+    "...world",
     "---World Objects---",
-    "world_objects/rubble.mdx",
-    "world_objects/survivor.mdx",
+    "...world_objects",
     "---Agent Commands---",
-    "agent_commands/dig.mdx",
-    "agent_commands/move.mdx",
-    "agent_commands/observe.mdx",
-    "agent_commands/recharge.mdx",
-    "agent_commands/save.mdx",
-    "agent_commands/send_message.mdx"
+    "...agent_commands"
   ]
 }
