@@ -8,12 +8,9 @@ from .parsers.args_parser import parse_args
 
 def main() -> None:
     try:
-        LOGGER.info("Aegis  : Initializing.")
-
         parameters, wait_for_client = parse_args()
         aegis = Aegis(parameters, wait_for_client=wait_for_client)
 
-        LOGGER.info("Aegis  : Starting Up.")
         if not aegis.start_up():
             LOGGER.error("Aegis  : Unable to start up.")
             sys.exit(1)
@@ -21,9 +18,6 @@ def main() -> None:
         if not aegis.build_world():
             LOGGER.error("Aegis  : Error building world.")
             sys.exit(1)
-
-        LOGGER.info("Aegis  : Waiting for agents.")
-        _ = sys.stdout.flush()
 
         aegis.start_agents()
         aegis.run()

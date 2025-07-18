@@ -1,0 +1,24 @@
+---
+title: get_round_number
+description: Return the current round number.
+---
+
+## Signature
+
+```py
+def get_round_number() -> int
+```
+
+## Description
+
+Returns the current round number of the simulation.
+The round number starts at `1` and increments by `1` after each simulation turn.
+
+## Example
+
+```py
+round_number = get_round_number()
+
+if round_number == 5:
+  print("Special action triggered")
+```

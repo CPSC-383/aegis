@@ -77,7 +77,7 @@ def get_survs() -> list[Location]:
     """Return a list of locations where survivors are present."""
 
 
-def get_energy_cells() -> list[Location]:
+def get_charging_cells() -> list[Location]:
     """Return a list of locations where charging cells are present."""
 
 

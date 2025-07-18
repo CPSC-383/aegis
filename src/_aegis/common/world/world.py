@@ -62,7 +62,7 @@ class World:
                 res.append(cell.location)
         return res
 
-    def get_energy_cells(self) -> list[Location]:
+    def get_charging_cells(self) -> list[Location]:
         res: list[Location] = []
         for row in self._world:
             for cell in row:

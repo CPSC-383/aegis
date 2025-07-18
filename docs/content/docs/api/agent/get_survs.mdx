@@ -1,0 +1,31 @@
+---
+title: get_survs
+description: Return a list of locations where survivors are present.
+---
+
+## Signature
+
+```py
+def get_survs() -> list[Location]
+```
+
+## Description
+
+Returns a list of `Location` objects where survivors are currently present in the world.
+
+## Example
+
+```py
+survs = get_survs()
+agent_loc = get_location()
+
+closest_surv = survs[0]
+closest_dist = agent_loc.distance_to(closest_surv)
+for surv in survs:
+  dist = agent_loc.distance_to(surv)
+  if dist >= closest_dist:
+    continue
+
+  closest_dist = dist
+  closest_surv = surv
+```

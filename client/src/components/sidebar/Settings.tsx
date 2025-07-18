@@ -42,7 +42,6 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
             Reconfigure Aegis Path
           </Button>
         </div>
-
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Trophy className="w-6 h-6" />
