@@ -1,0 +1,29 @@
+---
+title: log
+description: Log a message to the console.
+---
+
+## Signature
+
+```py
+def log(*args) -> None 
+```
+
+## Description
+
+Logs a message to the console.
+This function accepts any number of arguments, similar to `print()`.
+
+<Callout title="Note" type="info">
+The built-in `print()` function is disabled.
+Always use `log()` for output and debugging.
+</Callout>
+
+## Example
+
+```py
+energy = get_energy_level()
+round_num = get_round_number()
+
+log("Current energy:", energy, "| Current round:", round_num)
+```

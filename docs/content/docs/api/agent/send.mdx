@@ -1,0 +1,30 @@
+---
+title: send
+description: Send a command to Aegis for execution.
+---
+
+## Signature
+
+```py
+def send(command: AgentCommand) -> None: 
+```
+
+## Description
+
+Sends an `AgentCommand` to Aegis for execution.
+Agents use this function to perform actions such as moving and rescuing.
+
+<Callout title="Important" type="warn">
+Only **one command** can be executed per round. If `send()` is called multiple
+times in the same round, **only the last command sent will be used**. If no command
+is sent during a round, the agent will remain idle.
+</Callout>
+
+## Example
+
+```py
+agent_loc = get_location()
+next_location = agent_loc.add(Direction.SOUTH)
+
+send(Move(next_location))
+```

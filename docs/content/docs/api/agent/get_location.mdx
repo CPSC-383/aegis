@@ -1,0 +1,24 @@
+---
+title: get_location
+description: Return the current location of the agent.
+---
+
+## Signature
+
+```py
+def get_location() -> Location
+```
+
+## Description
+
+Returns the current `Location` of the agent within the world.
+
+## Example
+
+```py
+agent_loc = get_location()
+goal = <some location>
+
+dir = agent_loc.direction_to(goal)
+send(Move(dir))
+```
