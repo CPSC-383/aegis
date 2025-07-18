@@ -15,11 +15,11 @@ export enum SpecialCellBrushTypes {
 export enum BrushType {
   SpecialCells = 'special_cells',
   MoveCost = 'move_cost',
-  StackContents = 'stack_contents',
+  CellContents = 'cell_contents',
   View = 'view'
 }
 
-export enum StackContentBrushTypes {
+export enum CellContentBrushTypes {
   Survivor = 'survivor',
   Rubble = 'rubble'
 }

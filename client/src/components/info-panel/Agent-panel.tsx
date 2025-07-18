@@ -1,11 +1,11 @@
 import { AgentInfoDict, Simulation } from '@/core/simulation'
-import { StackContent } from '@/core/world'
+import { CellContent } from '@/core/world'
 import { EventType, listenEvent } from '@/events'
 
 type Props = {
   selectedAgent: AgentInfoDict
   setSelectedAgent: (value: AgentInfoDict | undefined) => void
-  setCellLayers: (value: StackContent[]) => void
+  setCellLayers: (value: CellContent[]) => void
   simulation: Simulation
 }
 

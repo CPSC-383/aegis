@@ -14,7 +14,7 @@ export type Arguments =
   | 'energy_required'
   | 'agents_required'
 
-export type StackContent = {
+export type CellContent = {
   type: string
   arguments: {
     [key in Arguments]?: number
@@ -24,7 +24,7 @@ export type StackContent = {
 export type Stack = {
   cell_loc: Location
   move_cost: number
-  contents: StackContent[]
+  contents: CellContent[]
 }
 
 export type Spawn = {

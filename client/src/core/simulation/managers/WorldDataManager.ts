@@ -1,7 +1,6 @@
 import { AgentInfoDict, CellDict, Groups, Round, RoundData } from '@/core/simulation/'
-import { WorldState } from '@/generated/aegis'
-import { SpawnZoneTypes, StackContent, WorldMap } from '@/core/world'
-import { Agent, Cell } from '@/generated/aegis'
+import { CellContent, SpawnZoneTypes, WorldMap } from '@/core/world'
+import { Agent, Cell, WorldState } from '@/generated/aegis'
 
 export class WorldDataManager {
   private currentRoundData?: WorldState
@@ -96,9 +95,9 @@ export class WorldDataManager {
    * Retrieves the stack layers at a specific cell.
    * @param {number} x - The x-coordinate of the cell.
    * @param {number} y - The y-coordinate of the cell.
-   * @returns {StackContent[]} The stack contents at the cell.
+   * @returns {CellContent[]} The cell contents at the cell.
    */
-  getLayersAtCell(x: number, y: number): StackContent[] {
+  getLayersAtCell(x: number, y: number): CellContent[] {
     if (!this.currentRoundData) {
       return this.getInitialLayers(x, y)
     }
@@ -109,9 +108,9 @@ export class WorldDataManager {
    * Retrieves initial state information about the initial stack layers at a specific cell.
    * @param {number} x - The x-coordinate of the cell.
    * @param {number} y - The y-coordinate of the cell.
-   * @returns {StackContent[]} The initial stack contents.
+   * @returns {CellContent[]} The initial cell contents.
    */
-  private getInitialLayers(x: number, y: number): StackContent[] {
+  private getInitialLayers(x: number, y: number): CellContent[] {
     const stack = this.worldMap.stacks.find(
       (g) => g.cell_loc.x === x && g.cell_loc.y === y
     )!
@@ -122,12 +121,39 @@ export class WorldDataManager {
    * Retrieves current state information about the stack layers at a specific cell.
    * @param {number} x - The x-coordinate of the cell.
    * @param {number} y - The y-coordinate of the cell.
-   * @returns {StackContent[]} The initial stack contents.
+   * @returns {CellContent[]} The current cell contents.
    */
-  private getCurrentLayers(x: number, y: number): StackContent[] {
-    // For now, return empty array since protobuf doesn't have stack contents
-    // This will need to be enhanced when protobuf schema includes stack contents
-    return []
+  private getCurrentLayers(x: number, y: number): CellContent[] {
+    // Find the protobuf cell at the given coordinates
+    const protobufCell = this.currentRoundData!.cells.find(
+      (cell: Cell) => cell.location!.x === x && cell.location!.y === y
+    )
+
+    if (!protobufCell) {
+      return []
+    }
+
+    const layers: CellContent[] = []
+
+    // Convert the top layer to CellContent format
+    if (protobufCell.topLayer.oneofKind === 'survivor') {
+      layers.push({
+        type: 'sv',
+        arguments: {
+          energy_level: 100 // Default energy level since not available in protobuf
+        }
+      })
+    } else if (protobufCell.topLayer.oneofKind === 'rubble') {
+      layers.push({
+        type: 'rb',
+        arguments: {
+          energy_required: 1, // Default energy required since not available in protobuf
+          agents_required: 1 // Default agents required since not available in protobuf
+        }
+      })
+    }
+
+    return layers
   }
 
   /**

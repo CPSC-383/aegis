@@ -1,19 +1,19 @@
 import {
+  CellContent,
   Location,
   RubbleInfo,
   Stack,
-  StackContent,
   SurvivorInfo,
   WorldMap
 } from '@/core/world'
-import { StackContentBrushTypes } from '@/types'
+import { CellContentBrushTypes } from '@/types'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 import BrushHandler from './BrushHandler'
 
 class StackContentHandler extends BrushHandler {
   constructor(
     worldMap: WorldMap,
-    private stackType: StackContentBrushTypes,
+    private stackType: CellContentBrushTypes,
     private rubbleInfo: RubbleInfo,
     private survivorInfo: SurvivorInfo
   ) {
@@ -42,7 +42,7 @@ class StackContentHandler extends BrushHandler {
     if (getCurrentAssignment() === ASSIGNMENT_A1) {
       const hasSurvivorOnMap = this.worldMap.stacks.some((stack) =>
         stack.contents.some(
-          (content: StackContent) => content.type.toLowerCase() === 'sv'
+          (content: CellContent) => content.type.toLowerCase() === 'sv'
         )
       )
 
@@ -50,11 +50,11 @@ class StackContentHandler extends BrushHandler {
     }
 
     const content = {
-      [StackContentBrushTypes.Rubble]: {
+      [CellContentBrushTypes.Rubble]: {
         type: 'rb',
         arguments: this.rubbleInfo
       },
-      [StackContentBrushTypes.Survivor]: {
+      [CellContentBrushTypes.Survivor]: {
         type: 'sv',
         arguments: this.survivorInfo
       }

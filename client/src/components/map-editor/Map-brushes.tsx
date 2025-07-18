@@ -15,7 +15,7 @@ import {
   WorldMap
 } from '@/core/world'
 import { dispatchEvent, EventType, listenEvent } from '@/events'
-import { BrushType, SpecialCellBrushTypes, StackContentBrushTypes } from '@/types'
+import { BrushType, CellContentBrushTypes, SpecialCellBrushTypes } from '@/types'
 import { formatDisplayText } from '@/utils/util'
 import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
 import { useCallback, useState } from 'react'
@@ -36,8 +36,8 @@ function MapBrushes(): JSX.Element {
   const [moveCost, setMoveCost] = useState<number>(2)
   const [gid, setGid] = useState<number>(0)
   const [spawnZoneType, setSpawnZoneType] = useState<SpawnZoneTypes>(SpawnZoneTypes.Any)
-  const [stackType, setStackType] = useState<StackContentBrushTypes>(
-    StackContentBrushTypes.Survivor
+  const [stackType, setStackType] = useState<CellContentBrushTypes>(
+    CellContentBrushTypes.Survivor
   )
   const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({
     energy_required: 0,
@@ -54,7 +54,7 @@ function MapBrushes(): JSX.Element {
           return new SpecialCellsHandler(worldMap, specialCellType, spawnZoneType, gid)
         case BrushType.MoveCost:
           return new MoveCostHandler(worldMap, moveCost)
-        case BrushType.StackContents:
+        case BrushType.CellContents:
           return new StackContentHandler(worldMap, stackType, rubbleInfo, survivorInfo)
         default:
           return null
@@ -105,7 +105,7 @@ function MapBrushes(): JSX.Element {
         )
       case BrushType.MoveCost:
         return <MoveCostBrush moveCost={moveCost} setMoveCost={setMoveCost} />
-      case BrushType.StackContents:
+      case BrushType.CellContents:
         return (
           <StackContentBrush
             stackType={stackType}
@@ -141,7 +141,7 @@ function MapBrushes(): JSX.Element {
                 <div className="flex items-center space-x-2">
                   {type === BrushType.SpecialCells && <Target className="w-4 h-4" />}
                   {type === BrushType.MoveCost && <Zap className="w-4 h-4" />}
-                  {type === BrushType.StackContents && (
+                  {type === BrushType.CellContents && (
                     <PlusSquare className="w-4 h-4" />
                   )}
                   {type === BrushType.View && <MousePointerClick className="w-4 h-4" />}

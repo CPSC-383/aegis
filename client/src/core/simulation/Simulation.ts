@@ -6,9 +6,9 @@ import {
   StatsCalculator,
   WorldDataManager
 } from '@/core/simulation'
-import { WorldMap, StackContent } from '@/core/world'
+import { CellContent, WorldMap } from '@/core/world'
 import { EventType, dispatchEvent } from '@/events'
-import { RoundUpdate, WorldState } from '@/generated/aegis'
+import { RoundUpdate } from '@/generated/aegis'
 
 export class Simulation {
   private stateManager: SimulationStateManager
@@ -142,9 +142,9 @@ export class Simulation {
    * Retrieves all stack layers at a specific cell location.
    * @param {number} x - The x-coordinate of the cell.
    * @param {number} y - The y-coordinate of the cell.
-   * @returns {StackContent[]} Stack layers at the cell location.
+   * @returns {CellContent[]} Stack layers at the cell location.
    */
-  getLayersAtCell(x: number, y: number): StackContent[] {
+  getLayersAtCell(x: number, y: number): CellContent[] {
     return this.worldData.getLayersAtCell(x, y)
   }
 

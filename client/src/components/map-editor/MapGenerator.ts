@@ -1,10 +1,10 @@
 import { Simulation } from '@/core/simulation'
 import {
+  CellContent,
   Location,
   Spawn,
   SpawnZoneTypes,
   Stack,
-  StackContent,
   WorldMap
 } from '@/core/world'
 import { aegisAPI } from '@/services'
@@ -67,7 +67,7 @@ class WorldValidator {
 
   private static hasSurvivors(world: WorldMap): boolean {
     return world.stacks.some((stack: Stack) =>
-      stack.contents.some((content: StackContent) => content.type === 'sv')
+      stack.contents.some((content: CellContent) => content.type === 'sv')
     )
   }
 }

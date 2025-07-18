@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { AlertCircle, Download, Grid3x3, Upload, Zap } from 'lucide-react'
+import { AlertCircle, Download, Grid3x3, Info, Upload, Zap } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useAppContext } from '@/contexts/AppContext'
@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import InfoDialog from '@/components/ui/InfoDialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import MapBrushes from './Map-brushes'
@@ -48,6 +49,9 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const simulation = useRef<Simulation | undefined>(undefined)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [resetDialogOpen, setResetDialogOpen] = useState(false)
+  const [brushesInfoOpen, setBrushesInfoOpen] = useState(false)
+  const [configInfoOpen, setConfigInfoOpen] = useState(false)
+  const [managementInfoOpen, setManagementInfoOpen] = useState(false)
 
   const isWorldEmpty =
     !appState.editorSimulation || appState.editorSimulation.worldMap.isEmpty()
@@ -157,8 +161,75 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
       exit={{ opacity: 0, x: -20 }}
       className="space-y-4 overflow-auto h-full pb-4 scrollbar"
     >
-      <MapBrushes />
-      <Card>
+      {/* Map Brushes Section */}
+      <div className="relative">
+        <div className="absolute top-2 right-2 z-10">
+          <InfoDialog
+            open={brushesInfoOpen}
+            onOpenChange={setBrushesInfoOpen}
+            trigger={
+              <button
+                type="button"
+                className="hover:text-primary text-muted-foreground"
+                aria-label="Map Brushes Info"
+                onClick={() => setBrushesInfoOpen(true)}
+              >
+                <Info className="w-4 h-4" />
+              </button>
+            }
+            title="Map Brushes"
+          >
+            <ul className="list-disc pl-5 space-y-2 text-left">
+              <li>
+                Select a brush type (Special Cells, Move Cost, Cell Contents) to edit
+                the map with.
+              </li>
+              <li>
+                Then choose either:
+                <ul className="list-disc pl-5 mb-2 space-y-2 text-left">
+                  <li>Which special cell (Killer, Charging, or Spawn)</li>
+                  <li>What move cost (1-5, or custom)</li>
+                  <li>Which cell content (Survivor or Rubble)</li>
+                </ul>
+                To start using the brush.
+              </li>
+              <li>
+                Left-click on a cell to apply the selected brush. Right-click to remove
+                it.
+              </li>
+            </ul>
+          </InfoDialog>
+        </div>
+        <MapBrushes />
+      </div>
+      {/* World Configuration Section */}
+      <Card className="relative">
+        <div className="absolute top-2 right-2 z-10">
+          <InfoDialog
+            open={configInfoOpen}
+            onOpenChange={setConfigInfoOpen}
+            trigger={
+              <button
+                type="button"
+                className="hover:text-primary text-muted-foreground"
+                aria-label="World Configuration Info"
+                onClick={() => setConfigInfoOpen(true)}
+              >
+                <Info className="w-4 h-4" />
+              </button>
+            }
+            title="World Configuration"
+          >
+            <ul className="list-disc pl-5 space-y-2 text-left">
+              <li>Set the width and height of the map before editing.</li>
+              <li>Set the initial agent energy for new worlds.</li>
+              <li>
+                To change these settings after editing, reset the world (this will clear
+                your current map).
+              </li>
+            </ul>
+          </InfoDialog>
+        </div>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Grid3x3 className="w-5 h-5" />
@@ -278,7 +349,32 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* World Management Section */}
+      <Card className="relative">
+        <div className="absolute top-2 right-2 z-10">
+          <InfoDialog
+            open={managementInfoOpen}
+            onOpenChange={setManagementInfoOpen}
+            trigger={
+              <button
+                type="button"
+                className="hover:text-primary text-muted-foreground"
+                aria-label="World Management Info"
+                onClick={() => setManagementInfoOpen(true)}
+              >
+                <Info className="w-4 h-4" />
+              </button>
+            }
+            title="World Management"
+          >
+            <ul className="list-disc pl-5 space-y-2 text-left">
+              <li>Enter a name for your world before exporting.</li>
+              <li>Click Export to save your map as a .world file.</li>
+              <li>Click Import to load an existing .world file into the editor.</li>
+              <li>Errors during import/export will be shown below the buttons.</li>
+            </ul>
+          </InfoDialog>
+        </div>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Download className="w-5 h-5" />
