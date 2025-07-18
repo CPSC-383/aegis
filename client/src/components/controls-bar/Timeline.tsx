@@ -7,6 +7,7 @@ function Timeline() {
     const { appState } = useAppContext()
     const { simulation } = appState
     const maxRounds = simulation ? simulation.getMaxRounds() : 0
+    const playableRounds = Math.max(0, maxRounds - 1)
     const TIMELINE_WIDTH = 300
 
     const handleSeek = (e: MouseEvent<HTMLDivElement>) => {
@@ -14,10 +15,8 @@ function Timeline() {
 
         const rect = e.currentTarget.getBoundingClientRect()
         const x = e.clientX - rect.left
-        const round = Math.floor((x / TIMELINE_WIDTH) * maxRounds)
-
-        // Ensure round is within valid bounds
-        const clampedRound = Math.max(0, Math.min(round, maxRounds))
+        const round = Math.floor((x / TIMELINE_WIDTH) * (playableRounds + 1))
+        const clampedRound = Math.max(0, Math.min(round, playableRounds))
         simulation.jumpToRound(clampedRound)
     }
 
@@ -33,7 +32,7 @@ function Timeline() {
     }
 
     const round = simulation.getRoundNumber()
-    const progressPercentage = maxRounds ? (round / maxRounds) * 100 : 0
+    const progressPercentage = playableRounds > 0 ? (round / playableRounds) * 100 : 0
 
     return (
         <TooltipProvider>
@@ -41,7 +40,7 @@ function Timeline() {
                 <div className="flex justify-center items-center mb-1">
                     <span className="text-xs text-gray-600">Round:</span>
                     <span className="text-xs ml-1">
-                        <b>{round}</b> / {maxRounds}
+                        <b>{round}</b> / {playableRounds}
                     </span>
                 </div>
                 <Tooltip>

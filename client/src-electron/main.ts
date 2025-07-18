@@ -190,7 +190,8 @@ class ElectronApp {
             group,
             '--config',
             config,
-            '--client'
+            '--client',
+            '--debug'
         ]
         const childAegis = child_process.spawn('aegis', [...procArgs], { cwd: aegisPath })
 
