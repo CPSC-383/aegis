@@ -1,12 +1,12 @@
 import {
   defineConfig,
+  defineCollections,
   defineDocs,
   frontmatterSchema,
   metaSchema,
 } from 'fumadocs-mdx/config';
+import { z } from 'zod';
 
-// You can customise Zod schemas for frontmatter and `meta.json` here
-// see https://fumadocs.vercel.app/docs/mdx/collections#define-docs
 export const docs = defineDocs({
   docs: {
     schema: frontmatterSchema,
@@ -14,6 +14,22 @@ export const docs = defineDocs({
   meta: {
     schema: metaSchema,
   },
+});
+
+export const guidePosts = defineCollections({
+  type: 'doc',
+  dir: 'content/guides',
+  schema: frontmatterSchema.extend({
+    author: z.string(),
+  }),
+});
+
+export const errorPosts = defineCollections({
+  type: 'doc',
+  dir: 'content/errors',
+  schema: frontmatterSchema.extend({
+    author: z.string(),
+  }),
 });
 
 export default defineConfig({
