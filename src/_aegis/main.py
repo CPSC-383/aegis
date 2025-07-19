@@ -4,14 +4,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .aegis_config import is_feature_enabled
-from .agent_handler import AgentHandler
+from .aegis_world import AegisWorld
 from .command_processor import CommandProcessor
 from .logger import LOGGER
 from .parameters import Parameters
 from .parsers.world_file_parser import WorldFileParser
 from .protobuf.protobuf_service import ProtobufService
 from .server_websocket import WebSocketServer
-from .world.aegis_world import AegisWorld
 
 try:
     from .agent_predictions.prediction_handler import PredictionHandler
@@ -34,9 +33,7 @@ class Aegis:
     def __init__(self, parameters: Parameters, *, wait_for_client: bool) -> None:
         self._parameters: Parameters = parameters
         self._started_idling: int = -1
-        self._end: bool = False
         self._agents: list[Agent] = []
-        self._agent_handler: AgentHandler = AgentHandler()
         self._agent_commands: list[AgentCommand] = []
         self._aegis_world: AegisWorld = AegisWorld(self._agents, parameters)
         self._ws_server: WebSocketServer = WebSocketServer()
@@ -46,7 +43,6 @@ class Aegis:
         self._command_processor: CommandProcessor = CommandProcessor(
             self._agents,
             self._aegis_world,
-            self._agent_handler,
             self._prediction_handler,
         )
 
@@ -75,26 +71,14 @@ class Aegis:
             self._parameters.world_filename, self._ws_server
         )
 
-    def shutdown(self) -> None:
-        self._agent_handler.print_group_survivor_saves()
-
-    def start_agents(self) -> None:
-        for _ in range(self._parameters.number_of_agents):
-            agent_id = self._agent_handler.agent_info(self._parameters.group_name)
-            agent = self._aegis_world.add_agent_by_id(agent_id)
-            if agent is None:
-                error = "Agent should not be of `none` type during creation"
-                raise RuntimeError(error)
-            agent.load_agent(self._parameters.agent)
-
     def _end_simulation(self, last_round: int) -> None:
         LOGGER.info("Aegis  : Simulation Over. Final Round: %s", last_round)
 
         serialized_data = ProtobufService.serialize_simulation_complete()
         self._compress_and_send(serialized_data)
 
-        self._end = True
         self._ws_server.finish()
+        self._print_results()
 
     def run(self) -> None:
         self._ws_server.start()
@@ -113,9 +97,6 @@ class Aegis:
         self._compress_and_send(serialized_data)
 
         for game_round in range(1, rounds + 1):
-            if self._end:
-                break
-
             self._command_processor.run_turn()
             self._grim_reaper()
             world_data = self.get_aegis_world().get_protobuf_world_data()
@@ -159,3 +140,17 @@ class Aegis:
     def _compress_and_send(self, event: bytes) -> None:
         encoded = base64.b64encode(event).decode("utf-8")
         self._ws_server.add_event(encoded)
+
+    def _print_results(self) -> None:
+        LOGGER.info("=================================================")
+        LOGGER.info("Results for each Group")
+        LOGGER.info("(Score, Number Saved, Correct Predictions)")
+        LOGGER.info("=================================================")
+        # for group in self.agent_group_list:
+        #     LOGGER.info(
+        #         "%s : (%s, %s, %s)",
+        #         group.name,
+        #         group.score,
+        #         group.number_saved,
+        #         group.number_predicted_right,
+        #     )

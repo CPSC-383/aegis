@@ -81,5 +81,9 @@ def get_charging_cells() -> list[Location]:
     """Return a list of locations where charging cells are present."""
 
 
+def get_spawns() -> list[Location]:
+    """Return a list of spawn locations."""
+
+
 def log(*args: object) -> None:
     """Log a message to the console."""

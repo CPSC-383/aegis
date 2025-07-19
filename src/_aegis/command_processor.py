@@ -5,8 +5,8 @@ from _aegis.common.location import Location
 from _aegis.common.world.info.surround_info import SurroundInfo
 
 from .aegis_config import is_feature_enabled
+from .aegis_world import AegisWorld
 from .agent import Agent
-from .agent_handler import AgentHandler
 from .common.agent_id import AgentID
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
@@ -32,7 +32,6 @@ from .common.world.info.cell_info import CellInfo
 from .common.world.objects.rubble import Rubble
 from .common.world.objects.survivor import Survivor
 from .common.world.objects.world_object import WorldObject
-from .world.aegis_world import AegisWorld
 
 try:
     from .common.commands.aegis_commands.save_result import SaveResult
@@ -56,12 +55,10 @@ class CommandProcessor:
         self,
         agents: list[Agent],
         aegis_world: AegisWorld,
-        agent_handler: AgentHandler,
         prediction_handler: PredictionHandlerType | None,
     ) -> None:
         self._agents: list[Agent] = agents
         self._world: AegisWorld = aegis_world
-        self._agent_handler: AgentHandler = agent_handler
         self._prediction_handler: PredictionHandlerType | None = prediction_handler
 
     def run_turn(self) -> None:
@@ -292,7 +289,7 @@ class CommandProcessor:
         if isinstance(top_layer, Survivor):
             self._world.remove_layer_from_cell(cell.location)
             alive_count, dead_count = self._calculate_survivor_stats(top_layer)
-            self._assign_points(agents_here, alive_count, dead_count, gid_counter)
+            # self._assign_points(agents_here, alive_count, dead_count, gid_counter)
 
             if (
                 is_feature_enabled("ENABLE_PREDICTIONS")
@@ -313,23 +310,6 @@ class CommandProcessor:
         self._world.remove_survivor(survivor)
         return (1, 0) if survivor.is_alive() else (0, 1)
 
-    def _assign_points(
-        self,
-        _agents_here: list[AgentID],
-        alive_count: int,
-        dead_count: int,
-        gid_counter: list[int],
-    ) -> None:
-        for gid, count in enumerate(gid_counter):
-            if count > 0:
-                if alive_count > 0:
-                    state = Constants.SAVE_STATE_ALIVE
-                    amount = alive_count
-                else:
-                    state = Constants.SAVE_STATE_DEAD
-                    amount = dead_count
-                self._agent_handler.increase_agent_group_saved(gid, amount, state)
-
     def _handle_random_tie(
         self,
         alive_count: int,
@@ -346,7 +326,7 @@ class CommandProcessor:
                 else:
                     state = Constants.SAVE_STATE_DEAD
                     amount = dead_count
-                self._agent_handler.increase_agent_group_saved(random_id, amount, state)
+                # self._agent_handler.increase_agent_group_saved(random_id, amount, state)
                 break
 
     def _handle_all_tie(
@@ -365,4 +345,4 @@ class CommandProcessor:
                     state = Constants.SAVE_STATE_DEAD
                     amount = dead_count
 
-                self._agent_handler.increase_agent_group_saved(gid, amount, state)
+                # self._agent_handler.increase_agent_group_saved(gid, amount, state)

@@ -217,6 +217,11 @@ class Agent:
     def get_cell_at(self, loc: Location) -> Cell | None:
         return self._world.get_cell_at(loc)
 
+    def spawn_agent(self, loc: Location) -> None:
+        if loc not in self._world.get_spawns():
+            error = "You can only spawn on spawn locations!"
+            LOGGER.critical(error)
+
     def log(self, *args: object) -> None:
         if not self._debug:
             return

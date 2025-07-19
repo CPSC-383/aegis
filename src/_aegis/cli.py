@@ -21,7 +21,6 @@ def main() -> None:
 
         aegis.start_agents()
         aegis.run()
-        aegis.shutdown()
         LOGGER.info("Aegis  : Done.")
 
     except Exception:  # noqa: BLE001

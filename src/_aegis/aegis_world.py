@@ -29,8 +29,6 @@ from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.protobuf.protobuf_service import ProtobufService
 from _aegis.server_websocket import WebSocketServer
 
-from .spawn_manager import SpawnManger
-
 LOGGER = logging.getLogger("aegis")
 
 
@@ -38,7 +36,6 @@ class AegisWorld:
     def __init__(self, agents: list[Agent], parameters: Parameters) -> None:
         self._world_object_count: int = 0
         self._agent_locations: dict[AgentID, Location] = {}
-        self._spawn_manager: SpawnManger = SpawnManger()
         self._random_seed: int = 0
         self._world: World | None = None
         self._agents: list[Agent] = agents
@@ -110,28 +107,28 @@ class AegisWorld:
                     continue
                 cell.setup_cell(special.name)
 
-    def _setup_cells(self, cell_stack_info: list[CellInfoSettings]) -> None:
+    def _setup_cells(self, cells: list[CellInfoSettings]) -> None:
         if self._world is None:
             error = "World must be initialized before calling this method."
             raise RuntimeError(error)
 
-        for cell_info_setting in cell_stack_info:
-            loc = cell_info_setting.location
+        for cell in cells:
+            loc = cell.location
             if not self._world.on_map(loc):
                 continue
 
-            cell = self._world.get_cell_at(loc)
-            if cell is None:
+            _cell = self._world.get_cell_at(loc)
+            if _cell is None:
                 continue
 
-            cell.move_cost = cell_info_setting.move_cost
+            _cell.move_cost = cell.move_cost
 
-            for content in reversed(cell_info_setting.contents):
-                layer = self.create_world_object(
-                    self._world_object_count, content["type"], content["arguments"]
+            for layer in reversed(cell.layers):
+                _layer = self.create_world_object(
+                    self._world_object_count, layer["type"], layer["attributes"]
                 )
-                if layer is not None:
-                    cell.add_layer(layer)
+                if _layer is not None:
+                    _cell.add_layer(_layer)
                     self._world_object_count += 1
 
     def _populate_normal_cells_and_survivors(self) -> None:
@@ -238,27 +235,20 @@ class AegisWorld:
     def get_agent_world_filename(self) -> str:
         return self._agent_world_filename
 
-    def add_agent_by_id(self, agent_id: AgentID) -> Agent | None:
+    def add_agent_by_id(self, agent_id: AgentID, loc: Location | None = None) -> Agent:
         if self._world is None:
             error = "World must be initialized before calling this method."
             raise RuntimeError(error)
 
-        spawn_loc = self._spawn_manager.get_spawn_location(agent_id.gid)
+        spawns = self._world.get_spawns()
+        if loc is None:
+            loc = random.choice(spawns)
 
-        cell = self._world.get_cell_at(spawn_loc)
-
-        if cell is None:
-            if len(self._normal_cell_list) == 0:
-                cell = self._world.get_cell_at(Location(0, 0))
-            else:
-                cell = random.choice(self._normal_cell_list)
+        cell = self._world.get_cell_at(loc)
 
         if cell is None:
-            error = "Aegis  : No cell found for agent"
+            error = "Aegis  : No spawn found for agent"
             raise RuntimeError(error)
-
-        if cell.is_killer_cell():
-            LOGGER.warning("Aegis  : agent has been placed on a killer cell!")
 
         world = World(self._build_agent_world())
         agent = Agent(
@@ -371,7 +361,7 @@ class AegisWorld:
     def get_agents(self) -> list[Agent]:
         return self._agents
 
-    def get_protobuf_world_data(self) -> dict[str, Any]:
+    def get_protobuf_world_data(self) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
         if self._world is None:
             error = "World must be initialized before calling this method."
             raise RuntimeError(error)
@@ -412,7 +402,7 @@ class AegisWorld:
                                 0 if top_layer.get_health() > 0 else 1
                             ),  # 0=alive, 1=dead
                         }
-                        survivors.append(
+                        survivors.append(  # pyright: ignore[reportUnknownMemberType]
                             {
                                 "id": top_layer.id,
                                 "state": 0 if top_layer.get_health() > 0 else 1,
@@ -422,7 +412,7 @@ class AegisWorld:
                         # Assume it's rubble
                         cell_data["rubble"] = {"move_cost": cell_info.move_cost}
 
-                cells.append(cell_data)
+                cells.append(cell_data)  # pyright: ignore[reportUnknownMemberType]
 
                 # Add agent data for agents in this cell
                 for agent_id in cell.agent_id_list:
@@ -438,7 +428,7 @@ class AegisWorld:
                             "energy_level": agent.get_energy_level(),
                             "steps_taken": agent.steps_taken,
                         }
-                        agents.append(agent_data)
+                        agents.append(agent_data)  # pyright: ignore[reportUnknownMemberType]
 
         return {
             "width": self._world.width,
