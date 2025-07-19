@@ -25,7 +25,6 @@ from .common.commands.agent_commands import (
 )
 from .constants import Constants
 from .common.direction import Direction
-from .common.utility import Utility
 from .common.world.cell import Cell
 from .common.world.info.cell_info import CellInfo
 from .common.world.objects.rubble import Rubble
@@ -67,16 +66,13 @@ class CommandProcessor:
 
         for agent in self._agents:
             agent.run()
-            command = agent.get_action_command()
+            command = agent.command_manager.get_action_command()
             if command is not None:
                 commands.append(command)
 
-            directives = agent.get_directives()
+            directives = agent.command_manager.get_directives()
             commands.extend(directives)
-            messages.extend(agent.get_messages())
-
-            agent.log(f"Action Command Sent: {command}")
-            agent.log(f"Directives Sent: {directives}")
+            messages.extend(agent.command_manager.get_messages())
 
         self._process(commands)
         self._route_messages(messages)
@@ -318,7 +314,8 @@ class CommandProcessor:
         max_group_size: int,
     ) -> None:
         while True:
-            random_id = Utility.next_int() % len(gid_counter)
+            # random_id = Utility.next_int() % len(gid_counter)
+            random_id = 0
             if gid_counter[random_id] == max_group_size:
                 if alive_count > 0:
                     state = Constants.SAVE_STATE_ALIVE

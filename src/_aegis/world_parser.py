@@ -3,9 +3,10 @@ from typing import cast
 
 import yaml
 
+from .aegis_config import is_feature_enabled
+from .common.location import Location
 from .common.world.cell import Cell
 from .common.world.objects import Rubble, Survivor, WorldObject
-from .constants import Constants
 from .logger import LOGGER
 from .types.world import Attributes, CellInfoRaw, WorldInfo, WorldRaw
 from .world import World
@@ -16,11 +17,10 @@ def load_world(filename: Path) -> World | None:
         with Path.open(filename) as file:
             data = cast("WorldRaw", yaml.safe_load(file))
 
-            rounds = Constants.DEFAULT_MAX_ROUNDS
             width, height, start_energy, seed = _parse_info(data.get("world_info"))
             cells = _create_cells(data.get("cells"))
 
-            return World(width, height, rounds, seed, start_energy, cells)
+            return World(width, height, seed, start_energy, cells)
     except (FileNotFoundError, yaml.YAMLError, KeyError):
         return None
 
@@ -90,3 +90,29 @@ def _create_world_object(
 
     LOGGER.critical("Unknown or invalid object type: '%s'", type_str)
     return None
+
+
+def load_agent_world(base_world: World) -> World:
+    width, height = base_world.width, base_world.height
+    seed = base_world.seed
+    start_energy = base_world.start_energy
+
+    cells: list[Cell] = []
+    for x in range(width):
+        for y in range(height):
+            source_cell = base_world.get_cell_at(Location(x, y))
+            cell = Cell(x, y)
+
+            if source_cell.is_killer_cell():
+                cell.set_killer_cell()
+            elif source_cell.is_charging_cell():
+                cell.set_charging_cell()
+            elif source_cell.is_spawn_cell():
+                cell.set_spawn_cell()
+
+            if is_feature_enabled("ENABLE_MOVE_COST"):
+                cell.move_cost = source_cell.move_cost
+
+            cells.append(cell)
+
+    return World(width, height, seed, start_energy, cells)

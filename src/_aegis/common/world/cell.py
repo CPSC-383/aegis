@@ -2,21 +2,18 @@ from __future__ import annotations
 
 from typing import override
 
-from _aegis.common import (
-    CellType,
-    Location,
-)
-from _aegis.common.agent_id import AgentID
+from _aegis.common import Location
 from _aegis.common.world.info import CellInfo
 from _aegis.common.world.objects import Survivor, WorldObject
+from _aegis.types.cell import CellType
 
 
 class Cell:
     def __init__(self, x: int, y: int) -> None:
         self._type: CellType = CellType.NORMAL_CELL
-        self.move_cost: int = 1
-        self._agents: list[AgentID] = []
         self._layers: list[WorldObject] = []
+        self.move_cost: int = 1
+        self.agents: list[int] = []
         self.location: Location = Location(x, y)
 
     def setup_cell(self, cell_state_type: str) -> None:
@@ -40,9 +37,6 @@ class Cell:
 
     def is_spawn_cell(self) -> bool:
         return self._type == CellType.SPAWN_CELL
-
-    def set_normal_cell(self) -> None:
-        self._type = CellType.NORMAL_CELL
 
     def set_spawn_cell(self) -> None:
         self._type = CellType.SPAWN_CELL
@@ -88,7 +82,7 @@ class Cell:
             cell_type,
             loc,
             self.move_cost,
-            [AgentID(agent_id.id, agent_id.gid) for agent_id in self._agents],
+            self.agents[:],
             self.get_top_layer(),
         )
 

@@ -16,4 +16,4 @@ class Constants:
     DIG_ENERGY_COST: int = 1
     MOVE_ENERGY_COST: int = 1
     MAX_DIRECTIVES: int = 5
-    DEFAULT_MAX_ROUNDS: int = 500
+    DEFAULT_MAX_ROUNDS: int = 1000

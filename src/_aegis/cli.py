@@ -1,7 +1,7 @@
 import sys
 import traceback
 
-from .parsers.args_parser import parse_args
+from .args_parser import parse_args
 from .play import run
 
 # TODO @dante: Add a init command
@@ -11,20 +11,6 @@ from .play import run
 def main() -> None:
     try:
         run(parse_args())
-
-        # aegis = Aegis(parameters, wait_for_client=wait_for_client)
-        #
-        # if not aegis.start_up():
-        #     LOGGER.error("Aegis  : Unable to start up.")
-        #     sys.exit(1)
-        #
-        # if not aegis.build_world():
-        #     LOGGER.error("Aegis  : Error building world.")
-        #     sys.exit(1)
-        #
-        # aegis.run()
-        # LOGGER.info("Aegis  : Done.")
-
     except Exception:  # noqa: BLE001
         traceback.print_exc()
         sys.exit(1)

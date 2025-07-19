@@ -1,33 +1,19 @@
-import base64
-import json
 import logging
-import random
-from pathlib import Path
 from typing import Any
 
-from _aegis.aegis_config import is_feature_enabled
 from _aegis.agent import Agent
 from _aegis.common import (
     AgentID,
     Direction,
     Location,
-    Utility,
 )
 from _aegis.common.world.cell import Cell
 from _aegis.common.world.info import CellInfo, SurroundInfo
 from _aegis.common.world.objects import Survivor
-from _aegis.common.world.objects.rubble import Rubble
-from _aegis.common.world.objects.world_object import WorldObject
 from _aegis.common.world.world import World
-from _aegis.parsers.aegis_world_file import AegisWorldFile
-from _aegis.parsers.args_parser import Args
-from _aegis.parsers.helper.cell_info_settings import CellInfoSettings
-from _aegis.parsers.helper.cell_type_info import CellTypeInfo
-from _aegis.protobuf.protobuf_service import ProtobufService
-from _aegis.server_websocket import WebSocketServer
 
+from .args_parser import Args
 from .constants import Constants
-from .types.world import Attributes
 
 LOGGER = logging.getLogger("aegis")
 
@@ -40,7 +26,6 @@ class AegisWorld:
         self._world: World | None = None
         self._agents: list[Agent] = agents
         self._args: Args = args
-        self._normal_cell_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._top_layer_removed_cell_list: list[Location] = []
         self._initial_agent_energy: int = Constants.DEFAULT_MAX_ENERGY_LEVEL
@@ -53,157 +38,6 @@ class AegisWorld:
         self._number_of_survivors_saved_alive: int = 0
         self._number_of_survivors_saved_dead: int = 0
         self._max_move_cost: int = 0
-
-    # def build_world_from_file(self, filename: str, ws_server: WebSocketServer) -> bool:
-    #     try:
-    #         aegis_world_file_info = WorldFileParser().parse_world_file(Path(filename))
-    #         success = self.build_world(aegis_world_file_info)
-    #
-    #         serialized_data = ProtobufService.serialize_world_init(
-    #             self.get_protobuf_world_data(),
-    #         )
-    #         encoded = base64.b64encode(serialized_data).decode("utf-8")
-    #         ws_server.add_event(encoded)
-    #     except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError):
-    #         return False
-    #     else:
-    #         return success
-
-    def build_world(self, aegis_world_file: AegisWorldFile | None) -> bool:
-        if aegis_world_file is None:
-            return False
-
-        try:
-            self._random_seed = aegis_world_file.random_seed
-            self._initial_agent_energy = aegis_world_file.start_energy
-            Utility.set_random_seed(aegis_world_file.random_seed)
-
-            self._world = World(
-                width=aegis_world_file.width,
-                height=aegis_world_file.height,
-            )
-
-            self._setup_specials(aegis_world_file.special_cells)
-            self._setup_cells(aegis_world_file.cells)
-            self._populate_normal_cells_and_survivors()
-            self._number_of_survivors = (
-                self._number_of_survivors_alive + self._number_of_survivors_dead
-            )
-        except (KeyError, ValueError):
-            LOGGER.exception("Error in building world")
-            return False
-        else:
-            return True
-
-    def _setup_specials(self, special_cells: list[CellTypeInfo]) -> None:
-        if self._world is None:
-            error = "World must be initialized before calling this method."
-            raise RuntimeError(error)
-
-        for special in special_cells:
-            for loc in special.locs:
-                cell = self._world.get_cell_at(loc)
-                if cell is None:
-                    continue
-                cell.setup_cell(special.name)
-
-    def _setup_cells(self, cells: list[CellInfoSettings]) -> None:
-        if self._world is None:
-            error = "World must be initialized before calling this method."
-            raise RuntimeError(error)
-
-        for cell in cells:
-            loc = cell.location
-            if not self._world.on_map(loc):
-                continue
-
-            _cell = self._world.get_cell_at(loc)
-            if _cell is None:
-                continue
-
-            _cell.move_cost = cell.move_cost
-
-            for layer in reversed(cell.layers):
-                _layer = self.create_world_object(
-                    self._world_object_count, layer["type"], layer["attributes"]
-                )
-                if _layer is not None:
-                    _cell.add_layer(_layer)
-                    self._world_object_count += 1
-
-    def _populate_normal_cells_and_survivors(self) -> None:
-        if self._world is None:
-            error = "World must be initialized before calling this method."
-            raise RuntimeError(error)
-
-        for x in range(self._world.width):
-            for y in range(self._world.height):
-                cell = self._world.get_cell_at(Location(x, y))
-                if cell is None:
-                    continue
-
-                if cell.is_normal_cell():
-                    self._normal_cell_list.append(cell)
-
-                for layer in cell.get_layers():
-                    if isinstance(layer, Survivor):
-                        if layer.get_health() > 0:
-                            self._number_of_survivors_alive += 1
-                        else:
-                            self._number_of_survivors_dead += 1
-
-    def create_world_object(
-        self, obj_id: int, type_str: str, args: dict[Attributes, int]
-    ) -> WorldObject | None:
-        type_upper = type_str.upper()
-        try:
-            if type_upper == "SV":
-                energy_level = args["energy_level"]
-                surv = Survivor(obj_id, energy_level)
-                self._survivors_list[obj_id] = surv
-                return surv
-
-            if type_upper == "RB":
-                energy_required = args["energy_required"]
-                agents_required = args["agents_required"]
-                return Rubble(obj_id, energy_required, agents_required)
-        except KeyError:
-            LOGGER.exception("Missing argument for object type '%s'", type_str)
-
-        LOGGER.critical("Unknown or invalid object type: '%s'", type_str)
-        return None
-
-    def _build_agent_world(self) -> list[list[Cell]]:
-        if self._world is None:
-            error = "World must be initialized before calling this method."
-            raise RuntimeError(error)
-
-        width, height = self._world.width, self._world.height
-        world: list[list[Cell]] = [
-            [Cell(x, y) for y in range(height)] for x in range(width)
-        ]
-
-        for x in range(width):
-            for y in range(height):
-                source_cell = self._world.get_cell_at(Location(x, y))
-                cell = world[x][y]
-
-                if source_cell is None:
-                    continue
-
-                if source_cell.is_killer_cell():
-                    cell.set_killer_cell()
-                elif source_cell.is_charging_cell():
-                    cell.set_charging_cell()
-                elif source_cell.is_spawn_cell():
-                    cell.set_spawn_cell()
-                else:
-                    cell.set_normal_cell()
-
-                if is_feature_enabled("ENABLE_MOVE_COST"):
-                    cell.move_cost = source_cell.move_cost
-
-        return world
 
     def grim_reaper(self) -> list[AgentID]:
         dead_agents: list[AgentID] = []
@@ -231,52 +65,6 @@ class AegisWorld:
 
         self._number_of_dead_agents += len(dead_agents)
         return dead_agents
-
-    def get_agent_world_filename(self) -> str:
-        return self._agent_world_filename
-
-    def add_agent_by_id(self, agent_id: AgentID, loc: Location | None = None) -> Agent:
-        if self._world is None:
-            error = "World must be initialized before calling this method."
-            raise RuntimeError(error)
-
-        spawns = self._world.get_spawns()
-        if loc is None:
-            loc = random.choice(spawns)
-
-        cell = self._world.get_cell_at(loc)
-
-        if cell is None:
-            error = "Aegis  : No spawn found for agent"
-            raise RuntimeError(error)
-
-        world = World(self._build_agent_world())
-        agent = Agent(
-            world,
-            self._world,
-            agent_id,
-            cell.location,
-            self._initial_agent_energy,
-            debug=self._args.debug,
-        )
-        self.add_agent(agent)
-        return agent
-
-    def add_agent(self, agent: Agent) -> None:
-        if self._world is None:
-            error = "World must be initialized before calling this method."
-            raise RuntimeError(error)
-
-        if agent not in self._agents:
-            self._agents.append(agent)
-
-            cell = self._world.get_cell_at(agent.get_location())
-            if cell is None:
-                return
-
-            cell.agent_id_list.append(agent.get_agent_id())
-            self._number_of_alive_agents += 1
-            LOGGER.info("Aegis  : Added agent %s", agent.get_agent_id())
 
     def get_agent(self, agent_id: AgentID) -> Agent | None:
         for agent in self._agents:
@@ -319,11 +107,6 @@ class AegisWorld:
                 self._number_of_survivors_saved_dead += 1
             else:
                 self._number_of_survivors_saved_alive += 1
-
-    def get_cell_at(self, location: Location) -> Cell | None:
-        if self._world is not None:
-            return self._world.get_cell_at(location)
-        return None
 
     def get_surround_info(self, location: Location) -> SurroundInfo:
         if self._world is None:

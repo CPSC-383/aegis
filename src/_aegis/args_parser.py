@@ -1,6 +1,8 @@
 import argparse
 from dataclasses import dataclass
 
+from _aegis.constants import Constants
+
 
 @dataclass
 class Args:
@@ -8,8 +10,8 @@ class Args:
     world: str
     rounds: int
     client: bool
-    agent: str
-    group: str
+    agent1: str | None
+    agent2: str | None
     config: str
     debug: bool
 
@@ -32,20 +34,20 @@ def parse_args() -> Args:
     _ = parser.add_argument(
         "--rounds",
         type=int,
-        required=True,
-        help="Number of simulation rounds",
+        default=Constants.DEFAULT_MAX_ROUNDS,
+        help=f"Number of simulation rounds (default = {Constants.DEFAULT_MAX_ROUNDS})",
     )
     _ = parser.add_argument(
-        "--agent",
+        "--agent1",
         type=str,
-        required=True,
-        help="Path to the agent file",
+        required=False,
+        help="Path to the agent file for team goobs",
     )
     _ = parser.add_argument(
-        "--group",
+        "--agent2",
         type=str,
-        required=True,
-        help="Group name",
+        required=False,
+        help="Path to the agent file for team voidseers",
     )
     _ = parser.add_argument(
         "--client",

@@ -10,6 +10,7 @@ class TeamInfo:
         self._predicted_wrong: list[int] = [0] * 2
         self._predicted: list[int] = [0] * 2
         self._score: list[int] = [0] * 2
+        self._units: list[int] = [0] * 2
 
     def get_saved(self, team: Team) -> int:
         return self._saved[team.value]
@@ -51,3 +52,6 @@ class TeamInfo:
 
     def inc_score(self, team: Team, amount: int) -> None:
         self._increment(self._score, team, amount)
+
+    def inc_units(self, team: Team, amount: int) -> None:
+        self._increment(self._units, team, amount)

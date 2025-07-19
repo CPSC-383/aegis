@@ -1,21 +1,21 @@
 from _aegis.constants import Constants
 
+from .common import Location
 from .common.world.cell import Cell
 
 
 class World:
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         width: int,
         height: int,
-        rounds: int,
         seed: int,
         start_energy: int,
         cells: list[Cell],
     ) -> None:
         self.width: int = width
         self.height: int = height
-        self.rounds: int = rounds
+        self.rounds: int = Constants.DEFAULT_MAX_ROUNDS
         self.seed: int = seed
         self.start_energy: int = start_energy
         self.cells: list[Cell] = cells
@@ -41,3 +41,7 @@ class World:
         if self.height > max_size:
             error = f"World height must not exceed {max_size}"
             raise ValueError(error)
+
+    def get_cell_at(self, loc: Location) -> Cell:
+        index = loc.y + loc.x * self.width
+        return self.cells[index]
