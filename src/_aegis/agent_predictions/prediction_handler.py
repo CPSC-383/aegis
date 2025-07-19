@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 
 from _aegis.agent_predictions import model_testing_data
 from _aegis.common import AgentID
-from _aegis.common.constants import Constants
+from _aegis.constants import Constants
 
 
 class PredictionHandler:

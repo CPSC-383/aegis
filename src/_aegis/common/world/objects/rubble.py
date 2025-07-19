@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, override
 from .world_object import WorldObject
 
 if TYPE_CHECKING:
-    from _aegis.parsers.helper.world_file_type import StackContent
+    from _aegis.parsers.helper.world_file_type import Layer
 
 
 class Rubble(WorldObject):
@@ -30,10 +30,10 @@ class Rubble(WorldObject):
         return self.__str__()
 
     @override
-    def json(self) -> StackContent:
+    def json(self) -> Layer:
         return {
             "type": "rb",
-            "arguments": {
+            "attributes": {
                 "energy_required": self.energy_required,
                 "agents_required": self.agents_required,
             },

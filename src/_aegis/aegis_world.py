@@ -9,7 +9,6 @@ from _aegis.aegis_config import is_feature_enabled
 from _aegis.agent import Agent
 from _aegis.common import (
     AgentID,
-    Constants,
     Direction,
     Location,
     Utility,
@@ -20,26 +19,27 @@ from _aegis.common.world.objects import Survivor
 from _aegis.common.world.objects.rubble import Rubble
 from _aegis.common.world.objects.world_object import WorldObject
 from _aegis.common.world.world import World
-from _aegis.parameters import Parameters
 from _aegis.parsers.aegis_world_file import AegisWorldFile
+from _aegis.parsers.args_parser import Args
 from _aegis.parsers.helper.cell_info_settings import CellInfoSettings
 from _aegis.parsers.helper.cell_type_info import CellTypeInfo
-from _aegis.parsers.helper.world_file_type import Attributes
-from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.protobuf.protobuf_service import ProtobufService
 from _aegis.server_websocket import WebSocketServer
+
+from .constants import Constants
+from .types.world import Attributes
 
 LOGGER = logging.getLogger("aegis")
 
 
 class AegisWorld:
-    def __init__(self, agents: list[Agent], parameters: Parameters) -> None:
+    def __init__(self, agents: list[Agent], args: Args) -> None:
         self._world_object_count: int = 0
         self._agent_locations: dict[AgentID, Location] = {}
         self._random_seed: int = 0
         self._world: World | None = None
         self._agents: list[Agent] = agents
-        self._parameters: Parameters = parameters
+        self._args: Args = args
         self._normal_cell_list: list[Cell] = []
         self._survivors_list: dict[int, Survivor] = {}
         self._top_layer_removed_cell_list: list[Location] = []
@@ -54,20 +54,20 @@ class AegisWorld:
         self._number_of_survivors_saved_dead: int = 0
         self._max_move_cost: int = 0
 
-    def build_world_from_file(self, filename: str, ws_server: WebSocketServer) -> bool:
-        try:
-            aegis_world_file_info = WorldFileParser().parse_world_file(Path(filename))
-            success = self.build_world(aegis_world_file_info)
-
-            serialized_data = ProtobufService.serialize_world_init(
-                self.get_protobuf_world_data(),
-            )
-            encoded = base64.b64encode(serialized_data).decode("utf-8")
-            ws_server.add_event(encoded)
-        except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError):
-            return False
-        else:
-            return success
+    # def build_world_from_file(self, filename: str, ws_server: WebSocketServer) -> bool:
+    #     try:
+    #         aegis_world_file_info = WorldFileParser().parse_world_file(Path(filename))
+    #         success = self.build_world(aegis_world_file_info)
+    #
+    #         serialized_data = ProtobufService.serialize_world_init(
+    #             self.get_protobuf_world_data(),
+    #         )
+    #         encoded = base64.b64encode(serialized_data).decode("utf-8")
+    #         ws_server.add_event(encoded)
+    #     except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError):
+    #         return False
+    #     else:
+    #         return success
 
     def build_world(self, aegis_world_file: AegisWorldFile | None) -> bool:
         if aegis_world_file is None:
@@ -145,7 +145,7 @@ class AegisWorld:
                 if cell.is_normal_cell():
                     self._normal_cell_list.append(cell)
 
-                for layer in cell.get_cell_layers():
+                for layer in cell.get_layers():
                     if isinstance(layer, Survivor):
                         if layer.get_health() > 0:
                             self._number_of_survivors_alive += 1
@@ -257,7 +257,7 @@ class AegisWorld:
             agent_id,
             cell.location,
             self._initial_agent_energy,
-            debug=self._parameters.debug,
+            debug=self._args.debug,
         )
         self.add_agent(agent)
         return agent

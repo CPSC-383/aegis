@@ -8,7 +8,7 @@ from _aegis.common.world.objects import WorldObject
 class CellInfo:
     def __init__(
         self,
-        cell_type: CellType = CellType.NO_CELL,
+        cell_type: CellType = CellType.NORMAL_CELL,
         location: Location | None = None,
         move_cost: int = 0,
         agent_id_list: list[AgentID] | None = None,
@@ -26,8 +26,6 @@ class CellInfo:
 
     @override
     def __str__(self) -> str:
-        if self.cell_type == CellType.NO_CELL:
-            return self.cell_type.name
         return (
             f"{self.cell_type.name} ( X {self.location.x} , Y {self.location.y} , "
             f"MV_COST {self.move_cost} , NUM_AGT {len(self.agent_id_list)} , "

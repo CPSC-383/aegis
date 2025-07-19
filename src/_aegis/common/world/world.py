@@ -1,5 +1,6 @@
-from _aegis.common import Constants, Location
+from _aegis.common import Location
 from _aegis.common.world.cell import Cell
+from _aegis.constants import Constants
 
 
 class World:

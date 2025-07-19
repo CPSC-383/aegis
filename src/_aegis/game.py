@@ -1,23 +1,20 @@
 import base64
 import sys
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-from .aegis_config import is_feature_enabled
 from .aegis_world import AegisWorld
 from .command_processor import CommandProcessor
 from .logger import LOGGER
-from .parameters import Parameters
-from .parsers.world_file_parser import WorldFileParser
+from .parsers.args_parser import Args
 from .protobuf.protobuf_service import ProtobufService
 from .server_websocket import WebSocketServer
 
-try:
-    from .agent_predictions.prediction_handler import PredictionHandler
-except ImportError:
-    _prediction_imported = False
-else:
-    _prediction_imported = True
+# try:
+#     from .agent_predictions.prediction_handler import PredictionHandler
+# except ImportError:
+#     _prediction_imported = False
+# else:
+#     _prediction_imported = True
 
 if TYPE_CHECKING:
     from .agent import Agent
@@ -29,15 +26,15 @@ else:
     PredictionHandlerType = object
 
 
-class Aegis:
-    def __init__(self, parameters: Parameters, *, wait_for_client: bool) -> None:
-        self._parameters: Parameters = parameters
+class Game:
+    def __init__(self, args: Args) -> None:
+        self._args: Args = args
         self._started_idling: int = -1
         self._agents: list[Agent] = []
         self._agent_commands: list[AgentCommand] = []
-        self._aegis_world: AegisWorld = AegisWorld(self._agents, parameters)
+        self._aegis_world: AegisWorld = AegisWorld(self._agents, args)
         self._ws_server: WebSocketServer = WebSocketServer()
-        if wait_for_client:
+        if args.client:
             self._ws_server.set_wait_for_client()
         self._prediction_handler: PredictionHandlerType | None = None
         self._command_processor: CommandProcessor = CommandProcessor(
@@ -46,29 +43,29 @@ class Aegis:
             self._prediction_handler,
         )
 
-    def start_up(self) -> bool:
-        if (
-            is_feature_enabled("ENABLE_PREDICTIONS", self._parameters.config_file)
-            and _prediction_imported
-        ):
-            self._prediction_handler = (
-                PredictionHandler()  # pyright: ignore[reportPossiblyUnboundVariable]
-            )
-
-        _aegis_world_file = WorldFileParser.parse_world_file(
-            Path(self._parameters.world_filename),
-        )
-        if _aegis_world_file is None:
-            LOGGER.error(
-                'Aegis  : Unable to parse world file from "%s"',
-                self._parameters.world_filename,
-            )
-            return False
-        return True
+    # def start_up(self) -> bool:
+    #     if (
+    #         is_feature_enabled("ENABLE_PREDICTIONS", self._args.config)
+    #         and _prediction_imported
+    #     ):
+    #         self._prediction_handler = (
+    #             PredictionHandler()  # pyright: ignore[reportPossiblyUnboundVariable]
+    #         )
+    #
+    #     _aegis_world_file = WorldFileParser.parse_world_file(
+    #         Path(self._parameters.world_filename),
+    #     )
+    #     if _aegis_world_file is None:
+    #         LOGGER.error(
+    #             'Aegis  : Unable to parse world file from "%s"',
+    #             self._parameters.world_filename,
+    #         )
+    #         return False
+    #     return True
 
     def build_world(self) -> bool:
         return self._aegis_world.build_world_from_file(
-            self._parameters.world_filename, self._ws_server
+            self._args.world, self._ws_server
         )
 
     def _end_simulation(self, last_round: int) -> None:
@@ -83,34 +80,33 @@ class Aegis:
     def run(self) -> None:
         self._ws_server.start()
 
-        rounds = self._parameters.number_of_rounds
+        rounds = self._args.rounds
         LOGGER.info("Aegis  : Running simulation.")
         LOGGER.info("Running for %s rounds\n", rounds)
         LOGGER.info("================================================")
         _ = sys.stdout.flush()
 
-        world_data = self.get_aegis_world().get_protobuf_world_data()
-
-        serialized_data = ProtobufService.serialize_round_update(
-            0, world_data, self._agent_handler.get_groups_data()
-        )
-        self._compress_and_send(serialized_data)
+        # world_data = self.get_aegis_world().get_protobuf_world_data()
+        # serialized_data = ProtobufService.serialize_round_update(
+        #     0, world_data, self._agent_handler.get_groups_data()
+        # )
+        # self._compress_and_send(serialized_data)
 
         for game_round in range(1, rounds + 1):
             self._command_processor.run_turn()
             self._grim_reaper()
-            world_data = self.get_aegis_world().get_protobuf_world_data()
 
-            serialized_data = ProtobufService.serialize_round_update(
-                game_round, world_data, self._agent_handler.get_groups_data()
-            )
-            self._compress_and_send(serialized_data)
+            # world_data = self.get_aegis_world().get_protobuf_world_data()
+            # serialized_data = ProtobufService.serialize_round_update(
+            #     game_round, world_data, self._agent_handler.get_groups_data()
+            # )
+            # self._compress_and_send(serialized_data)
 
             if self._is_game_over():
                 self._end_simulation(game_round)
                 return
 
-        self._end_simulation(self._parameters.number_of_rounds)
+        self._end_simulation(self._args.rounds)
 
     def _is_game_over(self) -> bool:
         if len(self._agents) == 0:
@@ -133,9 +129,6 @@ class Aegis:
             if agent is None:
                 continue
             self._agents.remove(agent)
-
-    def get_aegis_world(self) -> AegisWorld:
-        return self._aegis_world
 
     def _compress_and_send(self, event: bytes) -> None:
         encoded = base64.b64encode(event).decode("utf-8")

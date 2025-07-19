@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, override
 from _aegis.common.world.objects.world_object import WorldObject
 
 if TYPE_CHECKING:
-    from _aegis.parsers.helper.world_file_type import StackContent
+    from _aegis.parsers.helper.world_file_type import Layer
 
 
 class Survivor(WorldObject):
@@ -54,10 +54,10 @@ class Survivor(WorldObject):
         return self.__str__()
 
     @override
-    def json(self) -> StackContent:
+    def json(self) -> Layer:
         return {
             "type": "sv",
-            "arguments": {
+            "attributes": {
                 "energy_level": self._health,
             },
         }

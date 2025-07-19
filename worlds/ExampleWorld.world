@@ -5,14 +5,6 @@ world_info:
   seed: 9014
   start_energy: 500
 
-special_cells:
-  spawns:
-    - x: 2
-      y: 0
-      
-  killer: []
-  charging: []
-
 cells:
   - loc:
       x: 0
@@ -67,7 +59,7 @@ cells:
   - loc:
       x: 2
       y: 0
-    move_cost: 1
+    type: spawn
     layers: []
   - loc:
       x: 2
@@ -91,7 +83,7 @@ cells:
     layers:
       - type: sv
         attributes:
-          energy_level: 1
+          health: 1
   - loc:
       x: 3
       y: 0

@@ -1,8 +1,6 @@
 import argparse
 from dataclasses import dataclass
 
-from _aegis.parameters import Parameters
-
 
 @dataclass
 class Args:
@@ -16,7 +14,7 @@ class Args:
     debug: bool
 
 
-def parse_args() -> tuple[Parameters, bool]:
+def parse_args() -> Args:
     parser = argparse.ArgumentParser(description="AEGIS Simulation Configuration")
 
     _ = parser.add_argument(
@@ -68,13 +66,4 @@ def parse_args() -> tuple[Parameters, bool]:
 
     args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]
 
-    params = Parameters()
-    params.number_of_agents = args.amount
-    params.world_filename = args.world
-    params.number_of_rounds = args.rounds
-    params.agent = args.agent
-    params.group_name = args.group
-    params.config_file = args.config
-    params.debug = args.debug
-
-    return params, args.client
+    return args

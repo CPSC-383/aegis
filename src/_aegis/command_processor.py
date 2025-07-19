@@ -1,11 +1,10 @@
-import logging
+import logging  # noqa: I001
 from typing import TYPE_CHECKING
 
 from _aegis.common.location import Location
 from _aegis.common.world.info.surround_info import SurroundInfo
 
 from .aegis_config import is_feature_enabled
-from .aegis_world import AegisWorld
 from .agent import Agent
 from .common.agent_id import AgentID
 from .common.commands.aegis_command import AegisCommand
@@ -24,7 +23,7 @@ from .common.commands.agent_commands import (
     Save,
     SendMessage,
 )
-from .common.constants import Constants
+from .constants import Constants
 from .common.direction import Direction
 from .common.utility import Utility
 from .common.world.cell import Cell
@@ -32,6 +31,7 @@ from .common.world.info.cell_info import CellInfo
 from .common.world.objects.rubble import Rubble
 from .common.world.objects.survivor import Survivor
 from .common.world.objects.world_object import WorldObject
+from .aegis_world import AegisWorld
 
 try:
     from .common.commands.aegis_commands.save_result import SaveResult
@@ -259,7 +259,7 @@ class CommandProcessor:
                 cell = self._world.get_cell_at(cmd.location)
                 if cell:
                     cell_info = cell.get_cell_info()
-                    layers = cell.get_cell_layers()
+                    layers = cell.get_layers()
                 return [ObserveResult(energy, cell_info, layers)]
 
             case _:

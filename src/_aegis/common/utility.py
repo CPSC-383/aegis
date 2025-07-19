@@ -1,16 +1,25 @@
 import random
 import sys
 from enum import Enum
+from typing import override
 
 
 class CellType(Enum):
     """Enum representing different types of cells."""
 
-    NO_CELL = 1
-    NORMAL_CELL = 2
-    CHARGING_CELL = 3
-    KILLER_CELL = 4
-    SPAWN_CELL = 5
+    NORMAL_CELL = 0
+    CHARGING_CELL = 1
+    KILLER_CELL = 2
+    SPAWN_CELL = 3
+
+    @override
+    def __str__(self) -> str:
+        name = self.name.lower().replace("_cell", "")
+        return name.capitalize()
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 class Utility:
