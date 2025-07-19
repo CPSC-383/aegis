@@ -23,6 +23,12 @@ import {
 import InfoDialog from '@/components/ui/InfoDialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip'
 import MapBrushes from './Map-brushes'
 import { exportWorld, importWorld, WorldSerializer } from './MapGenerator'
 
@@ -57,11 +63,24 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
     !appState.editorSimulation || appState.editorSimulation.worldMap.isEmpty()
 
   const handleParamChange = (key: keyof WorldParams, value: number): void => {
-    setWorldParams({
-      ...worldParams,
-      [key]: value,
-      isInitialized: false
-    })
+    // Only trigger world recreation for width and height changes
+    if (key === 'width' || key === 'height') {
+      setWorldParams({
+        ...worldParams,
+        [key]: value,
+        isInitialized: false
+      })
+    } else {
+      // For other parameters like initialEnergy, just update without recreation
+      setWorldParams({
+        ...worldParams,
+        [key]: value
+      })
+    }
+  }
+
+  const handleInitialEnergyChange = (value: number): void => {
+    handleParamChange('initialEnergy', value)
   }
 
   const handleExport = async (): Promise<void> => {
@@ -202,6 +221,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
         </div>
         <MapBrushes />
       </div>
+
       {/* World Configuration Section */}
       <Card className="relative">
         <div className="absolute top-2 right-2 z-10">
@@ -239,53 +259,85 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
         <CardContent className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="flex items-center">
+              <Label
+                className={`flex items-center ${!isWorldEmpty ? 'text-muted-foreground/50 opacity-50' : ''}`}
+              >
                 <Grid3x3 className="w-4 h-4 mr-2 text-muted-foreground" />
                 Width
               </Label>
-              <Input
-                type="number"
-                value={worldParams.width === 0 ? '' : worldParams.width}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                  const value = e.target.value === '' ? 0 : Number(e.target.value)
-                  handleParamChange('width', value)
-                }}
-                onBlur={(e: React.FocusEvent<HTMLInputElement>): void => {
-                  let value = e.target.value === '' ? 0 : Number(e.target.value)
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Input
+                        type="number"
+                        value={worldParams.width === 0 ? '' : worldParams.width}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                          const value =
+                            e.target.value === '' ? 0 : Number(e.target.value)
+                          handleParamChange('width', value)
+                        }}
+                        onBlur={(e: React.FocusEvent<HTMLInputElement>): void => {
+                          let value = e.target.value === '' ? 0 : Number(e.target.value)
 
-                  if (value < MAP_MIN) value = MAP_MIN
-                  if (value > MAP_MAX) value = MAP_MAX
+                          if (value < MAP_MIN) value = MAP_MIN
+                          if (value > MAP_MAX) value = MAP_MAX
 
-                  handleParamChange('width', value)
-                }}
-                className="w-full"
-                disabled={!isWorldEmpty}
-              />
+                          handleParamChange('width', value)
+                        }}
+                        className="w-full"
+                        disabled={!isWorldEmpty}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  {!isWorldEmpty && (
+                    <TooltipContent>
+                      <p>Clear world to change</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <div className="space-y-2">
-              <Label className="flex items-center">
+              <Label
+                className={`flex items-center ${!isWorldEmpty ? 'text-muted-foreground/50 opacity-50' : ''}`}
+              >
                 <Grid3x3 className="w-4 h-4 mr-2 text-muted-foreground" />
                 Height
               </Label>
-              <Input
-                type="number"
-                value={worldParams.height === 0 ? '' : worldParams.height}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-                  const value = e.target.value === '' ? 0 : Number(e.target.value)
-                  handleParamChange('height', value)
-                }}
-                onBlur={(e: React.FocusEvent<HTMLInputElement>): void => {
-                  let value = e.target.value === '' ? 0 : Number(e.target.value)
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Input
+                        type="number"
+                        value={worldParams.height === 0 ? '' : worldParams.height}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
+                          const value =
+                            e.target.value === '' ? 0 : Number(e.target.value)
+                          handleParamChange('height', value)
+                        }}
+                        onBlur={(e: React.FocusEvent<HTMLInputElement>): void => {
+                          let value = e.target.value === '' ? 0 : Number(e.target.value)
 
-                  if (value < MAP_MIN) value = MAP_MIN
-                  if (value > MAP_MAX) value = MAP_MAX
+                          if (value < MAP_MIN) value = MAP_MIN
+                          if (value > MAP_MAX) value = MAP_MAX
 
-                  handleParamChange('height', value)
-                }}
-                className="w-full"
-                disabled={!isWorldEmpty}
-              />
+                          handleParamChange('height', value)
+                        }}
+                        className="w-full"
+                        disabled={!isWorldEmpty}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  {!isWorldEmpty && (
+                    <TooltipContent>
+                      <p>Reset world to change</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 
@@ -299,54 +351,55 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
               value={worldParams.initialEnergy === 0 ? '' : worldParams.initialEnergy}
               onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
                 const value = e.target.value === '' ? 0 : Number(e.target.value)
-                handleParamChange('initialEnergy', value)
+                handleInitialEnergyChange(value)
               }}
               onBlur={(e: React.FocusEvent<HTMLInputElement>): void => {
                 let value = e.target.value === '' ? 0 : Number(e.target.value)
 
                 if (value < 1) value = 1
 
-                handleParamChange('initialEnergy', value)
+                handleInitialEnergyChange(value)
               }}
               className="w-full"
-              disabled={!isWorldEmpty}
+              // disabled={!isWorldEmpty}
             />
-
-            {/* In the JSX, always render the Dialog, but disable the trigger button if needed */}
-            <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  className="mt-2"
-                  disabled={isWorldEmpty}
-                  onClick={(): void => setResetDialogOpen(true)}
-                >
-                  Reset to Change Settings
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Reset World Settings?</DialogTitle>
-                  <DialogDescription>
-                    This will clear the current world and allow you to modify its
-                    settings. Are you sure?
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button
-                    variant="secondary"
-                    onClick={(): void => setResetDialogOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button variant="destructive" onClick={handleMapEditorReset}>
-                    Reset Settings
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
           </div>
         </CardContent>
+        {/* In the JSX, always render the Dialog, but disable the trigger button if needed */}
+        <div className="flex justify-center mb-4">
+          <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="destructive"
+                className="py-4 px-3"
+                disabled={isWorldEmpty}
+                onClick={(): void => setResetDialogOpen(true)}
+              >
+                Clear world
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Reset World Settings?</DialogTitle>
+                <DialogDescription>
+                  This will clear the current world and allow you to modify its
+                  settings. Are you sure?
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant="secondary"
+                  onClick={(): void => setResetDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleMapEditorReset}>
+                  Reset World Dimensions
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </Card>
 
       {/* World Management Section */}
