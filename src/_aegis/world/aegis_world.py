@@ -3,7 +3,7 @@ import json
 import logging
 import random
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any
 
 from _aegis.aegis_config import is_feature_enabled
 from _aegis.agent import Agent
@@ -24,52 +24,12 @@ from _aegis.parameters import Parameters
 from _aegis.parsers.aegis_world_file import AegisWorldFile
 from _aegis.parsers.helper.cell_info_settings import CellInfoSettings
 from _aegis.parsers.helper.cell_type_info import CellTypeInfo
-from _aegis.parsers.helper.world_file_type import Arguments, StackContent
+from _aegis.parsers.helper.world_file_type import Attributes
 from _aegis.parsers.world_file_parser import WorldFileParser
 from _aegis.protobuf.protobuf_service import ProtobufService
 from _aegis.server_websocket import WebSocketServer
 
 from .spawn_manager import SpawnManger
-
-
-class LocationDict(TypedDict):
-    x: int
-    y: int
-
-
-class Stack(TypedDict):
-    cell_loc: LocationDict
-    move_cost: int
-    contents: list[StackContent]
-
-
-class CellDict(TypedDict):
-    cell_type: str
-    stack: Stack
-
-
-class AgentInfoDict(TypedDict):
-    id: int
-    gid: int
-    x: int
-    y: int
-    energy_level: int
-    command_sent: str
-    steps_taken: int
-
-
-class WorldDict(TypedDict):
-    cell_data: list[CellDict]
-    agent_data: list[AgentInfoDict]
-    top_layer_rem_data: list[LocationDict]
-    number_of_alive_agents: int
-    number_of_dead_agents: int
-    number_of_survivors: int
-    number_of_survivors_alive: int
-    number_of_survivors_dead: int
-    number_of_survivors_saved_alive: int
-    number_of_survivors_saved_dead: int
-
 
 LOGGER = logging.getLogger("aegis")
 
@@ -117,11 +77,8 @@ class AegisWorld:
             return False
 
         try:
-            for spawn in aegis_world_file.agent_spawn_locations:
-                self._spawn_manager.add_spawn_zone(spawn)
-
             self._random_seed = aegis_world_file.random_seed
-            self._initial_agent_energy = aegis_world_file.initial_agent_energy
+            self._initial_agent_energy = aegis_world_file.start_energy
             Utility.set_random_seed(aegis_world_file.random_seed)
 
             self._world = World(
@@ -129,8 +86,8 @@ class AegisWorld:
                 height=aegis_world_file.height,
             )
 
-            self._setup_special_cells(aegis_world_file.cell_settings)
-            self._setup_cells_content(aegis_world_file.cell_stack_info)
+            self._setup_specials(aegis_world_file.special_cells)
+            self._setup_cells(aegis_world_file.cells)
             self._populate_normal_cells_and_survivors()
             self._number_of_survivors = (
                 self._number_of_survivors_alive + self._number_of_survivors_dead
@@ -141,19 +98,19 @@ class AegisWorld:
         else:
             return True
 
-    def _setup_special_cells(self, cell_settings: list[CellTypeInfo]) -> None:
+    def _setup_specials(self, special_cells: list[CellTypeInfo]) -> None:
         if self._world is None:
             error = "World must be initialized before calling this method."
             raise RuntimeError(error)
 
-        for cell_setting in cell_settings:
-            for loc in cell_setting.locs:
+        for special in special_cells:
+            for loc in special.locs:
                 cell = self._world.get_cell_at(loc)
                 if cell is None:
                     continue
-                cell.setup_cell(cell_setting.name)
+                cell.setup_cell(special.name)
 
-    def _setup_cells_content(self, cell_stack_info: list[CellInfoSettings]) -> None:
+    def _setup_cells(self, cell_stack_info: list[CellInfoSettings]) -> None:
         if self._world is None:
             error = "World must be initialized before calling this method."
             raise RuntimeError(error)
@@ -199,7 +156,7 @@ class AegisWorld:
                             self._number_of_survivors_dead += 1
 
     def create_world_object(
-        self, obj_id: int, type_str: str, args: dict[Arguments, int]
+        self, obj_id: int, type_str: str, args: dict[Attributes, int]
     ) -> WorldObject | None:
         type_upper = type_str.upper()
         try:
@@ -241,6 +198,8 @@ class AegisWorld:
                     cell.set_killer_cell()
                 elif source_cell.is_charging_cell():
                     cell.set_charging_cell()
+                elif source_cell.is_spawn_cell():
+                    cell.set_spawn_cell()
                 else:
                     cell.set_normal_cell()
 

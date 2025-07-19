@@ -10,6 +10,7 @@ class CellType(Enum):
     NORMAL_CELL = 2
     CHARGING_CELL = 3
     KILLER_CELL = 4
+    SPAWN_CELL = 5
 
 
 class Utility:

@@ -181,6 +181,7 @@ class Agent:
             "on_map": self.on_map,
             "get_cell_at": self.get_cell_at,
             "get_charging_cells": self._world.get_charging_cells,
+            "get_spawns": self._world.get_spawns,
             "get_survs": self._aegis_world.get_survs,
             "log": self.log,
         }

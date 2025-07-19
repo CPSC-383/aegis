@@ -26,12 +26,14 @@ class Cell:
     def setup_cell(self, cell_state_type: str) -> None:
         cell_state_type = cell_state_type.upper().strip()
 
-        if cell_state_type == "NORMAL_CELLS":
-            self._type = CellType.NORMAL_CELL
-        elif cell_state_type == "CHARGING_CELLS":
+        if cell_state_type == "CHARGING":
             self._type = CellType.CHARGING_CELL
-        elif cell_state_type == "KILLER_CELLS":
+        elif cell_state_type == "KILLER":
             self._type = CellType.KILLER_CELL
+        elif cell_state_type == "SPAWNS":
+            self._type = CellType.SPAWN_CELL
+        else:
+            self._type = CellType.NORMAL_CELL
 
     def is_charging_cell(self) -> bool:
         return self._type == CellType.CHARGING_CELL
@@ -42,8 +44,14 @@ class Cell:
     def is_normal_cell(self) -> bool:
         return self._type == CellType.NORMAL_CELL
 
+    def is_spawn_cell(self) -> bool:
+        return self._type == CellType.SPAWN_CELL
+
     def set_normal_cell(self) -> None:
         self._type = CellType.NORMAL_CELL
+
+    def set_spawn_cell(self) -> None:
+        self._type = CellType.SPAWN_CELL
 
     def set_charging_cell(self) -> None:
         self._type = CellType.CHARGING_CELL

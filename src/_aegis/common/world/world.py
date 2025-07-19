@@ -70,3 +70,12 @@ class World:
                     continue
                 res.append(cell.location)
         return res
+
+    def get_spawns(self) -> list[Location]:
+        res: list[Location] = []
+        for row in self._world:
+            for cell in row:
+                if not cell.is_spawn_cell():
+                    continue
+                res.append(cell.location)
+        return res
