@@ -2,39 +2,58 @@ import { useAppContext } from '@/contexts/AppContext'
 import { AgentInfoDict, CellDict } from '@/core/simulation'
 import { CellContent, SpawnZoneData, SpawnZoneTypes } from '@/core/world'
 import { EventType, listenEvent } from '@/events'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import AgentPanel from './Agent-panel'
 import CellPanel from './Cell-panel'
 
 const InfoPanel = (): JSX.Element => {
   const { appState } = useAppContext()
-  const { simulation, selectedCell } = appState
+  // Determine which simulation and selectedCell to use
+  const isEditor = Boolean(appState.editorSimulation)
+  const simulation = isEditor ? appState.editorSimulation : appState.simulation
+  const selectedCell = isEditor ? appState.editorSelectedCell : appState.selectedCell
+
   const [cellInfo, setCellInfo] = useState<CellDict | undefined>()
   const [cellLayers, setCellLayers] = useState<CellContent[]>([])
   const [agents, setAgents] = useState<AgentInfoDict[]>([])
   const [selectedAgent, setSelectedAgent] = useState<AgentInfoDict | undefined>()
   const [spawns, setSpawns] = useState<SpawnZoneData | undefined>(undefined)
 
-  const gatherData = (): void => {
+  const gatherData = useCallback((): void => {
     if (!simulation || !selectedCell) return
 
     const { x, y } = selectedCell
 
     setCellInfo(simulation.getInfoAtCell(x, y))
     setCellLayers(simulation.getLayersAtCell(x, y))
-    setAgents(simulation.getAgentsAtCell(x, y))
+
+    // Only get agents if this is a normal simulation (not editor)
+    if (!isEditor) {
+      setAgents(simulation.getAgentsAtCell(x, y))
+    } else {
+      setAgents([]) // No agents in editor mode
+    }
+
     setSpawns(simulation.getSpawns(x, y))
-  }
+  }, [simulation, selectedCell, isEditor])
 
   // This is to get the info for a new
   // selected cell, or when the sim started
   useEffect(() => {
     gatherData()
     setSelectedAgent(undefined)
-  }, [simulation, selectedCell])
+  }, [simulation, selectedCell, isEditor, gatherData])
 
-  // This will update the cell every round
-  listenEvent(EventType.RENDER, gatherData)
+  // This will update the cell every round (only for normal simulation, not editor)
+  listenEvent(
+    EventType.RENDER,
+    () => {
+      if (!isEditor) {
+        gatherData()
+      }
+    },
+    [gatherData, isEditor]
+  )
 
   if (!simulation || !selectedCell) {
     return <div className="p-4 mx-auto">Select a cell when a map is loaded!</div>

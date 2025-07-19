@@ -25,15 +25,22 @@ class StackContentHandler extends BrushHandler {
     if (!stack) return
 
     if (rightClicked) {
-      // Remove content that matches the current brush type
-      const contentIndex = stack.contents.findIndex((content) => {
-        if (this.stackType === CellContentBrushTypes.Rubble) {
-          return content.type === 'rb'
-        } else if (this.stackType === CellContentBrushTypes.Survivor) {
-          return content.type === 'sv'
+      // Remove the most recently added content that matches the current brush type (FIFO)
+      // Find the last occurrence of the content type (most recently added)
+      let contentIndex = -1
+      for (let i = stack.contents.length - 1; i >= 0; i--) {
+        const content = stack.contents[i]
+        if (this.stackType === CellContentBrushTypes.Rubble && content.type === 'rb') {
+          contentIndex = i
+          break
+        } else if (
+          this.stackType === CellContentBrushTypes.Survivor &&
+          content.type === 'sv'
+        ) {
+          contentIndex = i
+          break
         }
-        return false
-      })
+      }
 
       if (contentIndex !== -1) {
         stack.contents.splice(contentIndex, 1)
@@ -41,11 +48,12 @@ class StackContentHandler extends BrushHandler {
       return
     }
 
-    // Check if the cell is occupied by special cells or already has content of this type
-    if (this.isOccupied(tile) || this.hasContentOfType(stack)) {
+    // Check if the cell is occupied by special cells
+    if (this.isOccupied(tile)) {
       return
     }
 
+    // Allow adding multiple items of the same type
     this.addStackContent(stack)
   }
 
@@ -78,17 +86,6 @@ class StackContentHandler extends BrushHandler {
     if (content) {
       stack.contents.push(content)
     }
-  }
-
-  private hasContentOfType(stack: Stack): boolean {
-    return stack.contents.some((content) => {
-      if (this.stackType === CellContentBrushTypes.Rubble) {
-        return content.type === 'rb'
-      } else if (this.stackType === CellContentBrushTypes.Survivor) {
-        return content.type === 'sv'
-      }
-      return false
-    })
   }
 }
 

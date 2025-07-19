@@ -1,6 +1,6 @@
 import { useAppContext } from '@/contexts/AppContext'
 import { EventType, dispatchEvent, listenEvent } from '@/events'
-import { shadesOfBrown } from '@/types'
+import { BrushType, shadesOfBrown } from '@/types'
 import { getImage, whatBucket } from '@/utils/util'
 import { useEffect, useRef, useState } from 'react'
 
@@ -180,7 +180,14 @@ function GameArea(): JSX.Element {
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
-    if (e.button === 2) {
+    // Disable dragging for cell contents brush
+    if (isEditor && appState.currentBrushType === BrushType.CellContents) {
+      if (e.button === 2) {
+        handleWorldCanvasClick(e, true)
+      } else if (e.button === 0) {
+        handleWorldCanvasClick(e, false)
+      }
+    } else if (e.button === 2) {
       handleWorldCanvasClick(e, true)
       setIsDragging(true)
       setDragButton(2)
@@ -190,11 +197,12 @@ function GameArea(): JSX.Element {
     }
   }
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
-    if (e.button === 0) handleWorldCanvasClick(e, false)
-  }
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
+    // Disable dragging for cell contents brush
+    if (isEditor && appState.currentBrushType === BrushType.CellContents) {
+      return
+    }
+
     if (!isDragging || dragButton === null) return
 
     const isRightClick = dragButton === 2
@@ -272,7 +280,6 @@ function GameArea(): JSX.Element {
     <div
       ref={worldContainerRef}
       className="flex justify-center items-center relative w-full h-screen"
-      onClick={handleClick}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

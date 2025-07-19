@@ -218,7 +218,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
               </li>
               <li>
                 <strong>Drag to paint:</strong> Click and drag across multiple cells to
-                apply or remove the brush.
+                apply or remove the brush (Not for cell contents brush).
               </li>
             </ul>
           </InfoDialog>

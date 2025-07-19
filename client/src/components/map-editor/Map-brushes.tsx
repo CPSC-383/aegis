@@ -18,7 +18,7 @@ import { dispatchEvent, EventType, listenEvent } from '@/events'
 import { BrushType, CellContentBrushTypes, SpecialCellBrushTypes } from '@/types'
 import { formatDisplayText } from '@/utils/util'
 import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import MoveCostBrush from './brushes/components/MoveCostBrush'
 import SpecialCellsBrush from './brushes/components/SpecialCellsBrush'
 import StackContentBrush from './brushes/components/StackContentBrush'
@@ -28,7 +28,7 @@ import SpecialCellsHandler from './brushes/handlers/SpecialCellsHandler'
 import StackContentHandler from './brushes/handlers/StackContentHandler'
 
 function MapBrushes(): JSX.Element {
-  const { appState } = useAppContext()
+  const { appState, setAppState } = useAppContext()
   const [brushType, setBrushType] = useState<BrushType>(BrushType.SpecialCells)
   const [specialCellType, setSpecialCellType] = useState<SpecialCellBrushTypes>(
     SpecialCellBrushTypes.Killer
@@ -46,6 +46,14 @@ function MapBrushes(): JSX.Element {
   const [survivorInfo] = useState<SurvivorInfo>({
     energy_level: 100
   })
+
+  // Update app state when brush type changes
+  useEffect(() => {
+    setAppState((prev) => ({
+      ...prev,
+      currentBrushType: brushType
+    }))
+  }, [brushType, setAppState])
 
   const createHandler = useCallback(
     (worldMap: WorldMap): BrushHandler | null => {

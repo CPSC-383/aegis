@@ -23,8 +23,8 @@ const Sidebar = (): JSX.Element => {
   const sidebarRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    setIsCollapsed(!!appState.selectedCell)
-  }, [appState.selectedCell])
+    setIsCollapsed(!!appState.selectedCell || !!appState.editorSelectedCell)
+  }, [appState.selectedCell, appState.editorSelectedCell])
 
   return (
     <div className="relative w-[30%]">
