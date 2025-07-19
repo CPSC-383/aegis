@@ -1,162 +1,172 @@
-import { aegisAPI } from '@/services'
 import { Simulation } from '@/core/simulation'
-import { Spawn, SpawnZoneTypes, Stack, StackContent, WorldMap, Location } from '@/core/world'
+import {
+  CellContent,
+  Location,
+  Spawn,
+  SpawnZoneTypes,
+  Stack,
+  WorldMap
+} from '@/core/world'
+import { aegisAPI } from '@/services'
 
 interface WorldFileData {
-    settings: {
-        world_info: {
-            size: {
-                width: number
-                height: number
-            }
-            seed: number
-            agent_energy: number
-        }
+  settings: {
+    world_info: {
+      size: {
+        width: number
+        height: number
+      }
+      seed: number
+      agent_energy: number
     }
-    spawn_locs: Spawn[]
-    cell_types: {
-        fire_cells: Location[]
-        killer_cells: Location[]
-        charging_cells: Location[]
-    }
-    stacks: Stack[]
+  }
+  spawn_locs: Spawn[]
+  cell_types: {
+    fire_cells: Location[]
+    killer_cells: Location[]
+    charging_cells: Location[]
+  }
+  stacks: Stack[]
 }
 
 class WorldValidator {
-    static validate(world: WorldMap): string {
-        const errors: string[] = []
+  static validate(world: WorldMap): string {
+    const errors: string[] = []
 
-        if (world.spawnCells.size === 0) {
-            errors.push('Missing spawn zones!')
-        }
-
-        const spawnZoneErrors = this.validateSpawnZones(world)
-        if (spawnZoneErrors) errors.push(spawnZoneErrors)
-
-        if (!this.hasSurvivors(world)) {
-            errors.push('Missing at least 1 survivor!')
-        }
-
-        return errors[0] || ''
+    if (world.spawnCells.size === 0) {
+      errors.push('Missing spawn zones!')
     }
 
-    private static validateSpawnZones(world: WorldMap): string | null {
-        let hasAnyZone = false
+    const spawnZoneErrors = this.validateSpawnZones(world)
+    if (spawnZoneErrors) errors.push(spawnZoneErrors)
 
-        for (const [key, data] of world.spawnCells) {
-            const coord = JSON.parse(key)
-
-            if (data.type === SpawnZoneTypes.Group && data.groups.length === 0) {
-                return `Group spawn zone at (${coord.x}, ${coord.y}) is missing a group ID!`
-            }
-
-            if (data.type === SpawnZoneTypes.Any) {
-                hasAnyZone = true
-            }
-        }
-
-        return !hasAnyZone ? "Missing at least 1 'Any' spawn zone!" : null
+    if (!this.hasSurvivors(world)) {
+      errors.push('Missing at least 1 survivor!')
     }
 
-    private static hasSurvivors(world: WorldMap): boolean {
-        return world.stacks.some((stack: Stack) =>
-            stack.contents.some((content: StackContent) => content.type === 'sv')
-        )
+    return errors[0] || ''
+  }
+
+  private static validateSpawnZones(world: WorldMap): string | null {
+    let hasAnyZone = false
+
+    for (const [key, data] of world.spawnCells) {
+      const coord = JSON.parse(key)
+
+      if (data.type === SpawnZoneTypes.Group && data.groups.length === 0) {
+        return `Group spawn zone at (${coord.x}, ${coord.y}) is missing a group ID!`
+      }
+
+      if (data.type === SpawnZoneTypes.Any) {
+        hasAnyZone = true
+      }
     }
+
+    return !hasAnyZone ? "Missing at least 1 'Any' spawn zone!" : null
+  }
+
+  private static hasSurvivors(world: WorldMap): boolean {
+    return world.stacks.some((stack: Stack) =>
+      stack.contents.some((content: CellContent) => content.type === 'sv')
+    )
+  }
 }
 
 class WorldSerializer {
-    static toJSON(world: WorldMap): WorldFileData {
-        return {
-            settings: this.createSettings(world),
-            spawn_locs: this.createSpawnLocations(world),
-            cell_types: {
-                fire_cells: world.fireCells,
-                killer_cells: world.killerCells,
-                charging_cells: world.chargingCells
-            },
-            stacks: world.stacks
-        }
+  static toJSON(world: WorldMap): WorldFileData {
+    return {
+      settings: this.createSettings(world),
+      spawn_locs: this.createSpawnLocations(world),
+      cell_types: {
+        fire_cells: world.fireCells,
+        killer_cells: world.killerCells,
+        charging_cells: world.chargingCells
+      },
+      stacks: world.stacks
     }
+  }
 
-    private static createSettings(world: WorldMap): WorldFileData['settings'] {
-        return {
-            world_info: {
-                size: {
-                    width: world.size.width,
-                    height: world.size.height
-                },
-                seed: this.generateSeedIfNeeded(world.seed),
-                agent_energy: world.initialAgentEnergy
-            }
-        }
+  private static createSettings(world: WorldMap): WorldFileData['settings'] {
+    return {
+      world_info: {
+        size: {
+          width: world.size.width,
+          height: world.size.height
+        },
+        seed: this.generateSeedIfNeeded(world.seed),
+        agent_energy: world.initialAgentEnergy
+      }
     }
+  }
 
-    private static createSpawnLocations(world: WorldMap): Spawn[] {
-        return Array.from(world.spawnCells, ([spawn, data]) => {
-            const { x, y } = JSON.parse(spawn)
+  private static createSpawnLocations(world: WorldMap): Spawn[] {
+    return Array.from(world.spawnCells, ([spawn, data]) => {
+      const { x, y } = JSON.parse(spawn)
 
-            if (data.groups.length === 0) {
-                return [{ x, y, type: data.type }]
-            }
+      if (data.groups.length === 0) {
+        return [{ x, y, type: data.type }]
+      }
 
-            return data.groups.map((gid: number) => ({
-                x,
-                y,
-                gid,
-                type: data.type
-            }))
-        }).flat()
-    }
+      return data.groups.map((gid: number) => ({
+        x,
+        y,
+        gid,
+        type: data.type
+      }))
+    }).flat()
+  }
 
-    private static generateSeedIfNeeded(seed: number): number {
-        return seed !== 0 ? seed : Math.floor(Math.random() * 10000)
-    }
+  private static generateSeedIfNeeded(seed: number): number {
+    return seed !== 0 ? seed : Math.floor(Math.random() * 10000)
+  }
 }
 
 export { WorldSerializer }
 
 export async function importWorld(file: File): Promise<Simulation> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader()
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
 
-        reader.onload = (e) => {
-            try {
-                const content = e.target?.result as string
-                const data = JSON.parse(content) as WorldFileData
-                const world = WorldMap.fromData(data)
-                resolve(new Simulation(world))
-            } catch (error) {
-                reject('Error parsing world! Make sure it is valid JSON.')
-            }
-        }
+    reader.onload = (e: ProgressEvent<FileReader>): void => {
+      try {
+        const content = e.target?.result as string
+        const data = JSON.parse(content) as WorldFileData
+        const world = WorldMap.fromData(data)
+        resolve(new Simulation(world))
+      } catch (error) {
+        reject('Error parsing world! Make sure it is valid JSON.')
+      }
+    }
 
-        reader.onerror = () => {
-            reject('Error reading the file.')
-        }
+    reader.onerror = (): void => {
+      reject('Error reading the file.')
+    }
 
-        reader.readAsText(file)
-    })
+    reader.readAsText(file)
+  })
 }
 
-export async function exportWorld(worldMap: WorldMap, worldName: string): Promise<string | null> {
-    const validationError = WorldValidator.validate(worldMap)
-    if (validationError) return validationError
+export async function exportWorld(
+  worldMap: WorldMap,
+  worldName: string
+): Promise<string | null> {
+  const validationError = WorldValidator.validate(worldMap)
+  if (validationError) return validationError
 
-    try {
-        const worldData = WorldSerializer.toJSON(worldMap)
-        const stringWorld = JSON.stringify(worldData, null, 2)
+  try {
+    const worldData = WorldSerializer.toJSON(worldMap)
+    const stringWorld = JSON.stringify(worldData, null, 2)
 
-        const aegisPath = localStorage.getItem('aegisPath')
-        if (!aegisPath) throw new Error('Aegis path not found in localStorage')
+    const aegisPath = localStorage.getItem('aegisPath')
+    if (!aegisPath) throw new Error('Aegis path not found in localStorage')
 
-        const fullName = `${worldName}.world`
-        const fullPath = await aegisAPI.path.join(aegisPath, 'worlds', fullName)
+    const fullName = `${worldName}.world`
+    const fullPath = await aegisAPI.path.join(aegisPath, 'worlds', fullName)
 
-        await aegisAPI.exportWorld(fullPath, stringWorld)
-        return null
-    } catch (error) {
-        // @ts-ignore: error
-        return `Error exporting world: ${error.message}`
-    }
+    await aegisAPI.exportWorld(fullPath, stringWorld)
+    return null
+  } catch (error) {
+    // @ts-ignore: error
+    return `Error exporting world: ${error.message}`
+  }
 }

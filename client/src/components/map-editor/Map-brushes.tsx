@@ -1,126 +1,168 @@
-import { useAppContext } from '@/contexts/AppContext'
-import { EventType, listenEvent, dispatchEvent } from '@/events'
-import { BrushType, SpecialCellBrushTypes, StackContentBrushTypes } from '@/types'
-import { useCallback, useState } from 'react'
-import SpecialCellsBrush from './brushes/components/SpecialCellsBrush'
-import MoveCostBrush from './brushes/components/MoveCostBrush'
-import StackContentBrush from './brushes/components/StackContentBrush'
-import SpecialCellsHandler from './brushes/handlers/SpecialCellsHandler'
-import MoveCostHandler from './brushes/handlers/MoveCostHandler'
-import StackContentHandler from './brushes/handlers/StackContentHandler'
-import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import { useAppContext } from '@/contexts/AppContext'
+import {
+  Location,
+  RubbleInfo,
+  SpawnZoneTypes,
+  SurvivorInfo,
+  WorldMap
+} from '@/core/world'
+import { dispatchEvent, EventType, listenEvent } from '@/events'
+import { BrushType, CellContentBrushTypes, SpecialCellBrushTypes } from '@/types'
 import { formatDisplayText } from '@/utils/util'
-import { RubbleInfo, SpawnZoneTypes, SurvivorInfo, Location } from '@/core/world'
+import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import MoveCostBrush from './brushes/components/MoveCostBrush'
+import SpecialCellsBrush from './brushes/components/SpecialCellsBrush'
+import StackContentBrush from './brushes/components/StackContentBrush'
+import BrushHandler from './brushes/handlers/BrushHandler'
+import MoveCostHandler from './brushes/handlers/MoveCostHandler'
+import SpecialCellsHandler from './brushes/handlers/SpecialCellsHandler'
+import StackContentHandler from './brushes/handlers/StackContentHandler'
 
-function MapBrushes() {
-    const { appState } = useAppContext()
-    const [brushType, setBrushType] = useState<BrushType>(BrushType.SpecialCells)
-    const [specialCellType, setSpecialCellType] = useState<SpecialCellBrushTypes>(SpecialCellBrushTypes.Killer)
-    const [moveCost, setMoveCost] = useState<number>(2)
-    const [gid, setGid] = useState<number>(0)
-    const [spawnZoneType, setSpawnZoneType] = useState<SpawnZoneTypes>(SpawnZoneTypes.Any)
-    const [stackType, setStackType] = useState<StackContentBrushTypes>(StackContentBrushTypes.Survivor)
-    const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({ energy_required: 0, agents_required: 0 })
-    const [survivorInfo, _] = useState<SurvivorInfo>({
-        energy_level: 100
-    })
+function MapBrushes(): JSX.Element {
+  const { appState, setAppState } = useAppContext()
+  const [brushType, setBrushType] = useState<BrushType>(BrushType.SpecialCells)
+  const [specialCellType, setSpecialCellType] = useState<SpecialCellBrushTypes>(
+    SpecialCellBrushTypes.Killer
+  )
+  const [moveCost, setMoveCost] = useState<number>(2)
+  const [gid, setGid] = useState<number>(0)
+  const [spawnZoneType, setSpawnZoneType] = useState<SpawnZoneTypes>(SpawnZoneTypes.Any)
+  const [stackType, setStackType] = useState<CellContentBrushTypes>(
+    CellContentBrushTypes.Survivor
+  )
+  const [rubbleInfo, setRubbleInfo] = useState<RubbleInfo>({
+    energy_required: 0,
+    agents_required: 0
+  })
+  const [survivorInfo] = useState<SurvivorInfo>({
+    energy_level: 100
+  })
 
-    const createHandler = useCallback(
-        (worldMap: any) => {
-            switch (brushType) {
-                case BrushType.SpecialCells:
-                    return new SpecialCellsHandler(worldMap, specialCellType, spawnZoneType, gid)
-                case BrushType.MoveCost:
-                    return new MoveCostHandler(worldMap, moveCost)
-                case BrushType.StackContents:
-                    return new StackContentHandler(worldMap, stackType, rubbleInfo, survivorInfo)
-                default:
-                    return null
-            }
-        },
-        [brushType, specialCellType, spawnZoneType, gid, moveCost, stackType, rubbleInfo, survivorInfo]
-    )
+  // Update app state when brush type changes
+  useEffect(() => {
+    setAppState((prev) => ({
+      ...prev,
+      currentBrushType: brushType
+    }))
+  }, [brushType, setAppState])
 
-    const handleBrush = useCallback(
-        (event: any) => {
-            if (!appState.editorSimulation) return
+  const createHandler = useCallback(
+    (worldMap: WorldMap): BrushHandler | null => {
+      switch (brushType) {
+        case BrushType.SpecialCells:
+          return new SpecialCellsHandler(worldMap, specialCellType, spawnZoneType, gid)
+        case BrushType.MoveCost:
+          return new MoveCostHandler(worldMap, moveCost)
+        case BrushType.CellContents:
+          return new StackContentHandler(worldMap, stackType, rubbleInfo, survivorInfo)
+        default:
+          return null
+      }
+    },
+    [
+      brushType,
+      specialCellType,
+      spawnZoneType,
+      gid,
+      moveCost,
+      stackType,
+      rubbleInfo,
+      survivorInfo
+    ]
+  )
 
-            const handler = createHandler(appState.editorSimulation.worldMap)
-            if (!handler) return
+  const handleBrush = useCallback(
+    (event: CustomEvent<{ selectedCell: Location; right: boolean }>): void => {
+      if (!appState.editorSimulation) return
 
-            const tile = event.detail.selectedCell as Location
-            const rightClicked = event.detail.right
+      const handler = createHandler(appState.editorSimulation.worldMap)
+      if (!handler) return
 
-            handler.handle(tile, rightClicked)
-            dispatchEvent(EventType.RENDER_MAP, {})
-        },
-        [appState.editorSimulation, createHandler]
-    )
+      const tile = event.detail.selectedCell as Location
+      const rightClicked = event.detail.right
 
-    listenEvent(EventType.TILE_CLICK, handleBrush)
+      handler.handle(tile, rightClicked)
+      dispatchEvent(EventType.RENDER_MAP, {})
+    },
+    [appState.editorSimulation, createHandler]
+  )
 
-    const renderBrushContent = () => {
-        switch (brushType) {
-            case BrushType.SpecialCells:
-                return (
-                    <SpecialCellsBrush
-                        specialCellType={specialCellType}
-                        setSpecialCellType={setSpecialCellType}
-                        spawnZoneType={spawnZoneType}
-                        setSpawnZoneType={setSpawnZoneType}
-                        gid={gid}
-                        setGid={setGid}
-                    />
-                )
-            case BrushType.MoveCost:
-                return <MoveCostBrush moveCost={moveCost} setMoveCost={setMoveCost} />
-            case BrushType.StackContents:
-                return (
-                    <StackContentBrush
-                        stackType={stackType}
-                        setStackType={setStackType}
-                        rubbleInfo={rubbleInfo}
-                        setRubbleInfo={setRubbleInfo}
-                    />
-                )
-            default:
-                return null
-        }
+  listenEvent(EventType.TILE_CLICK, handleBrush)
+
+  const renderBrushContent = (): JSX.Element | null => {
+    switch (brushType) {
+      case BrushType.SpecialCells:
+        return (
+          <SpecialCellsBrush
+            specialCellType={specialCellType}
+            setSpecialCellType={setSpecialCellType}
+            spawnZoneType={spawnZoneType}
+            setSpawnZoneType={setSpawnZoneType}
+            gid={gid}
+            setGid={setGid}
+          />
+        )
+      case BrushType.MoveCost:
+        return <MoveCostBrush moveCost={moveCost} setMoveCost={setMoveCost} />
+      case BrushType.CellContents:
+        return (
+          <StackContentBrush
+            stackType={stackType}
+            setStackType={setStackType}
+            rubbleInfo={rubbleInfo}
+            setRubbleInfo={setRubbleInfo}
+          />
+        )
+      default:
+        return null
     }
+  }
 
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                    <Brush className="w-5 h-5" />
-                    <span>Map Brushes</span>
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-                <Select value={brushType} onValueChange={(value) => setBrushType(value as BrushType)}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select Brush Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {Object.values(BrushType).map((type) => (
-                            <SelectItem key={type} value={type}>
-                                <div className="flex items-center space-x-2">
-                                    {type === BrushType.SpecialCells && <Target className="w-4 h-4" />}
-                                    {type === BrushType.MoveCost && <Zap className="w-4 h-4" />}
-                                    {type === BrushType.StackContents && <PlusSquare className="w-4 h-4" />}
-                                    {type === BrushType.View && <MousePointerClick className="w-4 h-4" />}
-                                    <span>{formatDisplayText(type)}</span>
-                                </div>
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                {renderBrushContent()}
-            </CardContent>
-        </Card>
-    )
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2">
+          <Brush className="w-5 h-5" />
+          <span>Map Brushes</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <Select
+          value={brushType}
+          onValueChange={(value: string): void => setBrushType(value as BrushType)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select Brush Type" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(BrushType).map((type) => (
+              <SelectItem key={type} value={type}>
+                <div className="flex items-center space-x-2">
+                  {type === BrushType.SpecialCells && <Target className="w-4 h-4" />}
+                  {type === BrushType.MoveCost && <Zap className="w-4 h-4" />}
+                  {type === BrushType.CellContents && (
+                    <PlusSquare className="w-4 h-4" />
+                  )}
+                  {type === BrushType.View && <MousePointerClick className="w-4 h-4" />}
+                  <span>{formatDisplayText(type)}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {renderBrushContent()}
+      </CardContent>
+    </Card>
+  )
 }
 
 export default MapBrushes
