@@ -216,6 +216,10 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
                 Left-click on a cell to apply the selected brush. Right-click to remove
                 it.
               </li>
+              <li>
+                <strong>Drag to paint:</strong> Click and drag across multiple cells to
+                apply or remove the brush.
+              </li>
             </ul>
           </InfoDialog>
         </div>
@@ -380,10 +384,10 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Reset World Settings?</DialogTitle>
+                <DialogTitle>Clear World?</DialogTitle>
                 <DialogDescription>
-                  This will clear the current world and allow you to modify its
-                  settings. Are you sure?
+                  This will clear the current world and allow you to modify its width
+                  and height. Are you sure?
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
@@ -394,7 +398,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
                   Cancel
                 </Button>
                 <Button variant="destructive" onClick={handleMapEditorReset}>
-                  Reset World Dimensions
+                  Clear World
                 </Button>
               </DialogFooter>
             </DialogContent>

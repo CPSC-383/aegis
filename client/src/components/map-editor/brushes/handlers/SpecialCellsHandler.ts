@@ -15,11 +15,10 @@ class SpecialCellsHandler extends BrushHandler {
 
   handle(tile: Location, rightClicked: boolean): void {
     const stack = this.getStack(tile)
-    if (stack && stack.contents.length > 0) return
 
     if (rightClicked) {
       this.removeSpecialCell(tile)
-    } else if (!this.isOccupied(tile)) {
+    } else if (!this.isOccupied(tile) && (!stack || stack.contents.length === 0)) {
       this.addSpecialCell(tile)
     }
   }

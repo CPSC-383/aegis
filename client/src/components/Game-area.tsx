@@ -2,7 +2,7 @@ import { useAppContext } from '@/contexts/AppContext'
 import { EventType, dispatchEvent, listenEvent } from '@/events'
 import { shadesOfBrown } from '@/types'
 import { getImage, whatBucket } from '@/utils/util'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import layerSpriteSheetSrc from '@/assets/layers-spritesheet-Sheet.png'
 import { AgentInfoDict } from '@/core/simulation'
@@ -20,6 +20,10 @@ function GameArea(): JSX.Element {
   const worldContainerRef = useRef<HTMLDivElement | null>(null)
   const tileSize = 50
   const thickness = 0.04
+
+  // Drag state
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragButton, setDragButton] = useState<number | null>(null)
 
   const updateCanvasSize = (canvas: HTMLCanvasElement | null, size: Size): void => {
     if (!canvas) return
@@ -176,11 +180,30 @@ function GameArea(): JSX.Element {
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
-    if (e.button === 2) handleWorldCanvasClick(e, true)
+    if (e.button === 2) {
+      handleWorldCanvasClick(e, true)
+      setIsDragging(true)
+      setDragButton(2)
+    } else if (e.button === 0) {
+      setIsDragging(true)
+      setDragButton(0)
+    }
   }
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (e.button === 0) handleWorldCanvasClick(e, false)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
+    if (!isDragging || dragButton === null) return
+
+    const isRightClick = dragButton === 2
+    handleWorldCanvasClick(e, isRightClick)
+  }
+
+  const handleMouseUp = (): void => {
+    setIsDragging(false)
+    setDragButton(null)
   }
 
   const renderMap = (): void => {
@@ -214,6 +237,19 @@ function GameArea(): JSX.Element {
     renderMap()
   }, [simulation])
 
+  // Handle global mouse up to stop dragging when mouse is released outside container
+  useEffect(() => {
+    const handleGlobalMouseUp = (): void => {
+      setIsDragging(false)
+      setDragButton(null)
+    }
+
+    document.addEventListener('mouseup', handleGlobalMouseUp)
+    return () => {
+      document.removeEventListener('mouseup', handleGlobalMouseUp)
+    }
+  }, [])
+
   // Render map and agents when switching away from map editor
   useEffect(() => {
     if (!isEditor && simulation) {
@@ -238,6 +274,8 @@ function GameArea(): JSX.Element {
       className="flex justify-center items-center relative w-full h-screen"
       onClick={handleClick}
       onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
     >
       <div>
         <canvas

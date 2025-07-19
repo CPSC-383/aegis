@@ -24,14 +24,29 @@ class StackContentHandler extends BrushHandler {
     const stack = this.getStack(tile)
     if (!stack) return
 
-    if (rightClicked && stack.contents.length > 0) {
-      stack.contents.pop()
+    if (rightClicked) {
+      // Remove content that matches the current brush type
+      const contentIndex = stack.contents.findIndex((content) => {
+        if (this.stackType === CellContentBrushTypes.Rubble) {
+          return content.type === 'rb'
+        } else if (this.stackType === CellContentBrushTypes.Survivor) {
+          return content.type === 'sv'
+        }
+        return false
+      })
+
+      if (contentIndex !== -1) {
+        stack.contents.splice(contentIndex, 1)
+      }
       return
     }
 
-    if (!this.isOccupied(tile)) {
-      this.addStackContent(stack)
+    // Check if the cell is occupied by special cells or already has content of this type
+    if (this.isOccupied(tile) || this.hasContentOfType(stack)) {
+      return
     }
+
+    this.addStackContent(stack)
   }
 
   private addStackContent(stack: Stack): void {
@@ -63,6 +78,17 @@ class StackContentHandler extends BrushHandler {
     if (content) {
       stack.contents.push(content)
     }
+  }
+
+  private hasContentOfType(stack: Stack): boolean {
+    return stack.contents.some((content) => {
+      if (this.stackType === CellContentBrushTypes.Rubble) {
+        return content.type === 'rb'
+      } else if (this.stackType === CellContentBrushTypes.Survivor) {
+        return content.type === 'sv'
+      }
+      return false
+    })
   }
 }
 
