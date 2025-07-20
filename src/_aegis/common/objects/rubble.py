@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, override
 from .world_object import WorldObject
 
 if TYPE_CHECKING:
-    from _aegis.parsers.helper.world_file_type import Layer
+    from _aegis.types.world import Layer
 
 
 class Rubble(WorldObject):

@@ -5,7 +5,7 @@ import yaml
 
 from .aegis_config import is_feature_enabled
 from .common import Cell, Location
-from .common.world.objects import Rubble, Survivor, WorldObject
+from .common.objects import Rubble, Survivor, WorldObject
 from .logger import LOGGER
 from .types.world import Attributes, CellInfoRaw, WorldInfo, WorldRaw
 from .world import World

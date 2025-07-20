@@ -34,13 +34,11 @@ def run(args: Args) -> None:
             game.running = False
 
     LOGGER.info("========== AEGIS SIMULATION END ==========")
-    LOGGER.info("Results for each team")
-    LOGGER.info("(Score, Number Saved, Correct Predictions)")
+    LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
+    LOGGER.info("-" * 58)
     for team in Team:
-        LOGGER.info(
-            "%s : (%s, %s, %s)",
-            team.name,
-            game.team_info.get_score(team),
-            game.team_info.get_saved(team),
-            game.team_info.get_predicted_right(team),
-        )
+        score = game.team_info.get_score(team)
+        saved = game.team_info.get_saved(team)
+        predictions = game.team_info.get_predicted_right(team)
+
+        LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")

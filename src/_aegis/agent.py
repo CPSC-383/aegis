@@ -56,20 +56,21 @@ class Agent:
         self.debug: bool = debug
         self.logs: list[str] = []
 
-    def run(self) -> None:
-        self.logs.clear()
-        if self.sandbox is None:
-            error = "Module should not be of `None` type."
-            raise RuntimeError(error)
+    def process_start_of_turn(self) -> None:
         self._send_messages()
         self._send_results()
+        self.logs.clear()
+
+    def run(self) -> None:
+        if self.sandbox is None:
+            error = "Sandbox should not be of `None` type."
+            raise RuntimeError(error)
+
+        self.process_start_of_turn()
         try:
             self.sandbox.think()
         except Exception:  # noqa: BLE001
             self.log(traceback.format_exc(limit=5))
-
-        for log in self.logs:
-            print(log)  # noqa: T201
 
     def _send_results(self) -> None:
         if self.results and self.sandbox:
@@ -112,9 +113,6 @@ class Agent:
     def update_surround(self, surround: dict[Direction, CellInfo]) -> None:
         for cell_info in surround.values():
             cell = self.game.get_cell_at(cell_info.location)
-            if cell is None:
-                continue
-
             cell.agents = cell_info.agents[:]
             cell.move_cost = cell_info.move_cost
             cell.set_top_layer(cell_info.top_layer)
@@ -131,9 +129,6 @@ class Agent:
 
     def add_step_taken(self) -> None:
         self.steps_taken += 1
-
-    def log(self, msg: str) -> None:
-        self.logs.append(msg)
 
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SendMessageResult):
@@ -157,3 +152,13 @@ class Agent:
                 "Got unrecognized reply from AEGIS: ",
                 f"{aegis_command.__class__.__name__}.",
             )
+
+    def log(self, *args: object) -> None:
+        if not self.debug:
+            return
+
+        agent_id = self.id
+        print(  # noqa: T201
+            f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ", end=""
+        )
+        print(*args)  # noqa: T201

@@ -25,7 +25,7 @@ from .common.commands.agent_commands import (
 )
 from .constants import Constants
 from .common import CellInfo, Direction
-from .common.world.objects.rubble import Rubble
+from .common.objects.rubble import Rubble
 
 try:
     # from .common.commands.aegis_commands.save_result import SaveResult
@@ -56,23 +56,9 @@ class CommandProcessor:
         self._game: Game = game
         self._prediction_handler: PredictionHandlerType | None = prediction_handler
 
-    def run_turn(self) -> None:
-        commands: list[AgentCommand] = []
-        messages: list[SendMessage] = []
-
-        for agent in list(self._agents.values()):
-            agent.run()
-            command = agent.command_manager.get_action_command()
-            if command is not None:
-                commands.append(command)
-
-            directives = agent.command_manager.get_directives()
-            commands.extend(directives)
-            messages.extend(agent.command_manager.get_messages())
-
-            agent.log(f"Action Received: {command}")
-            agent.log(f"Directives Received: {directives}")
-
+    def process(
+        self, commands: list[AgentCommand], messages: list[SendMessage]
+    ) -> None:
         self._process(commands)
         self._route_messages(messages)
         self._results(commands)
@@ -138,9 +124,6 @@ class CommandProcessor:
     def _handle_dig(self, cmd: Dig) -> None:
         agent = self._game.get_agent(cmd.get_id())
         cell = self._game.get_cell_at(agent.location)
-        if cell is None:
-            return
-
         agents_here = [aid for aid in cell.agents if self._game.get_agent(aid)]
         top_layer = cell.get_top_layer()
 
@@ -173,8 +156,6 @@ class CommandProcessor:
     def _handle_save(self, cmd: Save) -> None:
         agent = self._game.get_agent(cmd.get_id())
         cell = self._game.get_cell_at(agent.location)
-        if cell is None:
-            return
 
         # agents_here = [aid for aid in cell.agent_id_list if self._world.get_agent(aid)
         # ]
@@ -229,7 +210,7 @@ class CommandProcessor:
 
             case Recharge():
                 agent_cell = self._game.get_cell_at(location)
-                success = agent_cell is not None and agent_cell.is_charging_cell()
+                success = agent_cell.is_charging_cell()
                 return [RechargeResult(energy, was_successful=success)]
 
             case Observe():

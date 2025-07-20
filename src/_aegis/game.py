@@ -8,7 +8,7 @@ from .command_processor import CommandProcessor
 from .common import Cell, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.agent_commands import Move, Observe, Save, SendMessage
-from .common.world.objects.survivor import Survivor
+from .common.objects import Rubble, Survivor
 from .constants import Constants
 from .id_gen import IDGenerator
 from .logger import LOGGER
@@ -73,12 +73,25 @@ class Game:
 
     def run_round(self) -> None:
         self.round += 1
-        self._command_processor.run_turn()
-        # self._grim_reaper()
 
-        if self._is_game_over():
-            self.running = False
-            return
+        commands: list[AgentCommand] = []
+        messages: list[SendMessage] = []
+
+        for agent in list(self._agents.values()):
+            agent.run()
+            command = agent.command_manager.get_action_command()
+            if command is not None:
+                commands.append(command)
+
+            directives = agent.command_manager.get_directives()
+            commands.extend(directives)
+            messages.extend(agent.command_manager.get_messages())
+
+            agent.log(f"Action received: {command}")
+            agent.log(f"Directives received: {directives}")
+
+        self._command_processor.process(commands, messages)
+        self.process_end_of_round()
 
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
@@ -100,14 +113,30 @@ class Game:
 
         return False
 
-    # def _grim_reaper(self) -> None:
-    #     dead_agents = self._aegis_world.grim_reaper()
-    #
-    #     for agent_id in dead_agents:
-    #         agent = self.get_agent(agent_id)
-    #         if agent is None:
-    #             continue
-    #         self._agents.remove(agent)
+    def grim_reaper(self) -> None:
+        dead_agents: list[Agent] = []
+
+        for agent in self._agents.values():
+            died = False
+            cell = self.get_cell_at(agent.location)
+            if agent.energy_level <= 0:
+                LOGGER.info("Agent %s ran out of energy and died.\n", agent.id)
+                died = True
+            elif cell and cell.is_killer_cell():
+                LOGGER.info("Agent %s ran into killer cell and died.\n", agent.id)
+                died = True
+
+            if died:
+                dead_agents.append(agent)
+
+        for agent in dead_agents:
+            self.remove_agent(agent.id)
+
+    def process_end_of_round(self) -> None:
+        self.grim_reaper()
+        if self._is_game_over():
+            self.running = False
+            return
 
     def spawn_agent(
         self, loc: Location, team: Team, agent_id: int | None = None
@@ -127,20 +156,20 @@ class Game:
             self._agents[agent.id] = agent
 
             cell = self.get_cell_at(loc)
-            if cell is None:
-                return
-
             cell.agents.append(agent.id)
-            LOGGER.info("Aegis  : Added agent %s", agent.id)
+            LOGGER.info("Added agent %s", agent.id)
+
+    def remove_agent(self, agent_id: int) -> None:
+        agent = self._agents[agent_id]
+        del self._agents[agent_id]
+        cell = self.get_cell_at(agent.location)
+        cell.agents.remove(agent_id)
 
     def get_agent(self, agent_id: int) -> Agent:
         return self._agents[agent_id]
 
     def remove_layer(self, loc: Location, team: Team) -> None:
         cell = self.get_cell_at(loc)
-        if cell is None:
-            return
-
         world_object = cell.remove_top_layer()
         if world_object is None:
             return
@@ -148,18 +177,13 @@ class Game:
         if isinstance(world_object, Survivor):
             survivor = world_object
             is_alive = survivor.get_health() > 0
-            self.team_info.add_saved(
-                team, Constants.SURVIVOR_SAVE_SCORE, is_alive=is_alive
-            )
+            self.team_info.add_saved(team, 1, is_alive=is_alive)
+            self.team_info.add_score(team, Constants.SURVIVOR_SAVE_SCORE)
 
     def move_agent(self, agent_id: int, loc: Location) -> None:
         agent = self.get_agent(agent_id)
         curr_cell = self.get_cell_at(agent.location)
         dest_cell = self.get_cell_at(loc)
-
-        if dest_cell is None or curr_cell is None:
-            return
-
         curr_cell.agents.remove(agent.id)
         dest_cell.agents.append(agent.id)
         agent.set_location(dest_cell.location)
@@ -172,9 +196,7 @@ class Game:
             and location.y < self.world.height
         )
 
-    def get_cell_at(self, location: Location) -> Cell | None:
-        if not self.on_map(location):
-            return None
+    def get_cell_at(self, location: Location) -> Cell:
         return self.world.get_cell_at(location)
 
     def get_survs(self) -> list[Location]:
@@ -194,6 +216,7 @@ class Game:
             "Location": Location,
             "Move": Move,
             "Observe": Observe,
+            "Rubble": Rubble,
             "Save": Save,
             "SendMessage": SendMessage,
             "Survivor": Survivor,

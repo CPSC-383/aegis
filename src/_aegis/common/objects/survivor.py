@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, override
 
-from _aegis.common.world.objects.world_object import WorldObject
+from .world_object import WorldObject
 
 if TYPE_CHECKING:
     from _aegis.types.world import Layer

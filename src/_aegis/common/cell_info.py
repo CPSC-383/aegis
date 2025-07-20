@@ -1,8 +1,9 @@
 from typing import override
 
-from _aegis.common.location import Location
-from _aegis.common.world.objects import WorldObject
 from _aegis.types.cell import CellType
+
+from .location import Location
+from .objects import WorldObject
 
 
 class CellInfo:

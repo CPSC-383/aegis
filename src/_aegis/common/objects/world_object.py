@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, override
 
 if TYPE_CHECKING:
-    from _aegis.parsers.helper.world_file_type import StackContent
+    from _aegis.types.world import Layer
 
 
 class WorldObject(ABC):
@@ -17,5 +17,5 @@ class WorldObject(ABC):
         pass
 
     @abstractmethod
-    def json(self) -> StackContent:
+    def json(self) -> Layer:
         pass

@@ -6,7 +6,7 @@ from _aegis.types.cell import CellType
 
 from .cell_info import CellInfo
 from .location import Location
-from .world.objects import Survivor, WorldObject
+from .objects import Survivor, WorldObject
 
 
 class Cell:

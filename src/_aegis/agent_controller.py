@@ -15,6 +15,11 @@ class AgentController:
         self._game: Game = game
         self._agent: Agent = agent
 
+    def assert_not_none(self, value: object) -> None:
+        if value is None:
+            error = "Argument has invalid None value"
+            raise AgentError(error)
+
     def assert_spawn(self, loc: Location, team: Team) -> None:
         if loc not in self._game.get_spawns():
             error = f"Invalid spawn: {loc}"
@@ -23,6 +28,12 @@ class AgentController:
         units = self._game.team_info.get_units(team)
         if units == self._game.args.amount:
             error = "Max agents reached."
+            raise AgentError(error)
+
+    def assert_loc(self, loc: Location) -> None:
+        self.assert_not_none(loc)
+        if not self._game.on_map(loc):
+            error = "Location is not on the map"
             raise AgentError(error)
 
     # Public Agent Methods
@@ -47,9 +58,11 @@ class AgentController:
         self._agent.command_manager.send(command)
 
     def on_map(self, loc: Location) -> bool:
+        self.assert_not_none(loc)
         return self._game.on_map(loc)
 
     def get_cell_at(self, loc: Location) -> Cell | None:
+        self.assert_loc(loc)
         return self._game.get_cell_at(loc)
 
     def spawn_agent(self, loc: Location) -> None:
@@ -57,14 +70,7 @@ class AgentController:
         self._game.spawn_agent(loc, self._agent.team)
 
     def log(self, *args: object) -> None:
-        if not self._agent.debug:
-            return
-
-        agent_id = self.get_id()
-        print(  # noqa: T201
-            f"[Agent#({agent_id}:{self.get_team().name})@{self._game.round}] ", end=""
-        )
-        print(*args)  # noqa: T201
+        self._agent.log(*args)
 
 
 class AgentError(Exception):
