@@ -1,7 +1,7 @@
 import argparse
 from dataclasses import dataclass
 
-from _aegis.parameters import Parameters
+from _aegis.constants import Constants
 
 
 @dataclass
@@ -10,13 +10,13 @@ class Args:
     world: str
     rounds: int
     client: bool
-    agent: str
-    group: str
+    agent1: str | None
+    agent2: str | None
     config: str
     debug: bool
 
 
-def parse_args() -> tuple[Parameters, bool]:
+def parse_args() -> Args:
     parser = argparse.ArgumentParser(description="AEGIS Simulation Configuration")
 
     _ = parser.add_argument(
@@ -34,20 +34,20 @@ def parse_args() -> tuple[Parameters, bool]:
     _ = parser.add_argument(
         "--rounds",
         type=int,
-        required=True,
-        help="Number of simulation rounds",
+        default=Constants.DEFAULT_MAX_ROUNDS,
+        help=f"Number of simulation rounds (default = {Constants.DEFAULT_MAX_ROUNDS})",
     )
     _ = parser.add_argument(
-        "--agent",
+        "--agent1",
         type=str,
-        required=True,
-        help="Path to the agent file",
+        required=False,
+        help="Path to the agent file for team goobs",
     )
     _ = parser.add_argument(
-        "--group",
+        "--agent2",
         type=str,
-        required=True,
-        help="Group name",
+        required=False,
+        help="Path to the agent file for team voidseers",
     )
     _ = parser.add_argument(
         "--client",
@@ -68,13 +68,4 @@ def parse_args() -> tuple[Parameters, bool]:
 
     args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]
 
-    params = Parameters()
-    params.number_of_agents = args.amount
-    params.world_filename = args.world
-    params.number_of_rounds = args.rounds
-    params.agent = args.agent
-    params.group_name = args.group
-    params.config_file = args.config
-    params.debug = args.debug
-
-    return params, args.client
+    return args

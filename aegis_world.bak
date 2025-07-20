@@ -1,0 +1,76 @@
+    def get_protobuf_world_data(self) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
+        if self._world is None:
+            error = "World must be initialized before calling this method."
+            raise RuntimeError(error)
+
+        cells = []
+        agents = []
+        survivors = []
+
+        agent_map = {
+            (agent.get_agent_id().id, agent.get_agent_id().gid): agent
+            for agent in self._agents
+        }
+
+        for x in range(self._world.width):
+            for y in range(self._world.height):
+                cell = self._world.get_cell_at(Location(x, y))
+                if cell is None:
+                    continue
+
+                cell_info = cell.get_cell_info()
+
+                # Create cell data
+                cell_data = {
+                    "location": {"x": x, "y": y},
+                    "move_cost": cell_info.move_cost,
+                    "agent_ids": [
+                        {"id": aid.id, "gid": aid.gid} for aid in cell.agent_id_list
+                    ],
+                }
+
+                # Add top layer if present
+                top_layer = cell.get_top_layer()
+                if top_layer is not None:
+                    if isinstance(top_layer, Survivor):
+                        cell_data["survivor"] = {
+                            "id": top_layer.id,
+                            "state": (
+                                0 if top_layer.get_health() > 0 else 1
+                            ),  # 0=alive, 1=dead
+                        }
+                        survivors.append(  # pyright: ignore[reportUnknownMemberType]
+                            {
+                                "id": top_layer.id,
+                                "state": 0 if top_layer.get_health() > 0 else 1,
+                            }
+                        )
+                    else:
+                        # Assume it's rubble
+                        cell_data["rubble"] = {"move_cost": cell_info.move_cost}
+
+                cells.append(cell_data)  # pyright: ignore[reportUnknownMemberType]
+
+                # Add agent data for agents in this cell
+                for agent_id in cell.agent_id_list:
+                    key = (agent_id.id, agent_id.gid)
+                    agent = agent_map.get(key)
+                    if agent is not None:
+                        agent_data = {
+                            "agent_id": {
+                                "id": agent.get_agent_id().id,
+                                "gid": agent.get_agent_id().gid,
+                            },
+                            "location": {"x": x, "y": y},
+                            "energy_level": agent.get_energy_level(),
+                            "steps_taken": agent.steps_taken,
+                        }
+                        agents.append(agent_data)  # pyright: ignore[reportUnknownMemberType]
+
+        return {
+            "width": self._world.width,
+            "height": self._world.height,
+            "cells": cells,
+            "agents": agents,
+            "survivors": survivors,
+        }

@@ -17,15 +17,8 @@ class Loc(TypedDict):
     y: int
 
 
-class CellTypes(TypedDict):
-    spawns: list[Loc]
-    killer: list[Loc]
-    charging: list[Loc]
-
-
 Attributes = Literal[
-    "energy_level",
-    "number_of_survivors",
+    "health",
     "energy_required",
     "agents_required",
 ]
@@ -36,13 +29,13 @@ class Layer(TypedDict):
     attributes: dict[Attributes, int]
 
 
-class CellInfo(TypedDict):
+class CellInfoRaw(TypedDict):
     loc: Loc
     move_cost: int
+    type: str | None
     layers: list[Layer]
 
 
-class WorldFileType(TypedDict):
+class WorldRaw(TypedDict):
     world_info: WorldInfo
-    special_cells: CellTypes
-    cells: list[CellInfo]
+    cells: list[CellInfoRaw]

@@ -1,8 +1,8 @@
 from typing import override
 
+from _aegis.common import CellInfo
 from _aegis.common.commands.aegis_command import AegisCommand
-from _aegis.common.world.info import CellInfo
-from _aegis.common.world.objects.world_object import WorldObject
+from _aegis.common.objects.world_object import WorldObject
 
 
 class ObserveResult(AegisCommand):
