@@ -92,7 +92,6 @@ class Sandbox:
         return callable(self.globals.get("handle_save"))
 
     def has_handle_messages(self) -> bool:
-        print(f"HAS: {callable(self.globals.get("handle_messages"))}")
         return callable(self.globals.get("handle_messages"))
 
     def has_handle_observe(self) -> bool:

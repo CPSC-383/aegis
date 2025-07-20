@@ -3,7 +3,7 @@ from typing import cast
 
 import yaml
 
-from .aegis_types import Config, FeatureFlagName
+from .types.config import Config, FeatureFlagName
 
 CONFIG_PRESETS_PATH = Path("config/presets")
 DEFAULT_CONFIG = "default"

@@ -1,6 +1,6 @@
 from .common.commands.agent_command import AgentCommand
 from .common.commands.agent_commands import Observe, SendMessage
-from .common.constants import Constants
+from .constants import Constants
 
 try:
     from _aegis.common.commands.agent_commands.predict import Predict

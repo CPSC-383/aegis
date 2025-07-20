@@ -6,7 +6,6 @@
 
 from . import (
     AgentCommand,
-    AgentID,
     Cell,
     Direction,
     Location,
@@ -25,8 +24,12 @@ def get_round_number() -> int:
     """Return the current round number."""
 
 
-def get_agent_id() -> AgentID:
-    """Return the `AgentID` of the current agent."""
+def get_id() -> int:
+    """Return the id of the current agent."""
+
+
+def get_team() -> int:
+    """Return the current team of the agent."""
 
 
 def get_location() -> Location:
@@ -79,6 +82,20 @@ def get_survs() -> list[Location]:
 
 def get_charging_cells() -> list[Location]:
     """Return a list of locations where charging cells are present."""
+
+
+def get_spawns() -> list[Location]:
+    """Return a list of spawn locations."""
+
+
+def spawn_agent(loc: Location) -> None:
+    """
+    Spawn an agent.
+
+    Args:
+        loc: A valid spawn location.
+
+    """
 
 
 def log(*args: object) -> None:

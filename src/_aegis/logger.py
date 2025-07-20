@@ -24,7 +24,7 @@ handlers = [stdout_handler, stderr_handler]
 
 logging.basicConfig(
     level=logging.INFO,
-    format="[%(levelname)s] - %(message)s",
+    format="[%(levelname)s][%(name)s] - %(message)s",
     handlers=handlers,
     force=True,
 )

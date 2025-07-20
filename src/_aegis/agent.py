@@ -1,9 +1,13 @@
-from pathlib import Path
+# pyright: reportImportCycles = false
 
-from _aegis.sandbox import Sandbox
+import traceback
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+from _aegis.constants import Constants
 
 from .command_manager import CommandManager
-from .common import AgentID, Direction, Location
+from .common import CellInfo, Direction, Location
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
     ObserveResult,
@@ -11,13 +15,10 @@ from .common.commands.aegis_commands import (
     SendMessageResult,
     WorldUpdate,
 )
-from .common.commands.agent_command import AgentCommand
-from .common.commands.agent_commands import Move, Observe, Save, SendMessage
-from .common.world.cell import Cell
-from .common.world.info import SurroundInfo
-from .common.world.objects import Survivor
-from .common.world.world import World
 from .logger import LOGGER
+from .sandbox import Sandbox
+from .team import Team
+from .world_parser import load_agent_world
 
 try:
     from _aegis.common.commands.aegis_commands.save_result import SaveResult
@@ -25,68 +26,81 @@ except ImportError:
     SaveResult = None
 
 
+if TYPE_CHECKING:
+    from .game import Game
+    from .world import World
+
+
 class Agent:
     def __init__(  # noqa: PLR0913
         self,
-        world: World,
-        aegis_world: World,
-        agent_id: AgentID,
+        game: "Game",
+        agent_id: int,
         location: Location,
+        team: Team,
         energy_level: int,
         *,
         debug: bool,
     ) -> None:
-        self._round: int = 0
-        self._world: World = world
-        self._aegis_world: World = aegis_world
-        self._id: AgentID = agent_id
-        self._location: Location = location
-        self._energy_level: int = energy_level
-        self._command_manager: CommandManager = CommandManager()
-        self._sandbox: Sandbox | None = None
-        self._inbox: list[SendMessageResult] = []
-        self._results: list[AegisCommand] = []
+        self.game: Game = game
+        self.world: World = load_agent_world(game.world)
+        self.id: int = agent_id
+        self.team: Team = team
+        self.location: Location = location
+        self.energy_level: int = energy_level
+        self.command_manager: CommandManager = CommandManager()
+        self.sandbox: Sandbox | None = None
+        self.inbox: list[SendMessageResult] = []
+        self.results: list[AegisCommand] = []
         self.steps_taken: int = 0
-        self._debug: bool = debug
+        self.debug: bool = debug
+        self.logs: list[str] = []
 
-    def run(self) -> None:
-        self._round += 1
-        if self._sandbox is None:
-            error = "Module should not be of `None` type."
-            raise RuntimeError(error)
+    def process_start_of_turn(self) -> None:
         self._send_messages()
         self._send_results()
-        self._sandbox.think()
+        self.logs.clear()
+
+    def run(self) -> None:
+        if self.sandbox is None:
+            error = "Sandbox should not be of `None` type."
+            raise RuntimeError(error)
+
+        self.process_start_of_turn()
+        try:
+            self.sandbox.think()
+        except Exception:  # noqa: BLE001
+            self.log(traceback.format_exc(limit=5))
 
     def _send_results(self) -> None:
-        if self._results and self._sandbox:
-            for result in self._results:
+        if self.results and self.sandbox:
+            for result in self.results:
                 if (
                     isinstance(result, ObserveResult)
-                    and self._sandbox.has_handle_observe()
+                    and self.sandbox.has_handle_observe()
                 ):
-                    self._sandbox.handle_observe(result)  # pyright: ignore[reportUnknownMemberType]
+                    self.sandbox.handle_observe(result)  # pyright: ignore[reportUnknownMemberType]
 
                 elif (
                     SaveResult is not None
                     and isinstance(result, SaveResult)
-                    and self._sandbox.has_handle_save()
+                    and self.sandbox.has_handle_save()
                 ):
-                    self._sandbox.handle_save(result)  # pyright: ignore[reportUnknownMemberType]
-        self._results.clear()
+                    self.sandbox.handle_save(result)  # pyright: ignore[reportUnknownMemberType]
+        self.results.clear()
 
     def _send_messages(self) -> None:
-        if self._inbox and self._sandbox and self._sandbox.has_handle_messages():
-            self._sandbox.handle_messages(self._inbox)  # pyright: ignore[reportUnknownMemberType]
-        self._inbox.clear()
+        if self.inbox and self.sandbox and self.sandbox.has_handle_messages():
+            self.sandbox.handle_messages(self.inbox)  # pyright: ignore[reportUnknownMemberType]
+        self.inbox.clear()
 
-    def load_agent(self, agent_path: str) -> None:
+    def load(self, agent_path: str, methods) -> None:  # pyright: ignore[reportUnknownParameterType, reportMissingParameterType] # noqa: ANN001
         path = Path(agent_path).resolve()
         if not path.exists():
             error = "Agent not found"
             raise FileNotFoundError(error)
 
-        sandbox = Sandbox(self.create_methods())
+        sandbox = Sandbox(methods)  # pyright: ignore[reportUnknownArgumentType]
         sandbox.load_and_compile(path)
         sandbox.init()
 
@@ -94,134 +108,57 @@ class Agent:
             error = f"{path} does not define a `think()` function."
             raise AttributeError(error)
 
-        self._sandbox = sandbox
+        self.sandbox = sandbox
 
-    def update_surround(self, surround_info: SurroundInfo) -> None:
-        for d in Direction:
-            cell_info = surround_info.get_surround_info(d)
-            if cell_info is None:
-                continue
-
-            cell = self._world.get_cell_at(cell_info.location)
-            if cell is None:
-                continue
-
-            cell.agent_id_list = cell_info.agent_id_list
+    def update_surround(self, surround: dict[Direction, CellInfo]) -> None:
+        for cell_info in surround.values():
+            cell = self.game.get_cell_at(cell_info.location)
+            cell.agents = cell_info.agents[:]
             cell.move_cost = cell_info.move_cost
             cell.set_top_layer(cell_info.top_layer)
 
     def set_location(self, location: Location) -> None:
-        self._location = location
-        self.log(f"New Location: {self._location}")
+        self.location = location
 
     def set_energy_level(self, energy_level: int) -> None:
-        self._energy_level = energy_level
-        self.log(f"New Energy: {self._energy_level}")
+        self.energy_level = energy_level
 
-    def get_action_command(self) -> AgentCommand | None:
-        return self._command_manager.get_action_command()
+    def add_energy(self, energy: int) -> None:
+        self.energy_level += energy
+        self.energy_level = min(Constants.DEFAULT_MAX_ENERGY_LEVEL, self.energy_level)
 
-    def get_directives(self) -> list[AgentCommand]:
-        return self._command_manager.get_directives()
-
-    def get_messages(self) -> list[SendMessage]:
-        return self._command_manager.get_messages()
+    def add_step_taken(self) -> None:
+        self.steps_taken += 1
 
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SendMessageResult):
-            self._inbox.append(aegis_command)
+            self.inbox.append(aegis_command)
         elif isinstance(aegis_command, WorldUpdate):
-            move_result = aegis_command
-            curr_info = move_result.surround_info.get_current_info()
-            self.set_energy_level(move_result.energy_level)
+            world_update = aegis_command
+            curr_info = world_update.surround[Direction.CENTER]
+            self.set_energy_level(world_update.energy_level)
             self.set_location(curr_info.location)
-            self.update_surround(move_result.surround_info)
+            self.update_surround(world_update.surround)
         elif SaveResult is not None and isinstance(aegis_command, SaveResult):
-            self._results.append(aegis_command)
+            self.results.append(aegis_command)
         elif isinstance(aegis_command, RechargeResult):
             recharge_result: RechargeResult = aegis_command
             if recharge_result.was_successful:
                 self.set_energy_level(recharge_result.charge_energy)
         elif isinstance(aegis_command, ObserveResult):
-            self._results.append(aegis_command)
+            self.results.append(aegis_command)
         else:
             LOGGER.warning(
                 "Got unrecognized reply from AEGIS: ",
                 f"{aegis_command.__class__.__name__}.",
             )
 
-    def add_energy(self, energy: int) -> None:
-        if energy >= 0:
-            self._energy_level += energy
-
-    def remove_energy(self, energy: int) -> None:
-        if energy < self._energy_level:
-            self._energy_level -= energy
-        else:
-            self._energy_level = 0
-
-    def add_step_taken(self) -> None:
-        self.steps_taken += 1
-
-    def create_methods(self):  # noqa: ANN202
-        methods = {
-            "Direction": Direction,
-            "Move": Move,
-            "Observe": Observe,
-            "Save": Save,
-            "SendMessage": SendMessage,
-            "Survivor": Survivor,
-            "ObserveResult": ObserveResult,
-            "SendMessageResult": SendMessageResult,
-            "get_round_number": self.get_round_number,
-            "get_agent_id": self.get_agent_id,
-            "get_location": self.get_location,
-            "get_energy_level": self.get_energy_level,
-            "send": self.send,
-            "on_map": self.on_map,
-            "get_cell_at": self.get_cell_at,
-            "get_charging_cells": self._world.get_charging_cells,
-            "get_survs": self._aegis_world.get_survs,
-            "log": self.log,
-        }
-
-        if SaveResult is not None:
-            methods["SaveResult"] = SaveResult  # pyright: ignore[reportArgumentType]
-
-        return methods
-
-    ###################################
-    # ===== Public User Methods ===== #
-    ###################################
-
-    def get_round_number(self) -> int:
-        return self._round
-
-    def get_agent_id(self) -> AgentID:
-        return self._id
-
-    def get_location(self) -> Location:
-        return self._location
-
-    def get_energy_level(self) -> int:
-        return self._energy_level
-
-    def send(self, command: AgentCommand) -> None:
-        command.set_agent_id(self.get_agent_id())
-        self._command_manager.send(command)
-
-    def on_map(self, loc: Location) -> bool:
-        return self._world.on_map(loc)
-
-    def get_cell_at(self, loc: Location) -> Cell | None:
-        return self._world.get_cell_at(loc)
-
     def log(self, *args: object) -> None:
-        if not self._debug:
+        if not self.debug:
             return
 
-        agent_id = self.get_agent_id()
+        agent_id = self.id
         print(  # noqa: T201
-            f"[Agent#({agent_id.id}:{agent_id.gid})@{self.get_round_number()}] ", end=""
+            f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ", end=""
         )
         print(*args)  # noqa: T201

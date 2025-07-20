@@ -29,6 +29,8 @@ ignore = [
   "D203", # incorrect-blank-line-before-class
   "D212", # multi-line-summary-first-line
   "COM812", # missing-trailing-comma
+  "FIX002", # line-contains-todo
+  "ERA001", # Commented code
 ]
 
 [project.scripts]
