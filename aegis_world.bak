@@ -66,83 +66,8 @@ class AegisWorld:
         self._number_of_dead_agents += len(dead_agents)
         return dead_agents
 
-    def get_agent(self, agent_id: AgentID) -> Agent | None:
-        for agent in self._agents:
-            if agent.get_agent_id() == agent_id:
-                return agent
-        return None
-
-    def move_agent(self, agent_id: AgentID, location: Location) -> None:
-        agent = self.get_agent(agent_id)
-        if agent is None or self._world is None:
-            return
-
-        curr_cell = self._world.get_cell_at(agent.get_location())
-        dest_cell = self._world.get_cell_at(location)
-
-        if dest_cell is None or curr_cell is None:
-            return
-
-        curr_cell.agent_id_list.remove(agent.get_agent_id())
-        dest_cell.agent_id_list.append(agent.get_agent_id())
-        agent.set_location(dest_cell.location)
-
-    def remove_layer_from_cell(self, location: Location) -> None:
-        if self._world is None:
-            error = "World must be initialized before calling this method."
-            raise RuntimeError(error)
-
-        cell = self._world.get_cell_at(location)
-        if cell is None:
-            return
-
-        world_object = cell.remove_top_layer()
-        if world_object is None:
-            return
-
-        self._top_layer_removed_cell_list.append(location)
-        if isinstance(world_object, Survivor):
-            survivor = world_object
-            if survivor.get_health() <= 0:
-                self._number_of_survivors_saved_dead += 1
-            else:
-                self._number_of_survivors_saved_alive += 1
-
-    def get_surround_info(self, location: Location) -> SurroundInfo:
-        if self._world is None:
-            error = "World must be initialized before calling this method."
-            raise RuntimeError(error)
-
-        surround_info = SurroundInfo()
-
-        cell = self._world.get_cell_at(location)
-        if cell is None:
-            error = "Agent cell shouldn't be none"
-            raise RuntimeError(error)
-
-        surround_info.set_current_info(cell.get_cell_info())
-
-        for direction in Direction:
-            cell = self._world.get_cell_at(location.add(direction))
-            if cell is None:
-                surround_info.set_surround_info(direction, CellInfo())
-            else:
-                surround_info.set_surround_info(direction, cell.get_cell_info())
-        return surround_info
-
     def remove_survivor(self, survivor: Survivor) -> None:
         del self._survivors_list[survivor.id]
-
-    def get_num_survivors(self) -> int:
-        return self._number_of_survivors
-
-    def get_total_saved_survivors(self) -> int:
-        return (
-            self._number_of_survivors_saved_alive + self._number_of_survivors_saved_dead
-        )
-
-    def get_agents(self) -> list[Agent]:
-        return self._agents
 
     def get_protobuf_world_data(self) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
         if self._world is None:

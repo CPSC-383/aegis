@@ -1,7 +1,5 @@
-from _aegis.constants import Constants
-
-from .common import Location
-from .common.world.cell import Cell
+from .common import Cell, Location
+from .constants import Constants
 
 
 class World:
@@ -19,6 +17,7 @@ class World:
         self.seed: int = seed
         self.start_energy: int = start_energy
         self.cells: list[Cell] = cells
+        self.total_survivors: int = sum(cell.number_of_survivors() for cell in cells)
 
         self._validate_map()
 

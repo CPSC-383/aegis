@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, override
 from _aegis.common.world.objects.world_object import WorldObject
 
 if TYPE_CHECKING:
-    from _aegis.parsers.helper.world_file_type import Layer
+    from _aegis.types.world import Layer
 
 
 class Survivor(WorldObject):
@@ -58,10 +58,10 @@ class Survivor(WorldObject):
         return {
             "type": "sv",
             "attributes": {
-                "energy_level": self._health,
+                "health": self._health,
             },
         }
 
     class State(Enum):
-        ALIVE = 1
-        DEAD = 2
+        ALIVE = 0
+        DEAD = 1

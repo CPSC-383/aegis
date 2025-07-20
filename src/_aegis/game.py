@@ -1,15 +1,13 @@
 import random
 from typing import TYPE_CHECKING
 
-from .aegis_world import AegisWorld
 from .agent import Agent
 from .agent_controller import AgentController
 from .args_parser import Args
 from .command_processor import CommandProcessor
-from .common import Direction, Location
+from .common import Cell, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.agent_commands import Move, Observe, Save, SendMessage
-from .common.world.cell import Cell
 from .common.world.objects.survivor import Survivor
 from .id_gen import IDGenerator
 from .logger import LOGGER
@@ -43,16 +41,15 @@ class Game:
         self.round: int = 0
         self.id_gen: IDGenerator = IDGenerator()
         self.team_info: TeamInfo = TeamInfo()
-        self._agents: list[Agent] = []
+        self._agents: dict[int, Agent] = {}
         self._agent_commands: list[AgentCommand] = []
-        self._aegis_world: AegisWorld = AegisWorld(self._agents, args)
         self.ws_server: WebSocketServer = WebSocketServer()
         if args.client:
             self.ws_server.set_wait_for_client()
         self._prediction_handler: PredictionHandlerType | None = None
         self._command_processor: CommandProcessor = CommandProcessor(
+            self,
             self._agents,
-            self._aegis_world,
             self._prediction_handler,
         )
         self.team_agents: dict[Team, str] = {}
@@ -76,7 +73,7 @@ class Game:
     def run_round(self) -> None:
         self.round += 1
         self._command_processor.run_turn()
-        self._grim_reaper()
+        # self._grim_reaper()
 
         if self._is_game_over():
             self.running = False
@@ -89,22 +86,22 @@ class Game:
             LOGGER.info("All agents are dead.")
             return True
 
-        survivors_saved = self._aegis_world.get_total_saved_survivors()
-        total_survivors = self._aegis_world.get_num_survivors()
-        if survivors_saved == total_survivors:
+        saved_goobs = self.team_info.get_saved(Team.GOOBS)
+        saved_seers = self.team_info.get_saved(Team.VOIDSEERS)
+        if saved_goobs + saved_seers == self.world.total_survivors:
             LOGGER.info("All survivors saved")
             return True
 
         return False
 
-    def _grim_reaper(self) -> None:
-        dead_agents = self._aegis_world.grim_reaper()
-
-        for agent_id in dead_agents:
-            agent = self._aegis_world.get_agent(agent_id)
-            if agent is None:
-                continue
-            self._agents.remove(agent)
+    # def _grim_reaper(self) -> None:
+    #     dead_agents = self._aegis_world.grim_reaper()
+    #
+    #     for agent_id in dead_agents:
+    #         agent = self.get_agent(agent_id)
+    #         if agent is None:
+    #             continue
+    #         self._agents.remove(agent)
 
     def spawn_agent(
         self, loc: Location, team: Team, agent_id: int | None = None
@@ -117,11 +114,11 @@ class Game:
         ac = AgentController(self, agent)
         agent.load(self.team_agents[team], self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
         self.add_agent(agent, loc)
-        self.team_info.inc_units(agent.team, 1)
+        self.team_info.add_units(agent.team, 1)
 
     def add_agent(self, agent: Agent, loc: Location) -> None:
         if agent not in self._agents:
-            self._agents.append(agent)
+            self._agents[agent.id] = agent
 
             cell = self.get_cell_at(loc)
             if cell is None:
@@ -129,6 +126,35 @@ class Game:
 
             cell.agents.append(agent.id)
             LOGGER.info("Aegis  : Added agent %s", agent.id)
+
+    def get_agent(self, agent_id: int) -> Agent:
+        return self._agents[agent_id]
+
+    def remove_layer(self, loc: Location, team: Team) -> None:
+        cell = self.get_cell_at(loc)
+        if cell is None:
+            return
+
+        world_object = cell.remove_top_layer()
+        if world_object is None:
+            return
+
+        if isinstance(world_object, Survivor):
+            survivor = world_object
+            is_alive = survivor.get_health() > 0
+            self.team_info.add_saved(team, 1, is_alive=is_alive)
+
+    def move_agent(self, agent_id: int, loc: Location) -> None:
+        agent = self.get_agent(agent_id)
+        curr_cell = self.get_cell_at(agent.location)
+        dest_cell = self.get_cell_at(loc)
+
+        if dest_cell is None or curr_cell is None:
+            return
+
+        curr_cell.agents.remove(agent.id)
+        dest_cell.agents.append(agent.id)
+        agent.set_location(dest_cell.location)
 
     def on_map(self, location: Location) -> bool:
         return (

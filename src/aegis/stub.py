@@ -6,7 +6,6 @@
 
 from . import (
     AgentCommand,
-    AgentID,
     Cell,
     Direction,
     Location,
@@ -25,8 +24,12 @@ def get_round_number() -> int:
     """Return the current round number."""
 
 
-def get_agent_id() -> AgentID:
-    """Return the `AgentID` of the current agent."""
+def get_id() -> int:
+    """Return the id of the current agent."""
+
+
+def get_team() -> int:
+    """Return the current team of the agent."""
 
 
 def get_location() -> Location:

@@ -6,7 +6,6 @@ import numpy as np
 from numpy.typing import NDArray
 
 from _aegis.agent_predictions import model_testing_data
-from _aegis.common import AgentID
 from _aegis.constants import Constants
 
 

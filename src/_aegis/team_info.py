@@ -33,25 +33,25 @@ class TeamInfo:
     def get_score(self, team: Team) -> int:
         return self._score[team.value]
 
-    def _increment(self, array: list[int], team: Team, amount: int = 1) -> None:
+    def _add(self, array: list[int], team: Team, amount: int = 1) -> None:
         array[team.value] += amount
 
-    def inc_saved(self, team: Team, amount: int = 1, *, is_alive: bool) -> None:
-        self._increment(self._saved, team, amount)
+    def add_saved(self, team: Team, amount: int = 1, *, is_alive: bool) -> None:
+        self._add(self._saved, team, amount)
         if is_alive:
-            self._increment(self._saved_alive, team, amount)
+            self._add(self._saved_alive, team, amount)
         else:
-            self._increment(self._saved_dead, team, amount)
+            self._add(self._saved_dead, team, amount)
 
-    def inc_predicted(self, team: Team, amount: int = 1, *, correct: bool) -> None:
-        self._increment(self._predicted, team, amount)
+    def add_predicted(self, team: Team, amount: int = 1, *, correct: bool) -> None:
+        self._add(self._predicted, team, amount)
         if correct:
-            self._increment(self._predicted_right, team, amount)
+            self._add(self._predicted_right, team, amount)
         else:
-            self._increment(self._predicted_wrong, team, amount)
+            self._add(self._predicted_wrong, team, amount)
 
-    def inc_score(self, team: Team, amount: int) -> None:
-        self._increment(self._score, team, amount)
+    def add_score(self, team: Team, amount: int) -> None:
+        self._add(self._score, team, amount)
 
-    def inc_units(self, team: Team, amount: int) -> None:
-        self._increment(self._units, team, amount)
+    def add_units(self, team: Team, amount: int) -> None:
+        self._add(self._units, team, amount)

@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import override
 
-from _aegis.common import Location
-from _aegis.common.world.info import CellInfo
-from _aegis.common.world.objects import Survivor, WorldObject
 from _aegis.types.cell import CellType
+
+from .cell_info import CellInfo
+from .location import Location
+from .world.objects import Survivor, WorldObject
 
 
 class Cell:

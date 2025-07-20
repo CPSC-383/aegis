@@ -2,9 +2,8 @@
 from typing import TYPE_CHECKING
 
 from .agent import Agent
+from .common import Cell, Location
 from .common.commands.agent_command import AgentCommand
-from .common.location import Location
-from .common.world.cell import Cell
 from .team import Team
 
 if TYPE_CHECKING:
@@ -32,7 +31,7 @@ class AgentController:
         return self._agent.energy_level
 
     def send(self, command: AgentCommand) -> None:
-        command.set_agent_id(self.get_id())
+        command.set_id(self.get_id())
         self._agent.command_manager.send(command)
 
     def on_map(self, loc: Location) -> bool:

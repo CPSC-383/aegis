@@ -1,9 +1,11 @@
 __all__ = [
-    "AgentID",
+    "Cell",
+    "CellInfo",
     "Direction",
     "Location",
 ]
 
-from _aegis.common.agent_id import AgentID
-from _aegis.common.direction import Direction
-from _aegis.common.location import Location
+from .cell import Cell
+from .cell_info import CellInfo
+from .direction import Direction
+from .location import Location
