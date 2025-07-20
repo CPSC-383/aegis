@@ -2,7 +2,7 @@
 
 Protobuf schemas for Aegis.
 
-## Prereq
+## Prerequisites
 
 You need `protoc` version **26.x to 29.x**.  
 If Google's stupid aaahhh ever decides (20 years later lmao) to actually move Protobuf Python runtime to v6,
