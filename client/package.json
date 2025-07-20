@@ -81,9 +81,9 @@
     }
   },
   "dependencies": {
+    "aegis-schema": "file:../schema",
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
-    "@protobuf-ts/plugin": "^2.11.1",
     "@radix-ui/react-dialog": "^1.1.3",
     "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-progress": "^1.1.1",

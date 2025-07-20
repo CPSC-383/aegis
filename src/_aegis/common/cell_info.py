@@ -15,7 +15,7 @@ class CellInfo:
         agents: list[int] | None = None,
         top_layer: WorldObject | None = None,
     ) -> None:
-        self.cell_type: CellType = cell_type
+        self.type: CellType = cell_type
         self.location: Location = location if location is not None else Location(-1, -1)
         self.move_cost: int = move_cost
         self.agents: list[int] = agents if agents is not None else []
@@ -26,7 +26,7 @@ class CellInfo:
     @override
     def __str__(self) -> str:
         return (
-            f"{self.cell_type.name} ( X {self.location.x} , Y {self.location.y} , "
+            f"{self.type.name} ( X {self.location.x} , Y {self.location.y} , "
             f"MV_COST {self.move_cost} , NUM_AGT {len(self.agents)} , "
             f"ID_LIST {self.agents} , TOP_LAYER ( {self.top_layer} ) )"
         )

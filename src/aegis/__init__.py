@@ -1,8 +1,7 @@
 """Public Aegis export stuff."""
 
 from _aegis.cli import main
-from _aegis.common import Direction, Location
-from _aegis.common.cell import Cell
+from _aegis.common import CellInfo, Direction, Location
 from _aegis.common.commands.aegis_commands import ObserveResult, SendMessageResult
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
@@ -25,7 +24,7 @@ __all__ = [  # noqa: RUF022
     "Recharge",
     "Save",
     "AgentCommand",
-    "Cell",
+    "CellInfo",
     "Direction",
     "Location",
     "ObserveResult",

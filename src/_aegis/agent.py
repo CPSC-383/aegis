@@ -112,7 +112,7 @@ class Agent:
 
     def update_surround(self, surround: dict[Direction, CellInfo]) -> None:
         for cell_info in surround.values():
-            cell = self.game.get_cell_at(cell_info.location)
+            cell = self.world.get_cell_at(cell_info.location)
             cell.agents = cell_info.agents[:]
             cell.move_cost = cell_info.move_cost
             cell.set_top_layer(cell_info.top_layer)

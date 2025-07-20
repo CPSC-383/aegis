@@ -5,7 +5,7 @@ from .agent import Agent
 from .agent_controller import AgentController
 from .args_parser import Args
 from .command_processor import CommandProcessor
-from .common import Cell, Direction, Location
+from .common import Cell, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.agent_commands import Move, Observe, Save, SendMessage
 from .common.objects import Rubble, Survivor
@@ -199,6 +199,12 @@ class Game:
     def get_cell_at(self, location: Location) -> Cell:
         return self.world.get_cell_at(location)
 
+    def get_cell_info_at(self, location: Location) -> CellInfo:
+        cell = self.world.get_cell_at(location)
+        return CellInfo(
+            cell.type, cell.location, cell.move_cost, cell.agents, cell.get_top_layer()
+        )
+
     def get_survs(self) -> list[Location]:
         return [
             cell.location for cell in self.world.cells if cell.number_of_survivors() > 0
@@ -230,7 +236,7 @@ class Game:
             "send": ac.send,
             "spawn_agent": ac.spawn_agent,
             "on_map": self.on_map,
-            "get_cell_at": self.get_cell_at,
+            "get_cell_info_at": self.get_cell_info_at,
             "get_charging_cells": self.get_charging_cells,
             "get_spawns": self.get_spawns,
             "get_survs": self.get_survs,

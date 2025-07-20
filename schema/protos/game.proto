@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package aegis;
+
+import "world.proto";
+
+message GameHeader {
+  World world = 1;
+  int32 rounds = 2;
+}
+
+message GameFooter {
+  // Empty message for completion event
+}

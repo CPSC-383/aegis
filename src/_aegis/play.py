@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from _aegis.world_proto import serialize_world
+
 from .args_parser import Args
 from .game import Game
 from .logger import LOGGER
@@ -42,3 +44,5 @@ def run(args: Args) -> None:
         predictions = game.team_info.get_predicted_right(team)
 
         LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
+
+    _ = serialize_world(world)
