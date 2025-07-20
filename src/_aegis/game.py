@@ -9,6 +9,7 @@ from .common import Cell, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.agent_commands import Move, Observe, Save, SendMessage
 from .common.world.objects.survivor import Survivor
+from .constants import Constants
 from .id_gen import IDGenerator
 from .logger import LOGGER
 from .server_websocket import WebSocketServer
@@ -81,14 +82,19 @@ class Game:
 
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
+            print()  # noqa: T201
             LOGGER.info("Max rounds reached.")
+            return True
+
         if len(self._agents) == 0:
+            print()  # noqa: T201
             LOGGER.info("All agents are dead.")
             return True
 
         saved_goobs = self.team_info.get_saved(Team.GOOBS)
         saved_seers = self.team_info.get_saved(Team.VOIDSEERS)
         if saved_goobs + saved_seers == self.world.total_survivors:
+            print()  # noqa: T201
             LOGGER.info("All survivors saved")
             return True
 
@@ -142,7 +148,9 @@ class Game:
         if isinstance(world_object, Survivor):
             survivor = world_object
             is_alive = survivor.get_health() > 0
-            self.team_info.add_saved(team, 1, is_alive=is_alive)
+            self.team_info.add_saved(
+                team, Constants.SURVIVOR_SAVE_SCORE, is_alive=is_alive
+            )
 
     def move_agent(self, agent_id: int, loc: Location) -> None:
         agent = self.get_agent(agent_id)
@@ -183,6 +191,7 @@ class Game:
     def create_methods(self, ac: AgentController):  # noqa: ANN202
         methods = {
             "Direction": Direction,
+            "Location": Location,
             "Move": Move,
             "Observe": Observe,
             "Save": Save,
@@ -196,6 +205,7 @@ class Game:
             "get_location": ac.get_location,
             "get_energy_level": ac.get_energy_level,
             "send": ac.send,
+            "spawn_agent": ac.spawn_agent,
             "on_map": self.on_map,
             "get_cell_at": self.get_cell_at,
             "get_charging_cells": self.get_charging_cells,

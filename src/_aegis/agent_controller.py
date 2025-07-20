@@ -15,6 +15,18 @@ class AgentController:
         self._game: Game = game
         self._agent: Agent = agent
 
+    def assert_spawn(self, loc: Location, team: Team) -> None:
+        if loc not in self._game.get_spawns():
+            error = f"Invalid spawn: {loc}"
+            raise AgentError(error)
+
+        units = self._game.team_info.get_units(team)
+        if units == self._game.args.amount:
+            error = "Max agents reached."
+            raise AgentError(error)
+
+    # Public Agent Methods
+
     def get_round_number(self) -> int:
         return self._game.round
 
@@ -40,6 +52,10 @@ class AgentController:
     def get_cell_at(self, loc: Location) -> Cell | None:
         return self._game.get_cell_at(loc)
 
+    def spawn_agent(self, loc: Location) -> None:
+        self.assert_spawn(loc, self._agent.team)
+        self._game.spawn_agent(loc, self._agent.team)
+
     def log(self, *args: object) -> None:
         if not self._agent.debug:
             return
@@ -49,3 +65,7 @@ class AgentController:
             f"[Agent#({agent_id}:{self.get_team().name})@{self._game.round}] ", end=""
         )
         print(*args)  # noqa: T201
+
+
+class AgentError(Exception):
+    pass

@@ -1,5 +1,6 @@
 # pyright: reportImportCycles = false
 
+import traceback
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -53,14 +54,22 @@ class Agent:
         self.results: list[AegisCommand] = []
         self.steps_taken: int = 0
         self.debug: bool = debug
+        self.logs: list[str] = []
 
     def run(self) -> None:
+        self.logs.clear()
         if self.sandbox is None:
             error = "Module should not be of `None` type."
             raise RuntimeError(error)
         self._send_messages()
         self._send_results()
-        self.sandbox.think()
+        try:
+            self.sandbox.think()
+        except Exception:  # noqa: BLE001
+            self.log(traceback.format_exc(limit=5))
+
+        for log in self.logs:
+            print(log)  # noqa: T201
 
     def _send_results(self) -> None:
         if self.results and self.sandbox:
@@ -122,6 +131,9 @@ class Agent:
 
     def add_step_taken(self) -> None:
         self.steps_taken += 1
+
+    def log(self, msg: str) -> None:
+        self.logs.append(msg)
 
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SendMessageResult):

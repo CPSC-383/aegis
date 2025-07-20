@@ -88,5 +88,15 @@ def get_spawns() -> list[Location]:
     """Return a list of spawn locations."""
 
 
+def spawn_agent(loc: Location) -> None:
+    """
+    Spawn an agent.
+
+    Args:
+        loc: A valid spawn location.
+
+    """
+
+
 def log(*args: object) -> None:
     """Log a message to the console."""

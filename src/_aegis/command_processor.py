@@ -60,7 +60,7 @@ class CommandProcessor:
         commands: list[AgentCommand] = []
         messages: list[SendMessage] = []
 
-        for agent in self._agents.values():
+        for agent in list(self._agents.values()):
             agent.run()
             command = agent.command_manager.get_action_command()
             if command is not None:
@@ -69,6 +69,9 @@ class CommandProcessor:
             directives = agent.command_manager.get_directives()
             commands.extend(directives)
             messages.extend(agent.command_manager.get_messages())
+
+            agent.log(f"Action Received: {command}")
+            agent.log(f"Directives Received: {directives}")
 
         self._process(commands)
         self._route_messages(messages)
@@ -183,6 +186,8 @@ class CommandProcessor:
         agent.add_energy(-Constants.SAVE_ENERGY_COST)
         if top_layer is None:
             return
+
+        self._game.remove_layer(cell.location, agent.team)
         # self._handle_top_layer(top_layer, cell, agents_here, gid_counter)
 
     def _results(self, commands: list[AgentCommand]) -> None:
@@ -238,7 +243,7 @@ class CommandProcessor:
             case _:
                 return []
 
-    def _handle_save_cmd(self, agent: Agent) -> list[AegisCommand]:
+    def _handle_save_cmd(self, _agent: Agent) -> list[AegisCommand]:
         results: list[AegisCommand] = []
         # if (
         #     is_feature_enabled("ENABLE_PREDICTIONS")

@@ -3,6 +3,7 @@ from pathlib import Path
 from .args_parser import Args
 from .game import Game
 from .logger import LOGGER
+from .team import Team
 from .world_parser import load_world
 
 
@@ -23,21 +24,23 @@ def run(args: Args) -> None:
 
     LOGGER.info("========== AEGIS SIMULATION START ==========")
     LOGGER.info("Running %d rounds", world.rounds)
+    print()  # noqa: T201
 
     while game.running:
         try:
             game.run_round()
         except Exception:  # noqa: BLE001
-            LOGGER.exception("idk what happened")
+            LOGGER.exception("This shouldn't have happened.")
+            game.running = False
 
+    LOGGER.info("========== AEGIS SIMULATION END ==========")
     LOGGER.info("Results for each team")
     LOGGER.info("(Score, Number Saved, Correct Predictions)")
-    LOGGER.info("=================================================")
-    # for group in self.agent_group_list:
-    #     LOGGER.info(
-    #         "%s : (%s, %s, %s)",
-    #         group.name,
-    #         group.score,
-    #         group.number_saved,
-    #         group.number_predicted_right,
-    #     )
+    for team in Team:
+        LOGGER.info(
+            "%s : (%s, %s, %s)",
+            team.name,
+            game.team_info.get_score(team),
+            game.team_info.get_saved(team),
+            game.team_info.get_predicted_right(team),
+        )

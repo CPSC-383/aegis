@@ -33,6 +33,9 @@ class TeamInfo:
     def get_score(self, team: Team) -> int:
         return self._score[team.value]
 
+    def get_units(self, team: Team) -> int:
+        return self._units[team.value]
+
     def _add(self, array: list[int], team: Team, amount: int = 1) -> None:
         array[team.value] += amount
 
