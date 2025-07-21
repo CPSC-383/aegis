@@ -1,4 +1,4 @@
-import { Location as ProtobufLocation, WorldObject } from 'aegis-schema'
+import { Location as ProtobufLocation } from 'aegis-schema'
 
 export type Size = {
   width: number

@@ -1,10 +1,9 @@
-import { UIWorldStats, GroupStats, Groups } from '@/core/simulation'
-import { WorldDataManager } from '@/core/simulation'
+import { UIWorldStats, GroupStats, Groups, WorldDataManager } from '@/core/game'
 import { getCurrentAssignment, ASSIGNMENT_A1 } from '@/utils/util'
 import { WorldState, Agent } from '@/generated/aegis'
 
 export class StatsCalculator {
-  constructor(private readonly worldData: WorldDataManager) {}
+  constructor(private readonly worldData: WorldDataManager) { }
 
   /**
    * Calculates statistics for the current round of the simulation.

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ClientWebSocket, aegisAPI } from '@/services'
 import { useAppContext } from '@/contexts/AppContext'
-import { Simulation } from '@/core/simulation'
+import { Game } from '@/core/game'
 import { useForceUpdate } from '@/utils/util'
 import { ConsoleLine } from '@/types'
 
@@ -153,7 +153,7 @@ export function createScaffold(): Scaffold {
       forceUpdate()
     })
 
-    const onSimCreated = (sim: Simulation) => {
+    const onSimCreated = (sim: Game) => {
       setAppState((prevAppState) => ({
         ...prevAppState,
         simulation: sim

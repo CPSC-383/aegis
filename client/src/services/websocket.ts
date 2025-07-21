@@ -1,14 +1,14 @@
-import { Simulation } from '@/core/simulation'
+import { Game } from '@/core/game'
 import { WorldMap } from '@/core/world'
 import { Event } from "aegis-schema"
 
 export class ClientWebSocket {
   private url: string = 'ws://localhost:6003'
   private reconnectInterval: number = 500
-  private simulation: Simulation | undefined = undefined
+  private game: Game | undefined = undefined
   private started: boolean = false
 
-  constructor(readonly onSimCreated: (sim: Simulation) => void) {
+  constructor(readonly onSimCreated: (sim: Game) => void) {
     this.connect()
   }
 
@@ -24,7 +24,7 @@ export class ClientWebSocket {
     }
 
     ws.onclose = () => {
-      this.simulation = undefined
+      this.game = undefined
       this.started = false
       setTimeout(() => this.connect(), this.reconnectInterval)
     }
@@ -35,28 +35,28 @@ export class ClientWebSocket {
       const decoded = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
       const event = Event.fromBinary(decoded)
 
-      if (!this.simulation) {
+      if (!this.game) {
         if (event.event.oneofKind !== "gameHeader") {
           throw new Error("First event must be the GameHeader.")
         }
 
         const world = WorldMap.fromPb(event.event.gameHeader.world!)
-        this.simulation = new Simulation(world)
-        this.onSimCreated(this.simulation)
+        this.game = new Game(world)
+        this.onSimCreated(this.game)
         return
       }
 
-      this.simulation.addEvent(event)
+      this.game.addEvent(event)
 
       if (event.event.oneofKind === "round") {
         if (!this.started) {
           this.started = true
-          this.simulation.renderNextRound()
+          this.game.renderNextRound()
         }
       }
 
       if (event.event.oneofKind === "gameFooter")
-        this.simulation = undefined
+        this.game = undefined
 
     } catch (error) {
       console.error('Failed to handle websocket event:', error)

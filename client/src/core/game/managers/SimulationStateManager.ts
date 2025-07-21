@@ -1,4 +1,4 @@
-import { SimulationState } from '@/core/simulation'
+import { SimulationState } from '@/core/game'
 
 export class SimulationStateManager {
   private state: SimulationState

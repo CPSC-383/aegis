@@ -5,12 +5,16 @@ import {
   StatsCalculator,
   UIWorldStats,
   WorldDataManager
-} from '@/core/simulation'
+} from '@/core/game'
 import { SpawnZoneData, WorldMap } from '@/core/world'
 import { EventType, dispatchEvent } from '@/events'
-import { Cell, Event, WorldObject } from 'aegis-schema'
+import { Cell, Event, Round, World, WorldObject } from 'aegis-schema'
 
-export class Simulation {
+export class Game {
+  public maxRound: number = 1
+  public currentWorld?: World
+  public currentRound?: Round
+  private readonly rounds: Round[] = []
   private stateManager: SimulationStateManager
   private worldData: WorldDataManager
   private statsCalculator: StatsCalculator
@@ -36,12 +40,19 @@ export class Simulation {
       case "gameHeader":
         throw new Error("Cannot add another GameHeader event.")
       case "round":
-        this.worldData.addRound(event.event.round)
-        this.stateManager.incrementMaxRounds()
+        this.addRound(event.event.round)
         return
       case "gameFooter":
         return
     }
+  }
+
+  addRound(round: Round): void {
+    // if (this.rounds.length === 0) {
+    //
+    // }
+    this.rounds.push(round)
+    this.maxRound++
   }
 
   /**

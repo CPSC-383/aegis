@@ -1,12 +1,12 @@
-import { Simulation } from '@/core/simulation'
+import { Game } from '@/core/game'
 import { BrushType } from '@/types'
 import { createContext, ReactNode, SetStateAction, useContext, useState } from 'react'
 
 export interface AppContext {
-  simulation: Simulation | undefined
+  simulation: Game | undefined
   simPaused: boolean
   selectedCell: { x: number; y: number } | null
-  editorSimulation: Simulation | undefined // Used for the map editor, so it doesn't have to overwrite the game's simulation
+  editorSimulation: Game | undefined // Used for the map editor, so it doesn't have to overwrite the game's simulation
   editorSelectedCell: { x: number; y: number } | null // Independent selection for map editor
   currentBrushType: BrushType | null // Current brush type for editor mode
 }

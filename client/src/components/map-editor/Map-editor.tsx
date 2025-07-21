@@ -3,7 +3,7 @@ import { AlertCircle, Download, Grid3x3, Info, Upload, Zap } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useAppContext } from '@/contexts/AppContext'
-import { Simulation } from '@/core/simulation'
+import { Game } from '@/core/game'
 import { WorldMap } from '@/core/world'
 import { EventType } from '@/events'
 import { WorldParams } from '@/types'
@@ -52,7 +52,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
       : { width: 15, height: 15, initialEnergy: 100, isInitialized: false }
   })
   const [errMsg, setErrMsg] = useState<string>('')
-  const simulation = useRef<Simulation | undefined>(undefined)
+  const simulation = useRef<Game | undefined>(undefined)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [resetDialogOpen, setResetDialogOpen] = useState(false)
   const [brushesInfoOpen, setBrushesInfoOpen] = useState(false)
@@ -154,7 +154,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
             worldParams.initialEnergy
           )
         }
-        simulation.current = new Simulation(world)
+        simulation.current = new Game(world)
       }
       setAppState((prev) => ({
         ...prev,
@@ -365,7 +365,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
                 handleInitialEnergyChange(value)
               }}
               className="w-full"
-              // disabled={!isWorldEmpty}
+            // disabled={!isWorldEmpty}
             />
           </div>
         </CardContent>

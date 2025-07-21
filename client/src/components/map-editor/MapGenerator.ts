@@ -1,4 +1,4 @@
-import { Simulation } from '@/core/simulation'
+import { Game } from '@/core/game'
 import {
   CellContent,
   Location,
@@ -123,7 +123,7 @@ class WorldSerializer {
 
 export { WorldSerializer }
 
-export async function importWorld(file: File): Promise<Simulation> {
+export async function importWorld(file: File): Promise<Game> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
 
@@ -132,7 +132,7 @@ export async function importWorld(file: File): Promise<Simulation> {
         const content = e.target?.result as string
         const data = JSON.parse(content) as WorldFileData
         const world = WorldMap.fromData(data)
-        resolve(new Simulation(world))
+        resolve(new Game(world))
       } catch (error) {
         reject('Error parsing world! Make sure it is valid JSON.')
       }

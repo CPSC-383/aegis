@@ -1,4 +1,4 @@
-import { AgentInfoDict, CellDict, Groups } from '@/core/simulation/'
+import { AgentInfoDict, CellDict, Groups } from '@/core/game/'
 import { WorldMap } from '@/core/world'
 import { World, Round, WorldObject, Location, Cell } from 'aegis-schema'
 
@@ -7,14 +7,6 @@ export class WorldDataManager {
   private rounds: Round[] = []
 
   constructor(private readonly worldMap: WorldMap) { }
-
-  /**
-   * Adds a new round of data to the rounds list.
-   * @param {Round} round - The data representing the new round.
-   */
-  addRound(round: Round): void {
-    this.rounds.push(round)
-  }
 
   /**
    * Updates the current round data and group data to match the specified round index.
