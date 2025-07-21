@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package aegis;
 
-import "common.proto";
+import "location.proto";
 import "world_object.proto";
 
 enum CellType {

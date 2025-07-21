@@ -2,11 +2,20 @@ syntax = "proto3";
 
 package aegis;
 
+import "team.proto";
+import "turn.proto";
 import "world.proto";
 
 message GameHeader {
   World world = 1;
   int32 rounds = 2;
+}
+
+message Round {
+  int32 round = 1;  
+  World world = 2;
+  repeated Turn turns = 3;
+  repeated TeamInfo team_info = 4;
 }
 
 message GameFooter {

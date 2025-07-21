@@ -54,12 +54,10 @@ class Agent:
         self.results: list[AegisCommand] = []
         self.steps_taken: int = 0
         self.debug: bool = debug
-        self.logs: list[str] = []
 
     def process_start_of_turn(self) -> None:
         self._send_messages()
         self._send_results()
-        self.logs.clear()
 
     def run(self) -> None:
         if self.sandbox is None:

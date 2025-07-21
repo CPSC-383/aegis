@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package aegis;
+
+import "game.proto";
+
+message Event {
+  oneof event {
+    GameHeader game_header = 1;
+    Round round = 2;
+    GameFooter game_footer = 3;
+  }
+}

@@ -4,6 +4,7 @@
 """Fix protobuf Python imports in generated files and fix index.ts export."""
 
 import re
+from itertools import chain
 from pathlib import Path
 
 PYTHON_DIR = Path(__file__).parent.parent / "python"
@@ -44,7 +45,7 @@ def fix_index_ts(file: Path) -> None:
 def main() -> None:
     """Run all fixes."""
     print(f"Fixing imports in {PYTHON_DIR}")
-    for py_file in PYTHON_DIR.glob("*.pyi"):
+    for py_file in chain(PYTHON_DIR.glob("*.py"), PYTHON_DIR.glob("*.pyi")):
         print(f"Fixing {py_file.name}")
         fix_imports(py_file)
 

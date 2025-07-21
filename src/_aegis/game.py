@@ -10,9 +10,9 @@ from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.agent_commands import Move, Observe, Save, SendMessage
 from .common.objects import Rubble, Survivor
 from .constants import Constants
+from .game_pb import GamePb
 from .id_gen import IDGenerator
 from .logger import LOGGER
-from .server_websocket import WebSocketServer
 from .team import Team
 from .team_info import TeamInfo
 from .world import World
@@ -34,7 +34,7 @@ else:
 
 
 class Game:
-    def __init__(self, args: Args, world: World) -> None:
+    def __init__(self, args: Args, world: World, game_pb: GamePb) -> None:
         random.seed(world.seed)
         self.args: Args = args
         self.running: bool = True
@@ -42,11 +42,9 @@ class Game:
         self.round: int = 0
         self.id_gen: IDGenerator = IDGenerator()
         self.team_info: TeamInfo = TeamInfo()
+        self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
         self._agent_commands: list[AgentCommand] = []
-        self.ws_server: WebSocketServer = WebSocketServer()
-        if args.client:
-            self.ws_server.set_wait_for_client()
         self._prediction_handler: PredictionHandlerType | None = None
         self._command_processor: CommandProcessor = CommandProcessor(
             self,
@@ -73,7 +71,13 @@ class Game:
 
     def run_round(self) -> None:
         self.round += 1
+        self.game_pb.start_round(self.round)
+        self.process_agent_commands()
+        self.serialize_team_info()
+        self.game_pb.end_round(self.world)
+        self.process_end_of_round()
 
+    def process_agent_commands(self) -> None:
         commands: list[AgentCommand] = []
         messages: list[SendMessage] = []
 
@@ -89,9 +93,10 @@ class Game:
 
             agent.log(f"Action received: {command}")
             agent.log(f"Directives received: {directives}")
+            self.game_pb.end_turn(agent)
+            agent.command_manager.clear()
 
         self._command_processor.process(commands, messages)
-        self.process_end_of_round()
 
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
@@ -198,6 +203,10 @@ class Game:
 
     def get_cell_at(self, location: Location) -> Cell:
         return self.world.get_cell_at(location)
+
+    def serialize_team_info(self) -> None:
+        self.game_pb.add_team_info(Team.GOOBS, self.team_info)
+        self.game_pb.add_team_info(Team.VOIDSEERS, self.team_info)
 
     def get_cell_info_at(self, location: Location) -> CellInfo:
         cell = self.world.get_cell_at(location)

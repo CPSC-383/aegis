@@ -14,15 +14,14 @@ def think() -> None:
 
     # Fetch the cell at the agent's current location. If the location is outside
     # the world's bounds, return a default move action and end the turn.
-    cell = get_cell_at(get_location())
+    cell = get_cell_info_at(get_location())
     if cell is None:
         send(Move(Direction.CENTER))
         return
 
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and end the turn.
-    top_layer = cell.get_top_layer()
-    if isinstance(top_layer, Survivor):
+    if isinstance(cell.top_layer, Survivor):
         send(Save())
         return
 
