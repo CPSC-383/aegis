@@ -18,7 +18,6 @@ type AegisAPI = {
       rounds: string,
       amount: string,
       world: string,
-      group: string,
       agent: string,
       aegisPath: string,
       config: string,

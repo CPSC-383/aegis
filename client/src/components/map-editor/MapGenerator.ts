@@ -4,7 +4,7 @@ import {
   Location,
   Spawn,
   SpawnZoneTypes,
-  Stack,
+  Layers,
   WorldMap
 } from '@/core/world'
 import { aegisAPI } from '@/services'
@@ -26,7 +26,7 @@ interface WorldFileData {
     killer_cells: Location[]
     charging_cells: Location[]
   }
-  stacks: Stack[]
+  stacks: Layers[]
 }
 
 class WorldValidator {
@@ -66,7 +66,7 @@ class WorldValidator {
   }
 
   private static hasSurvivors(world: WorldMap): boolean {
-    return world.stacks.some((stack: Stack) =>
+    return world.stacks.some((stack: Layers) =>
       stack.contents.some((content: CellContent) => content.type === 'sv')
     )
   }

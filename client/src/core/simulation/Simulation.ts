@@ -1,16 +1,14 @@
 import {
   AgentInfoDict,
-  CellDict,
   GroupStats,
-  RoundData,
   SimulationStateManager,
   StatsCalculator,
   UIWorldStats,
   WorldDataManager
 } from '@/core/simulation'
-import { CellContent, SpawnZoneData, WorldMap } from '@/core/world'
+import { SpawnZoneData, WorldMap } from '@/core/world'
 import { EventType, dispatchEvent } from '@/events'
-import { RoundUpdate } from '@/generated/aegis'
+import { Cell, Event, WorldObject } from 'aegis-schema'
 
 export class Simulation {
   private stateManager: SimulationStateManager
@@ -30,36 +28,20 @@ export class Simulation {
   }
 
   /**
-   * Adds a new protobuf round update event to the simulation.
-   * @param {RoundUpdate} roundUpdate - The protobuf round update event to be added.
-   */
-  addProtobufEvent(roundUpdate: RoundUpdate): void {
-    if (!roundUpdate.world) {
-      console.warn('RoundUpdate missing world data')
-      return
-    }
-
-    // Use protobuf types directly - no conversion needed!
-    const roundData: RoundData = {
-      eventType: 'RoundUpdate',
-      round: roundUpdate.round,
-      afterWorld: roundUpdate.world, // Direct protobuf WorldState
-      groupsData: roundUpdate.groups // Direct protobuf Groups
-    }
-
-    this.addEvent(roundData)
-  }
-
-  /**
    * Adds a new round event to the simulation.
-   * @param {RoundData} event - The round event to be added.
+   * @param {Event} event - The event wrapper.
    */
-  addEvent(event: RoundData): void {
-    if (!event.eventType.startsWith('Round')) return
-
-    this.worldData.addRound(event)
-    this.stateManager.incrementMaxRounds()
-    dispatchEvent(EventType.RENDER, {})
+  addEvent(event: Event): void {
+    switch (event.event.oneofKind) {
+      case "gameHeader":
+        throw new Error("Cannot add another GameHeader event.")
+      case "round":
+        this.worldData.addRound(event.event.round)
+        this.stateManager.incrementMaxRounds()
+        return
+      case "gameFooter":
+        return
+    }
   }
 
   /**
@@ -110,13 +92,13 @@ export class Simulation {
   }
 
   /**
-   * Retrieves information about a cell at a specific location.
+   * Retrieves the cell at the given coordinates.
    * @param {number} x - The x-coordinate of the cell.
    * @param {number} y - The y-coordinate of the cell.
-   * @returns {CellDict} Information about the cell.
+   * @returns {Cell} The cell.
    */
-  getInfoAtCell(x: number, y: number): CellDict {
-    return this.worldData.getCellInfo(x, y)
+  getCell(x: number, y: number): Cell {
+    return this.worldMap.cells[y + x * this.worldMap.width]
   }
 
   /**
@@ -125,7 +107,7 @@ export class Simulation {
    * @param {number} y - The y-coordinate of the cell.
    * @returns {AgentInfoDict[]} List of agents at the cell location.
    */
-  getAgentsAtCell(x: number, y: number): AgentInfoDict[] {
+  getAgentsAtCell(x: number, y: number): number[] {
     return this.worldData.getAgentsAtLocation(x, y)
   }
 
@@ -145,7 +127,7 @@ export class Simulation {
    * @param {number} y - The y-coordinate of the cell.
    * @returns {CellContent[]} Stack layers at the cell location.
    */
-  getLayersAtCell(x: number, y: number): CellContent[] {
+  getLayersAtCell(x: number, y: number): WorldObject[] {
     return this.worldData.getLayersAtCell(x, y)
   }
 

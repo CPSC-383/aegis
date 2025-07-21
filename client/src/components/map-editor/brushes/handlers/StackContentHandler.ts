@@ -2,7 +2,7 @@ import {
   CellContent,
   Location,
   RubbleInfo,
-  Stack,
+  Layers,
   SurvivorInfo,
   WorldMap
 } from '@/core/world'
@@ -57,7 +57,7 @@ class StackContentHandler extends BrushHandler {
     this.addStackContent(stack)
   }
 
-  private addStackContent(stack: Stack): void {
+  private addStackContent(stack: Layers): void {
     const { spawnCells } = this.worldMap
     const key = JSON.stringify(stack.cell_loc)
 

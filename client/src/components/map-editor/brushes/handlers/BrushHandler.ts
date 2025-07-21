@@ -1,4 +1,4 @@
-import { Location, Stack, WorldMap } from '@/core/world'
+import { Location, Layers, WorldMap } from '@/core/world'
 
 abstract class BrushHandler {
   protected worldMap: WorldMap
@@ -14,7 +14,7 @@ abstract class BrushHandler {
     )
   }
 
-  protected getStack(tile: Location): Stack | undefined {
+  protected getStack(tile: Location): Layers | undefined {
     return this.worldMap.stacks.find(
       (stack) => stack.cell_loc.x === tile.x && stack.cell_loc.y === tile.y
     )

@@ -4,7 +4,7 @@ import goobSpriteSheetSrc from '@/assets/goobs/goob-sprite-Sheet.png'
 
 export const drawAgent = (
   ctx: CanvasRenderingContext2D,
-  gid: number,
+  id: number,
   x: number,
   y: number,
   agentSize: number
@@ -16,7 +16,7 @@ export const drawAgent = (
   if (!goobSpriteSheet) return
 
   // gid 1 gets the first column, gid 2 gets the second column, etc.
-  const goobSpritesheetX = (gid - 1) % 8
+  const goobSpritesheetX = (id - 1) % 8
   const goobSpritesheetY = 0
   const goobWidth = 32
   const goobHeight = 32

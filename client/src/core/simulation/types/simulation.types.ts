@@ -1,5 +1,4 @@
 import {
-  AgentID,
   Location,
   GroupData,
   Agent,

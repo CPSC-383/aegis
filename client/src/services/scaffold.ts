@@ -16,7 +16,6 @@ export type Scaffold = {
     rounds: string,
     amount: string,
     world: string,
-    group: string,
     agent: string,
     config: string,
     debug: boolean
@@ -52,7 +51,6 @@ export function createScaffold(): Scaffold {
     rounds: string,
     amount: string,
     world: string,
-    group: string,
     agent: string,
     config: string,
     debug: boolean
@@ -68,7 +66,6 @@ export function createScaffold(): Scaffold {
       rounds,
       amount,
       world,
-      group,
       agent,
       aegisPath,
       config,

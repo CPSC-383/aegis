@@ -1,4 +1,4 @@
-import { Location as ProtobufLocation } from '@/generated/aegis'
+import { Location as ProtobufLocation, WorldObject } from 'aegis-schema'
 
 export type Size = {
   width: number
@@ -19,12 +19,6 @@ export type CellContent = {
   arguments: {
     [key in Arguments]?: number
   }
-}
-
-export type Stack = {
-  cell_loc: Location
-  move_cost: number
-  contents: CellContent[]
 }
 
 export type Spawn = {

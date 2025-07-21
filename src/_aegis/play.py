@@ -12,6 +12,7 @@ from .world_proto import serialize_world
 
 def run(args: Args) -> None:
     game_pb = GamePb()
+    ws_server = WebSocketServer(wait_for_client=args.client)
     if args.agent1 is None and args.agent2 is None:
         error = "At least one agent must be provided"
         raise ValueError(error)
@@ -24,11 +25,11 @@ def run(args: Args) -> None:
     world.rounds = args.rounds
 
     game = Game(args, world, game_pb)
-    ws_server = WebSocketServer(wait_for_client=args.client)
 
     LOGGER.info("========== AEGIS SIMULATION START ==========")
     LOGGER.info("Running %d rounds", world.rounds)
     print()  # noqa: T201
+    ws_server.start()
 
     game_pb.make_game_header(world, ws_server)
     while game.running:

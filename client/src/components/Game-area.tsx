@@ -5,7 +5,6 @@ import { getImage, whatBucket } from '@/utils/util'
 import { useEffect, useRef, useState } from 'react'
 
 import layerSpriteSheetSrc from '@/assets/layers-spritesheet-Sheet.png'
-import { AgentInfoDict } from '@/core/simulation'
 import { Size } from '@/core/world'
 import { drawAgent, renderCoords } from '@/utils/renderUtils'
 
@@ -38,7 +37,7 @@ function GameArea(): JSX.Element {
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
-    const cellMap = new Map<string, AgentInfoDict[]>()
+    const cellMap = new Map<string, number[]>()
     const size = simulation.worldMap.size
 
     for (let x = 0; x < size.width; x++) {
@@ -68,7 +67,7 @@ function GameArea(): JSX.Element {
         const drawX = coords.x + col * agentSize
         const drawY = coords.y + row * agentSize
 
-        drawAgent(ctx, agent.agentId!.gid, drawX, drawY, agentSize)
+        drawAgent(ctx, 1, drawX, drawY, agentSize)
       })
     })
   }
@@ -88,17 +87,17 @@ function GameArea(): JSX.Element {
         const coords = renderCoords(x, y, size)
         ctx.clearRect(coords.x, coords.y, 1, 1)
 
-        const cellLayers = simulation.getLayersAtCell(x, y)
-        if (!cellLayers.length) continue
-        const layer = cellLayers[cellLayers.length - 1]
+        const layers = simulation.getLayersAtCell(x, y)
+        if (!layers.length) continue
+        const layer = layers[layers.length - 1]
 
         let rowInSheet = 0
         let colInSheet = 0
 
-        if (layer.type.startsWith('rb')) {
+        if (layer.object.oneofKind == "rubble") {
           const minMoveCost = simulation.worldMap.minMoveCost
           const maxMoveCost = simulation.worldMap.maxMoveCost
-          const moveCost = simulation.getInfoAtCell(x, y).move_cost
+          const moveCost = simulation.getCell(x, y).moveCost
           // whichShade should be between 0 and shadesOfBrown.length i hope
           const whichShade = whatBucket(
             minMoveCost,
@@ -108,10 +107,7 @@ function GameArea(): JSX.Element {
           )
           rowInSheet = 1
           colInSheet = whichShade
-        } else if (layer.type.startsWith('svg')) {
-          rowInSheet = 5
-          colInSheet = 0
-        } else if (layer.type.startsWith('sv')) {
+        } else if (layer.object.oneofKind == "survivor") {
           rowInSheet = 4
           colInSheet = 0
         }
@@ -130,7 +126,7 @@ function GameArea(): JSX.Element {
 
         // draw survivor sprites on edge of cell if there are any in the layer
         const numOfSurvivorsInCellLayers = Math.min(
-          cellLayers.filter((layer) => layer.type === 'sv').length,
+          layers.filter((layer) => layer.object.oneofKind === 'survivor').length,
           5
         )
 

@@ -1,20 +1,19 @@
-import { AgentInfoDict, CellDict, Groups, Round, RoundData } from '@/core/simulation/'
-import { CellContent, SpawnZoneData, WorldMap } from '@/core/world'
-import { Agent, Cell, WorldState } from '@/generated/aegis'
+import { AgentInfoDict, CellDict, Groups } from '@/core/simulation/'
+import { WorldMap } from '@/core/world'
+import { World, Round, WorldObject, Location, Cell } from 'aegis-schema'
 
 export class WorldDataManager {
-  private currentRoundData?: WorldState
-  private currentGroupsData?: Groups
+  private currentWorld?: World
   private rounds: Round[] = []
 
-  constructor(private readonly worldMap: WorldMap) {}
+  constructor(private readonly worldMap: WorldMap) { }
 
   /**
    * Adds a new round of data to the rounds list.
-   * @param {RoundData} roundData - The data representing the new round.
+   * @param {Round} round - The data representing the new round.
    */
-  addRound(roundData: RoundData): void {
-    this.rounds.push([roundData.afterWorld!, roundData.groupsData])
+  addRound(round: Round): void {
+    this.rounds.push(round)
   }
 
   /**
@@ -23,20 +22,17 @@ export class WorldDataManager {
    */
   updateCurrentRoundData(roundIndex: number): void {
     if (roundIndex < 0 || roundIndex >= this.rounds.length) return
-    ;[this.currentRoundData, this.currentGroupsData] = this.rounds[roundIndex]
+    this.currentWorld = this.rounds[roundIndex].world!
   }
 
   /**
-   * Retrieves information about a cell at the given coordinates.
+   * Retrieves the cell at the given coordinates.
    * @param {number} x - The x-coordinate of the cell.
    * @param {number} y - The y-coordinate of the cell.
-   * @returns {CellDict} The cell data dictionary.
+   * @returns {Cell} The cell.
    */
-  getCellInfo(x: number, y: number): CellDict {
-    if (!this.currentRoundData) {
-      return this.getInitialCellInfo(x, y)
-    }
-    return this.getCurrentCellInfo(x, y)
+  getCell(x: number, y: number): Cell {
+    return this.worldMap.cells[y + x * this.worldMap.width]
   }
 
   /**
@@ -97,63 +93,9 @@ export class WorldDataManager {
    * @param {number} y - The y-coordinate of the cell.
    * @returns {CellContent[]} The cell contents at the cell.
    */
-  getLayersAtCell(x: number, y: number): CellContent[] {
-    if (!this.currentRoundData) {
-      return this.getInitialLayers(x, y)
-    }
-    return this.getCurrentLayers(x, y)
-  }
-
-  /**
-   * Retrieves initial state information about the initial stack layers at a specific cell.
-   * @param {number} x - The x-coordinate of the cell.
-   * @param {number} y - The y-coordinate of the cell.
-   * @returns {CellContent[]} The initial cell contents.
-   */
-  private getInitialLayers(x: number, y: number): CellContent[] {
-    const stack = this.worldMap.stacks.find(
-      (g) => g.cell_loc.x === x && g.cell_loc.y === y
-    )!
-    return stack.contents.slice().reverse()
-  }
-
-  /**
-   * Retrieves current state information about the stack layers at a specific cell.
-   * @param {number} x - The x-coordinate of the cell.
-   * @param {number} y - The y-coordinate of the cell.
-   * @returns {CellContent[]} The current cell contents.
-   */
-  private getCurrentLayers(x: number, y: number): CellContent[] {
-    // Find the protobuf cell at the given coordinates
-    const protobufCell = this.currentRoundData!.cells.find(
-      (cell: Cell) => cell.location!.x === x && cell.location!.y === y
-    )
-
-    if (!protobufCell) {
-      return []
-    }
-
-    const layers: CellContent[] = []
-
-    // Convert the top layer to CellContent format
-    if (protobufCell.topLayer.oneofKind === 'survivor') {
-      layers.push({
-        type: 'sv',
-        arguments: {
-          energy_level: 100 // Default energy level since not available in protobuf
-        }
-      })
-    } else if (protobufCell.topLayer.oneofKind === 'rubble') {
-      layers.push({
-        type: 'rb',
-        arguments: {
-          energy_required: 1, // Default energy required since not available in protobuf
-          agents_required: 1 // Default agents required since not available in protobuf
-        }
-      })
-    }
-
-    return layers
+  getLayersAtCell(x: number, y: number): WorldObject[] {
+    const cell = this.worldMap.cells[y + x * this.worldMap.width]
+    return cell.layers.slice().reverse()
   }
 
   /**
@@ -162,12 +104,9 @@ export class WorldDataManager {
    * @param {number} y - The y-coordinate of the cell.
    * @returns {AgentInfoDict[]} An array of agents at the cell.
    */
-  getAgentsAtLocation(x: number, y: number): AgentInfoDict[] {
-    return (
-      this.currentRoundData?.agents.filter(
-        (agent: Agent) => agent.location!.x === x && agent.location!.y === y
-      ) || []
-    )
+  getAgentsAtLocation(x: number, y: number): number[] {
+    const cell = this.currentWorld!.cells[y + x * this.worldMap.width]
+    return cell.agents
   }
 
   /**
@@ -177,7 +116,7 @@ export class WorldDataManager {
    * @returns {AgentInfoDict | undefined} The agent information, or undefined if not found.
    */
   getAgentFromIds(id: number, gid: number): AgentInfoDict | undefined {
-    return this.currentRoundData?.agents.find(
+    return this.currentWorld?.agents.find(
       (agent: Agent) => agent.agentId!.id === id && agent.agentId!.gid === gid
     )
   }
@@ -188,7 +127,7 @@ export class WorldDataManager {
    * @param {number} y - The y-coordinate of the cell.
    * @returns {SpawnZoneData | undefined} Spawn zone data or undefined.
    */
-  getSpawnInfo(x: number, y: number): SpawnZoneData | undefined {
+  getSpawnInfo(x: number, y: number): Location | undefined {
     if (!this.currentRoundData) {
       const key = JSON.stringify({ x, y })
       return this.worldMap.spawnCells.get(key)

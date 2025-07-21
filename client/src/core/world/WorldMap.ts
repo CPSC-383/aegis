@@ -4,12 +4,11 @@ import {
   Size,
   SpawnZoneData,
   SpawnZoneTypes,
-  Stack
 } from '@/core/world'
-import { WorldState } from '@/generated/aegis'
 import { shadesOfBlue, shadesOfBrown } from '@/types'
 import { renderCoords } from '@/utils/renderUtils'
 import { whatBucket } from '@/utils/util'
+import { World, Cell, CellType } from 'aegis-schema'
 
 // Interface for world data structure
 interface WorldData {
@@ -26,7 +25,7 @@ interface WorldData {
     type: string
     gid?: number
   }>
-  stacks: Stack[]
+  stacks: Cell[]
   cell_types: {
     fire_cells: Location[]
     killer_cells: Location[]
@@ -58,8 +57,8 @@ export class WorldMap {
     public readonly fireCells: Location[],
     public readonly killerCells: Location[],
     public readonly chargingCells: Location[],
-    public readonly spawnCells: Map<string, SpawnZoneData>,
-    public readonly stacks: Stack[],
+    public readonly spawnCells: Location[],
+    public readonly cells: Cell[],
     public readonly initialAgentEnergy: number,
     public minMoveCost: number,
     public maxMoveCost: number
@@ -76,28 +75,43 @@ export class WorldMap {
    * @param worldState - Protobuf WorldState data.
    * @returns A WorldMap instance.
    */
-  static fromProtobufWorldState(worldState: WorldState): WorldMap {
-    // Convert protobuf cells to stacks directly
-    const stacks: Stack[] = worldState.cells.map((cell) => ({
-      cell_loc: { x: cell.location!.x, y: cell.location!.y },
-      move_cost: cell.moveCost,
-      contents: [] // Will need to be populated based on cell contents
-    }))
+  static fromPb(world: World): WorldMap {
+    const chargingCells: Location[] = []
+    const killerCells: Location[] = []
+    const spawnCells: Location[] = []
 
-    const moveCosts = stacks.map((stack) => stack.move_cost)
+    for (const cell of world.cells) {
+      const { loc, type } = cell
+
+      switch (type) {
+        case CellType.CHARGING:
+          chargingCells.push(loc!)
+          break
+        case CellType.KILLER:
+          killerCells.push(loc!)
+          break
+        case CellType.SPAWN:
+          spawnCells.push(loc!)
+          break
+        default:
+          break
+      }
+    }
+
+    const moveCosts = world.cells.map((cell) => cell.moveCost)
 
     // For now, create a basic world map with the protobuf data
     // This will need to be enhanced based on the actual world structure
     return new WorldMap(
-      worldState.width,
-      worldState.height,
-      0, // seed - not available in protobuf
-      [], // fireCells - not available in protobuf
-      [], // killerCells - not available in protobuf
-      [], // chargingCells - not available in protobuf
-      new Map(), // spawnCells - not available in protobuf
-      stacks,
-      100, // initialAgentEnergy - default value
+      world.width,
+      world.height,
+      world.seed,
+      [], // fireCells  
+      killerCells,
+      chargingCells,
+      spawnCells,
+      world.cells,
+      world.startEnergy,
       Math.min(...moveCosts),
       Math.max(...moveCosts)
     )
@@ -125,8 +139,8 @@ export class WorldMap {
       })
     )
 
-    const stacks: Stack[] = data.stacks
-    const moveCosts = stacks.map((stack) => stack.move_cost)
+    const cells: Cell[] = data.stacks
+    const moveCosts = cells.map((cell) => cell.moveCost)
 
     return new WorldMap(
       size.width,
@@ -151,15 +165,18 @@ export class WorldMap {
    * @returns A WorldMap instance with default parameters.
    */
   static fromParams(width: number, height: number, initialEnergy: number): WorldMap {
-    const stacks: Stack[] = []
+    const cells: Cell[] = []
 
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
-        stacks.push({
-          cell_loc: { x, y },
-          move_cost: 1,
-          contents: []
+        const cell = Cell.create({
+          loc: { x, y },
+          moveCost: 1,
+          type: CellType.NORMAL,
+          agents: [],
+          layers: [],
         })
+        cells.push(cell)
       }
     }
 
@@ -170,8 +187,8 @@ export class WorldMap {
       [],
       [],
       [],
-      new Map(),
-      stacks,
+      [],
+      cells,
       initialEnergy,
       1,
       1
@@ -200,8 +217,8 @@ export class WorldMap {
   isEmpty(): boolean {
     return (
       Object.values(this.cellTypes).every((type) => type.cells.length === 0) &&
-      this.spawnCells.size === 0 &&
-      this.stacks.every((stack) => stack.contents.length === 0 && stack.move_cost === 1)
+      this.spawnCells.length === 0 &&
+      this.cells.every((cell) => cell.layers.length === 0 && cell.moveCost === 1)
     )
   }
 
@@ -217,7 +234,7 @@ export class WorldMap {
    * Updates the minimum and maximum movement costs for cells in the map.
    */
   updateMinMaxMoveCosts(): void {
-    const moveCosts = this.stacks.map((stack) => stack.move_cost)
+    const moveCosts = this.cells.map((cell) => cell.moveCost)
     this.minMoveCost = Math.min(...moveCosts)
     this.maxMoveCost = Math.max(...moveCosts)
   }
@@ -256,15 +273,15 @@ export class WorldMap {
   private drawTerrain(ctx: CanvasRenderingContext2D, thickness: number): void {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
-        const cell = this.stacks.find(
-          (cell) => cell.cell_loc.x === x && cell.cell_loc.y === y
+        const cell = this.cells.find(
+          (cell) => cell.loc!.x === x && cell.loc!.y === y
         )
         if (!cell) continue
 
         const opacity = whatBucket(
           this.minMoveCost,
           this.maxMoveCost,
-          cell.move_cost,
+          cell.moveCost,
           shadesOfBrown.length
         )
 
@@ -289,15 +306,15 @@ export class WorldMap {
    */
   private drawSpecialCells(ctx: CanvasRenderingContext2D, thickness: number): void {
     for (const loc of this.chargingCells) {
-      const cell = this.stacks.find(
-        (cell) => cell.cell_loc.x === loc.x && cell.cell_loc.y === loc.y
+      const cell = this.cells.find(
+        (cell) => cell.loc!.x === loc.x && cell.loc!.y === loc.y
       )
       if (!cell) continue
 
       const opacity = whatBucket(
         this.minMoveCost,
         this.maxMoveCost,
-        cell.move_cost,
+        cell.moveCost,
         shadesOfBlue.length
       )
 
@@ -334,9 +351,8 @@ export class WorldMap {
    * @param ctx - Canvas rendering context.
    */
   private drawSpawnZones(ctx: CanvasRenderingContext2D): void {
-    for (const [spawnPoint] of this.spawnCells) {
-      const { x, y } = JSON.parse(spawnPoint)
-      const coords = renderCoords(x, y, this.size)
+    for (const spawn of this.spawnCells) {
+      const coords = renderCoords(spawn.x, spawn.y, this.size)
 
       ctx.save()
 

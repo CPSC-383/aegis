@@ -61,24 +61,23 @@ class ElectronApp {
       return this.handleElectronAPI(command, ...args)
     })
 
-    ipcMain.handle('aegis_child_process.spawn', async (event, ...args) => {
+    ipcMain.handle('aegis_child_process.spawn', async (_, ...args) => {
       return await this.spawnAegisProcess(
         args[0], // rounds
         args[1], // amount
         args[2], // world
-        args[3], // group
-        args[4], // agent
-        args[5], // aegis path
-        args[6], // config
-        args[7] // debug
+        args[3], // agent
+        args[4], // aegis path
+        args[5], // config
+        args[6] // debug
       )
     })
 
-    ipcMain.handle('aegis_child_process.kill', async (event, pid) => {
+    ipcMain.handle('aegis_child_process.kill', async (_, pid) => {
       this.killProcess(pid)
     })
 
-    ipcMain.handle('read_config_presets', async (event, aegisPath, context) => {
+    ipcMain.handle('read_config_presets', async (_, aegisPath, context) => {
       return this.readConfigPresets(aegisPath, context)
     })
   }
@@ -119,11 +118,10 @@ class ElectronApp {
           args[0], // rounds
           args[1], // amount
           args[2], // world
-          args[3], // group
-          args[4], // agent
-          args[5], // aegis path
-          args[6], // config
-          args[7] // debug
+          args[3], // agent
+          args[4], // aegis path
+          args[5], // config
+          args[6] // debug
         )
       case 'aegis_child_process.kill':
         return this.killProcess(args[0])
@@ -176,7 +174,6 @@ class ElectronApp {
     rounds: string,
     amount: string,
     world: string,
-    group: string,
     agent: string,
     aegisPath: string,
     config: string,
@@ -185,14 +182,12 @@ class ElectronApp {
     const procArgs = [
       '--amount',
       amount,
-      '--agent',
+      '--agent2',
       `agents/${agent}/main.py`,
       '--world',
       `worlds/${world}`,
       '--rounds',
       rounds,
-      '--group',
-      group,
       '--config',
       config,
       '--client',

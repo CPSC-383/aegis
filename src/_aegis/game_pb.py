@@ -51,7 +51,10 @@ class GamePb:
             pb_team_info = pb_round.team_info.add()
             pb_team_info.CopyFrom(team_info)
 
-        binary_string = pb_round.SerializeToString()
+        event = Event()
+        event.round.CopyFrom(pb_round)
+
+        binary_string = event.SerializeToString()
         self.ws_server.add_event(binary_string)
         self.clear_round()
 

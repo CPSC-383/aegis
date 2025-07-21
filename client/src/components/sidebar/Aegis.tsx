@@ -23,14 +23,13 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   const { worlds, agents, configPresets, startSimulation, killSim } = scaffold
   const [world, setWorld] = useLocalStorage<string>('aegis_world', '')
   const [rounds, setRounds] = useLocalStorage<number>('aegis_rounds', 0)
-  const [group, setGroup] = useLocalStorage<string>('aegis_group', '')
   const [agent, setAgent] = useLocalStorage<string>('aegis_agent', '')
   const [config, setConfig] = useLocalStorage<string>('aegis_config', '')
   const [debug] = useLocalStorage<boolean>('aegis_debug_mode', false)
 
   const isButtonDisabled = useMemo(
-    () => !world || !rounds || !group || !agent || !config,
-    [world, rounds, group, agent, config]
+    () => !world || !rounds || !agent || !config,
+    [world, rounds, agent, config]
   )
 
   const handleRoundBlur = (e: React.FocusEvent<HTMLInputElement>): void => {
@@ -39,11 +38,6 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       const newValue = Math.max(1, value)
       setRounds(newValue)
     }
-  }
-
-  const handleGroupName = (value: string): void => {
-    // don't allow space characters
-    setGroup(value.replace(/\s/g, ''))
   }
 
   return (
@@ -101,15 +95,6 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       </div>
 
       <div>
-        <Label>Group Name</Label>
-        <Input
-          value={group}
-          onChange={(e) => handleGroupName(e.target.value)}
-          placeholder="Enter group name"
-        />
-      </div>
-
-      <div>
         <Label>Config Preset</Label>
         <Select value={config} onValueChange={(value) => setConfig(value)}>
           <SelectTrigger>
@@ -140,7 +125,6 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
                 rounds.toString(),
                 amount.toString(),
                 world,
-                group,
                 agent,
                 config,
                 debug

@@ -31,7 +31,6 @@ const electronAPI = {
       rounds: string,
       amount: string,
       world: string,
-      group: string,
       agent: string,
       aegisPath: string,
       config: string,
@@ -42,7 +41,6 @@ const electronAPI = {
         rounds,
         amount,
         world,
-        group,
         agent,
         aegisPath,
         config,
@@ -50,9 +48,9 @@ const electronAPI = {
       ),
     kill: (pid: string) => ipcRenderer.invoke('aegis_child_process.kill', pid),
     onStdout: (callback: (data: string) => void) =>
-      ipcRenderer.on('aegis_child_process.stdout', (event, data) => callback(data)),
+      ipcRenderer.on('aegis_child_process.stdout', (_, data) => callback(data)),
     onStderr: (callback: (data: string) => void) =>
-      ipcRenderer.on('aegis_child_process.stderr', (event, data) => callback(data)),
+      ipcRenderer.on('aegis_child_process.stderr', (_, data) => callback(data)),
     onExit: (callback: () => void) =>
       ipcRenderer.on('aegis_child_process.exit', () => callback())
   },
