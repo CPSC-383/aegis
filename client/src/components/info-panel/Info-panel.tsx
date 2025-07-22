@@ -1,7 +1,6 @@
 import { useAppContext } from '@/contexts/AppContext'
 import { AgentInfoDict, CellDict } from '@/core/game'
 // import { CellContent, SpawnZoneData, SpawnZoneTypes } from '@/core/world'
-import { EventType, listenEvent } from '@/events'
 import { useCallback, useEffect, useState } from 'react'
 import AgentPanel from './Agent-panel'
 import CellPanel from './Cell-panel'
@@ -43,17 +42,6 @@ const InfoPanel = (): JSX.Element => {
     gatherData()
     setSelectedAgent(undefined)
   }, [simulation, selectedCell, isEditor, gatherData])
-
-  // This will update the cell every round (only for normal simulation, not editor)
-  listenEvent(
-    EventType.RENDER,
-    () => {
-      if (!isEditor) {
-        gatherData()
-      }
-    },
-    [gatherData, isEditor]
-  )
 
   if (!simulation || !selectedCell) {
     return <div className="p-4 mx-auto">Select a cell when a map is loaded!</div>

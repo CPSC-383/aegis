@@ -1,4 +1,3 @@
-import { EventType, dispatchEvent } from '@/events'
 import { useCallback, useState } from 'react'
 
 // Forces a re-render
@@ -21,9 +20,6 @@ export function loadImage(path: string): Promise<HTMLImageElement> {
     img.onload = () => {
       loadedImages.set(path, img)
       resolve(img)
-
-      dispatchEvent(EventType.RENDER_STACK, {})
-      dispatchEvent(EventType.RENDER, {})
     }
     img.onerror = (error) => {
       reject(error)

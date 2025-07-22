@@ -3,7 +3,7 @@ import { Runner } from "@/core/Runner";
 import { ListenerKey, subscribe } from "@/core/Listeners";
 import Game from "@/core/Game";
 
-export function useGame(): Game | undefined {
+export default function useGame(): Game | undefined {
   const [game, setGame] = useState(Runner.game);
 
   useEffect(() => {

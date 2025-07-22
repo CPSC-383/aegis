@@ -5,92 +5,20 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import { useAppContext } from '@/contexts/AppContext'
-import { EventType, listenEvent } from '@/events'
-import { useForceUpdate } from '@/utils/util'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Maximize2, Minimize2, Pause, Play, SkipBack, SkipForward } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Timeline from './Timeline'
+import useRound from '@/hooks/useRound'
+import useControl from '@/hooks/useControl'
+import { Runner } from '@/core/Runner'
 
-const ControlsBar = (): JSX.Element => {
-  const ROUND_INTERVAL_DURATION = 200
-  const { appState, setAppState } = useAppContext()
-  const { game, simPaused } = appState
+function ControlsBar(): JSX.Element | null {
+  const paused = useControl()
+  const round = useRound()
   const [isMinimized, setIsMinimized] = useState<boolean>(false)
 
-  const togglePlayPause = (paused: boolean): void => {
-    if (!game) return
-    setAppState((prevState) => ({
-      ...prevState,
-      simPaused: paused
-    }))
-  }
-
-  const handleRound = (step: number): void => {
-    if (!game) return
-
-    const currentRound = game.currentRound.round
-    const maxRounds = game.maxRound
-    const newRound = currentRound + step
-
-    // Check bounds before jumping
-    if (newRound >= 0 && newRound <= maxRounds) {
-      // game.jumpToRound(newRound)
-    }
-  }
-
-  const handleKeyPress = (e: KeyboardEvent): void => {
-    switch (e.key.toLowerCase()) {
-      case ' ':
-        e.preventDefault()
-        togglePlayPause(!simPaused)
-        break
-      case 'arrowleft':
-        handleRound(-1)
-        break
-      case 'arrowright':
-        handleRound(1)
-        break
-      case 'm':
-        setIsMinimized((prev) => !prev)
-        break
-      default:
-        break
-    }
-  }
-
-  useEffect(() => {
-    if (!game) return
-    window.addEventListener('keydown', handleKeyPress)
-    return (): void => {
-      window.removeEventListener('keydown', handleKeyPress)
-    }
-  }, [game, simPaused])
-
-  useEffect(() => {
-    if (!game || simPaused) return
-    const roundInterval = setInterval(() => {
-      // game.renderNextRound()
-      if (game.currentRound.isEnd()) {
-        togglePlayPause(true)
-      }
-    }, ROUND_INTERVAL_DURATION)
-    return (): void => {
-      clearInterval(roundInterval)
-    }
-  }, [game, simPaused])
-
-  listenEvent(EventType.RENDER, useForceUpdate())
-
-  // If maxRounds is -1, this means we are in the editor.
-  // Don't show the control bar when there isn't a simulation as well.
-  if (!game || game.maxRound === -1) return <></>
-
-  const currentRound = game.currentRound.round
-  const maxRounds = game.maxRound
-  const canGoBack = currentRound > 0
-  const canGoForward = currentRound < maxRounds
+  if (!round) return null
 
   return (
     <TooltipProvider>
@@ -162,8 +90,8 @@ const ControlsBar = (): JSX.Element => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={(): void => handleRound(-1)}
-                      disabled={!game || !canGoBack}
+                      onClick={(): void => Runner.stepRound(-1)}
+                      disabled={!round}
                     >
                       <SkipBack className="h-4 w-4" />
                     </Button>
@@ -178,10 +106,10 @@ const ControlsBar = (): JSX.Element => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={(): void => togglePlayPause(!simPaused)}
-                      disabled={!game}
+                      onClick={(): void => Runner.setPaused(!paused)}
+                      disabled={!round}
                     >
-                      {simPaused ? (
+                      {paused ? (
                         <Play className="h-4 w-4" />
                       ) : (
                         <Pause className="h-4 w-4" />
@@ -189,7 +117,7 @@ const ControlsBar = (): JSX.Element => {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{simPaused ? 'Play' : 'Pause'}</p>
+                    <p>{Runner.paused ? 'Play' : 'Pause'}</p>
                   </TooltipContent>
                 </Tooltip>
 
@@ -198,8 +126,8 @@ const ControlsBar = (): JSX.Element => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={(): void => handleRound(1)}
-                      disabled={!game || !canGoForward}
+                      onClick={(): void => Runner.stepRound(1)}
+                      disabled={!round}
                     >
                       <SkipForward className="h-4 w-4" />
                     </Button>

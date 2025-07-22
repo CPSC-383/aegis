@@ -16,12 +16,31 @@ export default class Round {
 
   public startRound(round: schema.Round | null): void {
     this.agents.processRound(this.currentRound)
+
     this.round += 1
 
     this.world.applyRound(round)
 
     this.turn = 0
     this.currentRound = round
+  }
+
+  public jumpToTurn(turn: number): void {
+    if (!this.currentRound) return
+
+    while (this.turn < turn) this.stepTurn()
+  }
+
+  private stepTurn(): void {
+    const turn = this.currentRound!.turns[this.turn]
+    if (!turn) return
+
+    this.agents.applyTurn(turn)
+    this.turn += 1
+  }
+
+  get turnsLength(): number {
+    return this.currentRound?.turns.length ?? 0
   }
 
   public copy(): Round {

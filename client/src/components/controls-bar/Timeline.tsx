@@ -1,5 +1,4 @@
 import { MouseEvent } from 'react'
-import { useAppContext } from '@/contexts/AppContext'
 import {
   Tooltip,
   TooltipContent,
@@ -7,25 +6,23 @@ import {
   TooltipTrigger
 } from '@/components/ui/tooltip'
 import { Progress } from '@/components/ui/progress'
+import { TIMELINE_WIDTH } from "@/utils/constants"
+import useRound from '@/hooks/useRound'
+import { Runner } from '@/core/Runner'
 
 function Timeline() {
-  const { appState } = useAppContext()
-  const { simulation } = appState
-  const maxRounds = simulation ? simulation.getMaxRounds() : 0
-  const playableRounds = Math.max(0, maxRounds - 1)
-  const TIMELINE_WIDTH = 300
+  const round = useRound()
 
   const handleSeek = (e: MouseEvent<HTMLDivElement>) => {
-    if (!simulation) return
+    if (!round) return
 
     const rect = e.currentTarget.getBoundingClientRect()
     const x = e.clientX - rect.left
-    const round = Math.floor((x / TIMELINE_WIDTH) * (playableRounds + 1))
-    const clampedRound = Math.max(0, Math.min(round, playableRounds))
-    simulation.jumpToRound(clampedRound)
+    const progress = Math.max(0, Math.min(1, x / TIMELINE_WIDTH))
+    Runner.jumpToRound(Math.floor(progress * (round.game.maxRound - 1) + 1))
   }
 
-  if (!simulation) {
+  if (!round) {
     return (
       <div
         className="text-xs text-muted-foreground flex items-center justify-center"
@@ -36,8 +33,8 @@ function Timeline() {
     )
   }
 
-  const round = simulation.getRoundNumber()
-  const progressPercentage = playableRounds > 0 ? (round / playableRounds) * 100 : 0
+  const maxRound = round.game.maxRound
+  const progressPercentage = maxRound > 0 ? (round.round / maxRound) * 100 : 0
 
   return (
     <TooltipProvider>
@@ -45,7 +42,7 @@ function Timeline() {
         <div className="flex justify-center items-center mb-1">
           <span className="text-xs text-gray-600">Round:</span>
           <span className="text-xs ml-1">
-            <b>{round}</b> / {playableRounds}
+            <b>{round.round}</b> / {maxRound}
           </span>
         </div>
         <Tooltip>

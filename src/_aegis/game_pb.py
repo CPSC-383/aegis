@@ -149,3 +149,4 @@ class GamePb:
     def clear_round(self) -> None:
         self.team_info.clear()
         self.spawns.clear()
+        self.turns.clear()

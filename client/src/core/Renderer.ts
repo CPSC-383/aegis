@@ -1,5 +1,8 @@
+import { TILE_SIZE } from "@/utils/constants";
 import { Runner } from "./Runner";
 import { CanvasLayers, Size } from "@/types";
+import { loadImage } from "@/utils/util";
+import goob from '@/assets/goobs/goob.png'
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any;
@@ -17,6 +20,7 @@ class RendererClass {
       const layerKey = CanvasLayers[layerValue] as keyof typeof CanvasLayers
       this.canvases[layerKey] = canvas
     })
+    loadImage(goob)
   }
 
   renderToContainer(container: HTMLDivElement | null): void {
@@ -45,10 +49,10 @@ class RendererClass {
     const game = Runner.game
     if (!actx || !lctx || !game) return
 
-    // const round = game.currentRound
+    const round = game.currentRound
     actx.clearRect(0, 0, actx.canvas.width, actx.canvas.height)
     lctx.clearRect(0, 0, lctx.canvas.width, lctx.canvas.height)
-    // round.world.draw()
+    round.agents.draw(game, actx)
   }
 
   onGameChange() {
@@ -60,8 +64,6 @@ class RendererClass {
 
 
   private updateCanvasSize(size: Size) {
-    const TILE_SIZE = 50;
-
     Object.values(this.canvases).forEach(canvas => {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;

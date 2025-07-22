@@ -7,14 +7,6 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { useAppContext } from '@/contexts/AppContext'
-// import {
-//   Location,
-//   RubbleInfo,
-//   SpawnZoneTypes,
-//   SurvivorInfo,
-//   WorldMap
-// } from '@/core/world'
-import { dispatchEvent, EventType, listenEvent } from '@/events'
 import { BrushType, CellContentBrushTypes, SpecialCellBrushTypes } from '@/types'
 import { formatDisplayText } from '@/utils/util'
 import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
@@ -80,23 +72,20 @@ function MapBrushes(): JSX.Element {
     ]
   )
 
-  const handleBrush = useCallback(
-    (event: CustomEvent<{ selectedCell: Location; right: boolean }>): void => {
-      if (!appState.editorSimulation) return
-
-      const handler = createHandler(appState.editorSimulation.worldMap)
-      if (!handler) return
-
-      const tile = event.detail.selectedCell as Location
-      const rightClicked = event.detail.right
-
-      handler.handle(tile, rightClicked)
-      dispatchEvent(EventType.RENDER_MAP, {})
-    },
-    [appState.editorSimulation, createHandler]
-  )
-
-  listenEvent(EventType.TILE_CLICK, handleBrush)
+  // const handleBrush = useCallback(
+  //   (event: CustomEvent<{ selectedCell: Location; right: boolean }>): void => {
+  //     if (!appState.editorSimulation) return
+  //
+  //     const handler = createHandler(appState.editorSimulation.worldMap)
+  //     if (!handler) return
+  //
+  //     const tile = event.detail.selectedCell as Location
+  //     const rightClicked = event.detail.right
+  //
+  //     handler.handle(tile, rightClicked)
+  //   },
+  //   [appState.editorSimulation, createHandler]
+  // )
 
   const renderBrushContent = (): JSX.Element | null => {
     switch (brushType) {
