@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useAppContext } from '@/contexts/AppContext'
 import Game from '@/core/Game'
 // import { WorldMap } from '@/core/world'
-import { EventType } from '@/events'
 import { WorldParams } from '@/types'
 
 import { Alert } from '@/components/ui/alert'
@@ -127,18 +126,14 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
     localStorage.setItem('editor_worldParams', JSON.stringify(worldParams))
   }, [worldParams])
 
-  useEffect(() => {
-    const saveWorld = (): void => {
-      if (appState.editorSimulation) {
-        const worldData = WorldSerializer.toJSON(appState.editorSimulation.worldMap)
-        localStorage.setItem('editor_worldData', JSON.stringify(worldData))
-      }
-    }
-    document.addEventListener(EventType.RENDER_MAP, saveWorld)
-    return (): void => {
-      document.removeEventListener(EventType.RENDER_MAP, saveWorld)
-    }
-  }, [appState.editorSimulation])
+  // useEffect(() => {
+  //   const saveWorld = (): void => {
+  //     if (appState.editorSimulation) {
+  //       const worldData = WorldSerializer.toJSON(appState.editorSimulation.worldMap)
+  //       localStorage.setItem('editor_worldData', JSON.stringify(worldData))
+  //     }
+  //   }
+  // }, [appState.editorSimulation])
 
   useEffect(() => {
     if (isOpen) {

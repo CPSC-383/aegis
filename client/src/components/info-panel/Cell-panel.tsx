@@ -75,11 +75,11 @@ const CellPanel = ({
     })
   }, [agents, renderAgentCanvas])
 
-  useEffect(() => {
-    updateCanvasSize()
-    window.addEventListener('resize', updateCanvasSize)
-    return (): void => window.removeEventListener('resize', updateCanvasSize)
-  }, [agents, selectedCell, game, updateCanvasSize, renderAgentCanvas])
+  // useEffect(() => {
+  //   updateCanvasSize()
+  //   window.addEventListener('resize', updateCanvasSize)
+  //   return (): void => window.removeEventListener('resize', updateCanvasSize)
+  // }, [agents, selectedCell, game, updateCanvasSize, renderAgentCanvas])
 
   const handleAgentCanvasClick = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>

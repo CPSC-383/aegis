@@ -1,5 +1,4 @@
 import { useAppContext } from '@/contexts/AppContext'
-import { EventType, dispatchEvent, listenEvent } from '@/events'
 import { BrushType, shadesOfBrown } from '@/types'
 import { getImage, whatBucket } from '@/utils/util'
 import { useEffect, useRef, useState } from 'react'
@@ -7,11 +6,11 @@ import { useEffect, useRef, useState } from 'react'
 import layerSpriteSheetSrc from '@/assets/layers-spritesheet-Sheet.png'
 import { drawAgent, renderCoords } from '@/utils/renderUtils'
 import { Renderer } from '@/core/Renderer'
-import { useGame } from '@/hooks/useGame'
+import useRound from '@/hooks/useRound'
 
 function GameArea(): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const game = useGame()
+  const round = useRound()
 
   // Drag state
   const [isDragging, setIsDragging] = useState(false)
@@ -24,47 +23,6 @@ function GameArea(): JSX.Element {
     }
   }, [])
 
-
-  // const renderAgents = (): void => {
-  //   const ctx = agentCanvas.current?.getContext('2d')
-  //   if (!ctx || !game || game.currentRound.isEnd()) return
-  //
-  //   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-  //
-  //   const cellMap = new Map<string, number[]>()
-  //   const size = game.world.size
-  //
-  //   for (let x = 0; x < size.width; x++) {
-  //     for (let y = 0; y < size.height; y++) {
-  //       // const agentsInCell = game.getAgentsAtCell(x, y)
-  //       // if (agentsInCell.length > 0) {
-  //       //   cellMap.set(`${ x }, ${ y }`, agentsInCell)
-  //       // }
-  //     }
-  //   }
-  //
-  //   cellMap.forEach((agentsInCell, key) => {
-  //     const [x, y] = key.split(',').map(Number)
-  //     const coords = renderCoords(x, y, size)
-  //     const agentsPerRow = 5
-  //     const totalAgents = agentsInCell.length
-  //
-  //     const agentSize = Math.max(
-  //       tileSize / agentsPerRow / tileSize,
-  //       tileSize / totalAgents / tileSize
-  //     )
-  //
-  //     agentsInCell.forEach((agent, i) => {
-  //       const col = i % agentsPerRow
-  //       const row = Math.floor(i / agentsPerRow)
-  //
-  //       const drawX = coords.x + col * agentSize
-  //       const drawY = coords.y + row * agentSize
-  //
-  //       drawAgent(ctx, 1, drawX, drawY, agentSize)
-  //     })
-  //   })
-  // }
 
   // const renderStack = (): void => {
   //   const ctx = stackCanvas.current?.getContext('2d')
@@ -142,9 +100,6 @@ function GameArea(): JSX.Element {
   //   }
   // }
 
-  // listenEvent(EventType.RENDER, renderAgents)
-  // listenEvent(EventType.RENDER_STACK, renderStack)
-
   // const handleWorldCanvasClick = (
   //   e: React.MouseEvent<HTMLDivElement>,
   //   right: boolean
@@ -220,12 +175,12 @@ function GameArea(): JSX.Element {
   return (
     <div
       ref={containerRef}
-      className="flex justify-center items-center w-full h-screen"
+      className="relative flex justify-center items-center w-full h-screen"
       // onMouseDown={handleMouseDown}
       // onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      {!game && (
+      {!round && (
         <div>
           Waiting for simulation to start...
         </div>

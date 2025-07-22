@@ -1,5 +1,11 @@
 import { schema } from "aegis-schema"
 import Games from "./Games"
+import Game from "./Game"
+import goobSrc from '@/assets/goobs/goob.png'
+import { getImage } from "@/utils/util"
+import { TILE_SIZE } from "@/utils/constants"
+import { renderCoords } from "@/utils/renderUtils"
+import Round from "./Round"
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()
@@ -19,6 +25,14 @@ export default class Agents {
     }
   }
 
+  public applyTurn(turn: schema.Turn) {
+    const agent = this.agents.get(turn.agentId)
+    if (!agent) return
+
+    agent.loc = { x: turn.loc!.x, y: turn.loc!.y }
+    agent.energyLevel = Math.max(turn.energyLevel, 0)
+  }
+
   public spawnAgent(_agent: schema.Spawn): void {
     const id = _agent.agentId
     const loc = _agent.loc!
@@ -33,6 +47,12 @@ export default class Agents {
   private insertAgents(spawns: schema.Spawn[]): void {
     for (const spawn of spawns) {
       this.spawnAgent(spawn)
+    }
+  }
+
+  public draw(game: Game, ctx: CanvasRenderingContext2D): void {
+    for (const agent of this.agents.values()) {
+      agent.draw(game, ctx)
     }
   }
 
@@ -56,6 +76,17 @@ export class Agent {
     public loc: schema.Location
   ) {
     this.lastLoc = this.loc
+  }
+
+  public draw(game: Game, ctx: CanvasRenderingContext2D): void {
+    const goob = getImage(goobSrc);
+    if (!goob) return;
+
+    const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
+
+    const spriteSize = 1;
+
+    ctx.drawImage(goob, pos.x, pos.y, spriteSize, spriteSize);
   }
 
   public copy(): Agent {

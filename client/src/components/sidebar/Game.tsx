@@ -1,13 +1,10 @@
 import { useAppContext } from '@/contexts/AppContext'
-import { EventType, listenEvent } from '@/events'
 import { ASSIGNMENT_A3, getCurrentAssignment, useForceUpdate } from '@/utils/util'
 import { motion } from 'framer-motion'
 import { AlertTriangle, Trophy } from 'lucide-react'
 
 const Game = (): JSX.Element => {
   const { appState } = useAppContext()
-  const forceUpdate = useForceUpdate()
-  listenEvent(EventType.RENDER, forceUpdate)
 
   if (!appState.simulation) {
     return (

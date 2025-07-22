@@ -42,11 +42,17 @@ export default class Game {
     this.maxRound++
   }
 
+  public stepRound(step: number): void {
+    this.jumpToRound(this.currentRound.round + step)
+  }
+
   /**
    * Jumps to a specified round and updates the simulation state.
    * @param {number} round - The round to jump to.
    */
   public jumpToRound(round: number): void {
+    if (this.snapshots.length === 0) return
+
     round = Math.max(1, Math.min(round, this.maxRound))
     if (round === this.currentRound.round) return
 
@@ -58,6 +64,7 @@ export default class Game {
         : snapshot.copy()
 
     while (updatingRound.round < round) {
+      updatingRound.jumpToTurn(updatingRound.turnsLength)
       const nextDelta = updatingRound.round < this.rounds.length ? this.rounds[updatingRound.round] : null
       updatingRound.startRound(nextDelta)
       if (updatingRound.round % SNAPSHOT_INTERVAL === 0)
@@ -65,6 +72,22 @@ export default class Game {
     }
     this.currentRound = updatingRound
   }
+
+  public stepGame(): [boolean, boolean] {
+    const round = this.currentRound.round
+    const turn = this.currentRound.turn
+
+    this.currentRound.jumpToTurn(this.currentRound.turnsLength)
+    this.stepRound(1)
+
+    const roundChanged = round != this.currentRound.round
+    const turnChanged = turn != this.currentRound.turn || roundChanged
+    return [roundChanged, turnChanged]
+  }
+
+  // public stepTurn(turns: number): void {
+  //   let targetTurn = this.currentRound.turn + turns
+  // }
 
   private getClosestSnapshot(targetRound: number): Round {
     const snapIndex = Math.floor((targetRound - 1) / SNAPSHOT_INTERVAL)
@@ -95,18 +118,6 @@ export default class Game {
   //       return
   //     }
   //     this.jumpToRound(this.stateManager.getCurrentRound() + 1)
-  //   }
-  //
-  //
-  //   /**
-  //    * Dispatches updates to render the simulation state.
-  //    */
-  //   private dispatchUpdates(): void {
-  //     dispatchEvent(EventType.RENDER, {})
-  //     // Note: protobuf WorldState doesn't have top_layer_rem_data, so we skip this check
-  //     // if (currentRoundData?.top_layer_rem_data) {
-  //     //     dispatchEvent(EventType.RENDER_STACK, {})
-  //     // }
   //   }
   //
   //   /**
@@ -165,29 +176,5 @@ export default class Game {
   //    */
   //   getSpawns(x: number, y: number): SpawnZoneData | undefined {
   //     return this.worldData.getSpawnInfo(x, y)
-  //   }
-  //
-  //   /**
-  //    * Determines whether the simulation has ended.
-  //    * @returns {boolean} True if the simulation is over, false otherwise.
-  //    */
-  //   isGameOver(): boolean {
-  //     return this.stateManager.isGameOver()
-  //   }
-  //
-  //   /**
-  //    * Retrieves the current round number.
-  //    * @returns {number} The current round number.
-  //    */
-  //   getRoundNumber(): number {
-  //     return this.stateManager.getCurrentRound()
-  //   }
-  //
-  //   /**
-  //    * Retrieves the maximum number of rounds in the simulation.
-  //    * @returns {number} The maximum number of rounds.
-  //    */
-  //   getMaxRounds(): number {
-  //     return this.stateManager.getMaxRounds()
   //   }
 }

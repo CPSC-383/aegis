@@ -1,6 +1,5 @@
 import { AgentInfoDict, Game } from '@/core/game'
 import { CellContent } from '@/core/world'
-import { EventType, listenEvent } from '@/events'
 
 type Props = {
   selectedAgent: AgentInfoDict
@@ -28,8 +27,6 @@ const AgentPanel = ({
     setSelectedAgent(agent)
     setCellLayers(layers)
   }
-
-  listenEvent(EventType.RENDER, updateSelectedAgentInfo)
 
   return (
     <div className="m-2">
