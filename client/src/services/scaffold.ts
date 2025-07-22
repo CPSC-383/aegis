@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { ClientWebSocket, aegisAPI } from '@/services'
 import { useAppContext } from '@/contexts/AppContext'
-import { Game } from '@/core/game'
+import Game from '@/core/Game'
 import { useForceUpdate } from '@/utils/util'
 import { ConsoleLine } from '@/types'
+import { Runner } from '@/core/Runner'
+import Games from '@/core/Games'
 
 export type Scaffold = {
   aegisPath: string | undefined
@@ -153,13 +155,18 @@ export function createScaffold(): Scaffold {
       forceUpdate()
     })
 
-    const onSimCreated = (sim: Game) => {
+    const onGamesCreated = (games: Games) => {
       setAppState((prevAppState) => ({
         ...prevAppState,
-        simulation: sim
+        queue: prevAppState.queue.concat([games])
       }))
+      Runner.setGames(games)
     }
-    new ClientWebSocket(onSimCreated)
+
+    const onGameCreated = (game: Game) => {
+      Runner.setGame(game)
+    }
+    new ClientWebSocket(onGameCreated, onGamesCreated)
   }, [])
 
   useEffect(() => {

@@ -3,8 +3,8 @@ import { AlertCircle, Download, Grid3x3, Info, Upload, Zap } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
 import { useAppContext } from '@/contexts/AppContext'
-import { Game } from '@/core/game'
-import { WorldMap } from '@/core/world'
+import Game from '@/core/Game'
+// import { WorldMap } from '@/core/world'
 import { EventType } from '@/events'
 import { WorldParams } from '@/types'
 
@@ -99,7 +99,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
         setWorldParams({
           width: sim.worldMap.width,
           height: sim.worldMap.height,
-          initialEnergy: sim.worldMap.initialAgentEnergy,
+          initialEnergy: sim.worldMap.startEnergy,
           isInitialized: true
         })
         setErrMsg('')

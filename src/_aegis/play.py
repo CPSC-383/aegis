@@ -11,8 +11,9 @@ from .world_proto import serialize_world
 
 
 def run(args: Args) -> None:
-    game_pb = GamePb()
     ws_server = WebSocketServer(wait_for_client=args.client)
+    game_pb = GamePb()
+    game_pb.make_games_header(ws_server)
     if args.agent1 is None and args.agent2 is None:
         error = "At least one agent must be provided"
         raise ValueError(error)
@@ -31,7 +32,7 @@ def run(args: Args) -> None:
     print()  # noqa: T201
     ws_server.start()
 
-    game_pb.make_game_header(world, ws_server)
+    game_pb.make_game_header(world)
     while game.running:
         try:
             game.run_round()
@@ -39,7 +40,9 @@ def run(args: Args) -> None:
             LOGGER.exception("This shouldn't have happened.")
             game.running = False
 
+    # game footer will be inside outer for loops of worlds later
     game_pb.make_game_footer()
+    game_pb.make_games_footer()
     ws_server.finish()
     LOGGER.info("========== AEGIS SIMULATION END ==========")
     LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")

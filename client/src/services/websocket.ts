@@ -1,14 +1,17 @@
-import { Game } from '@/core/game'
-import { WorldMap } from '@/core/world'
-import { Event } from "aegis-schema"
+import Game from '@/core/Game'
+import Games from '@/core/Games'
+import { schema } from "aegis-schema"
 
 export class ClientWebSocket {
   private url: string = 'ws://localhost:6003'
   private reconnectInterval: number = 500
+  private games: Games | undefined = undefined
   private game: Game | undefined = undefined
-  private started: boolean = false
 
-  constructor(readonly onSimCreated: (sim: Game) => void) {
+  constructor(
+    readonly onGameCreated: (game: Game) => void,
+    readonly onGamesCreated: (games: Games) => void
+  ) {
     this.connect()
   }
 
@@ -25,7 +28,6 @@ export class ClientWebSocket {
 
     ws.onclose = () => {
       this.game = undefined
-      this.started = false
       setTimeout(() => this.connect(), this.reconnectInterval)
     }
   }
@@ -33,26 +35,27 @@ export class ClientWebSocket {
   private handleEvent(data: string) {
     try {
       const decoded = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
-      const event = Event.fromBinary(decoded)
+      const event = schema.Event.fromBinary(decoded)
 
-      if (!this.game) {
-        if (event.event.oneofKind !== "gameHeader") {
+      if (!this.games) {
+        if (event.event.oneofKind !== "gamesHeader") {
           throw new Error("First event must be the GameHeader.")
         }
 
-        const world = WorldMap.fromPb(event.event.gameHeader.world!)
-        this.game = new Game(world)
-        this.onSimCreated(this.game)
+        this.games = new Games()
+        this.onGamesCreated(this.games)
         return
       }
 
-      this.game.addEvent(event)
+      this.games.addEvent(event)
 
       if (event.event.oneofKind === "round") {
-        if (!this.started) {
-          this.started = true
-          this.game.renderNextRound()
-        }
+        const games = this.games.games
+        const game = games[games.length - 1]
+        if (this.game === game) return
+
+        this.onGameCreated(game)
+        this.game = game
       }
 
       if (event.event.oneofKind === "gameFooter")

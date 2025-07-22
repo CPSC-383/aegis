@@ -23,15 +23,16 @@ _sym_db = _symbol_database.Default()
 
 
 from . import location_pb2 as location__pb2
+from . import spawn_pb2 as spawn__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nturn.proto\x12\x05\x61\x65gis\x1a\x0elocation.proto\"r\n\x04Turn\x12\x0f\n\x07\x61gentId\x18\x01 \x01(\x05\x12\x14\n\x0c\x65nergy_level\x18\x02 \x01(\x05\x12\x13\n\x0bsteps_taken\x18\x03 \x01(\x05\x12\x1c\n\x03loc\x18\x04 \x01(\x0b\x32\x0f.aegis.Location\x12\x10\n\x08\x63ommands\x18\x05 \x03(\tb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nturn.proto\x12\x05\x61\x65gis\x1a\x0elocation.proto\x1a\x0bspawn.proto\"\x90\x01\n\x04Turn\x12\x0f\n\x07\x61gentId\x18\x01 \x01(\x05\x12\x14\n\x0c\x65nergy_level\x18\x02 \x01(\x05\x12\x13\n\x0bsteps_taken\x18\x03 \x01(\x05\x12\x1c\n\x03loc\x18\x04 \x01(\x0b\x32\x0f.aegis.Location\x12\x10\n\x08\x63ommands\x18\x05 \x03(\t\x12\x1c\n\x06spawns\x18\x06 \x03(\x0b\x32\x0c.aegis.Spawnb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'turn_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_TURN']._serialized_start=37
-  _globals['_TURN']._serialized_end=151
+  _globals['_TURN']._serialized_start=51
+  _globals['_TURN']._serialized_end=195
 # @@protoc_insertion_point(module_scope)

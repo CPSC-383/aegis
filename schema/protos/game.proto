@@ -2,13 +2,18 @@ syntax = "proto3";
 
 package aegis;
 
+import "spawn.proto";
 import "team.proto";
 import "turn.proto";
 import "world.proto";
 
+message GamesHeader {
+}
+
 message GameHeader {
   World world = 1;
   int32 rounds = 2;
+  repeated Spawn spawns = 3;
 }
 
 message Round {
@@ -19,5 +24,7 @@ message Round {
 }
 
 message GameFooter {
-  // Empty message for completion event
+}
+
+message GamesFooter {
 }

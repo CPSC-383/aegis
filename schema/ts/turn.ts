@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Spawn } from "./spawn";
 import { Location } from "./location";
 /**
  * @generated from protobuf message aegis.Turn
@@ -35,6 +36,10 @@ export interface Turn {
      * @generated from protobuf field: repeated string commands = 5
      */
     commands: string[];
+    /**
+     * @generated from protobuf field: repeated aegis.Spawn spawns = 6
+     */
+    spawns: Spawn[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Turn$Type extends MessageType<Turn> {
@@ -44,7 +49,8 @@ class Turn$Type extends MessageType<Turn> {
             { no: 2, name: "energy_level", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "steps_taken", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "loc", kind: "message", T: () => Location },
-            { no: 5, name: "commands", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 5, name: "commands", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "spawns", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Spawn }
         ]);
     }
     create(value?: PartialMessage<Turn>): Turn {
@@ -53,6 +59,7 @@ class Turn$Type extends MessageType<Turn> {
         message.energyLevel = 0;
         message.stepsTaken = 0;
         message.commands = [];
+        message.spawns = [];
         if (value !== undefined)
             reflectionMergePartial<Turn>(this, message, value);
         return message;
@@ -76,6 +83,9 @@ class Turn$Type extends MessageType<Turn> {
                     break;
                 case /* repeated string commands */ 5:
                     message.commands.push(reader.string());
+                    break;
+                case /* repeated aegis.Spawn spawns */ 6:
+                    message.spawns.push(Spawn.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -104,6 +114,9 @@ class Turn$Type extends MessageType<Turn> {
         /* repeated string commands = 5; */
         for (let i = 0; i < message.commands.length; i++)
             writer.tag(5, WireType.LengthDelimited).string(message.commands[i]);
+        /* repeated aegis.Spawn spawns = 6; */
+        for (let i = 0; i < message.spawns.length; i++)
+            Spawn.internalBinaryWrite(message.spawns[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -1,9 +1,11 @@
-import { Game } from '@/core/game'
+import Game from '@/core/Game'
+import Games from '@/core/Games'
 import { BrushType } from '@/types'
 import { createContext, ReactNode, SetStateAction, useContext, useState } from 'react'
 
 export interface AppContext {
-  simulation: Game | undefined
+  game: Game | undefined
+  queue: Games[],
   simPaused: boolean
   selectedCell: { x: number; y: number } | null
   editorSimulation: Game | undefined // Used for the map editor, so it doesn't have to overwrite the game's simulation
@@ -12,7 +14,8 @@ export interface AppContext {
 }
 
 const DEFAULT_APP_CONTEXT: AppContext = {
-  simulation: undefined,
+  game: undefined,
+  queue: [],
   simPaused: true,
   selectedCell: null,
   editorSimulation: undefined,

@@ -1,12 +1,12 @@
-import { Game } from '@/core/game'
-import {
-  CellContent,
-  Location,
-  Spawn,
-  SpawnZoneTypes,
-  Layers,
-  WorldMap
-} from '@/core/world'
+import Game from '@/core/Game'
+// import {
+//   CellContent,
+//   Location,
+//   Spawn,
+//   SpawnZoneTypes,
+//   Layers,
+//   WorldMap
+// } from '@/core/world'
 import { aegisAPI } from '@/services'
 
 interface WorldFileData {
@@ -94,7 +94,7 @@ class WorldSerializer {
           height: world.size.height
         },
         seed: this.generateSeedIfNeeded(world.seed),
-        agent_energy: world.initialAgentEnergy
+        agent_energy: world.startEnergy
       }
     }
   }

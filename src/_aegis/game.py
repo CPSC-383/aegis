@@ -155,6 +155,7 @@ class Game:
         agent.load(self.team_agents[team], self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
         self.add_agent(agent, loc)
         self.team_info.add_units(agent.team, 1)
+        self.game_pb.add_spawn(agent.id, agent.team, agent.location)
 
     def add_agent(self, agent: Agent, loc: Location) -> None:
         if agent not in self._agents:

@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from . import game_pb2 as game__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0b\x65vent.proto\x12\x05\x61\x65gis\x1a\ngame.proto\"\x83\x01\n\x05\x45vent\x12(\n\x0bgame_header\x18\x01 \x01(\x0b\x32\x11.aegis.GameHeaderH\x00\x12\x1d\n\x05round\x18\x02 \x01(\x0b\x32\x0c.aegis.RoundH\x00\x12(\n\x0bgame_footer\x18\x03 \x01(\x0b\x32\x11.aegis.GameFooterH\x00\x42\x07\n\x05\x65ventb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0b\x65vent.proto\x12\x05\x61\x65gis\x1a\ngame.proto\"\xdb\x01\n\x05\x45vent\x12*\n\x0cgames_header\x18\x01 \x01(\x0b\x32\x12.aegis.GamesHeaderH\x00\x12(\n\x0bgame_header\x18\x02 \x01(\x0b\x32\x11.aegis.GameHeaderH\x00\x12\x1d\n\x05round\x18\x03 \x01(\x0b\x32\x0c.aegis.RoundH\x00\x12(\n\x0bgame_footer\x18\x04 \x01(\x0b\x32\x11.aegis.GameFooterH\x00\x12*\n\x0cgames_footer\x18\x05 \x01(\x0b\x32\x12.aegis.GamesFooterH\x00\x42\x07\n\x05\x65ventb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,5 +33,5 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'event_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_EVENT']._serialized_start=35
-  _globals['_EVENT']._serialized_end=166
+  _globals['_EVENT']._serialized_end=254
 # @@protoc_insertion_point(module_scope)

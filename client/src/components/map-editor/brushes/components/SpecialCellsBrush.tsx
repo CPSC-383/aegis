@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { SpawnZoneTypes } from '@/core/world'
+// import { SpawnZoneTypes } from '@/core/world'
 import { SpecialCellBrushTypes } from '@/types'
 import { ASSIGNMENT_A1, formatDisplayText, getCurrentAssignment } from '@/utils/util'
 import { Flame, PlusCircle, Skull, Tag, User, Users, Zap } from 'lucide-react'

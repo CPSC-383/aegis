@@ -1,6 +1,6 @@
 import { useAppContext } from '@/contexts/AppContext'
 import { AgentInfoDict, CellDict } from '@/core/game'
-import { CellContent, SpawnZoneData, SpawnZoneTypes } from '@/core/world'
+// import { CellContent, SpawnZoneData, SpawnZoneTypes } from '@/core/world'
 import { EventType, listenEvent } from '@/events'
 import { useCallback, useEffect, useState } from 'react'
 import AgentPanel from './Agent-panel'

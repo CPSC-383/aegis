@@ -10,9 +10,11 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { GamesFooter } from "./game";
 import { GameFooter } from "./game";
 import { Round } from "./game";
 import { GameHeader } from "./game";
+import { GamesHeader } from "./game";
 /**
  * @generated from protobuf message aegis.Event
  */
@@ -21,23 +23,35 @@ export interface Event {
      * @generated from protobuf oneof: event
      */
     event: {
+        oneofKind: "gamesHeader";
+        /**
+         * @generated from protobuf field: aegis.GamesHeader games_header = 1
+         */
+        gamesHeader: GamesHeader;
+    } | {
         oneofKind: "gameHeader";
         /**
-         * @generated from protobuf field: aegis.GameHeader game_header = 1
+         * @generated from protobuf field: aegis.GameHeader game_header = 2
          */
         gameHeader: GameHeader;
     } | {
         oneofKind: "round";
         /**
-         * @generated from protobuf field: aegis.Round round = 2
+         * @generated from protobuf field: aegis.Round round = 3
          */
         round: Round;
     } | {
         oneofKind: "gameFooter";
         /**
-         * @generated from protobuf field: aegis.GameFooter game_footer = 3
+         * @generated from protobuf field: aegis.GameFooter game_footer = 4
          */
         gameFooter: GameFooter;
+    } | {
+        oneofKind: "gamesFooter";
+        /**
+         * @generated from protobuf field: aegis.GamesFooter games_footer = 5
+         */
+        gamesFooter: GamesFooter;
     } | {
         oneofKind: undefined;
     };
@@ -46,9 +60,11 @@ export interface Event {
 class Event$Type extends MessageType<Event> {
     constructor() {
         super("aegis.Event", [
-            { no: 1, name: "game_header", kind: "message", oneof: "event", T: () => GameHeader },
-            { no: 2, name: "round", kind: "message", oneof: "event", T: () => Round },
-            { no: 3, name: "game_footer", kind: "message", oneof: "event", T: () => GameFooter }
+            { no: 1, name: "games_header", kind: "message", oneof: "event", T: () => GamesHeader },
+            { no: 2, name: "game_header", kind: "message", oneof: "event", T: () => GameHeader },
+            { no: 3, name: "round", kind: "message", oneof: "event", T: () => Round },
+            { no: 4, name: "game_footer", kind: "message", oneof: "event", T: () => GameFooter },
+            { no: 5, name: "games_footer", kind: "message", oneof: "event", T: () => GamesFooter }
         ]);
     }
     create(value?: PartialMessage<Event>): Event {
@@ -63,22 +79,34 @@ class Event$Type extends MessageType<Event> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* aegis.GameHeader game_header */ 1:
+                case /* aegis.GamesHeader games_header */ 1:
+                    message.event = {
+                        oneofKind: "gamesHeader",
+                        gamesHeader: GamesHeader.internalBinaryRead(reader, reader.uint32(), options, (message.event as any).gamesHeader)
+                    };
+                    break;
+                case /* aegis.GameHeader game_header */ 2:
                     message.event = {
                         oneofKind: "gameHeader",
                         gameHeader: GameHeader.internalBinaryRead(reader, reader.uint32(), options, (message.event as any).gameHeader)
                     };
                     break;
-                case /* aegis.Round round */ 2:
+                case /* aegis.Round round */ 3:
                     message.event = {
                         oneofKind: "round",
                         round: Round.internalBinaryRead(reader, reader.uint32(), options, (message.event as any).round)
                     };
                     break;
-                case /* aegis.GameFooter game_footer */ 3:
+                case /* aegis.GameFooter game_footer */ 4:
                     message.event = {
                         oneofKind: "gameFooter",
                         gameFooter: GameFooter.internalBinaryRead(reader, reader.uint32(), options, (message.event as any).gameFooter)
+                    };
+                    break;
+                case /* aegis.GamesFooter games_footer */ 5:
+                    message.event = {
+                        oneofKind: "gamesFooter",
+                        gamesFooter: GamesFooter.internalBinaryRead(reader, reader.uint32(), options, (message.event as any).gamesFooter)
                     };
                     break;
                 default:
@@ -93,15 +121,21 @@ class Event$Type extends MessageType<Event> {
         return message;
     }
     internalBinaryWrite(message: Event, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* aegis.GameHeader game_header = 1; */
+        /* aegis.GamesHeader games_header = 1; */
+        if (message.event.oneofKind === "gamesHeader")
+            GamesHeader.internalBinaryWrite(message.event.gamesHeader, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* aegis.GameHeader game_header = 2; */
         if (message.event.oneofKind === "gameHeader")
-            GameHeader.internalBinaryWrite(message.event.gameHeader, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* aegis.Round round = 2; */
+            GameHeader.internalBinaryWrite(message.event.gameHeader, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* aegis.Round round = 3; */
         if (message.event.oneofKind === "round")
-            Round.internalBinaryWrite(message.event.round, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* aegis.GameFooter game_footer = 3; */
+            Round.internalBinaryWrite(message.event.round, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* aegis.GameFooter game_footer = 4; */
         if (message.event.oneofKind === "gameFooter")
-            GameFooter.internalBinaryWrite(message.event.gameFooter, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            GameFooter.internalBinaryWrite(message.event.gameFooter, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* aegis.GamesFooter games_footer = 5; */
+        if (message.event.oneofKind === "gamesFooter")
+            GamesFooter.internalBinaryWrite(message.event.gamesFooter, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

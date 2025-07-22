@@ -6,8 +6,10 @@ import "game.proto";
 
 message Event {
   oneof event {
-    GameHeader game_header = 1;
-    Round round = 2;
-    GameFooter game_footer = 3;
+    GamesHeader games_header = 1;
+    GameHeader game_header = 2;
+    Round round = 3;
+    GameFooter game_footer = 4;
+    GamesFooter games_footer = 5;
   }
 }

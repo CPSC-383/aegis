@@ -1,3 +1,4 @@
+from . import spawn_pb2 as _spawn_pb2
 from . import team_pb2 as _team_pb2
 from . import turn_pb2 as _turn_pb2
 from . import world_pb2 as _world_pb2
@@ -8,13 +9,19 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class GamesHeader(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
 class GameHeader(_message.Message):
-    __slots__ = ("world", "rounds")
+    __slots__ = ("world", "rounds", "spawns")
     WORLD_FIELD_NUMBER: _ClassVar[int]
     ROUNDS_FIELD_NUMBER: _ClassVar[int]
+    SPAWNS_FIELD_NUMBER: _ClassVar[int]
     world: _world_pb2.World
     rounds: int
-    def __init__(self, world: _Optional[_Union[_world_pb2.World, _Mapping]] = ..., rounds: _Optional[int] = ...) -> None: ...
+    spawns: _containers.RepeatedCompositeFieldContainer[_spawn_pb2.Spawn]
+    def __init__(self, world: _Optional[_Union[_world_pb2.World, _Mapping]] = ..., rounds: _Optional[int] = ..., spawns: _Optional[_Iterable[_Union[_spawn_pb2.Spawn, _Mapping]]] = ...) -> None: ...
 
 class Round(_message.Message):
     __slots__ = ("round", "world", "turns", "team_info")
@@ -29,5 +36,9 @@ class Round(_message.Message):
     def __init__(self, round: _Optional[int] = ..., world: _Optional[_Union[_world_pb2.World, _Mapping]] = ..., turns: _Optional[_Iterable[_Union[_turn_pb2.Turn, _Mapping]]] = ..., team_info: _Optional[_Iterable[_Union[_team_pb2.TeamInfo, _Mapping]]] = ...) -> None: ...
 
 class GameFooter(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
+class GamesFooter(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...

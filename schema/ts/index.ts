@@ -1,8 +1,1 @@
-export * from './world_object';
-export * from './location';
-export * from './team';
-export * from './cell';
-export * from './game';
-export * from './event';
-export * from './world';
-export * from './turn';
+export * as schema from './index.aegis'

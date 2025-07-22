@@ -22,22 +22,27 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
+from . import spawn_pb2 as spawn__pb2
 from . import team_pb2 as team__pb2
 from . import turn_pb2 as turn__pb2
 from . import world_pb2 as world__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\ngame.proto\x12\x05\x61\x65gis\x1a\nteam.proto\x1a\nturn.proto\x1a\x0bworld.proto\"9\n\nGameHeader\x12\x1b\n\x05world\x18\x01 \x01(\x0b\x32\x0c.aegis.World\x12\x0e\n\x06rounds\x18\x02 \x01(\x05\"s\n\x05Round\x12\r\n\x05round\x18\x01 \x01(\x05\x12\x1b\n\x05world\x18\x02 \x01(\x0b\x32\x0c.aegis.World\x12\x1a\n\x05turns\x18\x03 \x03(\x0b\x32\x0b.aegis.Turn\x12\"\n\tteam_info\x18\x04 \x03(\x0b\x32\x0f.aegis.TeamInfo\"\x0c\n\nGameFooterb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\ngame.proto\x12\x05\x61\x65gis\x1a\x0bspawn.proto\x1a\nteam.proto\x1a\nturn.proto\x1a\x0bworld.proto\"\r\n\x0bGamesHeader\"W\n\nGameHeader\x12\x1b\n\x05world\x18\x01 \x01(\x0b\x32\x0c.aegis.World\x12\x0e\n\x06rounds\x18\x02 \x01(\x05\x12\x1c\n\x06spawns\x18\x03 \x03(\x0b\x32\x0c.aegis.Spawn\"s\n\x05Round\x12\r\n\x05round\x18\x01 \x01(\x05\x12\x1b\n\x05world\x18\x02 \x01(\x0b\x32\x0c.aegis.World\x12\x1a\n\x05turns\x18\x03 \x03(\x0b\x32\x0b.aegis.Turn\x12\"\n\tteam_info\x18\x04 \x03(\x0b\x32\x0f.aegis.TeamInfo\"\x0c\n\nGameFooter\"\r\n\x0bGamesFooterb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'game_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_GAMEHEADER']._serialized_start=58
-  _globals['_GAMEHEADER']._serialized_end=115
-  _globals['_ROUND']._serialized_start=117
-  _globals['_ROUND']._serialized_end=232
-  _globals['_GAMEFOOTER']._serialized_start=234
-  _globals['_GAMEFOOTER']._serialized_end=246
+  _globals['_GAMESHEADER']._serialized_start=71
+  _globals['_GAMESHEADER']._serialized_end=84
+  _globals['_GAMEHEADER']._serialized_start=86
+  _globals['_GAMEHEADER']._serialized_end=173
+  _globals['_ROUND']._serialized_start=175
+  _globals['_ROUND']._serialized_end=290
+  _globals['_GAMEFOOTER']._serialized_start=292
+  _globals['_GAMEFOOTER']._serialized_end=304
+  _globals['_GAMESFOOTER']._serialized_start=306
+  _globals['_GAMESFOOTER']._serialized_end=319
 # @@protoc_insertion_point(module_scope)

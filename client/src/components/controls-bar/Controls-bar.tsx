@@ -16,11 +16,11 @@ import Timeline from './Timeline'
 const ControlsBar = (): JSX.Element => {
   const ROUND_INTERVAL_DURATION = 200
   const { appState, setAppState } = useAppContext()
-  const { simulation, simPaused } = appState
+  const { game, simPaused } = appState
   const [isMinimized, setIsMinimized] = useState<boolean>(false)
 
   const togglePlayPause = (paused: boolean): void => {
-    if (!simulation) return
+    if (!game) return
     setAppState((prevState) => ({
       ...prevState,
       simPaused: paused
@@ -28,15 +28,15 @@ const ControlsBar = (): JSX.Element => {
   }
 
   const handleRound = (step: number): void => {
-    if (!simulation) return
+    if (!game) return
 
-    const currentRound = simulation.getRoundNumber()
-    const maxRounds = simulation.getMaxRounds()
+    const currentRound = game.currentRound.round
+    const maxRounds = game.maxRound
     const newRound = currentRound + step
 
     // Check bounds before jumping
     if (newRound >= 0 && newRound <= maxRounds) {
-      simulation.jumpToRound(newRound)
+      // game.jumpToRound(newRound)
     }
   }
 
@@ -61,34 +61,34 @@ const ControlsBar = (): JSX.Element => {
   }
 
   useEffect(() => {
-    if (!simulation) return
+    if (!game) return
     window.addEventListener('keydown', handleKeyPress)
     return (): void => {
       window.removeEventListener('keydown', handleKeyPress)
     }
-  }, [simulation, simPaused])
+  }, [game, simPaused])
 
   useEffect(() => {
-    if (!simulation || simPaused) return
+    if (!game || simPaused) return
     const roundInterval = setInterval(() => {
-      simulation.renderNextRound()
-      if (simulation.isGameOver()) {
+      // game.renderNextRound()
+      if (game.currentRound.isEnd()) {
         togglePlayPause(true)
       }
     }, ROUND_INTERVAL_DURATION)
     return (): void => {
       clearInterval(roundInterval)
     }
-  }, [simulation, simPaused])
+  }, [game, simPaused])
 
   listenEvent(EventType.RENDER, useForceUpdate())
 
   // If maxRounds is -1, this means we are in the editor.
   // Don't show the control bar when there isn't a simulation as well.
-  if (!simulation || simulation.getMaxRounds() === -1) return <></>
+  if (!game || game.maxRound === -1) return <></>
 
-  const currentRound = simulation.getRoundNumber()
-  const maxRounds = simulation.getMaxRounds()
+  const currentRound = game.currentRound.round
+  const maxRounds = game.maxRound
   const canGoBack = currentRound > 0
   const canGoForward = currentRound < maxRounds
 
@@ -163,7 +163,7 @@ const ControlsBar = (): JSX.Element => {
                       variant="ghost"
                       size="icon"
                       onClick={(): void => handleRound(-1)}
-                      disabled={!simulation || !canGoBack}
+                      disabled={!game || !canGoBack}
                     >
                       <SkipBack className="h-4 w-4" />
                     </Button>
@@ -179,7 +179,7 @@ const ControlsBar = (): JSX.Element => {
                       variant="ghost"
                       size="icon"
                       onClick={(): void => togglePlayPause(!simPaused)}
-                      disabled={!simulation}
+                      disabled={!game}
                     >
                       {simPaused ? (
                         <Play className="h-4 w-4" />
@@ -199,7 +199,7 @@ const ControlsBar = (): JSX.Element => {
                       variant="ghost"
                       size="icon"
                       onClick={(): void => handleRound(1)}
-                      disabled={!simulation || !canGoForward}
+                      disabled={!game || !canGoForward}
                     >
                       <SkipForward className="h-4 w-4" />
                     </Button>

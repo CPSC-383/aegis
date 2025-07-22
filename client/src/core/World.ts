@@ -1,14 +1,14 @@
-import {
-  CellTypeMap,
-  Location,
-  Size,
-  SpawnZoneData,
-  SpawnZoneTypes,
-} from '@/core/world'
-import { shadesOfBlue, shadesOfBrown } from '@/types'
+// import {
+//   CellTypeMap,
+//   Location,
+//   Size,
+//   SpawnZoneData,
+//   SpawnZoneTypes,
+// } from '@/core/world'
+import { shadesOfBlue, shadesOfBrown, Size } from '@/types'
 import { renderCoords } from '@/utils/renderUtils'
 import { whatBucket } from '@/utils/util'
-import { World, Cell, CellType } from 'aegis-schema'
+import { schema } from 'aegis-schema'
 
 // Interface for world data structure
 interface WorldData {
@@ -25,7 +25,7 @@ interface WorldData {
     type: string
     gid?: number
   }>
-  stacks: Cell[]
+  stacks: schema.Cell[]
   cell_types: {
     fire_cells: Location[]
     killer_cells: Location[]
@@ -33,11 +33,11 @@ interface WorldData {
   }
 }
 
-export class WorldMap {
+export default class World {
   private readonly cellTypes: CellTypeMap
 
   /**
-   * Constructs a new WorldMap instance.
+   * Constructs a new World instance.
    * @param width - The width of the map.
    * @param height - The height of the map.
    * @param seed - The seed used for procedural generation.
@@ -54,12 +54,12 @@ export class WorldMap {
     public readonly width: number,
     public readonly height: number,
     public readonly seed: number,
-    public readonly fireCells: Location[],
-    public readonly killerCells: Location[],
-    public readonly chargingCells: Location[],
-    public readonly spawnCells: Location[],
-    public readonly cells: Cell[],
-    public readonly initialAgentEnergy: number,
+    public readonly fireCells: schema.Location[],
+    public readonly killerCells: schema.Location[],
+    public readonly chargingCells: schema.Location[],
+    public readonly spawnCells: schema.Location[],
+    public readonly cells: schema.Cell[],
+    public readonly startEnergy: number,
     public minMoveCost: number,
     public maxMoveCost: number
   ) {
@@ -70,27 +70,29 @@ export class WorldMap {
     }
   }
 
+  public applyRound(round: schema.Round | null): void { }
+
   /**
-   * Creates a new WorldMap instance from protobuf WorldState data.
+   * Creates a new World instance from protobuf WorldState data.
    * @param worldState - Protobuf WorldState data.
-   * @returns A WorldMap instance.
+   * @returns A World instance.
    */
-  static fromPb(world: World): WorldMap {
-    const chargingCells: Location[] = []
-    const killerCells: Location[] = []
-    const spawnCells: Location[] = []
+  public static fromSchema(world: schema.World): World {
+    const chargingCells: schema.Location[] = []
+    const killerCells: schema.Location[] = []
+    const spawnCells: schema.Location[] = []
 
     for (const cell of world.cells) {
       const { loc, type } = cell
 
       switch (type) {
-        case CellType.CHARGING:
+        case schema.CellType.CHARGING:
           chargingCells.push(loc!)
           break
-        case CellType.KILLER:
+        case schema.CellType.KILLER:
           killerCells.push(loc!)
           break
-        case CellType.SPAWN:
+        case schema.CellType.SPAWN:
           spawnCells.push(loc!)
           break
         default:
@@ -100,9 +102,7 @@ export class WorldMap {
 
     const moveCosts = world.cells.map((cell) => cell.moveCost)
 
-    // For now, create a basic world map with the protobuf data
-    // This will need to be enhanced based on the actual world structure
-    return new WorldMap(
+    return new World(
       world.width,
       world.height,
       world.seed,
@@ -113,16 +113,16 @@ export class WorldMap {
       world.cells,
       world.startEnergy,
       Math.min(...moveCosts),
-      Math.max(...moveCosts)
+      Math.max(...moveCosts),
     )
   }
 
   /**
-   * Creates a new WorldMap instance from serialized data.
+   * Creates a new World instance from serialized data.
    * @param data - Serialized data representing the world map.
-   * @returns A WorldMap instance.
+   * @returns A World instance.
    */
-  static fromData(data: WorldData): WorldMap {
+  static fromData(data: WorldData): World {
     const { world_info } = data.settings
     const { size, seed, agent_energy } = world_info
 
@@ -139,10 +139,10 @@ export class WorldMap {
       })
     )
 
-    const cells: Cell[] = data.stacks
+    const cells: schema.Cell[] = data.stacks
     const moveCosts = cells.map((cell) => cell.moveCost)
 
-    return new WorldMap(
+    return new World(
       size.width,
       size.height,
       seed,
@@ -158,13 +158,13 @@ export class WorldMap {
   }
 
   /**
-   * Creates a new WorldMap instance with default parameters.
+   * Creates a new World instance with default parameters.
    * @param width - Width of the map.
    * @param height - Height of the map.
    * @param initialEnergy - Initial energy level for agents.
-   * @returns A WorldMap instance with default parameters.
+   * @returns A World instance with default parameters.
    */
-  static fromParams(width: number, height: number, initialEnergy: number): WorldMap {
+  static fromParams(width: number, height: number, initialEnergy: number): World {
     const cells: Cell[] = []
 
     for (let x = 0; x < width; x++) {
@@ -180,7 +180,7 @@ export class WorldMap {
       }
     }
 
-    return new WorldMap(
+    return new World(
       width,
       height,
       0,
@@ -192,6 +192,22 @@ export class WorldMap {
       initialEnergy,
       1,
       1
+    )
+  }
+
+  public copy(): World {
+    return new World(
+      this.width,
+      this.height,
+      this.seed,
+      [...this.fireCells.map(loc => ({ ...loc }))],
+      [...this.killerCells.map(loc => ({ ...loc }))],
+      [...this.chargingCells.map(loc => ({ ...loc }))],
+      [...this.spawnCells.map(loc => ({ ...loc }))],
+      this.cells.map(cell => ({ ...cell, loc: { ...cell.loc! } })),
+      this.startEnergy,
+      this.minMoveCost,
+      this.maxMoveCost
     )
   }
 
@@ -261,8 +277,8 @@ export class WorldMap {
    */
   private drawCells(ctx: CanvasRenderingContext2D, thickness: number): void {
     this.drawTerrain(ctx, thickness)
-    this.drawSpecialCells(ctx, thickness)
-    this.drawSpawnZones(ctx)
+    // this.drawSpecialCells(ctx, thickness)
+    this.drawSpawns(ctx)
   }
 
   /**
@@ -350,7 +366,7 @@ export class WorldMap {
    * Helper function to render spawn zones on the map.
    * @param ctx - Canvas rendering context.
    */
-  private drawSpawnZones(ctx: CanvasRenderingContext2D): void {
+  private drawSpawns(ctx: CanvasRenderingContext2D): void {
     for (const spawn of this.spawnCells) {
       const coords = renderCoords(spawn.x, spawn.y, this.size)
 

@@ -1,4 +1,4 @@
-import { Location, SpawnZoneTypes, WorldMap } from '@/core/world'
+// import { Location, SpawnZoneTypes, WorldMap } from '@/core/world'
 import { SpecialCellBrushTypes } from '@/types'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 import BrushHandler from './BrushHandler'
