@@ -1,7 +1,7 @@
 import { schema } from 'aegis-schema'
 import Games from './Games'
 import Game from './Game'
-import goobSrc from '@/assets/goobs/goob.png'
+import goobSrc from '@/assets/goob.png'
 import { getImage } from '@/utils/util'
 import { TILE_SIZE } from '@/utils/constants'
 import { renderCoords } from '@/utils/renderUtils'
@@ -30,7 +30,7 @@ export default class Agents {
     const agent = this.agents.get(turn.agentId)
     if (!agent) return
 
-    agent.loc = { x: turn.loc!.x, y: turn.loc!.y }
+    agent.loc = { ...turn.loc! }
     agent.energyLevel = Math.max(turn.energyLevel, 0)
   }
 

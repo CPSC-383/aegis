@@ -2,7 +2,7 @@ import { TILE_SIZE } from '@/utils/constants'
 import { Runner } from './Runner'
 import { CanvasLayers, Size } from '@/types'
 import { loadImage } from '@/utils/util'
-import goob from '@/assets/goobs/goob.png'
+import goob from '@/assets/goob.png'
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any

@@ -12,7 +12,7 @@ export default class Round {
     public round: number,
     public agents: Agents,
     private currentRound: schema.Round | null = null
-  ) {}
+  ) { }
 
   public startRound(round: schema.Round | null): void {
     this.agents.processRound(this.currentRound)

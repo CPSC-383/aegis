@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { AgentInfoDict, CellDict, Game } from '@/core/game'
-import { drawAgent } from '@/utils/renderUtils'
+// import { drawAgent } from '@/utils/renderUtils'
 import { useCallback, useEffect, useRef } from 'react'
 
 type Props = {
