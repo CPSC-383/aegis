@@ -4,7 +4,7 @@ import { BrushType } from '@/types'
 import { createContext, ReactNode, SetStateAction, useContext, useState } from 'react'
 
 export interface AppContext {
-  queue: Games[],
+  queue: Games[]
   selectedCell: { x: number; y: number } | null
   editorSimulation: Game | undefined // Used for the map editor, so it doesn't have to overwrite the game's simulation
   editorSelectedCell: { x: number; y: number } | null // Independent selection for map editor

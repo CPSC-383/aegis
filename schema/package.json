@@ -7,7 +7,7 @@
   "scripts": {
     "prebuild": "npm run clean:dirs",
     "build": "npm run build:python && npm run build:ts && npm run fix && npm run move:client",
-    "clean:dirs": "rimraf ./python/* ./ts/* ../client/node_modules/aegis-schema ../src/_aegis/schemas/*",
+    "clean:dirs": "rimraf --glob ./python/* ./ts/* ../client/node_modules/aegis-schema ../src/_aegis/schemas/*",
     "build:python": "protoc --proto_path=protos --python_out=python --pyi_out=python protos/*.proto",
     "build:ts": "npx protoc --ts_out=ts --proto_path protos protos/*.proto",
     "fix": "python scripts/fix_imports.py && python scripts/make_index.py",
