@@ -80,6 +80,7 @@ class Game:
     def process_agent_commands(self) -> None:
         commands: list[AgentCommand] = []
         messages: list[SendMessage] = []
+        agents: list[Agent] = []
 
         for agent in list(self._agents.values()):
             agent.run()
@@ -93,10 +94,13 @@ class Game:
 
             agent.log(f"Action received: {command}")
             agent.log(f"Directives received: {directives}")
-            self.game_pb.end_turn(agent)
+            agents.append(agent)  # defer end_turn
             agent.command_manager.clear()
 
         self._command_processor.process(commands, messages)
+
+        for agent in agents:
+            self.game_pb.end_turn(agent)
 
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
