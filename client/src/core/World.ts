@@ -4,8 +4,7 @@ import { getImage, whatBucket } from '@/utils/util'
 import survivorSrc from '@/assets/survivor.png'
 import { schema } from 'aegis-schema'
 import Game from './Game'
-
-// Interface for world data structure
+import { THICKNESS } from '@/utils/constants'
 
 export default class World {
   /**
@@ -231,14 +230,13 @@ export default class World {
    * @param ctx - Canvas rendering context.
    */
   draw(ctx: CanvasRenderingContext2D): void {
-    const thickness = 0.04
     ctx.strokeStyle = 'black'
-    ctx.lineWidth = thickness
+    ctx.lineWidth = THICKNESS
 
     ctx.fillStyle = '#000000'
     ctx.fillRect(0, 0, this.width, this.height)
 
-    this.drawCells(ctx, thickness)
+    this.drawCells(ctx)
   }
 
   /**
@@ -246,9 +244,9 @@ export default class World {
    * @param ctx - Canvas rendering context.
    * @param thickness - Line thickness for drawing the cells.
    */
-  private drawCells(ctx: CanvasRenderingContext2D, thickness: number): void {
-    this.drawTerrain(ctx, thickness)
-    this.drawSpecialCells(ctx, thickness)
+  private drawCells(ctx: CanvasRenderingContext2D): void {
+    this.drawTerrain(ctx)
+    this.drawSpecialCells(ctx)
     this.drawSpawns(ctx)
   }
 
@@ -257,7 +255,7 @@ export default class World {
    * @param ctx - Canvas rendering context.
    * @param thickness - Line thickness for drawing the cells.
    */
-  private drawTerrain(ctx: CanvasRenderingContext2D, thickness: number): void {
+  private drawTerrain(ctx: CanvasRenderingContext2D): void {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
         const cell = this.cells.find((cell) => cell.loc!.x === x && cell.loc!.y === y)
@@ -275,10 +273,10 @@ export default class World {
 
         const coords = renderCoords(x, y, this.size)
         ctx.fillRect(
-          coords.x + thickness / 2,
-          coords.y + thickness / 2,
-          1 - thickness,
-          1 - thickness
+          coords.x + THICKNESS / 2,
+          coords.y + THICKNESS / 2,
+          1 - THICKNESS,
+          1 - THICKNESS
         )
       }
     }
@@ -289,7 +287,7 @@ export default class World {
    * @param ctx - Canvas rendering context.
    * @param thickness - Line thickness for drawing the cells.
    */
-  private drawSpecialCells(ctx: CanvasRenderingContext2D, thickness: number): void {
+  private drawSpecialCells(ctx: CanvasRenderingContext2D): void {
     // Charging cells - dynamic blue shade based on moveCost
     for (const loc of this.chargingCells) {
       const cell = this.cells.find((c) => c.loc!.x === loc.x && c.loc!.y === loc.y)
@@ -306,10 +304,10 @@ export default class World {
 
       const coords = renderCoords(loc.x, loc.y, this.size)
       ctx.fillRect(
-        coords.x + thickness / 2,
-        coords.y + thickness / 2,
-        1 - thickness,
-        1 - thickness
+        coords.x + THICKNESS / 2,
+        coords.y + THICKNESS / 2,
+        1 - THICKNESS,
+        1 - THICKNESS
       )
     }
 
@@ -328,10 +326,10 @@ export default class World {
     for (const loc of this.killerCells) {
       const coords = renderCoords(loc.x, loc.y, this.size)
       ctx.fillRect(
-        coords.x + thickness / 2,
-        coords.y + thickness / 2,
-        1 - thickness,
-        1 - thickness
+        coords.x + THICKNESS / 2,
+        coords.y + THICKNESS / 2,
+        1 - THICKNESS,
+        1 - THICKNESS
       )
     }
   }

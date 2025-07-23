@@ -3,9 +3,7 @@ import Games from './Games'
 import Game from './Game'
 import goobSrc from '@/assets/goob.png'
 import { getImage } from '@/utils/util'
-import { TILE_SIZE } from '@/utils/constants'
 import { renderCoords } from '@/utils/renderUtils'
-import Round from './Round'
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()
@@ -52,6 +50,7 @@ export default class Agents {
   }
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
+    // TODO: draw multiple agents on a cell
     for (const agent of this.agents.values()) {
       agent.draw(game, ctx)
     }
