@@ -4,34 +4,10 @@ import { getImage, whatBucket } from '@/utils/util'
 import survivorSrc from '@/assets/survivor.png'
 import { schema } from 'aegis-schema'
 import Game from './Game'
-import { error } from 'console'
 
 // Interface for world data structure
-interface WorldData {
-  settings: {
-    world_info: {
-      size: { width: number; height: number }
-      seed: number
-      agent_energy: number
-    }
-  }
-  spawn_locs: Array<{
-    x: number
-    y: number
-    type: string
-    gid?: number
-  }>
-  stacks: schema.Cell[]
-  cell_types: {
-    fire_cells: Location[]
-    killer_cells: Location[]
-    charging_cells: Location[]
-  }
-}
 
 export default class World {
-  private readonly cellTypes: CellTypeMap
-
   /**
    * Constructs a new World instance.
    * @param width - The width of the map.
@@ -58,15 +34,16 @@ export default class World {
     public readonly startEnergy: number,
     public minMoveCost: number,
     public maxMoveCost: number
-  ) {
-    this.cellTypes = {
-      fire: { color: '#ff9900', cells: fireCells },
-      killer: { color: '#cc0000', cells: killerCells },
-      charging: { color: '', cells: chargingCells } // Color determined dynamically
+  ) { }
+
+  public applyRound(round: schema.Round | null): void {
+    if (!round) return
+
+    for (const loc of round.layersRemoved) {
+      const cell = this.cellAt(loc.x, loc.y);
+      cell.layers.pop()
     }
   }
-
-  public applyRound(round: schema.Round | null): void { }
 
   /**
    * Creates a new World instance from protobuf WorldState data.
@@ -118,40 +95,40 @@ export default class World {
    * @param data - Serialized data representing the world map.
    * @returns A World instance.
    */
-  static fromData(data: WorldData): World {
-    const { world_info } = data.settings
-    const { size, seed, agent_energy } = world_info
-
-    const spawnCells = new Map<string, SpawnZoneData>(
-      data.spawn_locs.map((spawn) => {
-        const key = JSON.stringify({ x: spawn.x, y: spawn.y })
-        return [
-          key,
-          {
-            type: spawn.type as SpawnZoneTypes,
-            groups: spawn.gid ? [spawn.gid] : []
-          }
-        ]
-      })
-    )
-
-    const cells: schema.Cell[] = data.stacks
-    const moveCosts = cells.map((cell) => cell.moveCost)
-
-    return new World(
-      size.width,
-      size.height,
-      seed,
-      data.cell_types.fire_cells,
-      data.cell_types.killer_cells,
-      data.cell_types.charging_cells,
-      spawnCells,
-      stacks,
-      agent_energy,
-      Math.min(...moveCosts),
-      Math.max(...moveCosts)
-    )
-  }
+  // static fromData(data: WorldData): World {
+  //   const { world_info } = data.settings
+  //   const { size, seed, agent_energy } = world_info
+  //
+  //   const spawnCells = new Map<string, SpawnZoneData>(
+  //     data.spawn_locs.map((spawn) => {
+  //       const key = JSON.stringify({ x: spawn.x, y: spawn.y })
+  //       return [
+  //         key,
+  //         {
+  //           type: spawn.type as SpawnZoneTypes,
+  //           groups: spawn.gid ? [spawn.gid] : []
+  //         }
+  //       ]
+  //     })
+  //   )
+  //
+  //   const cells: schema.Cell[] = data.stacks
+  //   const moveCosts = cells.map((cell) => cell.moveCost)
+  //
+  //   return new World(
+  //     size.width,
+  //     size.height,
+  //     seed,
+  //     data.cell_types.fire_cells,
+  //     data.cell_types.killer_cells,
+  //     data.cell_types.charging_cells,
+  //     spawnCells,
+  //     stacks,
+  //     agent_energy,
+  //     Math.min(...moveCosts),
+  //     Math.max(...moveCosts)
+  //   )
+  // }
 
   /**
    * Creates a new World instance with default parameters.
@@ -160,24 +137,24 @@ export default class World {
    * @param initialEnergy - Initial energy level for agents.
    * @returns A World instance with default parameters.
    */
-  static fromParams(width: number, height: number, initialEnergy: number): World {
-    const cells: Cell[] = []
-
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        const cell = Cell.create({
-          loc: { x, y },
-          moveCost: 1,
-          type: CellType.NORMAL,
-          agents: [],
-          layers: []
-        })
-        cells.push(cell)
-      }
-    }
-
-    return new World(width, height, 0, [], [], [], [], cells, initialEnergy, 1, 1)
-  }
+  // static fromParams(width: number, height: number, initialEnergy: number): World {
+  //   const cells: Cell[] = []
+  //
+  //   for (let x = 0; x < width; x++) {
+  //     for (let y = 0; y < height; y++) {
+  //       const cell = Cell.create({
+  //         loc: { x, y },
+  //         moveCost: 1,
+  //         type: CellType.NORMAL,
+  //         agents: [],
+  //         layers: []
+  //       })
+  //       cells.push(cell)
+  //     }
+  //   }
+  //
+  //   return new World(width, height, 0, [], [], [], [], cells, initialEnergy, 1, 1)
+  // }
 
   public copy(): World {
     return new World(
@@ -188,7 +165,7 @@ export default class World {
       [...this.killerCells.map((loc) => ({ ...loc }))],
       [...this.chargingCells.map((loc) => ({ ...loc }))],
       [...this.spawnCells.map((loc) => ({ ...loc }))],
-      this.cells.map((cell) => ({ ...cell, loc: { ...cell.loc! } })),
+      this.cells.map(this.copyCell),
       this.startEnergy,
       this.minMoveCost,
       this.maxMoveCost
@@ -196,29 +173,35 @@ export default class World {
   }
 
   /**
-   * Determines the type of a cell at the specified coordinates.
-   * @param x - X-coordinate of the cell.
-   * @param y - Y-coordinate of the cell.
-   * @returns The type of the cell as a string.
+   * Creates a deep copy of a Cell object.
+   *
+   * @param {schema.Cell} cell - The cell to copy.
+   * @returns {schema.Cell} A deep copy of the input cell.
    */
-  getCellType(x: number, y: number): string {
-    const matchLocation = (cell: Location): boolean => cell.x === x && cell.y === y
-
-    if (this.fireCells.some(matchLocation)) return 'CellType.FIRE_CELL'
-    if (this.killerCells.some(matchLocation)) return 'CellType.KILLER_CELL'
-    if (this.chargingCells.some(matchLocation)) return 'CellType.CHARGING_CELL'
-    return 'CellType.NORMAL_CELL'
+  private copyCell(cell: schema.Cell): schema.Cell {
+    return {
+      loc: cell.loc ? { ...cell.loc } : undefined,
+      moveCost: cell.moveCost,
+      type: cell.type,
+      agents: [...cell.agents],
+      layers: cell.layers.map(layer => ({ ...layer })),
+    }
   }
 
   /**
    * Checks if the world map is empty.
+   * A world is considered empty if:
+   * - There are no spawn cells,
+   * - All cells have no layers,
+   * - All cells are of type "normal".
    * @returns True if the map is empty, otherwise false.
    */
   isEmpty(): boolean {
     return (
-      Object.values(this.cellTypes).every((type) => type.cells.length === 0) &&
       this.spawnCells.length === 0 &&
-      this.cells.every((cell) => cell.layers.length === 0 && cell.moveCost === 1)
+      this.cells.every(
+        (cell) => cell.layers.length === 0 && cell.type === schema.CellType.NORMAL
+      )
     )
   }
 
@@ -265,7 +248,7 @@ export default class World {
    */
   private drawCells(ctx: CanvasRenderingContext2D, thickness: number): void {
     this.drawTerrain(ctx, thickness)
-    // this.drawSpecialCells(ctx, thickness)
+    this.drawSpecialCells(ctx, thickness)
     this.drawSpawns(ctx)
   }
 
@@ -302,25 +285,23 @@ export default class World {
   }
 
   /**
-   * Helper function to render special cells like charging cells, fire cells, and killer cells.
+   * Helper function to render special cells like charging, fire, and killer cells.
    * @param ctx - Canvas rendering context.
    * @param thickness - Line thickness for drawing the cells.
    */
   private drawSpecialCells(ctx: CanvasRenderingContext2D, thickness: number): void {
+    // Charging cells - dynamic blue shade based on moveCost
     for (const loc of this.chargingCells) {
-      const cell = this.cells.find(
-        (cell) => cell.loc!.x === loc.x && cell.loc!.y === loc.y
-      )
+      const cell = this.cells.find((c) => c.loc!.x === loc.x && c.loc!.y === loc.y)
       if (!cell) continue
 
-      const opacity = whatBucket(
+      const bucket = whatBucket(
         this.minMoveCost,
         this.maxMoveCost,
         cell.moveCost,
         shadesOfBlue.length
       )
-
-      const [r, g, b] = shadesOfBlue[opacity]
+      const [r, g, b] = shadesOfBlue[bucket]
       ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
 
       const coords = renderCoords(loc.x, loc.y, this.size)
@@ -332,19 +313,26 @@ export default class World {
       )
     }
 
-    for (const [type, { color, cells }] of Object.entries(this.cellTypes)) {
-      if (type === 'charging') continue
+    // ctx.fillStyle = '#ff9900'
+    // for (const loc of this.fireCells) {
+    //   const coords = renderCoords(loc.x, loc.y, this.size)
+    //   ctx.fillRect(
+    //     coords.x + thickness / 2,
+    //     coords.y + thickness / 2,
+    //     1 - thickness,
+    //     1 - thickness
+    //   )
+    // }
 
-      ctx.fillStyle = color
-      for (const loc of cells) {
-        const coords = renderCoords(loc.x, loc.y, this.size)
-        ctx.fillRect(
-          coords.x + thickness / 2,
-          coords.y + thickness / 2,
-          1 - thickness,
-          1 - thickness
-        )
-      }
+    ctx.fillStyle = '#cc0000'
+    for (const loc of this.killerCells) {
+      const coords = renderCoords(loc.x, loc.y, this.size)
+      ctx.fillRect(
+        coords.x + thickness / 2,
+        coords.y + thickness / 2,
+        1 - thickness,
+        1 - thickness
+      )
     }
   }
 
@@ -380,92 +368,70 @@ export default class World {
         ctx.closePath()
         ctx.fill()
       }
-      ctx.restore()
     }
   }
 
-  public drawLayers(ctx: CanvasRenderingContext2D): void {
+  public drawLayers(game: Game, ctx: CanvasRenderingContext2D, full: boolean): void {
     const surv = getImage(survivorSrc)
     if (!surv) throw new Error("surv should be loaded already")
 
-    const { width, height } = this.size
+    const locs = full
+      ? this.getAllLocations()
+      : game.currentRound.layersRemoved
 
-    for (let x = 0; x < width; x++) {
-      for (let y = 0; y < height; y++) {
-        const coords = renderCoords(x, y, this.size)
-        ctx.clearRect(coords.x, coords.y, 1, 1)
+    for (const loc of locs) {
+      const x = loc.x
+      const y = loc.y
 
-        const layers = this.cellAt(x, y).layers
-        if (!layers.length) continue
+      const coords = renderCoords(x, y, this.size)
+      ctx.clearRect(coords.x, coords.y, 1, 1)
 
-        const layer = layers[layers.length - 1]
-        const survivors = this.countByKind(layers, "survivor")
+      const layers = this.cellAt(x, y).layers
+      if (!layers.length) continue
 
+      const survivorCount = this.countByKind(layers, "survivor")
+      const rubbleCount = this.countByKind(layers, "rubble")
 
-        if (layer.object.oneofKind === "survivor") {
-          ctx.drawImage(surv, coords.x, coords.y, 1, 1)
-        } else if (layer.object.oneofKind === "rubble") {
-        }
+      const topLayer = layers[layers.length - 1]
+      const kind = topLayer.object.oneofKind
+
+      if (kind === "survivor") {
+        ctx.drawImage(surv, coords.x, coords.y, 1, 1)
+      } else if (kind === "rubble") {
+        ctx.fillStyle = "#555555"
+        ctx.fillRect(coords.x + 0.2, coords.y + 0.2, 0.6, 0.6)
+      }
+
+      ctx.font = "0.2px Arial"
+      ctx.textBaseline = "bottom"
+
+      if (survivorCount > 1) {
+        ctx.fillStyle = "blue"
+        ctx.textAlign = "right"
+        ctx.fillText(String(survivorCount), coords.x + 0.95, coords.y + 0.95)
+      }
+
+      if (rubbleCount > 1) {
+        ctx.fillStyle = "#555555"
+        ctx.textAlign = "left"
+        ctx.fillText(String(rubbleCount), coords.x + 0.05, coords.y + 0.95)
       }
     }
-    //       // if (layer.object.oneofKind == "rubble") {
-    //       //   const minMoveCost = game.world.minMoveCost
-    //       //   const maxMoveCost = game.world.maxMoveCost
-    //       //   const moveCost = game.getCell(x, y).moveCost
-    //       //   // whichShade should be between 0 and shadesOfBrown.length i hope
-    //       //   const whichShade = whatBucket(
-    //       //     minMoveCost,
-    //       //     maxMoveCost,
-    //       //     moveCost,
-    //       //     shadesOfBrown.length
-    //       //   )
-    //       //   rowInSheet = 1
-    //       //   colInSheet = whichShade
-    //       // } else if (layer.object.oneofKind == "survivor") {
-    //       //   rowInSheet = 4
-    //       //   colInSheet = 0
-    //       // }
-    //
-    //       ctx.drawImage(
-    //         layerSpriteSheet,
-    //         colInSheet * spriteHeight,
-    //         rowInSheet * spriteWidth,
-    //         spriteWidth,
-    //         spriteHeight,
-    //         coords.x + thickness / 2,
-    //         coords.y + thickness / 2,
-    //         1 - thickness,
-    //         1 - thickness
-    //       )
-    //
-    //       // draw survivor sprites on edge of cell if there are any in the layer
-    //       // const numOfSurvivorsInCellLayers = Math.min(
-    //       //   layers.filter((layer) => layer.object.oneofKind === 'survivor').length,
-    //       //   5
-    //       // )
-    //
-    //       // draw survivor sprite onto cell
-    //       // const survivorColumn = numOfSurvivorsInCellLayers - 1
-    //       // const survivorRow = 2 // light blue squares are row 3 on spritesheet
-    //       // ctx.drawImage(
-    //       //   layerSpriteSheet,
-    //       //   survivorColumn * spriteWidth,
-    //       //   survivorRow * spriteHeight,
-    //       //   spriteWidth,
-    //       //   spriteHeight,
-    //       //   coords.x + thickness / 2,
-    //       //   coords.y + thickness / 2,
-    //       //   1 - thickness,
-    //       //   1 - thickness
-    //       // )
-    //     }
-    //   }
-    // }
-
   }
 
   private countByKind(layers: schema.WorldObject[], kind: string) {
     return layers.filter(layer => layer.object.oneofKind === kind).length
+  }
+
+  private getAllLocations(): schema.Location[] {
+    const locs: schema.Location[] = []
+    const { width, height } = this.size
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        locs.push({ x, y })
+      }
+    }
+    return locs
   }
 }
 

@@ -54,9 +54,19 @@ class Cell:
     def add_layer(self, layer: WorldObject) -> None:
         self.layers.append(layer)
 
-    def remove_top_layer(self) -> WorldObject | None:
-        if not self.layers:
-            return None
+    def remove_top_layer(self) -> WorldObject:
+        """
+        Remove and returns the topmost layer from the cell.
+
+        Assumes the caller has already checked that the cell has a top layer.
+
+        Returns:
+            WorldObject: The topmost world object layer.
+
+        Raises:
+            IndexError: If there are no layers to remove.
+
+        """
         return self.layers.pop()
 
     def get_top_layer(self) -> WorldObject | None:

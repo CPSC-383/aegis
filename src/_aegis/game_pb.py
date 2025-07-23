@@ -20,6 +20,7 @@ class GamePb:
         self.team_info: list[PbTeamInfo] = []
         self.turns: list[Turn] = []
         self.spawns: list[Spawn] = []
+        self.removed_layers: list[PbLocation] = []
         self.ws_server: WebSocketServer | None = None
 
     def make_games_header(self, ws_server: WebSocketServer) -> None:
@@ -54,16 +55,15 @@ class GamePb:
     def start_round(self, game_round: int) -> None:
         self.round = game_round
 
-    def end_round(self, world: World) -> None:
+    def end_round(self) -> None:
         if self.ws_server is None:
             error = "Server should have started."
             raise ValueError(error)
         pb_round = Round()
-        pb_world = serialize_world(world)
-        pb_round.world.CopyFrom(pb_world)
         pb_round.round = self.round
         pb_round.turns.extend(self.turns)
         pb_round.team_info.extend(self.team_info)
+        pb_round.layers_removed.extend(self.removed_layers)
 
         event = Event()
         event.round.CopyFrom(pb_round)
@@ -141,6 +141,12 @@ class GamePb:
         pb_spawn.team = self.team_to_schema(team)
         self.spawns.append(pb_spawn)
 
+    def add_removed_layer(self, loc: Location) -> None:
+        pb_loc = PbLocation()
+        pb_loc.x = loc.x
+        pb_loc.y = loc.y
+        self.removed_layers.append(pb_loc)
+
     def team_to_schema(self, team: Team) -> PbTeam:
         if team == Team.GOOBS:
             return PbTeam.GOOBS
@@ -150,3 +156,4 @@ class GamePb:
         self.team_info.clear()
         self.spawns.clear()
         self.turns.clear()
+        self.removed_layers.clear()

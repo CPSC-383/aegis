@@ -12,6 +12,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { TeamInfo } from "./team";
 import { Turn } from "./turn";
+import { Location } from "./location";
 import { Spawn } from "./spawn";
 import { World } from "./world";
 /**
@@ -45,9 +46,9 @@ export interface Round {
      */
     round: number;
     /**
-     * @generated from protobuf field: aegis.World world = 2
+     * @generated from protobuf field: repeated aegis.Location layers_removed = 2
      */
-    world?: World;
+    layersRemoved: Location[];
     /**
      * @generated from protobuf field: repeated aegis.Turn turns = 3
      */
@@ -172,7 +173,7 @@ class Round$Type extends MessageType<Round> {
     constructor() {
         super("aegis.Round", [
             { no: 1, name: "round", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "world", kind: "message", T: () => World },
+            { no: 2, name: "layers_removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Location },
             { no: 3, name: "turns", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Turn },
             { no: 4, name: "team_info", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => TeamInfo }
         ]);
@@ -180,6 +181,7 @@ class Round$Type extends MessageType<Round> {
     create(value?: PartialMessage<Round>): Round {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.round = 0;
+        message.layersRemoved = [];
         message.turns = [];
         message.teamInfo = [];
         if (value !== undefined)
@@ -194,8 +196,8 @@ class Round$Type extends MessageType<Round> {
                 case /* int32 round */ 1:
                     message.round = reader.int32();
                     break;
-                case /* aegis.World world */ 2:
-                    message.world = World.internalBinaryRead(reader, reader.uint32(), options, message.world);
+                case /* repeated aegis.Location layers_removed */ 2:
+                    message.layersRemoved.push(Location.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* repeated aegis.Turn turns */ 3:
                     message.turns.push(Turn.internalBinaryRead(reader, reader.uint32(), options));
@@ -218,9 +220,9 @@ class Round$Type extends MessageType<Round> {
         /* int32 round = 1; */
         if (message.round !== 0)
             writer.tag(1, WireType.Varint).int32(message.round);
-        /* aegis.World world = 2; */
-        if (message.world)
-            World.internalBinaryWrite(message.world, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated aegis.Location layers_removed = 2; */
+        for (let i = 0; i < message.layersRemoved.length; i++)
+            Location.internalBinaryWrite(message.layersRemoved[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* repeated aegis.Turn turns = 3; */
         for (let i = 0; i < message.turns.length; i++)
             Turn.internalBinaryWrite(message.turns[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();

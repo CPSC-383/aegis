@@ -74,7 +74,7 @@ class Game:
         self.game_pb.start_round(self.round)
         self.process_agent_commands()
         self.serialize_team_info()
-        self.game_pb.end_round(self.world)
+        self.game_pb.end_round()
         self.process_end_of_round()
 
     def process_agent_commands(self) -> None:
@@ -181,8 +181,7 @@ class Game:
     def remove_layer(self, loc: Location, team: Team) -> None:
         cell = self.get_cell_at(loc)
         world_object = cell.remove_top_layer()
-        if world_object is None:
-            return
+        self.game_pb.add_removed_layer(loc)
 
         if isinstance(world_object, Survivor):
             survivor = world_object

@@ -48,8 +48,11 @@ def _create_cells(cells: list[CellInfoRaw]) -> list[Cell]:
         cell = Cell(*coord)
 
         if cell_type is not None:
-            if "move_cost" in cell_raw:
-                error = f"Move cost should not be set at cell with coordinates {coord}."
+            if move_cost != 1:
+                error = (
+                    f"Cells with a type must have move_cost = 1 at {coord}, "
+                    f"got {move_cost}."
+                )
                 raise ValueError(error)
             cell.setup_cell(cell_type)
         else:

@@ -60,6 +60,7 @@ cells:
       x: 2
       y: 0
     type: spawn
+    move_cost: 1
     layers: []
   - loc:
       x: 2

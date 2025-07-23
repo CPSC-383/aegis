@@ -8,6 +8,8 @@ import survivor from '@/assets/survivor.png'
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any
+  private fullRedraw = false
+
   constructor() {
     const numericLayers = Object.values(CanvasLayers).filter(
       (value) => typeof value === 'number'
@@ -35,6 +37,10 @@ class RendererClass {
     })
   }
 
+  doFullRedraw(): void {
+    this.fullRedraw = true
+  }
+
   ctx(layer: CanvasLayers): CanvasRenderingContext2D | null {
     const canvas = this.canvases[CanvasLayers[layer] as keyof typeof CanvasLayers]
     return canvas.getContext('2d')
@@ -56,14 +62,17 @@ class RendererClass {
 
     const round = game.currentRound
     actx.clearRect(0, 0, actx.canvas.width, actx.canvas.height)
-    lctx.clearRect(0, 0, lctx.canvas.width, lctx.canvas.height)
     round.agents.draw(game, actx)
-    round.world.drawLayers(lctx)
+
+    const full = this.fullRedraw
+    this.fullRedraw = false
+    round.world.drawLayers(game, lctx, full)
   }
 
   onGameChange() {
     const game = Runner.game
     if (!game) return
+    this.fullRedraw = true
     this.updateCanvasSize(game.world.size)
     this.fullRender()
   }

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package aegis;
 
+import "location.proto";
 import "spawn.proto";
 import "team.proto";
 import "turn.proto";
@@ -18,7 +19,7 @@ message GameHeader {
 
 message Round {
   int32 round = 1;  
-  World world = 2;
+  repeated Location layers_removed = 2;
   repeated Turn turns = 3;
   repeated TeamInfo team_info = 4;
 }

@@ -21,7 +21,7 @@ class RunnerClass {
         this.stopGameLoop()
         return
       }
-      const [roundChanged, turnChanged] = this.game.stepGame()
+      const [roundChanged, _] = this.game.stepGame()
       Renderer.render()
       if (roundChanged) notify(ListenerKey.Round)
       if (this.game.currentRound.isEnd()) this.setPaused(true)
@@ -69,6 +69,7 @@ class RunnerClass {
   public stepRound(step: number): void {
     if (!this.game) return
     this.game.stepRound(step)
+    Renderer.doFullRedraw()
     Renderer.render()
     notify(ListenerKey.Round)
   }
@@ -76,6 +77,7 @@ class RunnerClass {
   public jumpToRound(round: number): void {
     if (!this.game || this.game.currentRound.round === round) return
     this.game.jumpToRound(round)
+    Renderer.doFullRedraw()
     Renderer.render()
     notify(ListenerKey.Round)
   }

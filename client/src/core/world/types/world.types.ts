@@ -12,10 +12,3 @@ export type RubbleInfo = {
 export type SurvivorInfo = {
   energy_level: number
 }
-
-export interface CellTypeMap {
-  [key: string]: {
-    color: string
-    cells: Location[]
-  }
-}

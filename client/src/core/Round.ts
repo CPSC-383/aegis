@@ -43,6 +43,10 @@ export default class Round {
     return this.currentRound?.turns.length ?? 0
   }
 
+  get layersRemoved(): schema.Location[] {
+    return this.currentRound?.layersRemoved ?? []
+  }
+
   public copy(): Round {
     return new Round(
       this.game,
