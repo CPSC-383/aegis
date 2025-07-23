@@ -70,7 +70,7 @@ export default class World {
     }
   }
 
-  public applyRound(round: schema.Round | null): void { }
+  public applyRound(round: schema.Round | null): void {}
 
   /**
    * Creates a new World instance from protobuf WorldState data.
@@ -106,14 +106,14 @@ export default class World {
       world.width,
       world.height,
       world.seed,
-      [], // fireCells  
+      [], // fireCells
       killerCells,
       chargingCells,
       spawnCells,
       world.cells,
       world.startEnergy,
       Math.min(...moveCosts),
-      Math.max(...moveCosts),
+      Math.max(...moveCosts)
     )
   }
 
@@ -174,25 +174,13 @@ export default class World {
           moveCost: 1,
           type: CellType.NORMAL,
           agents: [],
-          layers: [],
+          layers: []
         })
         cells.push(cell)
       }
     }
 
-    return new World(
-      width,
-      height,
-      0,
-      [],
-      [],
-      [],
-      [],
-      cells,
-      initialEnergy,
-      1,
-      1
-    )
+    return new World(width, height, 0, [], [], [], [], cells, initialEnergy, 1, 1)
   }
 
   public copy(): World {
@@ -200,11 +188,11 @@ export default class World {
       this.width,
       this.height,
       this.seed,
-      [...this.fireCells.map(loc => ({ ...loc }))],
-      [...this.killerCells.map(loc => ({ ...loc }))],
-      [...this.chargingCells.map(loc => ({ ...loc }))],
-      [...this.spawnCells.map(loc => ({ ...loc }))],
-      this.cells.map(cell => ({ ...cell, loc: { ...cell.loc! } })),
+      [...this.fireCells.map((loc) => ({ ...loc }))],
+      [...this.killerCells.map((loc) => ({ ...loc }))],
+      [...this.chargingCells.map((loc) => ({ ...loc }))],
+      [...this.spawnCells.map((loc) => ({ ...loc }))],
+      this.cells.map((cell) => ({ ...cell, loc: { ...cell.loc! } })),
       this.startEnergy,
       this.minMoveCost,
       this.maxMoveCost
@@ -289,9 +277,7 @@ export default class World {
   private drawTerrain(ctx: CanvasRenderingContext2D, thickness: number): void {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
-        const cell = this.cells.find(
-          (cell) => cell.loc!.x === x && cell.loc!.y === y
-        )
+        const cell = this.cells.find((cell) => cell.loc!.x === x && cell.loc!.y === y)
         if (!cell) continue
 
         const opacity = whatBucket(

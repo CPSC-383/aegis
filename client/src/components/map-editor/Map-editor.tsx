@@ -360,7 +360,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
                 handleInitialEnergyChange(value)
               }}
               className="w-full"
-            // disabled={!isWorldEmpty}
+              // disabled={!isWorldEmpty}
             />
           </div>
         </CardContent>

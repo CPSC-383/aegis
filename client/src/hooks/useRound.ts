@@ -1,25 +1,25 @@
-import { useEffect, useState } from "react";
-import useGame from "./useGame";
-import { ListenerKey, subscribe } from "@/core/Listeners";
-import type Round from "@/core/Round";
+import { useEffect, useState } from 'react'
+import useGame from './useGame'
+import { ListenerKey, subscribe } from '@/core/Listeners'
+import type Round from '@/core/Round'
 
 export default function useRound(): Round | undefined {
-  const game = useGame();
-  const [round, setRound] = useState(game?.currentRound);
-  const [_, setRoundNumber] = useState(game?.currentRound.round);
+  const game = useGame()
+  const [round, setRound] = useState(game?.currentRound)
+  const [_, setRoundNumber] = useState(game?.currentRound.round)
 
   useEffect(() => {
-    setRound(game?.currentRound);
-    setRoundNumber(game?.currentRound?.round);
-    if (!game) return;
+    setRound(game?.currentRound)
+    setRoundNumber(game?.currentRound?.round)
+    if (!game) return
 
     const unsubscribe = subscribe(ListenerKey.Round, () => {
-      setRound(game.currentRound);
-      setRoundNumber(game.currentRound?.round);
-    });
+      setRound(game.currentRound)
+      setRoundNumber(game.currentRound?.round)
+    })
 
-    return unsubscribe;
-  }, [game]);
+    return unsubscribe
+  }, [game])
 
-  return round;
+  return round
 }

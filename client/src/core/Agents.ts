@@ -1,11 +1,11 @@
-import { schema } from "aegis-schema"
-import Games from "./Games"
-import Game from "./Game"
+import { schema } from 'aegis-schema'
+import Games from './Games'
+import Game from './Game'
 import goobSrc from '@/assets/goobs/goob.png'
-import { getImage } from "@/utils/util"
-import { TILE_SIZE } from "@/utils/constants"
-import { renderCoords } from "@/utils/renderUtils"
-import Round from "./Round"
+import { getImage } from '@/utils/util'
+import { TILE_SIZE } from '@/utils/constants'
+import { renderCoords } from '@/utils/renderUtils'
+import Round from './Round'
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()
@@ -18,7 +18,8 @@ export default class Agents {
   }
 
   public processRound(round: schema.Round | null): void {
-    if (round) { }
+    if (round) {
+    }
 
     for (const agent of this.agents.values()) {
       agent.lastLoc = agent.loc
@@ -79,23 +80,18 @@ export class Agent {
   }
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
-    const goob = getImage(goobSrc);
-    if (!goob) return;
+    const goob = getImage(goobSrc)
+    if (!goob) return
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
 
-    const spriteSize = 1;
+    const spriteSize = 1
 
-    ctx.drawImage(goob, pos.x, pos.y, spriteSize, spriteSize);
+    ctx.drawImage(goob, pos.x, pos.y, spriteSize, spriteSize)
   }
 
   public copy(): Agent {
-    const copy = new Agent(
-      this.games,
-      this.id,
-      this.team,
-      { ...this.loc }
-    )
+    const copy = new Agent(this.games, this.id, this.team, { ...this.loc })
     copy.energyLevel = this.energyLevel
     copy.lastLoc = { ...this.lastLoc }
     return copy
@@ -103,7 +99,7 @@ export class Agent {
 
   public default(): void {
     const currentGame = this.games.currentGame
-    if (!currentGame) throw new Error("No active game found for agent initialization")
+    if (!currentGame) throw new Error('No active game found for agent initialization')
     this.energyLevel = this.games.currentGame!.world.startEnergy
   }
 }

@@ -1,7 +1,7 @@
 export enum CanvasLayers {
   Background,
   Layers,
-  Agent,
+  Agent
 }
 
 export type Size = {

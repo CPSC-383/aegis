@@ -1,5 +1,5 @@
-import { schema } from "aegis-schema";
-import Game from "./Game";
+import { schema } from 'aegis-schema'
+import Game from './Game'
 
 let nextId = 0
 
@@ -18,25 +18,25 @@ export default class Games {
    */
   addEvent(event: schema.Event): void {
     switch (event.event.oneofKind) {
-      case "gamesHeader":
-        throw new Error("Cannot add another GamesHeader event.")
-      case "gameHeader":
+      case 'gamesHeader':
+        throw new Error('Cannot add another GamesHeader event.')
+      case 'gameHeader':
         const header = event.event.gameHeader
         const game = Game.fromSchema(this, header)
         this.games.push(game)
         this.currentGame = game
         game.initEnergy()
         return
-      case "round":
+      case 'round':
         if (this.currentGame === undefined) {
-          throw new Error("Cannot add rounds to an undefined game.")
+          throw new Error('Cannot add rounds to an undefined game.')
         }
         const round = event.event.round
         this.currentGame.addRound(round)
         return
-      case "gameFooter":
+      case 'gameFooter':
         return
-      case "gamesFooter":
+      case 'gamesFooter':
         return
     }
   }

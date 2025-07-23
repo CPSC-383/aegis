@@ -1,15 +1,17 @@
-import { TILE_SIZE } from "@/utils/constants";
-import { Runner } from "./Runner";
-import { CanvasLayers, Size } from "@/types";
-import { loadImage } from "@/utils/util";
+import { TILE_SIZE } from '@/utils/constants'
+import { Runner } from './Runner'
+import { CanvasLayers, Size } from '@/types'
+import { loadImage } from '@/utils/util'
 import goob from '@/assets/goobs/goob.png'
 
 class RendererClass {
-  private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any;
+  private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any
   constructor() {
-    const numericLayers = Object.values(CanvasLayers).filter(value => typeof value === 'number') as number[]
+    const numericLayers = Object.values(CanvasLayers).filter(
+      (value) => typeof value === 'number'
+    ) as number[]
     numericLayers.forEach((layerValue, index) => {
-      const canvas = document.createElement("canvas")
+      const canvas = document.createElement('canvas')
       canvas.style.zIndex = (index + 1).toString()
       canvas.style.position = 'absolute'
       canvas.style.top = '50%'
@@ -25,7 +27,7 @@ class RendererClass {
 
   renderToContainer(container: HTMLDivElement | null): void {
     if (!container) return
-    Object.values(this.canvases).forEach(canvas => {
+    Object.values(this.canvases).forEach((canvas) => {
       container.appendChild(canvas)
     })
   }
@@ -62,16 +64,15 @@ class RendererClass {
     this.fullRender()
   }
 
-
   private updateCanvasSize(size: Size) {
-    Object.values(this.canvases).forEach(canvas => {
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      canvas.width = size.width * TILE_SIZE;
-      canvas.height = size.height * TILE_SIZE;
-      ctx.scale(TILE_SIZE, TILE_SIZE);
-    });
+    Object.values(this.canvases).forEach((canvas) => {
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+      canvas.width = size.width * TILE_SIZE
+      canvas.height = size.height * TILE_SIZE
+      ctx.scale(TILE_SIZE, TILE_SIZE)
+    })
   }
 }
 

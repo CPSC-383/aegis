@@ -1,7 +1,7 @@
 import World from './World'
 // import { EventType, dispatchEvent } from '@/events'
 import { schema } from 'aegis-schema'
-import Round from "./Round"
+import Round from './Round'
 import Agents from './Agents'
 import Games from './Games'
 
@@ -65,7 +65,10 @@ export default class Game {
 
     while (updatingRound.round < round) {
       updatingRound.jumpToTurn(updatingRound.turnsLength)
-      const nextDelta = updatingRound.round < this.rounds.length ? this.rounds[updatingRound.round] : null
+      const nextDelta =
+        updatingRound.round < this.rounds.length
+          ? this.rounds[updatingRound.round]
+          : null
       updatingRound.startRound(nextDelta)
       if (updatingRound.round % SNAPSHOT_INTERVAL === 0)
         this.snapshots.push(updatingRound.copy())
@@ -91,8 +94,7 @@ export default class Game {
 
   private getClosestSnapshot(targetRound: number): Round {
     const snapIndex = Math.floor((targetRound - 1) / SNAPSHOT_INTERVAL)
-    if (snapIndex < this.snapshots.length)
-      return this.snapshots[snapIndex]
+    if (snapIndex < this.snapshots.length) return this.snapshots[snapIndex]
     return this.snapshots[this.snapshots.length - 1]
   }
 
@@ -102,9 +104,7 @@ export default class Game {
     }
   }
 
-
   // ------- old stuff --------
-
 
   //   /**
   //    * Renders the next round in the simulation, if applicable.

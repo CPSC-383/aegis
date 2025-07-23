@@ -23,7 +23,6 @@ function GameArea(): JSX.Element {
     }
   }, [])
 
-
   // const renderStack = (): void => {
   //   const ctx = stackCanvas.current?.getContext('2d')
   //   const layerSpriteSheet = getImage(layerSpriteSheetSrc)
@@ -180,11 +179,7 @@ function GameArea(): JSX.Element {
       // onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      {!round && (
-        <div>
-          Waiting for simulation to start...
-        </div>
-      )}
+      {!round && <div>Waiting for simulation to start...</div>}
     </div>
   )
 }

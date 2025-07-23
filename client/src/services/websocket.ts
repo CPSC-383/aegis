@@ -1,6 +1,6 @@
 import Game from '@/core/Game'
 import Games from '@/core/Games'
-import { schema } from "aegis-schema"
+import { schema } from 'aegis-schema'
 
 export class ClientWebSocket {
   private url: string = 'ws://localhost:6003'
@@ -34,12 +34,12 @@ export class ClientWebSocket {
 
   private handleEvent(data: string) {
     try {
-      const decoded = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
+      const decoded = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
       const event = schema.Event.fromBinary(decoded)
 
       if (!this.games) {
-        if (event.event.oneofKind !== "gamesHeader") {
-          throw new Error("First event must be the GameHeader.")
+        if (event.event.oneofKind !== 'gamesHeader') {
+          throw new Error('First event must be the GameHeader.')
         }
 
         this.games = new Games()
@@ -49,7 +49,7 @@ export class ClientWebSocket {
 
       this.games.addEvent(event)
 
-      if (event.event.oneofKind === "round") {
+      if (event.event.oneofKind === 'round') {
         const games = this.games.games
         const game = games[games.length - 1]
         if (this.game === game) return
@@ -58,9 +58,7 @@ export class ClientWebSocket {
         this.game = game
       }
 
-      if (event.event.oneofKind === "gameFooter")
-        this.game = undefined
-
+      if (event.event.oneofKind === 'gameFooter') this.game = undefined
     } catch (error) {
       console.error('Failed to handle websocket event:', error)
     }

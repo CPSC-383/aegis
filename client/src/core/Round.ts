@@ -1,7 +1,7 @@
-import Agents from "./Agents";
-import Game from "./Game";
-import { schema } from "aegis-schema"
-import World from "./World";
+import Agents from './Agents'
+import Game from './Game'
+import { schema } from 'aegis-schema'
+import World from './World'
 
 export default class Round {
   public turn: number = 0
@@ -12,7 +12,7 @@ export default class Round {
     public round: number,
     public agents: Agents,
     private currentRound: schema.Round | null = null
-  ) { }
+  ) {}
 
   public startRound(round: schema.Round | null): void {
     this.agents.processRound(this.currentRound)
