@@ -4,7 +4,7 @@ import { getImage, whatBucket } from '@/utils/util'
 import { useEffect, useRef, useState } from 'react'
 
 import layerSpriteSheetSrc from '@/assets/layers-spritesheet-Sheet.png'
-import { drawAgent, renderCoords } from '@/utils/renderUtils'
+import { renderCoords } from '@/utils/renderUtils'
 import { Renderer } from '@/core/Renderer'
 import useRound from '@/hooks/useRound'
 

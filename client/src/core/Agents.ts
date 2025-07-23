@@ -84,10 +84,7 @@ export class Agent {
     if (!goob) return
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
-
-    const spriteSize = 1
-
-    ctx.drawImage(goob, pos.x, pos.y, spriteSize, spriteSize)
+    ctx.drawImage(goob, pos.x, pos.y, 1, 1)
   }
 
   public copy(): Agent {

@@ -1,14 +1,10 @@
-// import {
-//   CellTypeMap,
-//   Location,
-//   Size,
-//   SpawnZoneData,
-//   SpawnZoneTypes,
-// } from '@/core/world'
 import { shadesOfBlue, shadesOfBrown, Size } from '@/types'
 import { renderCoords } from '@/utils/renderUtils'
-import { whatBucket } from '@/utils/util'
+import { getImage, whatBucket } from '@/utils/util'
+import survivorSrc from '@/assets/survivor.png'
 import { schema } from 'aegis-schema'
+import Game from './Game'
+import { error } from 'console'
 
 // Interface for world data structure
 interface WorldData {
@@ -70,7 +66,7 @@ export default class World {
     }
   }
 
-  public applyRound(round: schema.Round | null): void {}
+  public applyRound(round: schema.Round | null): void { }
 
   /**
    * Creates a new World instance from protobuf WorldState data.
@@ -234,6 +230,10 @@ export default class World {
     return { width: this.width, height: this.height }
   }
 
+  public cellAt(x: number, y: number) {
+    return this.cells[y + x * this.width]
+  }
+
   /**
    * Updates the minimum and maximum movement costs for cells in the map.
    */
@@ -383,4 +383,89 @@ export default class World {
       ctx.restore()
     }
   }
+
+  public drawLayers(ctx: CanvasRenderingContext2D): void {
+    const surv = getImage(survivorSrc)
+    if (!surv) throw new Error("surv should be loaded already")
+
+    const { width, height } = this.size
+
+    for (let x = 0; x < width; x++) {
+      for (let y = 0; y < height; y++) {
+        const coords = renderCoords(x, y, this.size)
+        ctx.clearRect(coords.x, coords.y, 1, 1)
+
+        const layers = this.cellAt(x, y).layers
+        if (!layers.length) continue
+
+        const layer = layers[layers.length - 1]
+        const survivors = this.countByKind(layers, "survivor")
+
+
+        if (layer.object.oneofKind === "survivor") {
+          ctx.drawImage(surv, coords.x, coords.y, 1, 1)
+        } else if (layer.object.oneofKind === "rubble") {
+        }
+      }
+    }
+    //       // if (layer.object.oneofKind == "rubble") {
+    //       //   const minMoveCost = game.world.minMoveCost
+    //       //   const maxMoveCost = game.world.maxMoveCost
+    //       //   const moveCost = game.getCell(x, y).moveCost
+    //       //   // whichShade should be between 0 and shadesOfBrown.length i hope
+    //       //   const whichShade = whatBucket(
+    //       //     minMoveCost,
+    //       //     maxMoveCost,
+    //       //     moveCost,
+    //       //     shadesOfBrown.length
+    //       //   )
+    //       //   rowInSheet = 1
+    //       //   colInSheet = whichShade
+    //       // } else if (layer.object.oneofKind == "survivor") {
+    //       //   rowInSheet = 4
+    //       //   colInSheet = 0
+    //       // }
+    //
+    //       ctx.drawImage(
+    //         layerSpriteSheet,
+    //         colInSheet * spriteHeight,
+    //         rowInSheet * spriteWidth,
+    //         spriteWidth,
+    //         spriteHeight,
+    //         coords.x + thickness / 2,
+    //         coords.y + thickness / 2,
+    //         1 - thickness,
+    //         1 - thickness
+    //       )
+    //
+    //       // draw survivor sprites on edge of cell if there are any in the layer
+    //       // const numOfSurvivorsInCellLayers = Math.min(
+    //       //   layers.filter((layer) => layer.object.oneofKind === 'survivor').length,
+    //       //   5
+    //       // )
+    //
+    //       // draw survivor sprite onto cell
+    //       // const survivorColumn = numOfSurvivorsInCellLayers - 1
+    //       // const survivorRow = 2 // light blue squares are row 3 on spritesheet
+    //       // ctx.drawImage(
+    //       //   layerSpriteSheet,
+    //       //   survivorColumn * spriteWidth,
+    //       //   survivorRow * spriteHeight,
+    //       //   spriteWidth,
+    //       //   spriteHeight,
+    //       //   coords.x + thickness / 2,
+    //       //   coords.y + thickness / 2,
+    //       //   1 - thickness,
+    //       //   1 - thickness
+    //       // )
+    //     }
+    //   }
+    // }
+
+  }
+
+  private countByKind(layers: schema.WorldObject[], kind: string) {
+    return layers.filter(layer => layer.object.oneofKind === kind).length
+  }
 }
+

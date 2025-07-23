@@ -2,7 +2,9 @@ import { TILE_SIZE } from '@/utils/constants'
 import { Runner } from './Runner'
 import { CanvasLayers, Size } from '@/types'
 import { loadImage } from '@/utils/util'
+
 import goob from '@/assets/goob.png'
+import survivor from '@/assets/survivor.png'
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any
@@ -23,6 +25,7 @@ class RendererClass {
       this.canvases[layerKey] = canvas
     })
     loadImage(goob)
+    loadImage(survivor)
   }
 
   renderToContainer(container: HTMLDivElement | null): void {
@@ -55,6 +58,7 @@ class RendererClass {
     actx.clearRect(0, 0, actx.canvas.width, actx.canvas.height)
     lctx.clearRect(0, 0, lctx.canvas.width, lctx.canvas.height)
     round.agents.draw(game, actx)
+    round.world.drawLayers(lctx)
   }
 
   onGameChange() {
