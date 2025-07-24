@@ -3,7 +3,8 @@ import { Runner } from './Runner'
 import { CanvasLayers, Size } from '@/types'
 import { loadImage } from '@/utils/util'
 
-import goob from '@/assets/goob.png'
+import goobA from '@/assets/goob-team-a.png'
+import goobB from '@/assets/goob-team-b.png'
 import survivor from '@/assets/survivor.png'
 
 class RendererClass {
@@ -26,7 +27,8 @@ class RendererClass {
       const layerKey = CanvasLayers[layerValue] as keyof typeof CanvasLayers
       this.canvases[layerKey] = canvas
     })
-    loadImage(goob)
+    loadImage(goobA)
+    loadImage(goobB)
     loadImage(survivor)
   }
 

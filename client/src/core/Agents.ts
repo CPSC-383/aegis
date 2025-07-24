@@ -1,7 +1,8 @@
 import { schema } from 'aegis-schema'
 import Games from './Games'
 import Game from './Game'
-import goobSrc from '@/assets/goob.png'
+import goobA from '@/assets/goob-team-a.png'
+import goobB from '@/assets/goob-team-b.png'
 import { getImage } from '@/utils/util'
 import { renderCoords } from '@/utils/renderUtils'
 
@@ -37,7 +38,7 @@ export default class Agents {
     const loc = _agent.loc!
     const team = _agent.team
 
-    const agent = new Agent(this.games, id, team, loc)
+    const agent = new Agent(this.games, id, team, loc, team === schema.Team.GOOBS ? goobA : goobB)
     this.agents.set(id, agent)
 
     if (this.games.currentGame) agent.default()
@@ -73,13 +74,12 @@ export class Agent {
     private games: Games,
     public readonly id: number,
     public readonly team: schema.Team,
-    public loc: schema.Location
-  ) {
-    this.lastLoc = this.loc
-  }
+    public loc: schema.Location,
+    public imgPath: string
+  ) { this.lastLoc = this.loc }
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
-    const goob = getImage(goobSrc)
+    const goob = getImage(this.imgPath)
     if (!goob) return
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
@@ -87,7 +87,7 @@ export class Agent {
   }
 
   public copy(): Agent {
-    const copy = new Agent(this.games, this.id, this.team, { ...this.loc })
+    const copy = new Agent(this.games, this.id, this.team, { ...this.loc }, this.team === schema.Team.GOOBS ? goobA : goobB)
     copy.energyLevel = this.energyLevel
     copy.lastLoc = { ...this.lastLoc }
     return copy
@@ -96,6 +96,6 @@ export class Agent {
   public default(): void {
     const currentGame = this.games.currentGame
     if (!currentGame) throw new Error('No active game found for agent initialization')
-    this.energyLevel = this.games.currentGame!.world.startEnergy
+    this.energyLevel = currentGame.world.startEnergy
   }
 }
