@@ -403,13 +403,13 @@ export default class World {
       ctx.font = "0.2px Arial"
       ctx.textBaseline = "bottom"
 
-      if (survivorCount > 1) {
+      if (survivorCount > 0) {
         ctx.fillStyle = "blue"
         ctx.textAlign = "right"
         ctx.fillText(String(survivorCount), coords.x + 0.95, coords.y + 0.95)
       }
 
-      if (rubbleCount > 1) {
+      if (rubbleCount > 0) {
         ctx.fillStyle = "#555555"
         ctx.textAlign = "left"
         ctx.fillText(String(rubbleCount), coords.x + 0.05, coords.y + 0.95)

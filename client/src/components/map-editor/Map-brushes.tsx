@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { useAppContext } from '@/contexts/AppContext'
+import { useAppStore } from '@/store/useAppStore'
 import { BrushType, CellContentBrushTypes, SpecialCellBrushTypes } from '@/types'
 import { formatDisplayText } from '@/utils/util'
 import { Brush, MousePointerClick, PlusSquare, Target, Zap } from 'lucide-react'
@@ -19,8 +19,8 @@ import MoveCostHandler from './brushes/handlers/MoveCostHandler'
 import SpecialCellsHandler from './brushes/handlers/SpecialCellsHandler'
 import StackContentHandler from './brushes/handlers/StackContentHandler'
 
+// FIX: this function needs updating
 function MapBrushes(): JSX.Element {
-  const { appState, setAppState } = useAppContext()
   const [brushType, setBrushType] = useState<BrushType>(BrushType.SpecialCells)
   const [specialCellType, setSpecialCellType] = useState<SpecialCellBrushTypes>(
     SpecialCellBrushTypes.Killer

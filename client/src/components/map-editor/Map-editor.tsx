@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { AlertCircle, Download, Grid3x3, Info, Upload, Zap } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 
-import { useAppContext } from '@/contexts/AppContext'
+import { useAppStore } from "@/store/useAppStore"
 import Game from '@/core/Game'
 // import { WorldMap } from '@/core/world'
 import { WorldParams } from '@/types'
@@ -40,7 +40,6 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const MAP_MAX = 30
   const MAP_MIN = 3
 
-  const { appState, setAppState } = useAppContext()
   const [worldName, setWorldName] = useState<string>(
     () => localStorage.getItem('editor_worldName') || ''
   )
@@ -360,7 +359,7 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
                 handleInitialEnergyChange(value)
               }}
               className="w-full"
-              // disabled={!isWorldEmpty}
+            // disabled={!isWorldEmpty}
             />
           </div>
         </CardContent>

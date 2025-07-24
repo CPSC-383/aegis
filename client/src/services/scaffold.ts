@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ClientWebSocket, aegisAPI } from '@/services'
-import { useAppContext } from '@/contexts/AppContext'
+import { useAppStore } from '@/store/useAppStore'
 import Game from '@/core/Game'
 import { useForceUpdate } from '@/utils/util'
 import { ConsoleLine } from '@/types'
@@ -28,11 +28,10 @@ export type Scaffold = {
 }
 
 export function createScaffold(): Scaffold {
-  const { setAppState } = useAppContext()
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
-  const [allConfigPresets, setAllConfigPresets] = useState<string[]>([])
+  const [_allConfigPresets, setAllConfigPresets] = useState<string[]>([])
   const [configPresets, setConfigPresets] = useState<string[]>([])
   const [output, setOutput] = useState<ConsoleLine[]>([])
   const aegisPid = useRef<string | undefined>(undefined)
@@ -141,7 +140,6 @@ export function createScaffold(): Scaffold {
       setAegisPath(path)
     })
 
-    // Setup aegis listeners once
     aegisAPI.aegis_child_process.onStdout((data: string) => {
       addOutput(data, false)
     })
@@ -156,10 +154,7 @@ export function createScaffold(): Scaffold {
     })
 
     const onGamesCreated = (games: Games) => {
-      setAppState((prevAppState) => ({
-        ...prevAppState,
-        queue: prevAppState.queue.concat([games])
-      }))
+      useAppStore.getState().pushToQueue(games)
       Runner.setGames(games)
     }
 

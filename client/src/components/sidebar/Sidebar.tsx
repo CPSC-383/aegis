@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAppContext } from '@/contexts/AppContext'
+import { useAppStore } from '@/store/useAppStore'
 import { TabNames } from '@/types'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
@@ -17,14 +17,15 @@ import Settings from './Settings'
 const Sidebar = (): JSX.Element => {
   const scaffold = createScaffold()
   const { aegisPath, setupAegisPath, output } = scaffold
-  const { appState } = useAppContext()
   const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const selectedCell = useAppStore((s) => s.selectedCell)
+  const editorSelectedCell = useAppStore((s) => s.editorSelectedCell)
   const sidebarRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    setIsCollapsed(!!appState.selectedCell || !!appState.editorSelectedCell)
-  }, [appState.selectedCell, appState.editorSelectedCell])
+    setIsCollapsed(!!selectedCell || !!editorSelectedCell)
+  }, [selectedCell, editorSelectedCell])
 
   return (
     <div className="relative w-[30%]">
@@ -88,7 +89,7 @@ const Sidebar = (): JSX.Element => {
                     <Game />
                   </TabsContent>
                   <TabsContent value={TabNames.Editor}>
-                    <MapEditor isOpen={selectedTab === TabNames.Editor} />
+                    {/* <MapEditor isOpen={selectedTab === TabNames.Editor} /> */}
                   </TabsContent>
                   <TabsContent value={TabNames.Settings}>
                     <Settings scaffold={scaffold} />

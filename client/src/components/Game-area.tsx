@@ -1,4 +1,3 @@
-import { useAppContext } from '@/contexts/AppContext'
 import { BrushType, shadesOfBrown } from '@/types'
 import { useEffect, useRef, useState } from 'react'
 

@@ -148,9 +148,7 @@ class GamePb:
         self.removed_layers.append(pb_loc)
 
     def team_to_schema(self, team: Team) -> PbTeam:
-        if team == Team.GOOBS:
-            return PbTeam.GOOBS
-        return PbTeam.VOIDSEERS
+        return PbTeam.GOOBS if team == Team.GOOBS else PbTeam.VOIDSEERS
 
     def clear_round(self) -> None:
         self.team_info.clear()

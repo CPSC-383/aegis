@@ -1,12 +1,13 @@
-import { useAppContext } from '@/contexts/AppContext'
-import { ASSIGNMENT_A3, getCurrentAssignment, useForceUpdate } from '@/utils/util'
+import { ASSIGNMENT_A3, getCurrentAssignment } from '@/utils/util'
 import { motion } from 'framer-motion'
 import { AlertTriangle, Trophy } from 'lucide-react'
+import { useAppStore } from '@/store/useAppStore'
+import useRound from '@/hooks/useRound'
 
 const Game = (): JSX.Element => {
-  const { appState } = useAppContext()
+  const round = useRound()
 
-  if (!appState.simulation) {
+  if (!round) {
     return (
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -24,7 +25,7 @@ const Game = (): JSX.Element => {
     )
   }
 
-  if (appState.simulation.getRoundNumber() === 0) {
+  if (round.round === 0) {
     return (
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -42,90 +43,93 @@ const Game = (): JSX.Element => {
     )
   }
 
-  const stats = appState.simulation.getStats()
-
+  // FIX: update everything below
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-    >
-      <div className="p-2 max-h-60 scrollbar overflow-auto">
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          {Object.entries(stats.worldStats).map(([key, stat]) => (
-            <div key={key} className="flex">
-              <div className="w-1 h-full bg-foreground"></div>
-              <div className="flex-1 p-4 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
-                <div className="mr-4">{stat.icon && <stat.icon />}</div>
-                <div className="flex-grow">
-                  <p className="text-xs font-medium text-black">
-                    {key.replace(/([A-Z])/g, ' $1').trim()}
-                  </p>
-                  <p className="text-lg font-bold text-black">{stat.value}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {getCurrentAssignment() === ASSIGNMENT_A3 && (
-          <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full text-sm border-collapse border text-center">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="px-2 py-2">Group Stats Table</th>
-                  {stats.groupStats!.map((group) => (
-                    <th key={group.gid} className="px-4 py-2">
-                      {group.name}
-                      <br /> ID: {group.gid}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="px-2 py-2">
-                    Survivors
-                    <br />
-                    Saved
-                  </td>
-                  {stats.groupStats!.map((group) => (
-                    <td key={group.gid} className="px-4 py-2">
-                      {group.survivorsSaved}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b">
-                  <td className="px-2 py-2">
-                    Correct
-                    <br />
-                    Predictions
-                  </td>
-                  {stats.groupStats!.map((group) => (
-                    <td key={group.gid} className="px-4 py-2">
-                      {group.correctPredictions}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b">
-                  <td className="px-2 py-2">
-                    Incorrect
-                    <br />
-                    Predictions
-                  </td>
-                  {stats.groupStats!.map((group) => (
-                    <td key={group.gid} className="px-4 py-2">
-                      {group.incorrectPredictions}
-                    </td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </motion.div>
+    <div>TODO</div>
   )
+
+  // return (
+  //   <motion.div
+  //     initial={{ opacity: 0, x: -20 }}
+  //     animate={{ opacity: 1, x: 0 }}
+  //     exit={{ opacity: 0, x: -20 }}
+  //   >
+  //     <div className="p-2 max-h-60 scrollbar overflow-auto">
+  //       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+  //         {Object.entries(stats.worldStats).map(([key, stat]) => (
+  //           <div key={key} className="flex">
+  //             <div className="w-1 h-full bg-foreground"></div>
+  //             <div className="flex-1 p-4 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
+  //               <div className="mr-4">{stat.icon && <stat.icon />}</div>
+  //               <div className="flex-grow">
+  //                 <p className="text-xs font-medium text-black">
+  //                   {key.replace(/([A-Z])/g, ' $1').trim()}
+  //                 </p>
+  //                 <p className="text-lg font-bold text-black">{stat.value}</p>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         ))}
+  //       </div>
+  //
+  //       {getCurrentAssignment() === ASSIGNMENT_A3 && (
+  //         <div className="mt-6 overflow-x-auto">
+  //           <table className="min-w-full text-sm border-collapse border text-center">
+  //             <thead>
+  //               <tr className="bg-gray-200">
+  //                 <th className="px-2 py-2">Group Stats Table</th>
+  //                 {stats.groupStats!.map((group) => (
+  //                   <th key={group.gid} className="px-4 py-2">
+  //                     {group.name}
+  //                     <br /> ID: {group.gid}
+  //                   </th>
+  //                 ))}
+  //               </tr>
+  //             </thead>
+  //             <tbody>
+  //               <tr className="border-b">
+  //                 <td className="px-2 py-2">
+  //                   Survivors
+  //                   <br />
+  //                   Saved
+  //                 </td>
+  //                 {stats.groupStats!.map((group) => (
+  //                   <td key={group.gid} className="px-4 py-2">
+  //                     {group.survivorsSaved}
+  //                   </td>
+  //                 ))}
+  //               </tr>
+  //               <tr className="border-b">
+  //                 <td className="px-2 py-2">
+  //                   Correct
+  //                   <br />
+  //                   Predictions
+  //                 </td>
+  //                 {stats.groupStats!.map((group) => (
+  //                   <td key={group.gid} className="px-4 py-2">
+  //                     {group.correctPredictions}
+  //                   </td>
+  //                 ))}
+  //               </tr>
+  //               <tr className="border-b">
+  //                 <td className="px-2 py-2">
+  //                   Incorrect
+  //                   <br />
+  //                   Predictions
+  //                 </td>
+  //                 {stats.groupStats!.map((group) => (
+  //                   <td key={group.gid} className="px-4 py-2">
+  //                     {group.incorrectPredictions}
+  //                   </td>
+  //                 ))}
+  //               </tr>
+  //             </tbody>
+  //           </table>
+  //         </div>
+  //       )}
+  //     </div>
+  //   </motion.div>
+  // )
 }
 
 export default Game
