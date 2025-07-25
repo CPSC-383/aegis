@@ -54,7 +54,7 @@ class RunnerClass {
     this.games = games
   }
 
-  public setGame(game: Game | null): void {
+  public setGame(game: Game | undefined): void {
     notify(ListenerKey.Match)
     if (game) {
       game.games.currentGame = game

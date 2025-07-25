@@ -4,7 +4,7 @@ import Round from './Round'
 import Agents from './Agents'
 import Games from './Games'
 
-const SNAPSHOT_INTERVAL = 10
+const SNAPSHOT_INTERVAL = 25
 
 export default class Game {
   public maxRound: number = 1
@@ -13,7 +13,7 @@ export default class Game {
   private readonly snapshots: Round[] = []
 
   /**
-   * Initializes the Simulation with the given world map.
+   * Initializes the Game with the given world map.
    * @param {Games} games - The games wrapper.
    * @param {World} world - The initial world map for the simulation.
    * @param {Agents} initialAgents - The initial agents that will spawn.

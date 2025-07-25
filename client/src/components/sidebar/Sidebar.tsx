@@ -89,7 +89,7 @@ const Sidebar = (): JSX.Element => {
                     <Game />
                   </TabsContent>
                   <TabsContent value={TabNames.Editor}>
-                    {/* <Editor isOpen={selectedTab === TabNames.Editor} /> */}
+                    <Editor isOpen={selectedTab === TabNames.Editor} />
                   </TabsContent>
                   <TabsContent value={TabNames.Settings}>
                     <Settings scaffold={scaffold} />

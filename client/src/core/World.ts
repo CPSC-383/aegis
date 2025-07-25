@@ -5,6 +5,8 @@ import survivorSrc from '@/assets/survivor.png'
 import { schema } from 'aegis-schema'
 import Game from './Game'
 import { THICKNESS } from '@/utils/constants'
+import { MoveCostBrush, ZoneBrush, EditorBrush, RubbleBrush, SurvivorBrush } from './Brushes'
+import Round from './Round'
 
 export default class World {
   /**
@@ -136,24 +138,22 @@ export default class World {
    * @param initialEnergy - Initial energy level for agents.
    * @returns A World instance with default parameters.
    */
-  // static fromParams(width: number, height: number, initialEnergy: number): World {
-  //   const cells: Cell[] = []
-  //
-  //   for (let x = 0; x < width; x++) {
-  //     for (let y = 0; y < height; y++) {
-  //       const cell = Cell.create({
-  //         loc: { x, y },
-  //         moveCost: 1,
-  //         type: CellType.NORMAL,
-  //         agents: [],
-  //         layers: []
-  //       })
-  //       cells.push(cell)
-  //     }
-  //   }
-  //
-  //   return new World(width, height, 0, [], [], [], [], cells, initialEnergy, 1, 1)
-  // }
+  static fromParams(width: number, height: number, initialEnergy: number): World {
+    const cells: schema.Cell[] = Array.from({ length: width * height }, (_, index) => {
+      const x = index % width
+      const y = Math.floor(index / width)
+
+      return schema.Cell.create({
+        loc: { x, y },
+        moveCost: 1,
+        type: schema.CellType.NORMAL,
+        agents: [],
+        layers: []
+      })
+    })
+
+    return new World(width, height, 0, [], [], [], [], cells, initialEnergy, 1, 1)
+  }
 
   public copy(): World {
     return new World(
@@ -415,6 +415,10 @@ export default class World {
         ctx.fillText(String(rubbleCount), coords.x + 0.05, coords.y + 0.95)
       }
     }
+  }
+
+  public getBrushes(round: Round): EditorBrush[] {
+    return [new ZoneBrush(round), new MoveCostBrush(round), new RubbleBrush(round), new SurvivorBrush(round)]
   }
 
   private countByKind(layers: schema.WorldObject[], kind: string) {
