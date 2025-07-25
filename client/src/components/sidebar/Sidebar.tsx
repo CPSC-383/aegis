@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createScaffold } from '@/services'
 import Console from '../Console'
 import InfoPanel from '../info-panel/Info-panel'
-import MapEditor from '../map-editor/Map-editor'
+import Editor from '../editor/Editor'
 import Aegis from './Aegis'
 import Game from './Game'
 import Settings from './Settings'
@@ -89,7 +89,7 @@ const Sidebar = (): JSX.Element => {
                     <Game />
                   </TabsContent>
                   <TabsContent value={TabNames.Editor}>
-                    {/* <MapEditor isOpen={selectedTab === TabNames.Editor} /> */}
+                    {/* <Editor isOpen={selectedTab === TabNames.Editor} /> */}
                   </TabsContent>
                   <TabsContent value={TabNames.Settings}>
                     <Settings scaffold={scaffold} />

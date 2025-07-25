@@ -1,36 +1,9 @@
 import Game from '@/core/Game'
-// import {
-//   CellContent,
-//   Location,
-//   Spawn,
-//   SpawnZoneTypes,
-//   Layers,
-//   WorldMap
-// } from '@/core/world'
+import World from '@/core/World'
 import { aegisAPI } from '@/services'
 
-interface WorldFileData {
-  settings: {
-    world_info: {
-      size: {
-        width: number
-        height: number
-      }
-      seed: number
-      agent_energy: number
-    }
-  }
-  spawn_locs: Spawn[]
-  cell_types: {
-    fire_cells: Location[]
-    killer_cells: Location[]
-    charging_cells: Location[]
-  }
-  stacks: Layers[]
-}
-
 class WorldValidator {
-  static validate(world: WorldMap): string {
+  static validate(world: World): string {
     const errors: string[] = []
 
     if (world.spawnCells.size === 0) {
@@ -47,31 +20,37 @@ class WorldValidator {
     return errors[0] || ''
   }
 
-  private static validateSpawnZones(world: WorldMap): string | null {
-    let hasAnyZone = false
-
-    for (const [key, data] of world.spawnCells) {
-      const coord = JSON.parse(key)
-
-      if (data.type === SpawnZoneTypes.Group && data.groups.length === 0) {
-        return `Group spawn zone at (${coord.x}, ${coord.y}) is missing a group ID!`
-      }
-
-      if (data.type === SpawnZoneTypes.Any) {
-        hasAnyZone = true
-      }
-    }
-
-    return !hasAnyZone ? "Missing at least 1 'Any' spawn zone!" : null
+  private static validateSpawnZones(world: World): string | null {
+    // FIX: update to new world layout
+    return null
+    // let hasAnyZone = false
+    //
+    // for (const [key, data] of world.spawnCells) {
+    //   const coord = JSON.parse(key)
+    //
+    //   if (data.type === SpawnZoneTypes.Group && data.groups.length === 0) {
+    //     return `Group spawn zone at (${coord.x}, ${coord.y}) is missing a group ID!`
+    //   }
+    //
+    //   if (data.type === SpawnZoneTypes.Any) {
+    //     hasAnyZone = true
+    //   }
+    // }
+    //
+    // return !hasAnyZone ? "Missing at least 1 'Any' spawn zone!" : null
   }
 
-  private static hasSurvivors(world: WorldMap): boolean {
-    return world.stacks.some((stack: Layers) =>
-      stack.contents.some((content: CellContent) => content.type === 'sv')
-    )
+  private static hasSurvivors(world: World): boolean {
+    // FIX: Update to new world layout
+    return false
+
+    // return world.stacks.some((stack: Layers) =>
+    //   stack.contents.some((content: CellContent) => content.type === 'sv')
+    // )
   }
 }
 
+// FIX: Fix layout and see if we can use YAML directly
 class WorldSerializer {
   static toJSON(world: WorldMap): WorldFileData {
     return {

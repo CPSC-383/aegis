@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from './dialog'
+} from './ui/dialog'
 
 interface InfoDialogProps {
   trigger: React.ReactNode
@@ -17,14 +17,14 @@ interface InfoDialogProps {
   onOpenChange?: (open: boolean) => void
 }
 
-const InfoDialog: React.FC<InfoDialogProps> = ({
+function InfoDialog({
   trigger,
   title,
   children,
   description,
   open,
   onOpenChange
-}) => (
+}: InfoDialogProps) {
   <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogTrigger asChild>{trigger}</DialogTrigger>
     <DialogContent>
@@ -35,6 +35,6 @@ const InfoDialog: React.FC<InfoDialogProps> = ({
       </DialogHeader>
     </DialogContent>
   </Dialog>
-)
+}
 
 export default InfoDialog

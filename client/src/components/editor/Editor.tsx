@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { useAppStore } from "@/store/useAppStore"
 import Game from '@/core/Game'
-// import { WorldMap } from '@/core/world'
 import { WorldParams } from '@/types'
 
 import { Alert } from '@/components/ui/alert'
@@ -19,7 +18,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
-import InfoDialog from '@/components/ui/InfoDialog'
+import InfoDialog from '@/components/InfoDialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -30,6 +29,7 @@ import {
 } from '@/components/ui/tooltip'
 import MapBrushes from './Map-brushes'
 import { exportWorld, importWorld, WorldSerializer } from './MapGenerator'
+import { MAP_MAX, MAP_MIN } from '@/utils/constants'
 
 // Clear map editor localStorage keys on every app start
 localStorage.removeItem('editor_worldName')
@@ -37,9 +37,6 @@ localStorage.removeItem('editor_worldParams')
 localStorage.removeItem('editor_worldData')
 
 function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
-  const MAP_MAX = 30
-  const MAP_MIN = 3
-
   const [worldName, setWorldName] = useState<string>(
     () => localStorage.getItem('editor_worldName') || ''
   )
@@ -134,36 +131,36 @@ function MapEditor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   //   }
   // }, [appState.editorSimulation])
 
-  useEffect(() => {
-    if (isOpen) {
-      if (!simulation.current || !worldParams.isInitialized) {
-        let world
-        const savedWorld = localStorage.getItem('editor_worldData')
-        if (savedWorld) {
-          world = WorldMap.fromData(JSON.parse(savedWorld))
-        } else {
-          world = WorldMap.fromParams(
-            worldParams.width,
-            worldParams.height,
-            worldParams.initialEnergy
-          )
-        }
-        simulation.current = new Game(world)
-      }
-      setAppState((prev) => ({
-        ...prev,
-        editorSimulation: simulation.current,
-        editorSelectedCell: null
-      }))
-      worldParams.isInitialized = true
-    } else {
-      setAppState((prev) => ({
-        ...prev,
-        editorSimulation: undefined,
-        editorSelectedCell: null
-      }))
-    }
-  }, [worldParams, isOpen])
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     if (!simulation.current || !worldParams.isInitialized) {
+  //       let world
+  //       const savedWorld = localStorage.getItem('editor_worldData')
+  //       if (savedWorld) {
+  //         world = WorldMap.fromData(JSON.parse(savedWorld))
+  //       } else {
+  //         world = WorldMap.fromParams(
+  //           worldParams.width,
+  //           worldParams.height,
+  //           worldParams.initialEnergy
+  //         )
+  //       }
+  //       simulation.current = new Game(world)
+  //     }
+  //     setAppState((prev) => ({
+  //       ...prev,
+  //       editorSimulation: simulation.current,
+  //       editorSelectedCell: null
+  //     }))
+  //     worldParams.isInitialized = true
+  //   } else {
+  //     setAppState((prev) => ({
+  //       ...prev,
+  //       editorSimulation: undefined,
+  //       editorSelectedCell: null
+  //     }))
+  //   }
+  // }, [worldParams, isOpen])
 
   if (!isOpen) return null
 
