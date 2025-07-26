@@ -5,8 +5,8 @@ import type Round from '@/core/Round'
 
 export default function useRound(): Round | undefined {
   const game = useGame()
-  const [round, setRound] = useState(game?.currentRound)
-  const [_, setRoundNumber] = useState(game?.currentRound.round)
+  const [, setRound] = useState(game?.currentRound)
+  const [, setRoundNumber] = useState(game?.currentRound.round)
 
   useEffect(() => {
     const unsubscribe = subscribe(ListenerKey.Round, () => {
@@ -17,5 +17,5 @@ export default function useRound(): Round | undefined {
     return unsubscribe
   }, [game])
 
-  return round
+  return game?.currentRound
 }
