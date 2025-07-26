@@ -1,5 +1,6 @@
 import { schema } from "aegis-schema"
 import Round from "./Round"
+import World from "./World"
 
 enum Layers {
   SURVIVOR,
@@ -28,7 +29,15 @@ export abstract class EditorBrush {
   abstract readonly cells: any[]
   abstract readonly fields: Record<string, EditorField>
   abstract apply(x: number, y: number, fields: Record<string, EditorField>): void
+
   public open: boolean = false
+  protected readonly round: Round
+  protected readonly world: World
+
+  constructor(round: Round) {
+    this.round = round
+    this.world = round.world
+  }
 
   withOpen(open: boolean): this {
     const clone = Object.create(Object.getPrototypeOf(this))
@@ -55,11 +64,15 @@ export class ZoneBrush extends EditorBrush {
   }
 
   constructor(round: Round) {
-    super()
+    super(round)
     this.cells = round.game.world.cells
   }
 
   apply(x: number, y: number, fields: Record<string, EditorField>): void {
+    const cell = this.world.editorCellAt(x, y)
+    const cellType = fields.zoneType.value as schema.CellType
+
+    cell.type = Number(cellType)
   }
 }
 
@@ -76,7 +89,7 @@ export class SurvivorBrush extends EditorBrush {
   }
 
   constructor(round: Round) {
-    super()
+    super(round)
     this.cells = round.game.world.cells
   }
 
@@ -102,7 +115,7 @@ export class RubbleBrush extends EditorBrush {
   }
 
   constructor(round: Round) {
-    super()
+    super(round)
     this.cells = round.game.world.cells
   }
 
@@ -123,7 +136,7 @@ export class MoveCostBrush extends EditorBrush {
   }
 
   constructor(round: Round) {
-    super()
+    super(round)
     this.cells = round.game.world.cells
   }
 

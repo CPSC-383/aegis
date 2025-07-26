@@ -1,4 +1,4 @@
-import { shadesOfBlue, shadesOfBrown, Size } from '@/types'
+import { shadesOfBlue, shadesOfBrown, Size, Vector } from '@/types'
 import { renderCoords } from '@/utils/renderUtils'
 import { getImage, whatBucket } from '@/utils/util'
 import survivorSrc from '@/assets/survivor.png'
@@ -14,10 +14,6 @@ export default class World {
    * @param width - The width of the map.
    * @param height - The height of the map.
    * @param seed - The seed used for procedural generation.
-   * @param fireCells - Array of locations representing fire cells.
-   * @param killerCells - Array of locations representing killer cells.
-   * @param chargingCells - Array of locations representing charging cells.
-   * @param spawnCells - Map of spawn zones with their types and associated groups.
    * @param stacks - Array of stacks containing cell data and movement costs.
    * @param initialAgentEnergy - Initial energy level for agents in the map.
    * @param minMoveCost - Minimum movement cost for cells in the map.
@@ -27,10 +23,6 @@ export default class World {
     public readonly width: number,
     public readonly height: number,
     public readonly seed: number,
-    public readonly fireCells: schema.Location[],
-    public readonly killerCells: schema.Location[],
-    public readonly chargingCells: schema.Location[],
-    public readonly spawnCells: schema.Location[],
     public readonly cells: schema.Cell[],
     public readonly startEnergy: number,
     public minMoveCost: number,
@@ -52,38 +44,12 @@ export default class World {
    * @returns A World instance.
    */
   public static fromSchema(world: schema.World): World {
-    const chargingCells: schema.Location[] = []
-    const killerCells: schema.Location[] = []
-    const spawnCells: schema.Location[] = []
-
-    for (const cell of world.cells) {
-      const { loc, type } = cell
-
-      switch (type) {
-        case schema.CellType.CHARGING:
-          chargingCells.push(loc!)
-          break
-        case schema.CellType.KILLER:
-          killerCells.push(loc!)
-          break
-        case schema.CellType.SPAWN:
-          spawnCells.push(loc!)
-          break
-        default:
-          break
-      }
-    }
-
     const moveCosts = world.cells.map((cell) => cell.moveCost)
 
     return new World(
       world.width,
       world.height,
       world.seed,
-      [], // fireCells
-      killerCells,
-      chargingCells,
-      spawnCells,
       world.cells,
       world.startEnergy,
       Math.min(...moveCosts),
@@ -152,7 +118,7 @@ export default class World {
       })
     })
 
-    return new World(width, height, 0, [], [], [], [], cells, initialEnergy, 1, 1)
+    return new World(width, height, 0, cells, initialEnergy, 1, 1)
   }
 
   public copy(): World {
@@ -160,10 +126,6 @@ export default class World {
       this.width,
       this.height,
       this.seed,
-      [...this.fireCells.map((loc) => ({ ...loc }))],
-      [...this.killerCells.map((loc) => ({ ...loc }))],
-      [...this.chargingCells.map((loc) => ({ ...loc }))],
-      [...this.spawnCells.map((loc) => ({ ...loc }))],
       this.cells.map(this.copyCell),
       this.startEnergy,
       this.minMoveCost,
@@ -197,7 +159,7 @@ export default class World {
    */
   isEmpty(): boolean {
     return (
-      this.spawnCells.length === 0 &&
+      this.getCellsByType(schema.CellType.SPAWN).length === 0 &&
       this.cells.every(
         (cell) => cell.layers.length === 0 && cell.type === schema.CellType.NORMAL
       )
@@ -214,6 +176,11 @@ export default class World {
 
   public cellAt(x: number, y: number) {
     return this.cells[y + x * this.width]
+  }
+
+  // ya idk why canvas coords flips this
+  public editorCellAt(x: number, y: number) {
+    return this.cells[x + y * this.height]
   }
 
   /**
@@ -247,7 +214,6 @@ export default class World {
   private drawCells(ctx: CanvasRenderingContext2D): void {
     this.drawTerrain(ctx)
     this.drawSpecialCells(ctx)
-    this.drawSpawns(ctx)
   }
 
   /**
@@ -285,51 +251,37 @@ export default class World {
   /**
    * Helper function to render special cells like charging, fire, and killer cells.
    * @param ctx - Canvas rendering context.
-   * @param thickness - Line thickness for drawing the cells.
    */
   private drawSpecialCells(ctx: CanvasRenderingContext2D): void {
-    // Charging cells - dynamic blue shade based on moveCost
-    for (const loc of this.chargingCells) {
-      const cell = this.cells.find((c) => c.loc!.x === loc.x && c.loc!.y === loc.y)
-      if (!cell) continue
+    for (const cell of this.cells) {
+      if (!cell.loc) continue
+      const { x, y } = cell.loc
 
-      const bucket = whatBucket(
-        this.minMoveCost,
-        this.maxMoveCost,
-        cell.moveCost,
-        shadesOfBlue.length
-      )
-      const [r, g, b] = shadesOfBlue[bucket]
-      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
+      const coords = renderCoords(x, y, this.size)
 
-      const coords = renderCoords(loc.x, loc.y, this.size)
+      if (cell.type === schema.CellType.NORMAL) continue
+
+      if (cell.type === schema.CellType.CHARGING) {
+        const bucket = whatBucket(
+          this.minMoveCost,
+          this.maxMoveCost,
+          cell.moveCost,
+          shadesOfBlue.length
+        )
+        const [r, g, b] = shadesOfBlue[bucket]
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
+      } else if (cell.type === schema.CellType.KILLER) {
+        ctx.fillStyle = '#cc0000'
+      } else if (cell.type === schema.CellType.SPAWN) {
+        this.drawSpawn(ctx, coords)
+        continue
+      }
+
       ctx.fillRect(
         coords.x + THICKNESS / 2,
         coords.y + THICKNESS / 2,
         1 - THICKNESS,
-        1 - THICKNESS
-      )
-    }
-
-    // ctx.fillStyle = '#ff9900'
-    // for (const loc of this.fireCells) {
-    //   const coords = renderCoords(loc.x, loc.y, this.size)
-    //   ctx.fillRect(
-    //     coords.x + thickness / 2,
-    //     coords.y + thickness / 2,
-    //     1 - thickness,
-    //     1 - thickness
-    //   )
-    // }
-
-    ctx.fillStyle = '#cc0000'
-    for (const loc of this.killerCells) {
-      const coords = renderCoords(loc.x, loc.y, this.size)
-      ctx.fillRect(
-        coords.x + THICKNESS / 2,
-        coords.y + THICKNESS / 2,
         1 - THICKNESS,
-        1 - THICKNESS
       )
     }
   }
@@ -338,35 +290,32 @@ export default class World {
    * Helper function to render spawn zones on the map.
    * @param ctx - Canvas rendering context.
    */
-  private drawSpawns(ctx: CanvasRenderingContext2D): void {
-    for (const spawn of this.spawnCells) {
-      const coords = renderCoords(spawn.x, spawn.y, this.size)
+  private drawSpawn(ctx: CanvasRenderingContext2D, coords: Vector): void {
+    ctx.save()
 
-      ctx.save()
+    ctx.beginPath()
+    ctx.rect(coords.x, coords.y, 1, 1)
+    ctx.clip()
+
+    const stripeWidth = 0.125
+    const numStripes = 8
+
+    for (let i = -numStripes; i < numStripes * 2; i++) {
+      ctx.beginPath()
+      ctx.fillStyle = i % 2 === 0 ? '#ffff00' : '#000000'
+
+      const startPointX = coords.x + i * stripeWidth
+      const endPointX = startPointX + stripeWidth
 
       ctx.beginPath()
-      ctx.rect(coords.x, coords.y, 1, 1)
-      ctx.clip()
-
-      const stripeWidth = 0.125
-      const numStripes = 8
-
-      for (let i = -numStripes; i < numStripes * 2; i++) {
-        ctx.beginPath()
-        ctx.fillStyle = i % 2 === 0 ? '#ffff00' : '#000000'
-
-        const startPointX = coords.x + i * stripeWidth
-        const endPointX = startPointX + stripeWidth
-
-        ctx.beginPath()
-        ctx.moveTo(startPointX, coords.y)
-        ctx.lineTo(endPointX, coords.y)
-        ctx.lineTo(endPointX - 1, coords.y + 1)
-        ctx.lineTo(startPointX - 1, coords.y + 1)
-        ctx.closePath()
-        ctx.fill()
-      }
+      ctx.moveTo(startPointX, coords.y)
+      ctx.lineTo(endPointX, coords.y)
+      ctx.lineTo(endPointX - 1, coords.y + 1)
+      ctx.lineTo(startPointX - 1, coords.y + 1)
+      ctx.closePath()
+      ctx.fill()
     }
+    ctx.restore()
   }
 
   public drawLayers(game: Game, ctx: CanvasRenderingContext2D, full: boolean): void {
@@ -419,6 +368,10 @@ export default class World {
 
   public getBrushes(round: Round): EditorBrush[] {
     return [new ZoneBrush(round), new MoveCostBrush(round), new RubbleBrush(round), new SurvivorBrush(round)]
+  }
+
+  public getCellsByType(type: schema.CellType): schema.Cell[] {
+    return this.cells.filter(cell => cell.type === type)
   }
 
   private countByKind(layers: schema.WorldObject[], kind: string) {

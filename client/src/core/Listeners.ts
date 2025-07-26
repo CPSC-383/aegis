@@ -1,7 +1,8 @@
 export enum ListenerKey {
   Match = 'match',
   Round = 'round',
-  Control = 'control'
+  Control = 'control',
+  Canvas = 'canvas'
 }
 
 type Listener = () => void
@@ -9,7 +10,8 @@ type Listener = () => void
 const listenersMap: Record<ListenerKey, Listener[]> = {
   [ListenerKey.Match]: [],
   [ListenerKey.Round]: [],
-  [ListenerKey.Control]: []
+  [ListenerKey.Control]: [],
+  [ListenerKey.Canvas]: []
 }
 
 export function subscribe(key: ListenerKey, listener: Listener): () => void {

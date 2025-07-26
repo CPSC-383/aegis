@@ -11,6 +11,11 @@ export type Size = {
   height: number
 }
 
+export type Vector = {
+  x: number,
+  y: number
+}
+
 export type Arguments =
   | 'energy_level'
   | 'number_of_survivors'

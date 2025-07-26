@@ -9,9 +9,12 @@ import Agents from "@/core/Agents"
 import { EditorBrush } from "@/core/Brushes"
 import Brush from "./Brush"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import useHoveredTile from "@/hooks/useHoveredTile"
+import { Renderer } from "@/core/Renderer"
 
 function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
+  const hovered = useHoveredTile()
   const [brushes, setBrushes] = useState<EditorBrush[]>([])
   const [worldParams] = useState<WorldParams>({ width: 15, height: 15, initialEnergy: 100 })
   const editorGame = useRef<Games | null>(null)
@@ -43,6 +46,16 @@ function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
       prev.map(b => b.withOpen(b.name === name))
     )
   }
+
+  const applyBrush = (loc: { x: number, y: number }) => {
+    if (!currentBrush) return
+    currentBrush.apply(loc.x, loc.y, currentBrush.fields)
+    Renderer.fullRender()
+  }
+
+  useEffect(() => {
+    if (hovered) applyBrush(hovered)
+  }, [hovered])
 
   if (!isOpen || brushes.length === 0 || !currentBrush) return null
 

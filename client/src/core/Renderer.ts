@@ -1,15 +1,18 @@
 import { TILE_SIZE } from '@/utils/constants'
 import { Runner } from './Runner'
-import { CanvasLayers, Size } from '@/types'
+import { CanvasLayers, Size, Vector } from '@/types'
 import { loadImage } from '@/utils/util'
 
 import goobA from '@/assets/goob-team-a.png'
 import goobB from '@/assets/goob-team-b.png'
 import survivor from '@/assets/survivor.png'
+import { ListenerKey, notify } from './Listeners'
+import { renderCoords } from '@/utils/renderUtils'
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any
   private fullRedraw = false
+  private mouseTile: Vector | undefined = undefined
 
   constructor() {
     const numericLayers = Object.values(CanvasLayers).filter(
@@ -27,6 +30,10 @@ class RendererClass {
       const layerKey = CanvasLayers[layerValue] as keyof typeof CanvasLayers
       this.canvases[layerKey] = canvas
     })
+    const canvasArray = Object.values(this.canvases)
+    const topCanvas = canvasArray[canvasArray.length - 1]
+    topCanvas.onmousedown = (e) => this.mouseDown(e)
+
     loadImage(goobA)
     loadImage(goobB)
     loadImage(survivor)
@@ -88,6 +95,36 @@ class RendererClass {
       canvas.height = size.height * TILE_SIZE
       ctx.scale(TILE_SIZE, TILE_SIZE)
     })
+  }
+
+  private mouseDown(e: MouseEvent) {
+    this.mouseTile = this.eventToPoint(e)
+    notify(ListenerKey.Canvas)
+  }
+
+  public getMouseTile(): Vector | undefined {
+    return this.mouseTile
+  }
+
+  private eventToPoint(e: MouseEvent): Vector | undefined {
+    const canvas = e.target as HTMLCanvasElement
+    const rect = canvas.getBoundingClientRect()
+    const world = Runner.game?.world
+    if (!world) return undefined
+
+    const normX = (e.clientX - rect.left) / rect.width
+    const normY = (e.clientY - rect.top) / rect.height
+    const { width, height } = world.size
+
+    const xx = Math.floor(normX * width)
+    const yy = Math.floor(normY * height)
+    const { x, y } = renderCoords(xx, yy, world.size)
+
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+      return undefined
+    }
+
+    return { x, y }
   }
 }
 
