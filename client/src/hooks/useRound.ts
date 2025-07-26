@@ -9,13 +9,9 @@ export default function useRound(): Round | undefined {
   const [_, setRoundNumber] = useState(game?.currentRound.round)
 
   useEffect(() => {
-    setRound(game?.currentRound)
-    setRoundNumber(game?.currentRound?.round)
-    if (!game) return
-
     const unsubscribe = subscribe(ListenerKey.Round, () => {
-      setRound(game.currentRound)
-      setRoundNumber(game.currentRound?.round)
+      setRound(game?.currentRound)
+      setRoundNumber(game?.currentRound?.round)
     })
 
     return unsubscribe

@@ -3,12 +3,12 @@ import { Renderer } from "@/core/Renderer"
 import { subscribe, ListenerKey } from "@/core/Listeners"
 import type { Vector } from "@/types"
 
-export default function useHoveredTile(): Vector | undefined {
-  const [hovered, setHovered] = useState(Renderer.getMouseTile())
+export default function useHover(): Vector | undefined {
+  const [hovered, setHovered] = useState(Renderer.getHoveredTile())
 
   useEffect(() => {
-    const unsubscribe = subscribe(ListenerKey.Canvas, () => {
-      setHovered(Renderer.getMouseTile())
+    const unsubscribe = subscribe(ListenerKey.Hover, () => {
+      setHovered(Renderer.getHoveredTile())
     })
 
     return unsubscribe

@@ -12,7 +12,10 @@ import { renderCoords } from '@/utils/renderUtils'
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any
   private fullRedraw = false
-  private mouseTile: Vector | undefined = undefined
+  private mouseDownClick: boolean = false
+  private mouseDownRight: boolean = false
+  private selectedTile: Vector | undefined = undefined
+  private hoveredTile: Vector | undefined = undefined
 
   constructor() {
     const numericLayers = Object.values(CanvasLayers).filter(
@@ -33,6 +36,9 @@ class RendererClass {
     const canvasArray = Object.values(this.canvases)
     const topCanvas = canvasArray[canvasArray.length - 1]
     topCanvas.onmousedown = (e) => this.mouseDown(e)
+    topCanvas.onmouseup = (e) => this.mouseUp(e)
+    topCanvas.onmousemove = (e) => this.mouseMove(e)
+    topCanvas.onclick = (e) => this.click(e)
 
     loadImage(goobA)
     loadImage(goobB)
@@ -97,13 +103,45 @@ class RendererClass {
     })
   }
 
-  private mouseDown(e: MouseEvent) {
-    this.mouseTile = this.eventToPoint(e)
+  private mouseDown(e: MouseEvent): void {
+    this.mouseDownClick = true
+    if (e.button === 2) this.mouseDownRight = true
     notify(ListenerKey.Canvas)
   }
 
-  public getMouseTile(): Vector | undefined {
-    return this.mouseTile
+  private mouseUp(e: MouseEvent): void {
+    this.mouseDownClick = false
+    if (e.button === 2) this.mouseDownRight = false
+    notify(ListenerKey.Canvas)
+  }
+
+  private mouseMove(e: MouseEvent): void {
+    const tile = this.eventToPoint(e)
+    if (!tile || (tile.x === this.hoveredTile?.x && tile.y === this.hoveredTile.y)) return
+    this.hoveredTile = tile
+    notify(ListenerKey.Hover)
+  }
+
+  private click(e: MouseEvent): void {
+    this.selectedTile = this.eventToPoint(e)
+    if (!this.selectedTile) return
+    notify(ListenerKey.Canvas)
+  }
+
+  public getMouseDownClick(): boolean {
+    return this.mouseDownClick
+  }
+
+  public getMouseDownRight(): boolean {
+    return this.mouseDownRight
+  }
+
+  public getSelectedTile(): Vector | undefined {
+    return this.selectedTile
+  }
+
+  public getHoveredTile(): Vector | undefined {
+    return this.hoveredTile
   }
 
   private eventToPoint(e: MouseEvent): Vector | undefined {

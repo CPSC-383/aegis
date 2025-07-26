@@ -175,12 +175,7 @@ export default class World {
   }
 
   public cellAt(x: number, y: number) {
-    return this.cells[y + x * this.width]
-  }
-
-  // ya idk why canvas coords flips this
-  public editorCellAt(x: number, y: number) {
-    return this.cells[x + y * this.height]
+    return this.cells[x + y * this.width]
   }
 
   /**
@@ -224,7 +219,7 @@ export default class World {
   private drawTerrain(ctx: CanvasRenderingContext2D): void {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
-        const cell = this.cells.find((cell) => cell.loc!.x === x && cell.loc!.y === y)
+        const cell = this.cellAt(x, y)
         if (!cell) continue
 
         const opacity = whatBucket(

@@ -42,5 +42,5 @@ class World:
             raise ValueError(error)
 
     def get_cell_at(self, loc: Location) -> Cell:
-        index = loc.y + loc.x * self.width
+        index = loc.x + loc.y * self.width
         return self.cells[index]

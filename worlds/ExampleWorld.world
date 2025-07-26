@@ -6,132 +6,82 @@ world_info:
   start_energy: 500
 
 cells:
-  - loc:
-      x: 0
-      y: 0
+  - loc: { x: 0, y: 0 }
     move_cost: 1
     layers: []
-  - loc:
-      x: 0
-      y: 1
+  - loc: { x: 1, y: 0 }
     move_cost: 1
     layers: []
-  - loc:
-      x: 0
-      y: 2
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 0
-      y: 3
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 0
-      y: 4
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 1
-      y: 0
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 1
-      y: 1
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 1
-      y: 2
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 1
-      y: 3
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 1
-      y: 4
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 2
-      y: 0
+  - loc: { x: 2, y: 0 }
     type: spawn
     move_cost: 1
     layers: []
-  - loc:
-      x: 2
-      y: 1
+  - loc: { x: 3, y: 0 }
     move_cost: 1
     layers: []
-  - loc:
-      x: 2
-      y: 2
+  - loc: { x: 4, y: 0 }
     move_cost: 1
     layers: []
-  - loc:
-      x: 2
-      y: 3
+  - loc: { x: 0, y: 1 }
     move_cost: 1
     layers: []
-  - loc:
-      x: 2
-      y: 4
+  - loc: { x: 1, y: 1 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 2, y: 1 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 3, y: 1 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 4, y: 1 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 0, y: 2 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 1, y: 2 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 2, y: 2 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 3, y: 2 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 4, y: 2 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 0, y: 3 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 1, y: 3 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 2, y: 3 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 3, y: 3 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 4, y: 3 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 0, y: 4 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 1, y: 4 }
+    move_cost: 1
+    layers: []
+  - loc: { x: 2, y: 4 }
     move_cost: 1
     layers:
       - type: sv
         attributes:
           health: 1
-  - loc:
-      x: 3
-      y: 0
+  - loc: { x: 3, y: 4 }
     move_cost: 1
     layers: []
-  - loc:
-      x: 3
-      y: 1
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 3
-      y: 2
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 3
-      y: 3
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 3
-      y: 4
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 4
-      y: 0
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 4
-      y: 1
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 4
-      y: 2
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 4
-      y: 3
-    move_cost: 1
-    layers: []
-  - loc:
-      x: 4
-      y: 4
+  - loc: { x: 4, y: 4 }
     move_cost: 1
     layers: []
