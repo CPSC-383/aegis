@@ -5,7 +5,7 @@ import survivorSrc from '@/assets/survivor.png'
 import { schema } from 'aegis-schema'
 import Game from './Game'
 import { THICKNESS } from '@/utils/constants'
-import { MoveCostBrush, ZoneBrush, EditorBrush, RubbleBrush, SurvivorBrush } from './Brushes'
+import { MoveCostBrush, ZoneBrush, EditorBrush, LayersBrush } from './Brushes'
 import Round from './Round'
 
 export default class World {
@@ -362,7 +362,7 @@ export default class World {
   }
 
   public getBrushes(round: Round): EditorBrush[] {
-    return [new ZoneBrush(round), new MoveCostBrush(round), new RubbleBrush(round), new SurvivorBrush(round)]
+    return [new ZoneBrush(round), new MoveCostBrush(round), new LayersBrush(round)]
   }
 
   public getCellsByType(type: schema.CellType): schema.Cell[] {

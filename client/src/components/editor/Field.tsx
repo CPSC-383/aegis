@@ -12,9 +12,10 @@ import { useState } from "react"
 
 interface FieldProps {
   field: EditorField
+  onChange?: (value: any) => void
 }
 
-export default function Field({ field }: FieldProps) {
+export default function Field({ field, onChange }: FieldProps) {
   const [value, setValue] = useState(field.value)
 
   const handleChange = (newValue: any) => {
@@ -24,6 +25,9 @@ export default function Field({ field }: FieldProps) {
 
     field.value = processedValue
     setValue(newValue)
+
+    // so layersbrush rerenders when the layer type changes
+    onChange?.(processedValue)
   }
 
   return (

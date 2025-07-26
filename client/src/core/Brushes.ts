@@ -27,7 +27,6 @@ export abstract class EditorBrush {
   public open: boolean = false
   protected readonly round: Round
   protected readonly world: World
-  public nextID: number = 1
 
 
   constructor(round: Round) {
@@ -77,60 +76,37 @@ export class ZoneBrush extends EditorBrush {
   }
 }
 
-export class SurvivorBrush extends EditorBrush {
-  name = "Survivor"
+export class LayersBrush extends EditorBrush {
+  name = "Layers"
   cells: schema.Cell[]
+  private nextID: number = 0
 
-  fields: Record<string, EditorField> = {
-    survivorHP: {
+  public readonly fields: Record<string, EditorField> = {
+    objectType: {
+      type: EditorBrushTypes.SINGLE_SELECT,
+      label: "Layer Type",
+      value: "survivor",
+      options: [
+        { label: "Survivor", value: "survivor" },
+        { label: "Rubble", value: "rubble" }
+      ]
+    },
+
+    // Use the format <layerName>_<propertyName> for any new layer-specific fields
+    // e.g., survivor_hp, rubble_energyRequired
+
+    survivor_hp: {
       type: EditorBrushTypes.POSITIVE_INTEGER,
       value: 1,
       label: "Survivor HP"
-    }
-  }
+    },
 
-  constructor(round: Round) {
-    super(round)
-    this.cells = round.game.world.cells
-  }
-
-  apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean) {
-    const cell = this.world.cellAt(x, y)
-    const hp = fields.survivorHP.value
-
-    if (rightClick) {
-      cell.layers.pop()
-      return
-    }
-
-    const surv: schema.Survivor = schema.Survivor.create({
-      id: this.nextID++,
-      health: hp,
-      state: schema.SurvivorState.ALIVE,
-    })
-
-    const worldObject: schema.WorldObject = {
-      object: {
-        oneofKind: "survivor",
-        survivor: surv,
-      }
-    }
-
-    cell.layers.push(worldObject)
-  }
-}
-
-export class RubbleBrush extends EditorBrush {
-  name = "Rubble"
-  cells: schema.Cell[]
-
-  fields: Record<string, EditorField> = {
-    rubbleEnergyRequired: {
+    rubble_energyRequired: {
       type: EditorBrushTypes.POSITIVE_INTEGER,
       value: 1,
       label: "Energy Required"
     },
-    rubbleAgentRequired: {
+    rubble_agentsRequired: {
       type: EditorBrushTypes.POSITIVE_INTEGER,
       value: 1,
       label: "Agents Required"
@@ -144,26 +120,43 @@ export class RubbleBrush extends EditorBrush {
 
   apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean) {
     const cell = this.world.cellAt(x, y)
-    const energyRequired = fields.rubbleEnergyRequired.value
-    const agentsRequired = fields.rubbleAgentRequired.value
+    const type = fields.objectType.value
 
     if (rightClick) {
       cell.layers.pop()
       return
     }
-    const rubble: schema.Rubble = schema.Rubble.create({
-      id: this.nextID++,
-      energyRequired,
-      agentsRequired
-    })
-    const worldObject: schema.WorldObject = {
-      object: {
-        oneofKind: "rubble",
-        rubble
-      }
+
+    if (type === "survivor") {
+      const hp = fields.survivor_hp.value
+      const surv: schema.Survivor = schema.Survivor.create({
+        id: this.nextID++,
+        health: hp,
+        state: schema.SurvivorState.ALIVE
+      })
+      cell.layers.push({
+        object: {
+          oneofKind: "survivor",
+          survivor: surv
+        }
+      })
     }
 
-    cell.layers.push(worldObject)
+    if (type === "rubble") {
+      const energy = fields.rubble_energyRequired.value
+      const agents = fields.rubble_agentsRequired.value
+      const rubble: schema.Rubble = schema.Rubble.create({
+        id: this.nextID++,
+        energyRequired: energy,
+        agentsRequired: agents
+      })
+      cell.layers.push({
+        object: {
+          oneofKind: "rubble",
+          rubble
+        }
+      })
+    }
   }
 }
 
@@ -187,6 +180,8 @@ export class MoveCostBrush extends EditorBrush {
   apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean): void {
     const cell = this.world.cellAt(x, y)
     const moveCost = fields.moveCost.value
+
+    if (cell.type !== schema.CellType.NORMAL) return
 
     if (rightClick) {
       cell.moveCost = 1
