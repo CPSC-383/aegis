@@ -37,6 +37,8 @@ def run(args: Args) -> None:
     LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
     LOGGER.info("-" * 58)
     for team in Team:
+        if team == Team.VOIDSEERS and args.agent2 is None:
+            continue
         score = game.team_info.get_score(team)
         saved = game.team_info.get_saved(team)
         predictions = game.team_info.get_predicted_right(team)
