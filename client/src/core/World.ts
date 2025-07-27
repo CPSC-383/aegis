@@ -155,15 +155,19 @@ export default class World {
    * - There are no spawn cells,
    * - All cells have no layers,
    * - All cells are of type "normal".
+   * - All cells have a move cost of 1.
    * @returns True if the map is empty, otherwise false.
    */
   isEmpty(): boolean {
     return (
       this.getCellsByType(schema.CellType.SPAWN).length === 0 &&
       this.cells.every(
-        (cell) => cell.layers.length === 0 && cell.type === schema.CellType.NORMAL
+        (cell) =>
+          cell.layers.length === 0 &&
+          cell.type === schema.CellType.NORMAL &&
+          cell.moveCost === 1
       )
-    )
+    );
   }
 
   /**

@@ -12,21 +12,26 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import useHover from "@/hooks/useHover"
 import useCanvas from "@/hooks/useCanvas"
 import { Renderer } from "@/core/Renderer"
+import { MAP_MAX, MAP_MIN } from "@/utils/constants"
+import NumberInput from "../NumberInput"
+import { Label } from "../ui/label"
+import { Button } from "../ui/button"
 
-function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
+export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
   const hoveredTile = useHover()
   const { rightClick, mouseDown } = useCanvas()
   const [brushes, setBrushes] = useState<EditorBrush[]>([])
-  const [worldParams] = useState<WorldParams>({ width: 15, height: 15, initialEnergy: 100 })
+  const [worldParams, setWorldParams] = useState<WorldParams>({ width: 15, height: 15, initialEnergy: 100 })
+  const [isWorldEmpty, setIsWorldEmpty] = useState<boolean>(true)
   const editorGame = useRef<Games | null>(null)
 
   useEffect(() => {
     if (!isOpen) {
-      Runner.setGame(undefined)
+      Runner.setGames(undefined)
       return
     }
-    if (!editorGame.current) {
+    if (!editorGame.current || !worldParams.imported) {
       const games = new Games()
       const agents = new Agents(games)
       const world = World.fromParams(worldParams.height, worldParams.width, worldParams.initialEnergy)
@@ -39,10 +44,16 @@ function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
     const loadedBrushes = round.world.getBrushes(round)
     loadedBrushes[0].open = true
     setBrushes(loadedBrushes)
-  }, [isOpen])
+    setIsWorldEmpty(round.world.isEmpty())
+  }, [isOpen, worldParams])
 
   const worldEmpty = () => !round || round.world.isEmpty()
   const currentBrush = brushes.find(b => b.open)
+
+  const clearWorld = () => {
+    setIsWorldEmpty(true)
+    setWorldParams({ ...worldParams, imported: null })
+  }
 
   const handleBrushChange = (name: string) => {
     setBrushes(prev =>
@@ -55,6 +66,7 @@ function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
     currentBrush.apply(loc.x, loc.y, currentBrush.fields, rightClick)
     Renderer.doFullRedraw()
     Renderer.fullRender()
+    setIsWorldEmpty(worldEmpty());
   }
 
   useEffect(() => {
@@ -88,8 +100,50 @@ function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
           </TabsContent>
         ))}
       </Tabs>
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-muted-foreground">Map Size</h3>
+        <div className={`grid grid-cols-2 gap-4 ${isWorldEmpty ? "" : "pointer-events-none opacity-50"}`}>
+          <div className="space-y-1">
+            <Label htmlFor="width">Width</Label>
+            <NumberInput
+              name="width"
+              value={worldParams.width}
+              min={MAP_MIN}
+              max={MAP_MAX}
+              onChange={(name, val) =>
+                setWorldParams(prev => ({ ...prev, [name]: val, imported: null }))
+              }
+            />
+            <p className="text-xs text-muted-foreground">
+              Min: {MAP_MIN}, Max: {MAP_MAX}
+            </p>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="height">Height</Label>
+            <NumberInput
+              name="height"
+              value={worldParams.height}
+              min={MAP_MIN}
+              max={MAP_MAX}
+              onChange={(name, val) =>
+                setWorldParams(prev => ({ ...prev, [name]: val, imported: null }))
+              }
+            />
+            <p className="text-xs text-muted-foreground">
+              Min: {MAP_MIN}, Max: {MAP_MAX}
+            </p>
+          </div>
+        </div>
+        <Button
+          onClick={clearWorld}
+          variant="destructive"
+          size="sm"
+          className={`w-full mt-2 ${isWorldEmpty ? "invisible" : ""}`}
+        >
+          Clear World
+        </Button>
+      </div>
     </div>
   )
 }
-
-export default Editor

@@ -20,19 +20,12 @@ export type EditorField = EditorFieldBase & {
 
 export abstract class EditorBrush {
   abstract readonly name: string
-  abstract readonly cells: any[]
   abstract readonly fields: Record<string, EditorField>
   abstract apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean): void
-
   public open: boolean = false
-  protected readonly round: Round
-  protected readonly world: World
 
 
-  constructor(round: Round) {
-    this.round = round
-    this.world = round.world
-  }
+  constructor(public readonly world: World) { }
 
   withOpen(open: boolean): this {
     const clone = Object.create(Object.getPrototypeOf(this))
@@ -43,7 +36,6 @@ export abstract class EditorBrush {
 
 export class ZoneBrush extends EditorBrush {
   name = "Zone"
-  cells: schema.Cell[]
 
   public readonly fields: Record<string, EditorField> = {
     zoneType: {
@@ -59,8 +51,7 @@ export class ZoneBrush extends EditorBrush {
   }
 
   constructor(round: Round) {
-    super(round)
-    this.cells = round.game.world.cells
+    super(round.world)
   }
 
   apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean): void {
@@ -78,7 +69,6 @@ export class ZoneBrush extends EditorBrush {
 
 export class LayersBrush extends EditorBrush {
   name = "Layers"
-  cells: schema.Cell[]
   private nextID: number = 0
 
   public readonly fields: Record<string, EditorField> = {
@@ -114,8 +104,7 @@ export class LayersBrush extends EditorBrush {
   }
 
   constructor(round: Round) {
-    super(round)
-    this.cells = round.game.world.cells
+    super(round.world)
   }
 
   apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean) {
@@ -162,7 +151,6 @@ export class LayersBrush extends EditorBrush {
 
 export class MoveCostBrush extends EditorBrush {
   name = "Move Cost"
-  cells: schema.Cell[]
 
   public readonly fields: Record<string, EditorField> = {
     moveCost: {
@@ -173,8 +161,7 @@ export class MoveCostBrush extends EditorBrush {
   }
 
   constructor(round: Round) {
-    super(round)
-    this.cells = round.game.world.cells
+    super(round.world)
   }
 
   apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean): void {

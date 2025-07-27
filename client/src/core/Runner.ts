@@ -49,13 +49,13 @@ class RunnerClass {
     notify(ListenerKey.Control)
   }
 
-  public setGames(games: Games): void {
+  public setGames(games: Games | undefined): void {
     if (this.games === games) return
     this.games = games
+    notify(ListenerKey.Games)
   }
 
   public setGame(game: Game | undefined): void {
-    notify(ListenerKey.Match)
     if (game) {
       game.games.currentGame = game
       this.setGames(game.games)
@@ -64,6 +64,7 @@ class RunnerClass {
     }
     this.setPaused(true)
     Renderer.onGameChange()
+    notify(ListenerKey.Game)
   }
 
   public stepRound(step: number): void {

@@ -6,26 +6,39 @@ export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
   const objectTypeField = brush.fields.objectType
   const [objectType, setObjectType] = useState(() => objectTypeField?.value as string)
 
+  const generalFields = []
+  const objectFields = []
+
+  for (const [key, field] of Object.entries(brush.fields)) {
+    if (key === "objectType") {
+      generalFields.push(
+        <Field
+          key={key}
+          field={field}
+          onChange={(val) => setObjectType(val)}
+        />
+      )
+    } else if (!objectTypeField) {
+      generalFields.push(<Field key={key} field={field} />)
+    } else if (key.startsWith(objectType + "_")) {
+      objectFields.push(<Field key={key} field={field} />)
+    }
+  }
+
   return (
-    <div className="p-4 border rounded space-y-4">
-      <h2 className="text-lg font-bold">{brush.name}</h2>
+    <div className="space-y-4 px-1">
+      {generalFields.length > 0 && (
+        <div className="space-y-2">{generalFields}</div>
+      )}
 
-      {Object.entries(brush.fields).map(([key, field]) => {
-        const isObjectType = key === "objectType"
-        const isFieldForType = key.startsWith(objectType + "_")
-
-        if (!isObjectType && objectTypeField && !isFieldForType) {
-          return null
-        }
-
-        return (
-          <Field
-            key={key}
-            field={field}
-            onChange={isObjectType ? (val) => setObjectType(val) : undefined}
-          />
-        )
-      })}
+      {objectTypeField && objectFields.length > 0 && (
+        <div className="space-y-2 mt-2">
+          <h3 className="text-sm font-medium text-muted-foreground">
+            {objectType.charAt(0).toUpperCase() + objectType.slice(1)} Options
+          </h3>
+          {objectFields}
+        </div>
+      )}
     </div>
   )
 }

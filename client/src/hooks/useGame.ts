@@ -7,7 +7,7 @@ export default function useGame(): Game | undefined {
   const [game, setGame] = useState(Runner.game)
 
   useEffect(() => {
-    const unsubscribe = subscribe(ListenerKey.Match, () => setGame(Runner.game))
+    const unsubscribe = subscribe(ListenerKey.Game, () => setGame(Runner.game))
     return unsubscribe
   }, [])
 

@@ -1,5 +1,6 @@
 export enum ListenerKey {
-  Match = 'match',
+  Games = 'games',
+  Game = 'game',
   Round = 'round',
   Control = 'control',
   Canvas = 'canvas',
@@ -9,7 +10,8 @@ export enum ListenerKey {
 type Listener = () => void
 
 const listenersMap: Record<ListenerKey, Listener[]> = {
-  [ListenerKey.Match]: [],
+  [ListenerKey.Games]: [],
+  [ListenerKey.Game]: [],
   [ListenerKey.Round]: [],
   [ListenerKey.Control]: [],
   [ListenerKey.Canvas]: [],
