@@ -36,7 +36,9 @@ export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
           <h3 className="text-sm font-medium text-muted-foreground">
             {objectType.charAt(0).toUpperCase() + objectType.slice(1)} Options
           </h3>
-          {objectFields}
+          <div className="flex flex-col md:flex-row md:flex-wrap md:gap-4">
+            {objectFields}
+          </div>
         </div>
       )}
     </div>
