@@ -1,10 +1,10 @@
-import { schema } from 'aegis-schema'
-import Games from './Games'
-import Game from './Game'
 import goobA from '@/assets/goob-team-a.png'
 import goobB from '@/assets/goob-team-b.png'
-import { getImage } from '@/utils/util'
 import { renderCoords } from '@/utils/renderUtils'
+import { getImage } from '@/utils/util'
+import { schema } from 'aegis-schema'
+import Game from './Game'
+import Games from './Games'
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()
@@ -18,6 +18,7 @@ export default class Agents {
 
   public processRound(round: schema.Round | null): void {
     if (round) {
+      // Process round data if needed
     }
 
     for (const agent of this.agents.values()) {
@@ -25,7 +26,7 @@ export default class Agents {
     }
   }
 
-  public applyTurn(turn: schema.Turn) {
+  public applyTurn(turn: schema.Turn): void {
     const agent = this.agents.get(turn.agentId)
     if (!agent) return
 
@@ -38,7 +39,28 @@ export default class Agents {
     const loc = _agent.loc!
     const team = _agent.team
 
-    const agent = new Agent(this.games, id, team, loc, team === schema.Team.GOOBS ? goobA : goobB)
+    // Check if we have multiple teams
+    const existingTeams = new Set(Array.from(this.agents.values()).map((a) => a.team))
+    const hasMultipleTeams = existingTeams.size > 0 || team !== schema.Team.GOOBS
+
+    // If single team or first agent, always use blue sprite
+    // If multiple teams, use team-based assignment
+    const imgPath = hasMultipleTeams
+      ? team === schema.Team.GOOBS
+        ? goobA
+        : goobB
+      : goobA
+    const teamName = hasMultipleTeams
+      ? team === schema.Team.GOOBS
+        ? 'GOOBS (Blue)'
+        : 'VOIDSEERS (Red)'
+      : 'TEAM A (Blue)'
+
+    console.log(
+      `Agent ${id} assigned to ${teamName} (team value: ${team}, multiple teams: ${hasMultipleTeams})`
+    )
+
+    const agent = new Agent(this.games, id, team, loc, imgPath)
     this.agents.set(id, agent)
 
     if (this.games.currentGame) agent.default()
@@ -76,7 +98,9 @@ export class Agent {
     public readonly team: schema.Team,
     public loc: schema.Location,
     public imgPath: string
-  ) { this.lastLoc = this.loc }
+  ) {
+    this.lastLoc = this.loc
+  }
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
     const goob = getImage(this.imgPath)
@@ -87,7 +111,9 @@ export class Agent {
   }
 
   public copy(): Agent {
-    const copy = new Agent(this.games, this.id, this.team, { ...this.loc }, this.team === schema.Team.GOOBS ? goobA : goobB)
+    // Use the same logic as spawnAgent - first agent gets blue sprite
+    const imgPath = this.team === schema.Team.GOOBS ? goobA : goobB
+    const copy = new Agent(this.games, this.id, this.team, { ...this.loc }, imgPath)
     copy.energyLevel = this.energyLevel
     copy.lastLoc = { ...this.lastLoc }
     return copy

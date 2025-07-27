@@ -1,6 +1,6 @@
-import { schema } from "aegis-schema"
-import Round from "./Round"
-import World from "./World"
+import { schema } from 'aegis-schema'
+import Round from './Round'
+import World from './World'
 
 export enum EditorBrushTypes {
   POSITIVE_INTEGER,
@@ -11,7 +11,7 @@ export type EditorFieldBase = {
   type: EditorBrushTypes
   value: any
   label: string
-  options?: { value: any, label: string }[]
+  options?: { value: any; label: string }[]
 }
 
 export type EditorField = EditorFieldBase & {
@@ -21,11 +21,15 @@ export type EditorField = EditorFieldBase & {
 export abstract class EditorBrush {
   abstract readonly name: string
   abstract readonly fields: Record<string, EditorField>
-  abstract apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean): void
+  abstract apply(
+    x: number,
+    y: number,
+    fields: Record<string, EditorField>,
+    rightClick: boolean
+  ): void
   public open: boolean = false
 
-
-  constructor(public readonly world: World) { }
+  constructor(public readonly world: World) {}
 
   withOpen(open: boolean): this {
     const clone = Object.create(Object.getPrototypeOf(this))
@@ -35,17 +39,17 @@ export abstract class EditorBrush {
 }
 
 export class ZoneBrush extends EditorBrush {
-  name = "Zone"
+  name = 'Zone'
 
   public readonly fields: Record<string, EditorField> = {
     zoneType: {
       type: EditorBrushTypes.SINGLE_SELECT,
       value: schema.CellType.SPAWN,
-      label: "Zone Type",
+      label: 'Zone Type',
       options: [
-        { value: schema.CellType.SPAWN, label: "Spawn" },
-        { value: schema.CellType.KILLER, label: "Killer" },
-        { value: schema.CellType.CHARGING, label: "Charging" },
+        { value: schema.CellType.SPAWN, label: 'Spawn' },
+        { value: schema.CellType.KILLER, label: 'Killer' },
+        { value: schema.CellType.CHARGING, label: 'Charging' }
       ]
     }
   }
@@ -54,8 +58,15 @@ export class ZoneBrush extends EditorBrush {
     super(round.world)
   }
 
-  apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean): void {
+  apply(
+    x: number,
+    y: number,
+    fields: Record<string, EditorField>,
+    rightClick: boolean
+  ): void {
     const cell = this.world.cellAt(x, y)
+    if (!cell) return
+
     const cellType = fields.zoneType.value as schema.CellType
 
     if (rightClick) {
@@ -68,17 +79,17 @@ export class ZoneBrush extends EditorBrush {
 }
 
 export class LayersBrush extends EditorBrush {
-  name = "Layers"
+  name = 'Layers'
   private nextID: number = 0
 
   public readonly fields: Record<string, EditorField> = {
     objectType: {
       type: EditorBrushTypes.SINGLE_SELECT,
-      label: "Layer Type",
-      value: "survivor",
+      label: 'Layer Type',
+      value: 'survivor',
       options: [
-        { label: "Survivor", value: "survivor" },
-        { label: "Rubble", value: "rubble" }
+        { label: 'Survivor', value: 'survivor' },
+        { label: 'Rubble', value: 'rubble' }
       ]
     },
 
@@ -88,18 +99,18 @@ export class LayersBrush extends EditorBrush {
     survivor_hp: {
       type: EditorBrushTypes.POSITIVE_INTEGER,
       value: 1,
-      label: "Survivor HP"
+      label: 'Survivor HP'
     },
 
     rubble_energyRequired: {
       type: EditorBrushTypes.POSITIVE_INTEGER,
       value: 1,
-      label: "Energy Required"
+      label: 'Energy Required'
     },
     rubble_agentsRequired: {
       type: EditorBrushTypes.POSITIVE_INTEGER,
       value: 1,
-      label: "Agents Required"
+      label: 'Agents Required'
     }
   }
 
@@ -107,8 +118,15 @@ export class LayersBrush extends EditorBrush {
     super(round.world)
   }
 
-  apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean) {
+  apply(
+    x: number,
+    y: number,
+    fields: Record<string, EditorField>,
+    rightClick: boolean
+  ) {
     const cell = this.world.cellAt(x, y)
+    if (!cell) return
+
     const type = fields.objectType.value
 
     if (rightClick) {
@@ -116,7 +134,7 @@ export class LayersBrush extends EditorBrush {
       return
     }
 
-    if (type === "survivor") {
+    if (type === 'survivor') {
       const hp = fields.survivor_hp.value
       const surv: schema.Survivor = schema.Survivor.create({
         id: this.nextID++,
@@ -125,13 +143,13 @@ export class LayersBrush extends EditorBrush {
       })
       cell.layers.push({
         object: {
-          oneofKind: "survivor",
+          oneofKind: 'survivor',
           survivor: surv
         }
       })
     }
 
-    if (type === "rubble") {
+    if (type === 'rubble') {
       const energy = fields.rubble_energyRequired.value
       const agents = fields.rubble_agentsRequired.value
       const rubble: schema.Rubble = schema.Rubble.create({
@@ -141,7 +159,7 @@ export class LayersBrush extends EditorBrush {
       })
       cell.layers.push({
         object: {
-          oneofKind: "rubble",
+          oneofKind: 'rubble',
           rubble
         }
       })
@@ -150,13 +168,13 @@ export class LayersBrush extends EditorBrush {
 }
 
 export class MoveCostBrush extends EditorBrush {
-  name = "Move Cost"
+  name = 'Move Cost'
 
   public readonly fields: Record<string, EditorField> = {
     moveCost: {
       type: EditorBrushTypes.POSITIVE_INTEGER,
       value: 1,
-      label: "Move Cost"
+      label: 'Move Cost'
     }
   }
 
@@ -164,8 +182,15 @@ export class MoveCostBrush extends EditorBrush {
     super(round.world)
   }
 
-  apply(x: number, y: number, fields: Record<string, EditorField>, rightClick: boolean): void {
+  apply(
+    x: number,
+    y: number,
+    fields: Record<string, EditorField>,
+    rightClick: boolean
+  ): void {
     const cell = this.world.cellAt(x, y)
+    if (!cell) return
+
     const moveCost = fields.moveCost.value
 
     if (cell.type !== schema.CellType.NORMAL) return
@@ -175,7 +200,5 @@ export class MoveCostBrush extends EditorBrush {
     } else {
       cell.moveCost = moveCost
     }
-
-    this.world.updateMinMaxMoveCosts()
   }
 }

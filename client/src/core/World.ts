@@ -1,39 +1,35 @@
-import { shadesOfBlue, shadesOfBrown, Size, Vector } from '@/types'
-import { renderCoords } from '@/utils/renderUtils'
-import { getImage, whatBucket } from '@/utils/util'
 import survivorSrc from '@/assets/survivor.png'
-import { schema } from 'aegis-schema'
-import Game from './Game'
+import { getMoveCostColor, Size, Vector } from '@/types'
 import { THICKNESS } from '@/utils/constants'
-import { MoveCostBrush, ZoneBrush, EditorBrush, LayersBrush } from './Brushes'
+import { renderCoords } from '@/utils/renderUtils'
+import { getImage } from '@/utils/util'
+import { schema } from 'aegis-schema'
+import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from './Brushes'
+import Game from './Game'
 import Round from './Round'
 
+/**
+ * Represents a world in the AEGIS game.
+ * @param width - Width of the world in cells.
+ * @param height - Height of the world in cells.
+ * @param seed - Random seed for world generation.
+ * @param cells - Array of cells in the world.
+ * @param startEnergy - Starting energy for agents.
+ */
 export default class World {
-  /**
-   * Constructs a new World instance.
-   * @param width - The width of the map.
-   * @param height - The height of the map.
-   * @param seed - The seed used for procedural generation.
-   * @param stacks - Array of stacks containing cell data and movement costs.
-   * @param initialAgentEnergy - Initial energy level for agents in the map.
-   * @param minMoveCost - Minimum movement cost for cells in the map.
-   * @param maxMoveCost - Maximum movement cost for cells in the map.
-   */
   constructor(
     public readonly width: number,
     public readonly height: number,
     public readonly seed: number,
     public readonly cells: schema.Cell[],
-    public readonly startEnergy: number,
-    public minMoveCost: number,
-    public maxMoveCost: number
-  ) { }
+    public readonly startEnergy: number
+  ) {}
 
   public applyRound(round: schema.Round | null): void {
     if (!round) return
 
     for (const loc of round.layersRemoved) {
-      const cell = this.cellAt(loc.x, loc.y);
+      const cell = this.cellAt(loc.x, loc.y)!
       cell.layers.pop()
     }
   }
@@ -44,16 +40,12 @@ export default class World {
    * @returns A World instance.
    */
   public static fromSchema(world: schema.World): World {
-    const moveCosts = world.cells.map((cell) => cell.moveCost)
-
     return new World(
       world.width,
       world.height,
       world.seed,
       world.cells,
-      world.startEnergy,
-      Math.min(...moveCosts),
-      Math.max(...moveCosts)
+      world.startEnergy
     )
   }
 
@@ -118,7 +110,7 @@ export default class World {
       })
     })
 
-    return new World(width, height, 0, cells, initialEnergy, 1, 1)
+    return new World(width, height, 0, cells, initialEnergy)
   }
 
   public copy(): World {
@@ -127,9 +119,7 @@ export default class World {
       this.height,
       this.seed,
       this.cells.map(this.copyCell),
-      this.startEnergy,
-      this.minMoveCost,
-      this.maxMoveCost
+      this.startEnergy
     )
   }
 
@@ -145,7 +135,7 @@ export default class World {
       moveCost: cell.moveCost,
       type: cell.type,
       agents: [...cell.agents],
-      layers: cell.layers.map(layer => ({ ...layer })),
+      layers: cell.layers.map((layer) => ({ ...layer }))
     }
   }
 
@@ -167,7 +157,7 @@ export default class World {
           cell.type === schema.CellType.NORMAL &&
           cell.moveCost === 1
       )
-    );
+    )
   }
 
   /**
@@ -178,17 +168,8 @@ export default class World {
     return { width: this.width, height: this.height }
   }
 
-  public cellAt(x: number, y: number) {
+  public cellAt(x: number, y: number): schema.Cell | undefined {
     return this.cells[x + y * this.width]
-  }
-
-  /**
-   * Updates the minimum and maximum movement costs for cells in the map.
-   */
-  updateMinMaxMoveCosts(): void {
-    const moveCosts = this.cells.map((cell) => cell.moveCost)
-    this.minMoveCost = Math.min(...moveCosts)
-    this.maxMoveCost = Math.max(...moveCosts)
   }
 
   /**
@@ -226,14 +207,7 @@ export default class World {
         const cell = this.cellAt(x, y)
         if (!cell) continue
 
-        const opacity = whatBucket(
-          this.minMoveCost,
-          this.maxMoveCost,
-          cell.moveCost,
-          shadesOfBrown.length
-        )
-
-        const [r, g, b] = shadesOfBrown[opacity]
+        const [r, g, b] = getMoveCostColor(cell.moveCost, 'brown')
         ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
 
         const coords = renderCoords(x, y, this.size)
@@ -261,13 +235,7 @@ export default class World {
       if (cell.type === schema.CellType.NORMAL) continue
 
       if (cell.type === schema.CellType.CHARGING) {
-        const bucket = whatBucket(
-          this.minMoveCost,
-          this.maxMoveCost,
-          cell.moveCost,
-          shadesOfBlue.length
-        )
-        const [r, g, b] = shadesOfBlue[bucket]
+        const [r, g, b] = getMoveCostColor(cell.moveCost, 'blue')
         ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
       } else if (cell.type === schema.CellType.KILLER) {
         ctx.fillStyle = '#cc0000'
@@ -280,7 +248,7 @@ export default class World {
         coords.x + THICKNESS / 2,
         coords.y + THICKNESS / 2,
         1 - THICKNESS,
-        1 - THICKNESS,
+        1 - THICKNESS
       )
     }
   }
@@ -319,11 +287,9 @@ export default class World {
 
   public drawLayers(game: Game, ctx: CanvasRenderingContext2D, full: boolean): void {
     const surv = getImage(survivorSrc)
-    if (!surv) throw new Error("surv should be loaded already")
+    if (!surv) throw new Error('surv should be loaded already')
 
-    const locs = full
-      ? this.getAllLocations()
-      : game.currentRound.layersRemoved
+    const locs = full ? this.getAllLocations() : game.currentRound.layersRemoved
 
     for (const loc of locs) {
       const x = loc.x
@@ -332,34 +298,34 @@ export default class World {
       const coords = renderCoords(x, y, this.size)
       ctx.clearRect(coords.x, coords.y, 1, 1)
 
-      const layers = this.cellAt(x, y).layers
+      const layers = this.cellAt(x, y)!.layers
       if (!layers.length) continue
 
-      const survivorCount = this.countByKind(layers, "survivor")
-      const rubbleCount = this.countByKind(layers, "rubble")
+      const survivorCount = this.countByKind(layers, 'survivor')
+      const rubbleCount = this.countByKind(layers, 'rubble')
 
       const topLayer = layers[layers.length - 1]
       const kind = topLayer.object.oneofKind
 
-      if (kind === "survivor") {
+      if (kind === 'survivor') {
         ctx.drawImage(surv, coords.x, coords.y, 1, 1)
-      } else if (kind === "rubble") {
-        ctx.fillStyle = "#555555"
+      } else if (kind === 'rubble') {
+        ctx.fillStyle = '#555555'
         ctx.fillRect(coords.x + 0.2, coords.y + 0.2, 0.6, 0.6)
       }
 
-      ctx.font = "0.2px Arial"
-      ctx.textBaseline = "bottom"
+      ctx.font = '0.2px Arial'
+      ctx.textBaseline = 'bottom'
 
       if (survivorCount > 0) {
-        ctx.fillStyle = "blue"
-        ctx.textAlign = "right"
+        ctx.fillStyle = 'blue'
+        ctx.textAlign = 'right'
         ctx.fillText(String(survivorCount), coords.x + 0.95, coords.y + 0.95)
       }
 
       if (rubbleCount > 0) {
-        ctx.fillStyle = "#555555"
-        ctx.textAlign = "left"
+        ctx.fillStyle = '#555555'
+        ctx.textAlign = 'left'
         ctx.fillText(String(rubbleCount), coords.x + 0.05, coords.y + 0.95)
       }
     }
@@ -370,11 +336,11 @@ export default class World {
   }
 
   public getCellsByType(type: schema.CellType): schema.Cell[] {
-    return this.cells.filter(cell => cell.type === type)
+    return this.cells.filter((cell) => cell.type === type)
   }
 
-  private countByKind(layers: schema.WorldObject[], kind: string) {
-    return layers.filter(layer => layer.object.oneofKind === kind).length
+  private countByKind(layers: schema.WorldObject[], kind: string): number {
+    return layers.filter((layer) => layer.object.oneofKind === kind).length
   }
 
   private getAllLocations(): schema.Location[] {
@@ -388,4 +354,3 @@ export default class World {
     return locs
   }
 }
-
