@@ -31,7 +31,7 @@ class Layer(TypedDict):
 
 class CellInfoRaw(TypedDict):
     loc: Loc
-    move_cost: int
+    moveCost: int
     type: str | None
     layers: list[Layer]
 

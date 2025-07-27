@@ -7,7 +7,6 @@ from .logger import LOGGER
 from .server_websocket import WebSocketServer
 from .team import Team
 from .world_parser import load_world
-from .world_proto import serialize_world
 
 
 def run(args: Args) -> None:
@@ -53,5 +52,3 @@ def run(args: Args) -> None:
         predictions = game.team_info.get_predicted_right(team)
 
         LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
-
-    _ = serialize_world(world)

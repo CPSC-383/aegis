@@ -39,7 +39,7 @@ export class ClientWebSocket {
 
       if (!this.games) {
         if (event.event.oneofKind !== 'gamesHeader') {
-          throw new Error('First event must be the GameHeader.')
+          throw new Error('First event must be the GamesHeader.')
         }
 
         this.games = new Games()

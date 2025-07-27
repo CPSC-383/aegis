@@ -1,5 +1,4 @@
 import { EditorField, EditorBrushTypes } from "@/core/Brushes"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -9,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useState } from "react"
+import NumberInput from "../NumberInput"
 
 interface FieldProps {
   field: EditorField
@@ -25,28 +25,25 @@ export default function Field({ field, onChange }: FieldProps) {
 
     field.value = processedValue
     setValue(newValue)
-
-    // so layersbrush rerenders when the layer type changes
     onChange?.(processedValue)
   }
 
   return (
     <div className="space-y-2">
       {field.label && (
-        <Label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        <Label className="text-xs text-muted-foreground">
           {field.label}
         </Label>
       )}
 
       <div className="flex items-center gap-2">
         {field.type === EditorBrushTypes.POSITIVE_INTEGER && (
-          <Input
-            type="number"
-            min={1}
+          <NumberInput
+            name={field.label}
             value={value}
-            onChange={(e) => handleChange(e.target.value)}
-            className="w-20 h-9 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            placeholder="1"
+            min={1}
+            max={100}
+            onChange={(_, val) => handleChange(val)}
           />
         )}
 

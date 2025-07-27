@@ -21,7 +21,7 @@ export interface Cell {
      */
     loc?: Location;
     /**
-     * @generated from protobuf field: int32 move_cost = 2
+     * @generated from protobuf field: int32 moveCost = 2
      */
     moveCost: number;
     /**
@@ -63,7 +63,7 @@ class Cell$Type extends MessageType<Cell> {
     constructor() {
         super("aegis.Cell", [
             { no: 1, name: "loc", kind: "message", T: () => Location },
-            { no: 2, name: "move_cost", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "moveCost", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "type", kind: "enum", T: () => ["aegis.CellType", CellType] },
             { no: 4, name: "agents", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "layers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => WorldObject }
@@ -87,7 +87,7 @@ class Cell$Type extends MessageType<Cell> {
                 case /* aegis.Location loc */ 1:
                     message.loc = Location.internalBinaryRead(reader, reader.uint32(), options, message.loc);
                     break;
-                case /* int32 move_cost */ 2:
+                case /* int32 moveCost */ 2:
                     message.moveCost = reader.int32();
                     break;
                 case /* aegis.CellType type */ 3:
@@ -118,7 +118,7 @@ class Cell$Type extends MessageType<Cell> {
         /* aegis.Location loc = 1; */
         if (message.loc)
             Location.internalBinaryWrite(message.loc, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int32 move_cost = 2; */
+        /* int32 moveCost = 2; */
         if (message.moveCost !== 0)
             writer.tag(2, WireType.Varint).int32(message.moveCost);
         /* aegis.CellType type = 3; */

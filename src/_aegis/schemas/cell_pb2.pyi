@@ -20,15 +20,15 @@ KILLER: CellType
 CHARGING: CellType
 
 class Cell(_message.Message):
-    __slots__ = ("loc", "move_cost", "type", "agents", "layers")
+    __slots__ = ("loc", "moveCost", "type", "agents", "layers")
     LOC_FIELD_NUMBER: _ClassVar[int]
-    MOVE_COST_FIELD_NUMBER: _ClassVar[int]
+    MOVECOST_FIELD_NUMBER: _ClassVar[int]
     TYPE_FIELD_NUMBER: _ClassVar[int]
     AGENTS_FIELD_NUMBER: _ClassVar[int]
     LAYERS_FIELD_NUMBER: _ClassVar[int]
     loc: _location_pb2.Location
-    move_cost: int
+    moveCost: int
     type: CellType
     agents: _containers.RepeatedScalarFieldContainer[int]
     layers: _containers.RepeatedCompositeFieldContainer[_world_object_pb2.WorldObject]
-    def __init__(self, loc: _Optional[_Union[_location_pb2.Location, _Mapping]] = ..., move_cost: _Optional[int] = ..., type: _Optional[_Union[CellType, str]] = ..., agents: _Optional[_Iterable[int]] = ..., layers: _Optional[_Iterable[_Union[_world_object_pb2.WorldObject, _Mapping]]] = ...) -> None: ...
+    def __init__(self, loc: _Optional[_Union[_location_pb2.Location, _Mapping]] = ..., moveCost: _Optional[int] = ..., type: _Optional[_Union[CellType, str]] = ..., agents: _Optional[_Iterable[int]] = ..., layers: _Optional[_Iterable[_Union[_world_object_pb2.WorldObject, _Mapping]]] = ...) -> None: ...
