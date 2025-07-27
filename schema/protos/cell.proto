@@ -14,7 +14,7 @@ enum CellType {
 
 message Cell {
   Location loc = 1;
-  int32 move_cost = 2;
+  int32 moveCost = 2;
   CellType type = 3;
   repeated int32 agents = 4;
   repeated WorldObject layers = 5;

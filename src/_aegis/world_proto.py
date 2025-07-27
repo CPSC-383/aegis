@@ -1,6 +1,9 @@
+from google.protobuf.message import DecodeError
+
 from .common import Cell
 from .common.objects import Rubble, Survivor
 from .schemas import world_pb2
+from .schemas.cell_pb2 import Cell as PbCell
 from .schemas.cell_pb2 import CellType
 from .schemas.world_object_pb2 import SurvivorState
 from .world import World
@@ -16,6 +19,40 @@ def get_cell_type(cell: Cell) -> CellType:
     return CellType.NORMAL
 
 
+def cell_type_from_proto(cell: Cell, cell_type: CellType) -> None:
+    if cell_type == CellType.SPAWN:
+        cell.set_spawn_cell()
+    elif cell_type == CellType.CHARGING:
+        cell.set_charging_cell()
+    elif cell_type == CellType.KILLER:
+        cell.set_killer_cell()
+
+
+def cell_from_proto(proto_cell: PbCell) -> Cell:
+    loc = proto_cell.loc
+    cell = Cell(loc.x, loc.y)
+
+    cell_type_from_proto(cell, proto_cell.type)
+    cell.move_cost = proto_cell.moveCost
+    cell.agents = list(proto_cell.agents)
+
+    for layer_proto in proto_cell.layers:
+        if layer_proto.HasField("survivor"):
+            s = layer_proto.survivor
+            survivor = Survivor(s.id, s.health)
+            cell.add_layer(survivor)
+        elif layer_proto.HasField("rubble"):
+            r = layer_proto.rubble
+            rubble = Rubble(
+                r.id,
+                r.energy_required,
+                r.agents_required,
+            )
+            cell.add_layer(rubble)
+
+    return cell
+
+
 def serialize_world(world: World) -> world_pb2.World:
     proto_world = world_pb2.World()
     proto_world.width = world.width
@@ -28,7 +65,7 @@ def serialize_world(world: World) -> world_pb2.World:
         proto_cell = proto_world.cells.add()
         proto_cell.loc.x = cell.location.x
         proto_cell.loc.y = cell.location.y
-        proto_cell.move_cost = cell.move_cost
+        proto_cell.moveCost = cell.move_cost
         proto_cell.type = get_cell_type(cell)
         proto_cell.agents.extend(cell.agents)
 
@@ -50,3 +87,22 @@ def serialize_world(world: World) -> world_pb2.World:
                 rubble_proto.agents_required = layer.agents_required
 
     return proto_world
+
+
+def deserialize_world(data: bytes) -> World:
+    try:
+        proto_world = world_pb2.World()
+        _ = proto_world.ParseFromString(data)
+    except DecodeError as e:
+        error = "Failed to decode binary world file"
+        raise ValueError(error) from e
+
+    cells = [cell_from_proto(proto_cell) for proto_cell in proto_world.cells]
+
+    return World(
+        proto_world.width,
+        proto_world.height,
+        proto_world.seed,
+        proto_world.start_energy,
+        cells,
+    )

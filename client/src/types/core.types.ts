@@ -32,18 +32,10 @@ export type Survivor = {
 }
 
 export interface WorldData {
-  settings: {
+  world_info: {
     size: Size
     seed: number
     start_energy: number
   }
-  cells: {
-    loc: schema.Location
-    type?: string
-    move_cost: number
-    layers: {
-      type: "sv" | "rb"
-      attributes: Partial<Survivor & Rubble>
-    }[]
-  }[]
+  cells: schema.Cell[]
 }

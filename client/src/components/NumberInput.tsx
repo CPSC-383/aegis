@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 
 interface NumberInputProps {
@@ -18,6 +18,9 @@ export default function NumberInput({
 }: NumberInputProps) {
   const [internal, setInternal] = useState(String(value))
 
+  useEffect(() => {
+    setInternal(String(value))
+  }, [value])
   const clamp = (val: number) => Math.max(min, Math.min(max, val))
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -54,40 +54,22 @@ export default class World {
    * @param data - Serialized data representing the world map.
    * @returns A World instance.
    */
-  // static fromData(data: WorldData): World {
-  //   const { world_info } = data.settings
-  //   const { size, seed, agent_energy } = world_info
-  //
-  //   const spawnCells = new Map<string, SpawnZoneData>(
-  //     data.spawn_locs.map((spawn) => {
-  //       const key = JSON.stringify({ x: spawn.x, y: spawn.y })
-  //       return [
-  //         key,
-  //         {
-  //           type: spawn.type as SpawnZoneTypes,
-  //           groups: spawn.gid ? [spawn.gid] : []
-  //         }
-  //       ]
-  //     })
-  //   )
-  //
-  //   const cells: schema.Cell[] = data.stacks
-  //   const moveCosts = cells.map((cell) => cell.moveCost)
-  //
-  //   return new World(
-  //     size.width,
-  //     size.height,
-  //     seed,
-  //     data.cell_types.fire_cells,
-  //     data.cell_types.killer_cells,
-  //     data.cell_types.charging_cells,
-  //     spawnCells,
-  //     stacks,
-  //     agent_energy,
-  //     Math.min(...moveCosts),
-  //     Math.max(...moveCosts)
-  //   )
-  // }
+  static fromData(data: WorldData): World {
+    const { size, seed, start_energy } = data.world_info
+
+    const cells = data.cells
+    const moveCosts = cells.map((cell) => cell.moveCost)
+
+    return new World(
+      size.width,
+      size.height,
+      seed,
+      cells,
+      start_energy,
+      Math.min(...moveCosts),
+      Math.max(...moveCosts)
+    )
+  }
 
   /**
    * Creates a new World instance with default parameters.
