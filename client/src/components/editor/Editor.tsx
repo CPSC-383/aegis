@@ -20,6 +20,7 @@ import { Button } from '../ui/button'
 import { importWorld, exportWorld } from './MapGenerator'
 import ConfirmClearDialog from '../ConfirmClearDialog'
 import LayerEditor from '../LayerEditor'
+import { useAppStore } from '@/store/useAppStore'
 
 export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
@@ -35,15 +36,22 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false)
   const [selectedTile, setSelectedTile] = useState<Vector | undefined>(undefined)
 
+  const setEditorGames = useAppStore((state) => state.setEditorGames)
+
   const editorGame = useRef<Games | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     if (!isOpen) {
+      setEditorGames(editorGame.current)
       Runner.setGames(undefined)
       return
     }
-    if (worldParams.imported) {
+
+    const storedEditorGames = useAppStore.getState().editorGames
+    if (storedEditorGames) {
+      editorGame.current = storedEditorGames
+    } else if (worldParams.imported) {
       editorGame.current = worldParams.imported
     } else if (!editorGame.current || worldParams.imported === null) {
       const games = new Games(false)
@@ -59,6 +67,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     }
 
     worldParams.imported = undefined
+    setEditorGames(null)
 
     Runner.setGame(editorGame.current.currentGame)
     const round = editorGame.current.currentGame!.currentRound

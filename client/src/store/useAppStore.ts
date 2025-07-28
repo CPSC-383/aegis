@@ -3,16 +3,22 @@ import Games from '@/core/Games'
 
 interface AppStore {
   queue: Games[]
+  editorGames: Games | null
 
   setQueue: (queue: Games[]) => void
   pushToQueue: (game: Games) => void
   clearQueue: () => void
+
+  setEditorGames: (games: Games | null) => void
 }
 
 export const useAppStore = create<AppStore>((set) => ({
   queue: [],
+  editorGames: null,
 
   setQueue: (queue) => set({ queue }),
   pushToQueue: (game) => set((state) => ({ queue: [...state.queue, game] })),
-  clearQueue: () => set({ queue: [] })
+  clearQueue: () => set({ queue: [] }),
+
+  setEditorGames: (games) => set({ editorGames: games })
 }))
