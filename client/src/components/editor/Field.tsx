@@ -7,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { useState } from 'react'
 import NumberInput from '../NumberInput'
 
 interface FieldProps {
@@ -16,14 +15,11 @@ interface FieldProps {
 }
 
 export default function Field({ field, onChange }: FieldProps) {
-  const [value, setValue] = useState(field.value)
-
   const handleChange = (newValue: any) => {
     const processedValue =
       field.type === EditorBrushTypes.POSITIVE_INTEGER ? Number(newValue) : newValue
 
     field.value = processedValue
-    setValue(newValue)
     onChange?.(processedValue)
   }
 
@@ -37,7 +33,7 @@ export default function Field({ field, onChange }: FieldProps) {
         {field.type === EditorBrushTypes.POSITIVE_INTEGER && (
           <NumberInput
             name={field.label}
-            value={value}
+            value={field.value}
             min={1}
             max={100}
             onChange={(_, val) => handleChange(val)}
@@ -45,7 +41,7 @@ export default function Field({ field, onChange }: FieldProps) {
         )}
 
         {field.type === EditorBrushTypes.SINGLE_SELECT && field.options && (
-          <Select value={String(value)} onValueChange={handleChange}>
+          <Select value={String(field.value)} onValueChange={handleChange}>
             <SelectTrigger className="w-40 h-9 text-sm">
               <SelectValue placeholder="Select option..." />
             </SelectTrigger>
