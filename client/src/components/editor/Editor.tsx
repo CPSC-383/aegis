@@ -121,6 +121,8 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   const handleClose = () => {
     setIsEditorOpen(false)
     setSelectedTile(undefined)
+    Renderer.doFullRedraw()
+    Renderer.fullRender()
   }
 
   useEffect(() => {

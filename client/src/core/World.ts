@@ -265,7 +265,7 @@ export default class World {
       const survivorCount = this.countByKind(layers, 'survivor')
       const rubbleCount = this.countByKind(layers, 'rubble')
 
-      const topLayer = layers[layers.length - 1]
+      const topLayer = layers[0]
       const kind = topLayer.object.oneofKind
 
       if (kind === 'survivor') {

@@ -50,15 +50,6 @@ export default class Agents {
         ? goobA
         : goobB
       : goobA
-    const teamName = hasMultipleTeams
-      ? team === schema.Team.GOOBS
-        ? 'GOOBS (Blue)'
-        : 'VOIDSEERS (Red)'
-      : 'TEAM A (Blue)'
-
-    console.log(
-      `Agent ${id} assigned to ${teamName} (team value: ${team}, multiple teams: ${hasMultipleTeams})`
-    )
 
     const agent = new Agent(this.games, id, team, loc, imgPath)
     this.agents.set(id, agent)

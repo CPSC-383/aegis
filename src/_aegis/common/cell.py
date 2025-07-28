@@ -72,7 +72,7 @@ class Cell:
     def get_top_layer(self) -> WorldObject | None:
         if not self.layers:
             return None
-        return self.layers[-1]
+        return self.layers[0]
 
     def set_top_layer(self, top_layer: WorldObject | None) -> None:
         self.layers.clear()
@@ -110,7 +110,7 @@ class Cell:
             layers_str = "  (no layers)"
         else:
             layers_str = "\n".join(
-                f"  {i + 1} - {layer}" for i, layer in enumerate(reversed(self.layers))
+                f"  {i + 1} - {layer}" for i, layer in enumerate(self.layers)
             )
 
         return (
