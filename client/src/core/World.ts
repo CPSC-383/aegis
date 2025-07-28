@@ -168,7 +168,7 @@ export default class World {
         const cell = this.cellAt(x, y)
         if (!cell) continue
 
-        const [r, g, b] = getMoveCostColor(cell.moveCost, 'brown')
+        const [r, g, b] = getMoveCostColor(cell.moveCost)
         ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
 
         const coords = renderCoords(x, y, this.size)
@@ -196,8 +196,7 @@ export default class World {
       if (cell.type === schema.CellType.NORMAL) continue
 
       if (cell.type === schema.CellType.CHARGING) {
-        const [r, g, b] = getMoveCostColor(cell.moveCost, 'blue')
-        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
+        ctx.fillStyle = '#3f00ff'
       } else if (cell.type === schema.CellType.KILLER) {
         ctx.fillStyle = '#cc0000'
       } else if (cell.type === schema.CellType.SPAWN) {

@@ -24,27 +24,10 @@ const shadesOfBrown = [
   [65, 32, 2]
 ]
 
-const shadesOfBlue = [
-  [188, 104, 29],
-  [171, 95, 26],
-  [154, 85, 24],
-  [137, 76, 21],
-  [120, 67, 18],
-  [111, 60, 13],
-  [80, 80, 135],
-  [60, 60, 115],
-  [40, 40, 95],
-  [20, 20, 75]
-]
-
 // Move cost 1 = lightest, move cost 10+ = darkest
-export function getMoveCostColor(
-  moveCost: number,
-  brownOrBlue: string
-): [number, number, number] {
-  const colourList = brownOrBlue === 'brown' ? shadesOfBrown : shadesOfBlue
+export function getMoveCostColor(moveCost: number): [number, number, number] {
   const index = Math.min(Math.max(moveCost, 1), 10) - 1
-  return colourList[index] as [number, number, number]
+  return shadesOfBrown[index] as [number, number, number]
 }
 
 export type Config = {
