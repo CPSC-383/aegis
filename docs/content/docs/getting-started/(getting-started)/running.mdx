@@ -15,7 +15,7 @@ To run Aegis from the terminal, use the aegis command:
 aegis [--amount AMOUNT] --world WORLD \
   --rounds ROUNDS --agent AGENT \
   --group GROUP [--client] \
-  [--config CONFIG] [--debug]
+  [--config CONFIG] [--debug] [--log]
 ```
 
 ### Example
@@ -26,6 +26,16 @@ Here's an example of running Aegis with a sample agent, `ExampleWorld.world` and
 aegis --world worlds/ExampleWorld.world \
   --rounds 50 --agent agents/test/main.py \
   --group "cli"
+```
+
+### Example with Logging
+
+To save console output to a log file:
+
+```
+aegis --world worlds/ExampleWorld.world \
+  --rounds 50 --agent agents/test/main.py \
+  --group "cli" --log
 ```
 
 ### Full Command Options
@@ -41,6 +51,7 @@ options:
   --client         Set to wait for the client to connect
   --config CONFIG  Config preset to use (default: default)
   --debug          Enable agent debug logging output
+  --log            Enable AEGIS console output logging to file
 
 ```
 
@@ -98,17 +109,18 @@ Once the client opens, follow the steps below to run a simulation.
 <Steps>
 <Step>
 
-### Set the Aegis Path 
+### Set the Aegis Path
 
-Since the client cannot automatically locate your project files, click the **Setup Aegis Path** button and 
+Since the client cannot automatically locate your project files, click the **Setup Aegis Path** button and
 select the root `aegis` directory. This root directory contains your worlds, agents, and client folders.
 
-If the setup is successful, the sidebar tabs will appear and you'll be able to select worlds and agents in 
+If the setup is successful, the sidebar tabs will appear and you'll be able to select worlds and agents in
 the **Aegis** tab.
 
 <Callout title="Tip" type="info">
-If you accidentally select the wrong path, you can reconfigure it anytime from the **Settings** tab. 
-</Callout> 
+  If you accidentally select the wrong path, you can reconfigure it anytime from the **Settings**
+  tab.
+</Callout>{" "}
 
 </Step>
 
@@ -123,7 +135,7 @@ preset you wish to use.
 
 <Step>
 
-### Start the Simulation 
+### Start the Simulation
 
 Once all required fields are set, the **Start Up Game** button will become active.
 Click it to launch the simulation. You'll know it's running when the console logs confirm startup
@@ -133,7 +145,7 @@ or the button changes to **Kill Game**.
 
 <Step>
 
-### Confirm 
+### Confirm
 
 If everything is configured correctly, the simulation will start and display in the main window.
 
