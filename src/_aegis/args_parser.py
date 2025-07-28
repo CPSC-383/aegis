@@ -14,6 +14,7 @@ class Args:
     agent2: str | None
     config: str
     debug: bool
+    log: bool
 
 
 def parse_args() -> Args:
@@ -64,6 +65,11 @@ def parse_args() -> Args:
         "--debug",
         action="store_true",
         help="Enable agent debug logging output",
+    )
+    _ = parser.add_argument(
+        "--log",
+        action="store_true",
+        help="Enable AEGIS console output logging to a file",
     )
 
     args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]

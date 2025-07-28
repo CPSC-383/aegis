@@ -2,12 +2,14 @@ from pathlib import Path
 
 from .args_parser import Args
 from .game import Game
-from .logger import LOGGER
+from .logger import LOGGER, setup_logging
 from .team import Team
 from .world_parser import load_world
 
 
 def run(args: Args) -> None:
+    setup_logging(args.log)
+
     if args.agent1 is None and args.agent2 is None:
         error = "At least one agent must be provided"
         raise ValueError(error)
