@@ -21,8 +21,10 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import NumberInput from './NumberInput'
 import { Vector } from '@/types'
 import Round from '@/core/Round'
+import { Trash2, GripVertical } from 'lucide-react'
 
 interface Props {
   tile: Vector | undefined
@@ -52,6 +54,24 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
     }
   }
 
+  const updateLayer = (index: number, updates: any) => {
+    setLayers((prev) => {
+      const next = [...prev]
+      next[index] = {
+        ...next[index],
+        object: {
+          ...next[index].object,
+          ...updates
+        }
+      }
+      return next
+    })
+  }
+
+  const deleteLayer = (index: number) => {
+    setLayers((prev) => prev.filter((_, i) => i !== index))
+  }
+
   return (
     <Dialog open={!!tile} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="max-w-md">
@@ -60,7 +80,7 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
             Edit Layers at ({tile.x}, {tile.y})
           </DialogTitle>
           <DialogDescription>
-            Inspect and manage all layers applied to the selected tile.
+            Inspect, reorder, modify, or remove layers from this tile.
           </DialogDescription>
         </DialogHeader>
 
@@ -83,6 +103,8 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
                     id={`layer-${index}`}
                     index={index}
                     layer={layer}
+                    onDelete={() => deleteLayer(index)}
+                    onUpdate={(updates) => updateLayer(index, updates)}
                   />
                 ))}
               </SortableContext>
@@ -103,11 +125,15 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
 function SortableLayer({
   id,
   layer,
-  index
+  index,
+  onDelete,
+  onUpdate
 }: {
   id: string
   layer: any
   index: number
+  onDelete: () => void
+  onUpdate: (updates: any) => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id })
@@ -116,30 +142,91 @@ function SortableLayer({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    cursor: 'grab'
   }
 
   return (
     <div
       ref={setNodeRef}
       {...attributes}
-      {...listeners}
       style={style}
       className="border p-2 rounded text-sm bg-background"
     >
-      <div>
-        <strong>Layer {index + 1}</strong>: {layer.object.oneofKind}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <div {...listeners} className="cursor-grab">
+            <GripVertical className="w-4 h-4" />
+          </div>
+          <strong>Layer {index + 1}</strong>
+        </div>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="h-5 w-5"
+          onClick={onDelete}
+        >
+          <Trash2 className="w-4 h-4 text-red-500" />
+        </Button>
       </div>
-      <div className="pl-2 mt-1 space-y-1 text-muted-foreground text-xs">
+
+      <div className="text-xs mt-1 text-muted-foreground">
+        <div>Type: {layer.object.oneofKind}</div>
+
         {layer.object.oneofKind === 'survivor' && (
-          <div>Health: {layer.object.survivor?.health}</div>
+          <div className="mt-1 space-y-1">
+            <label className="block">
+              Health:
+              <NumberInput
+                name="health"
+                value={layer.object.survivor.health}
+                min={1}
+                onChange={(_, value) =>
+                  onUpdate({
+                    survivor: {
+                      ...layer.object.survivor,
+                      health: value
+                    }
+                  })
+                }
+              />
+            </label>
+          </div>
         )}
 
         {layer.object.oneofKind === 'rubble' && (
-          <>
-            <div>Energy Required: {layer.object.rubble?.energyRequired}</div>
-            <div>Agents Required: {layer.object.rubble?.agentsRequired}</div>
-          </>
+          <div className="mt-1 space-y-1">
+            <label className="block">
+              Energy Required:
+              <NumberInput
+                name="energyRequired"
+                value={layer.object.rubble?.energyRequired ?? 0}
+                min={1}
+                onChange={(_, value) =>
+                  onUpdate({
+                    rubble: {
+                      ...layer.object.rubble,
+                      energyRequired: value
+                    }
+                  })
+                }
+              />
+            </label>
+            <label className="block">
+              Agents Required:
+              <NumberInput
+                name="agentsRequired"
+                value={layer.object.rubble?.agentsRequired ?? 0}
+                min={1}
+                onChange={(_, value) =>
+                  onUpdate({
+                    rubble: {
+                      ...layer.object.rubble,
+                      agentsRequired: value
+                    }
+                  })
+                }
+              />
+            </label>
+          </div>
         )}
       </div>
     </div>
