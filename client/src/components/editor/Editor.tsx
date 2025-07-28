@@ -18,6 +18,7 @@ import ExportDialog from "../ExportDialog"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import { importWorld, exportWorld } from "./MapGenerator"
+import ConfirmClearDialog from "../ConfirmClearDialog"
 
 export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
@@ -128,15 +129,10 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
       <section className="space-y-2 border-t pt-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-foreground">Map Configuration</h3>
-          <Button
-            onClick={clearWorld}
-            variant="outline"
-            size="sm"
-            className={`h-7 px-3 text-xs text-destructive hover:text-destructive-foreground hover:bg-destructive ${isWorldEmpty ? "invisible" : ""
-              }`}
-          >
-            Clear
-          </Button>
+          <ConfirmClearDialog
+            onConfirm={clearWorld}
+            disabled={isWorldEmpty}
+          />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
           <div className={`space-y-1 ${isWorldEmpty ? "" : "pointer-events-none opacity-50"}`}>
