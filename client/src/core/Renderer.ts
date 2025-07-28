@@ -132,7 +132,7 @@ class RendererClass {
     notify(ListenerKey.Canvas)
   }
 
-  private mouseLeave(e: MouseEvent): void {
+  private mouseLeave(_e: MouseEvent): void {
     this.mouseDownClick = false
     this.mouseDownRight = false
     this.hoveredTile = undefined

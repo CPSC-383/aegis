@@ -3,7 +3,7 @@ import useRound from '@/hooks/useRound'
 import { Runner } from '@/core/Runner'
 import Game from '@/core/Game'
 import World from '@/core/World'
-import { WorldParams } from '@/types'
+import { Vector, WorldParams } from '@/types'
 import Games from '@/core/Games'
 import Agents from '@/core/Agents'
 import { EditorBrush } from '@/core/Brushes'
@@ -19,6 +19,7 @@ import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { importWorld, exportWorld } from './MapGenerator'
 import ConfirmClearDialog from '../ConfirmClearDialog'
+import LayerEditor from '../LayerEditor'
 
 export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
@@ -31,6 +32,8 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     initialEnergy: 100
   })
   const [isWorldEmpty, setIsWorldEmpty] = useState<boolean>(true)
+  const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false)
+  const [selectedTile, setSelectedTile] = useState<Vector | undefined>(undefined)
 
   const editorGame = useRef<Games | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -101,6 +104,23 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     Renderer.doFullRedraw()
     Renderer.fullRender()
     setIsWorldEmpty(worldEmpty())
+  }
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === 'e' && hoveredTile) {
+        e.preventDefault()
+        setSelectedTile(hoveredTile)
+        setIsEditorOpen(true)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [hoveredTile])
+
+  const handleClose = () => {
+    setIsEditorOpen(false)
+    setSelectedTile(undefined)
   }
 
   useEffect(() => {
@@ -201,6 +221,11 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
           />
         </div>
       </section>
+      <LayerEditor
+        tile={isEditorOpen ? selectedTile : undefined}
+        round={round}
+        onClose={handleClose}
+      />
 
       <input
         type="file"
