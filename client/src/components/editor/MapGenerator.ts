@@ -7,23 +7,36 @@ import { schema } from 'aegis-schema'
 
 class WorldValidator {
   static validate(world: World): string {
-    const errors: string[] = []
-
     if (world.getCellsByType(schema.CellType.SPAWN).length === 0) {
-      errors.push('Missing spawn zones!')
+      return 'Missing spawn zones!'
     }
 
     if (!this.hasSurvivors(world)) {
-      errors.push('Missing at least 1 survivor!')
+      return 'Missing at least 1 survivor!'
     }
 
-    return errors[0] || ''
+    // This case should be impossible, but you never know
+    const moveCostError = this.verifyMoveCosts(world)
+    if (moveCostError) return moveCostError
+
+    return ''
   }
 
   private static hasSurvivors(world: World): boolean {
     return world.cells.some((cell) =>
       cell.layers.some((layer) => layer.object.oneofKind === 'survivor')
     )
+  }
+
+  private static verifyMoveCosts(world: World): string | null {
+    for (const cell of world.cells) {
+      if (cell.type !== schema.CellType.NORMAL && cell.moveCost !== 1) {
+        const x = cell.loc!.x
+        const y = cell.loc!.y
+        return `Cell at (${x}, ${y}) has move cost ${cell.moveCost}, expected 1`
+      }
+    }
+    return null
   }
 }
 
