@@ -40,6 +40,7 @@ class RendererClass {
     topCanvas.onmouseup = (e) => this.mouseUp(e)
     topCanvas.onmousemove = (e) => this.mouseMove(e)
     topCanvas.onclick = (e) => this.click(e)
+    topCanvas.onmouseleave = (e) => this.mouseLeave(e)
 
     loadImage(goobA)
     loadImage(goobB)
@@ -128,6 +129,13 @@ class RendererClass {
     this.selectedTile = this.eventToPoint(e)
     if (!this.selectedTile) return
     notify(ListenerKey.Canvas)
+  }
+
+  private mouseLeave(e: MouseEvent): void {
+    this.mouseDownClick = false
+    this.mouseDownRight = false
+    this.hoveredTile = undefined
+    notify(ListenerKey.Hover)
   }
 
   public getMouseDownClick(): boolean {
