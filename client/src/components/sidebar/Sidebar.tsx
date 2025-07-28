@@ -19,13 +19,11 @@ const Sidebar = (): JSX.Element => {
   const { aegisPath, setupAegisPath, output } = scaffold
   const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const selectedCell = useAppStore((s) => s.selectedCell)
-  const editorSelectedCell = useAppStore((s) => s.editorSelectedCell)
   const sidebarRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    setIsCollapsed(!!selectedCell || !!editorSelectedCell)
-  }, [selectedCell, editorSelectedCell])
+  // useEffect(() => {
+  //   setIsCollapsed(!!selectedCell || !!editorSelectedCell)
+  // }, [selectedCell, editorSelectedCell])
 
   return (
     <div className="relative w-[30%]">
