@@ -6,6 +6,7 @@ import { loadImage } from '@/utils/util'
 import goobA from '@/assets/goob-team-a.png'
 import goobB from '@/assets/goob-team-b.png'
 import survivor from '@/assets/survivor.png'
+import rubble from '@/assets/rubble.png'
 import { ListenerKey, notify } from './Listeners'
 import { renderCoords } from '@/utils/renderUtils'
 
@@ -43,6 +44,7 @@ class RendererClass {
     loadImage(goobA)
     loadImage(goobB)
     loadImage(survivor)
+    loadImage(rubble)
   }
 
   renderToContainer(container: HTMLDivElement | null): void {

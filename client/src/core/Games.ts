@@ -7,10 +7,11 @@ export default class Games {
   public readonly games: Game[] = []
   public currentGame: Game | undefined = undefined
   public readonly id: number
-  public playable = false
+  public playable: boolean
 
-  constructor() {
+  constructor(playable: boolean) {
     this.id = nextId++
+    this.playable = playable
   }
 
   /**
@@ -27,7 +28,6 @@ export default class Games {
         this.games.push(game)
         this.currentGame = game
         game.initEnergy()
-        this.playable = true
         return
       case 'round':
         if (this.currentGame === undefined) {

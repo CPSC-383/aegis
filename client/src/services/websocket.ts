@@ -42,8 +42,7 @@ export class ClientWebSocket {
           throw new Error('First event must be the GamesHeader.')
         }
 
-        this.games = new Games()
-        this.onGamesCreated(this.games)
+        this.games = new Games(true)
         return
       }
 

@@ -1,15 +1,16 @@
 import survivorSrc from '@/assets/survivor.png'
+import rubbleSrc from '@/assets/rubble.png'
 import { getMoveCostColor, Size, Vector } from '@/types'
+import { schema } from 'aegis-schema'
+import Game from './Game'
 import { THICKNESS } from '@/utils/constants'
 import { renderCoords } from '@/utils/renderUtils'
 import { getImage } from '@/utils/util'
-import { schema } from 'aegis-schema'
 import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from './Brushes'
-import Game from './Game'
 import Round from './Round'
 
 /**
- * Represents a world in the AEGIS game.
+ * Represents a world in aegis.
  * @param width - Width of the world in cells.
  * @param height - Height of the world in cells.
  * @param seed - Random seed for world generation.
@@ -23,7 +24,7 @@ export default class World {
     public readonly seed: number,
     public readonly cells: schema.Cell[],
     public readonly startEnergy: number
-  ) {}
+  ) { }
 
   public applyRound(round: schema.Round | null): void {
     if (!round) return
@@ -46,28 +47,6 @@ export default class World {
       world.seed,
       world.cells,
       world.startEnergy
-    )
-  }
-
-  /**
-   * Creates a new World instance from serialized data.
-   * @param data - Serialized data representing the world map.
-   * @returns A World instance.
-   */
-  static fromData(data: WorldData): World {
-    const { size, seed, start_energy } = data.world_info
-
-    const cells = data.cells
-    const moveCosts = cells.map((cell) => cell.moveCost)
-
-    return new World(
-      size.width,
-      size.height,
-      seed,
-      cells,
-      start_energy,
-      Math.min(...moveCosts),
-      Math.max(...moveCosts)
     )
   }
 
@@ -150,7 +129,7 @@ export default class World {
     return { width: this.width, height: this.height }
   }
 
-  public cellAt(x: number, y: number): schema.Cell | undefined {
+  public cellAt(x: number, y: number): schema.Cell {
     return this.cells[x + y * this.width]
   }
 
@@ -269,7 +248,8 @@ export default class World {
 
   public drawLayers(game: Game, ctx: CanvasRenderingContext2D, full: boolean): void {
     const surv = getImage(survivorSrc)
-    if (!surv) throw new Error('surv should be loaded already')
+    const rubble = getImage(rubbleSrc)
+    if (!surv || !rubble) throw new Error("layer images should be loaded already")
 
     const locs = full ? this.getAllLocations() : game.currentRound.layersRemoved
 
@@ -291,9 +271,8 @@ export default class World {
 
       if (kind === 'survivor') {
         ctx.drawImage(surv, coords.x, coords.y, 1, 1)
-      } else if (kind === 'rubble') {
-        ctx.fillStyle = '#555555'
-        ctx.fillRect(coords.x + 0.2, coords.y + 0.2, 0.6, 0.6)
+      } else if (kind === "rubble") {
+        ctx.drawImage(rubble, coords.x, coords.y, 1, 1)
       }
 
       ctx.font = '0.2px Arial'
@@ -336,3 +315,4 @@ export default class World {
     return locs
   }
 }
+

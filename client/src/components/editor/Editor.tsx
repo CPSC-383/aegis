@@ -14,9 +14,10 @@ import useCanvas from "@/hooks/useCanvas"
 import { Renderer } from "@/core/Renderer"
 import { MAP_MAX, MAP_MIN } from "@/utils/constants"
 import NumberInput from "../NumberInput"
+import ExportDialog from "../ExportDialog"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button"
-import { importWorld } from "./MapGenerator"
+import { importWorld, exportWorld } from "./MapGenerator"
 
 export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
@@ -37,7 +38,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     if (worldParams.imported) {
       editorGame.current = worldParams.imported
     } else if (!editorGame.current || worldParams.imported === null) {
-      const games = new Games()
+      const games = new Games(false)
       const agents = new Agents(games)
       const world = World.fromParams(worldParams.height, worldParams.width, worldParams.initialEnergy)
       const game = new Game(games, world, agents)
@@ -63,16 +64,12 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     setWorldParams({ ...worldParams, imported: null })
   }
 
-  const handleExport = () => {
-  }
-
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
     const file = e.target.files?.[0]
     if (!file) return
     importWorld(file)
       .then((games) => {
         const world = games.currentGame!.currentRound.world
-        console.log(world)
         setWorldParams({
           width: world.size.width,
           height: world.size.height,
@@ -190,11 +187,12 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
           >
             Import
           </Button>
-          <Button
-            onClick={handleExport}
-          >
-            Export
-          </Button>
+          <ExportDialog
+            onConfirm={async (filename) => {
+              const error = await exportWorld(round!.world, filename)
+              return error
+            }}
+          />
         </div>
       </section>
 

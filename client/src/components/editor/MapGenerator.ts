@@ -21,12 +21,8 @@ class WorldValidator {
   }
 
   private static hasSurvivors(world: World): boolean {
-    // FIX: Update to new world layout
-    return false
-
-    // return world.stacks.some((stack: Layers) =>
-    //   stack.contents.some((content: CellContent) => content.type === 'sv')
-    // )
+    return world.cells.some(cell =>
+      cell.layers.some(layer => layer.object.oneofKind === "survivor"))
   }
 }
 
@@ -38,7 +34,7 @@ export async function importWorld(file: File): Promise<Games> {
       const binary = new Uint8Array(reader.result as ArrayBuffer)
       const proto_world = schema.World.fromBinary(binary)
       const world = World.fromSchema(proto_world)
-      const games = new Games()
+      const games = new Games(false)
       const agents = new Agents(games)
       const game = new Game(games, world, agents)
       games.currentGame = game
@@ -47,16 +43,19 @@ export async function importWorld(file: File): Promise<Games> {
   })
 }
 
-export async function exportWorld(
-  world: World,
-  worldName: string
-): Promise<string | null> {
+export async function exportWorld(world: World, worldName: string): Promise<string | null> {
   const validationError = WorldValidator.validate(world)
   if (validationError) return validationError
 
   try {
-    const worldData = WorldSerializer.toJSON(worldMap)
-    const stringWorld = JSON.stringify(worldData, null, 2)
+    const protoWorld = schema.World.create({
+      width: world.size.width,
+      height: world.size.height,
+      seed: Math.floor(Math.random() * 10000),
+      startEnergy: world.startEnergy,
+      cells: world.cells
+    })
+    const binary = schema.World.toBinary(protoWorld)
 
     const aegisPath = localStorage.getItem('aegisPath')
     if (!aegisPath) throw new Error('Aegis path not found in localStorage')
@@ -64,7 +63,7 @@ export async function exportWorld(
     const fullName = `${worldName}.world`
     const fullPath = await aegisAPI.path.join(aegisPath, 'worlds', fullName)
 
-    await aegisAPI.exportWorld(fullPath, stringWorld)
+    await aegisAPI.exportWorld(fullPath, binary)
     return null
   } catch (error) {
     // @ts-ignore: error
