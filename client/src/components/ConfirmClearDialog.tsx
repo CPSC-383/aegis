@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 import {
   Dialog,
   DialogTrigger,
@@ -6,16 +6,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+  DialogFooter
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
 interface ConfirmClearDialogProps {
   onConfirm: () => void
   disabled?: boolean
 }
 
-export default function ConfirmClearDialog({ onConfirm, disabled }: ConfirmClearDialogProps) {
+export default function ConfirmClearDialog({
+  onConfirm,
+  disabled
+}: ConfirmClearDialogProps) {
   const [open, setOpen] = useState(false)
 
   const handleConfirm = () => {
@@ -29,7 +32,7 @@ export default function ConfirmClearDialog({ onConfirm, disabled }: ConfirmClear
         <Button
           variant="outline"
           size="sm"
-          className={`text-xs text-destructive hover:text-destructive-foreground hover:bg-destructive ${disabled ? "invisible" : ""}`}
+          className={`text-xs text-destructive hover:text-destructive-foreground hover:bg-destructive ${disabled ? 'invisible' : ''}`}
         >
           Clear
         </Button>
@@ -42,8 +45,12 @@ export default function ConfirmClearDialog({ onConfirm, disabled }: ConfirmClear
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button className="ml-2" variant="destructive" onClick={handleConfirm}>Clear</Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
+          <Button className="ml-2" variant="destructive" onClick={handleConfirm}>
+            Clear
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

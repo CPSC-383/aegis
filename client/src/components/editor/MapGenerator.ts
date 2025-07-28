@@ -21,8 +21,9 @@ class WorldValidator {
   }
 
   private static hasSurvivors(world: World): boolean {
-    return world.cells.some(cell =>
-      cell.layers.some(layer => layer.object.oneofKind === "survivor"))
+    return world.cells.some((cell) =>
+      cell.layers.some((layer) => layer.object.oneofKind === 'survivor')
+    )
   }
 }
 
@@ -43,7 +44,10 @@ export async function importWorld(file: File): Promise<Games> {
   })
 }
 
-export async function exportWorld(world: World, worldName: string): Promise<string | null> {
+export async function exportWorld(
+  world: World,
+  worldName: string
+): Promise<string | null> {
   const validationError = WorldValidator.validate(world)
   if (validationError) return validationError
 

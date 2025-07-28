@@ -1,4 +1,4 @@
-import { schema } from "aegis-schema"
+import { schema } from 'aegis-schema'
 
 export enum CanvasLayers {
   Background,
@@ -12,7 +12,7 @@ export type Size = {
 }
 
 export type Vector = {
-  x: number,
+  x: number
   y: number
 }
 

@@ -1,4 +1,4 @@
-import Games from "@/core/Games"
+import Games from '@/core/Games'
 
 export type WorldParams = {
   width: number

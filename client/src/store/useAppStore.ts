@@ -34,5 +34,5 @@ export const useAppStore = create<AppStore>((set) => ({
   setSelectedCell: (cell) => set({ selectedCell: cell }),
   setEditorSimulation: (game) => set({ editorSimulation: game }),
   setEditorSelectedCell: (cell) => set({ editorSelectedCell: cell }),
-  setBrushType: (brush) => set({ currentBrushType: brush }),
+  setBrushType: (brush) => set({ currentBrushType: brush })
 }))

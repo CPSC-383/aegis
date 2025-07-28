@@ -120,7 +120,8 @@ class RendererClass {
 
   private mouseMove(e: MouseEvent): void {
     const tile = this.eventToPoint(e)
-    if (!tile || (tile.x === this.hoveredTile?.x && tile.y === this.hoveredTile.y)) return
+    if (!tile || (tile.x === this.hoveredTile?.x && tile.y === this.hoveredTile.y))
+      return
     this.hoveredTile = tile
     notify(ListenerKey.Hover)
   }

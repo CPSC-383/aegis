@@ -1,14 +1,14 @@
-import { EditorField, EditorBrushTypes } from "@/core/Brushes"
-import { Label } from "@/components/ui/label"
+import { EditorField, EditorBrushTypes } from '@/core/Brushes'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { useState } from "react"
-import NumberInput from "../NumberInput"
+  SelectValue
+} from '@/components/ui/select'
+import { useState } from 'react'
+import NumberInput from '../NumberInput'
 
 interface FieldProps {
   field: EditorField
@@ -19,9 +19,8 @@ export default function Field({ field, onChange }: FieldProps) {
   const [value, setValue] = useState(field.value)
 
   const handleChange = (newValue: any) => {
-    const processedValue = field.type === EditorBrushTypes.POSITIVE_INTEGER
-      ? Number(newValue)
-      : newValue
+    const processedValue =
+      field.type === EditorBrushTypes.POSITIVE_INTEGER ? Number(newValue) : newValue
 
     field.value = processedValue
     setValue(newValue)
@@ -31,9 +30,7 @@ export default function Field({ field, onChange }: FieldProps) {
   return (
     <div className="space-y-2">
       {field.label && (
-        <Label className="text-xs text-muted-foreground">
-          {field.label}
-        </Label>
+        <Label className="text-xs text-muted-foreground">{field.label}</Label>
       )}
 
       <div className="flex items-center gap-2">
@@ -54,11 +51,7 @@ export default function Field({ field, onChange }: FieldProps) {
             </SelectTrigger>
             <SelectContent>
               {field.options.map((opt, i) => (
-                <SelectItem
-                  key={i}
-                  value={String(opt.value)}
-                  className="text-sm"
-                >
+                <SelectItem key={i} value={String(opt.value)} className="text-sm">
                   {opt.label}
                 </SelectItem>
               ))}

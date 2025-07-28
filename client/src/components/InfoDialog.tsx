@@ -25,7 +25,7 @@ function InfoDialog({
   open,
   onOpenChange
 }: InfoDialogProps) {
-  <Dialog open={open} onOpenChange={onOpenChange}>
+  ;<Dialog open={open} onOpenChange={onOpenChange}>
     <DialogTrigger asChild>{trigger}</DialogTrigger>
     <DialogContent>
       <DialogHeader>

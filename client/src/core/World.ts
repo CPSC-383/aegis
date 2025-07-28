@@ -24,7 +24,7 @@ export default class World {
     public readonly seed: number,
     public readonly cells: schema.Cell[],
     public readonly startEnergy: number
-  ) { }
+  ) {}
 
   public applyRound(round: schema.Round | null): void {
     if (!round) return
@@ -248,7 +248,7 @@ export default class World {
   public drawLayers(game: Game, ctx: CanvasRenderingContext2D, full: boolean): void {
     const surv = getImage(survivorSrc)
     const rubble = getImage(rubbleSrc)
-    if (!surv || !rubble) throw new Error("layer images should be loaded already")
+    if (!surv || !rubble) throw new Error('layer images should be loaded already')
 
     const locs = full ? this.getAllLocations() : game.currentRound.layersRemoved
 
@@ -270,8 +270,8 @@ export default class World {
 
       if (kind === 'survivor') {
         ctx.drawImage(surv, coords.x, coords.y, 1, 1)
-      } else if (kind === "rubble") {
-        ctx.drawImage(rubble, coords.x, coords.y, 1, 1)
+      } else if (kind === 'rubble') {
+        ctx.drawImage(rubble, coords.x + 0.1, coords.y, 0.8, 0.8)
       }
 
       ctx.font = '0.2px Arial'
@@ -314,4 +314,3 @@ export default class World {
     return locs
   }
 }
-

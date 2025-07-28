@@ -44,9 +44,7 @@ const Game = (): JSX.Element => {
   }
 
   // FIX: update everything below
-  return (
-    <div>TODO</div>
-  )
+  return <div>TODO</div>
 
   // return (
   //   <motion.div
