@@ -67,7 +67,7 @@ class Cell:
             IndexError: If there are no layers to remove.
 
         """
-        return self.layers.pop()
+        return self.layers.pop(0)
 
     def get_top_layer(self) -> WorldObject | None:
         if not self.layers:

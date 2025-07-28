@@ -7,11 +7,13 @@
 from . import (
     AgentCommand,
     CellInfo,
+    Dig,
     Direction,
     Location,
     Move,
     Observe,
     ObserveResult,
+    Rubble,
     Save,
     SaveResult,
     SendMessage,

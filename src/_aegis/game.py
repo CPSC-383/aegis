@@ -7,7 +7,7 @@ from .args_parser import Args
 from .command_processor import CommandProcessor
 from .common import Cell, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
-from .common.commands.agent_commands import Move, Observe, Save, SendMessage
+from .common.commands.agent_commands import Dig, Move, Observe, Save, SendMessage
 from .common.objects import Rubble, Survivor
 from .constants import Constants
 from .game_pb import GamePb
@@ -231,6 +231,7 @@ class Game:
 
     def create_methods(self, ac: AgentController):  # noqa: ANN202
         methods = {
+            "Dig": Dig,
             "Direction": Direction,
             "Location": Location,
             "Move": Move,
