@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import cast
 
 import yaml
 
@@ -7,14 +6,14 @@ from .aegis_config import is_feature_enabled
 from .common import Cell, Location
 from .common.objects import Rubble, Survivor, WorldObject
 from .logger import LOGGER
-from .types.world import Attributes, CellInfoRaw, WorldInfo, WorldRaw
+from .types.world import Attributes, CellInfoRaw, WorldInfo
 from .world import World
 
 
 def load_world(filename: Path) -> World | None:
     try:
         with Path.open(filename) as file:
-            data = cast("WorldRaw", yaml.safe_load(file))
+            data = yaml.safe_load(file)
 
             width, height, start_energy, seed = _parse_info(data.get("world_info"))
             cells = _create_cells(data.get("cells"))

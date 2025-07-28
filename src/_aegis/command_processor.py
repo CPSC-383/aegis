@@ -1,12 +1,10 @@
 # pyright: reportImportCycles = false
 
-import logging  # noqa: I001
 from typing import TYPE_CHECKING
-
-from .common.location import Location
 
 from .aegis_config import is_feature_enabled
 from .agent import Agent
+from .common import CellInfo, Direction
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
     ObserveResult,
@@ -23,9 +21,10 @@ from .common.commands.agent_commands import (
     Save,
     SendMessage,
 )
-from .constants import Constants
-from .common import CellInfo, Direction
+from .common.location import Location
 from .common.objects.rubble import Rubble
+from .constants import Constants
+from .logger import LOGGER
 
 try:
     # from .common.commands.aegis_commands.save_result import SaveResult
@@ -41,8 +40,6 @@ if TYPE_CHECKING:
     from .game import Game
 else:
     PredictionHandlerType = object
-
-LOGGER = logging.getLogger("aegis")
 
 
 class CommandProcessor:
