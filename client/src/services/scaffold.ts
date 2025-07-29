@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import Game from '@/core/Game'
+import Games from '@/core/Games'
+import { Runner } from '@/core/Runner'
 import { ClientWebSocket, aegisAPI } from '@/services'
 import { useAppStore } from '@/store/useAppStore'
-import Game from '@/core/Game'
-import { useForceUpdate } from '@/utils/util'
 import { ConsoleLine } from '@/types'
-import { Runner } from '@/core/Runner'
-import Games from '@/core/Games'
+import { useForceUpdate } from '@/utils/util'
+import { useEffect, useRef, useState } from 'react'
 
 export type Scaffold = {
   aegisPath: string | undefined
@@ -25,6 +25,7 @@ export type Scaffold = {
   killSim: (() => void) | undefined
   readAegisConfig: () => Promise<string>
   refreshConfigPresets: () => Promise<void>
+  refreshWorldsAndAgents: () => Promise<void>
 }
 
 export function createScaffold(): Scaffold {
@@ -128,6 +129,18 @@ export function createScaffold(): Scaffold {
     localStorage.removeItem('aegis_config')
   }
 
+  const refreshWorldsAndAgents = async () => {
+    if (!aegisPath) return
+
+    const [worldsData, agentsData] = await Promise.all([
+      getWorlds(aegisPath),
+      getAgents(aegisPath)
+    ])
+
+    setWorlds(worldsData)
+    setAgents(agentsData)
+  }
+
   const killSimulation = () => {
     if (!aegisPid.current) return
     aegisAPI.aegis_child_process.kill(aegisPid.current)
@@ -200,7 +213,8 @@ export function createScaffold(): Scaffold {
     startSimulation,
     killSim,
     readAegisConfig,
-    refreshConfigPresets
+    refreshConfigPresets,
+    refreshWorldsAndAgents
   }
 }
 

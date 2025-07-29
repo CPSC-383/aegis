@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,12 +20,42 @@ type Props = {
 }
 
 const Aegis = ({ scaffold }: Props): JSX.Element => {
-  const { worlds, agents, configPresets, startSimulation, killSim } = scaffold
+  const {
+    worlds,
+    agents,
+    configPresets,
+    startSimulation,
+    killSim,
+    refreshWorldsAndAgents
+  } = scaffold
   const [world, setWorld] = useLocalStorage<string>('aegis_world', '')
   const [rounds, setRounds] = useLocalStorage<number>('aegis_rounds', 0)
   const [agent, setAgent] = useLocalStorage<string>('aegis_agent', '')
   const [config, setConfig] = useLocalStorage<string>('aegis_config', '')
   const [debug] = useLocalStorage<boolean>('aegis_debug_mode', false)
+
+  // Refresh worlds and agents when component mounts (when switching to this tab)
+  useEffect(() => {
+    refreshWorldsAndAgents()
+  }, [])
+
+  useEffect(() => {
+    const storedWorld = localStorage.getItem('aegis_world')
+    if (storedWorld) {
+      const worldName = JSON.parse(storedWorld)
+      if (worldName && !worlds.includes(worldName)) {
+        setWorld('')
+      }
+    }
+
+    const storedAgent = localStorage.getItem('aegis_agent')
+    if (storedAgent) {
+      const agentName = JSON.parse(storedAgent)
+      if (agentName && !agents.includes(agentName)) {
+        setAgent('')
+      }
+    }
+  }, [worlds, agents, setWorld, setAgent])
 
   const isButtonDisabled = useMemo(
     () => !world || !rounds || !agent || !config,

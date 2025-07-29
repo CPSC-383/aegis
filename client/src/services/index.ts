@@ -21,6 +21,7 @@ export interface Scaffold {
   killSim: (() => void) | undefined
   readAegisConfig: () => Promise<string>
   refreshConfigPresets: () => Promise<void>
+  refreshWorldsAndAgents: () => Promise<void>
 }
 
 export { createScaffold } from './scaffold'
