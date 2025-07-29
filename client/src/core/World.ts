@@ -31,7 +31,7 @@ export default class World {
 
     for (const loc of round.layersRemoved) {
       const cell = this.cellAt(loc.x, loc.y)!
-      cell.layers.pop()
+      cell.layers.shift()
     }
   }
 
