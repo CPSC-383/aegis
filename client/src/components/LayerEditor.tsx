@@ -1,18 +1,6 @@
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors
-} from '@dnd-kit/core'
-import {
-  SortableContext,
-  useSortable,
-  arrayMove,
-  verticalListSortingStrategy
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -20,24 +8,36 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-
-import NumberInput from './NumberInput'
-import { Vector } from '@/types'
-import Round from '@/core/Round'
 import {
-  Trash2,
-  GripVertical,
-  User,
+  closestCenter,
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { useState } from 'react'
+
+import Round from '@/core/Round'
+import { Vector } from '@/types'
+import {
   Building2,
+  GripVertical,
   Layers3,
   MapPin,
   Save,
+  Trash2,
+  User,
   X
 } from 'lucide-react'
+import NumberInput from './NumberInput'
 
 interface Props {
   tile: Vector | undefined
@@ -246,16 +246,85 @@ function SortableLayer({
               <GripVertical className="w-4 h-4 text-muted-foreground" />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col items-start my-3 gap-0.5">
+              <span className="text-md text-muted-foreground">Layer {index + 1}</span>
               <Badge
                 className={`${getLayerColor(layer.object.oneofKind)} font-medium pointer-events-none`}
               >
                 {getLayerIcon(layer.object.oneofKind)}
                 <span className="ml-1 capitalize">{layer.object.oneofKind}</span>
               </Badge>
-              <span className="text-sm text-muted-foreground">Layer {index + 1}</span>
             </div>
           </div>
+
+          {layer.object.oneofKind === 'survivor' && (
+            <div className="space-y-3 pt-2">
+              <div className="flex flex-row items-center gap-2">
+                <Label htmlFor={`health-${index}`} className="text-sm font-medium">
+                  Health
+                </Label>
+                <NumberInput
+                  name="health"
+                  value={layer.object.survivor.health}
+                  min={1}
+                  max={100}
+                  onChange={(_, value) =>
+                    onUpdate({
+                      survivor: {
+                        ...layer.object.survivor,
+                        health: value
+                      }
+                    })
+                  }
+                />
+              </div>
+            </div>
+          )}
+
+          {layer.object.oneofKind === 'rubble' && (
+            <div className="space-y-3 pt-2">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label htmlFor={`energy-${index}`} className="text-sm font-medium">
+                    Energy Required
+                  </Label>
+                  <NumberInput
+                    name="energyRequired"
+                    value={layer.object.rubble?.energyRequired ?? 0}
+                    min={1}
+                    max={999}
+                    onChange={(_, value) =>
+                      onUpdate({
+                        rubble: {
+                          ...layer.object.rubble,
+                          energyRequired: value
+                        }
+                      })
+                    }
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor={`agents-${index}`} className="text-sm font-medium">
+                    Agents Required
+                  </Label>
+                  <NumberInput
+                    name="agentsRequired"
+                    value={layer.object.rubble?.agentsRequired ?? 0}
+                    min={1}
+                    max={10}
+                    onChange={(_, value) =>
+                      onUpdate({
+                        rubble: {
+                          ...layer.object.rubble,
+                          agentsRequired: value
+                        }
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           <Button
             size="sm"
@@ -266,75 +335,6 @@ function SortableLayer({
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
-
-        {layer.object.oneofKind === 'survivor' && (
-          <div className="space-y-3 pt-2 border-t">
-            <div className="space-y-2">
-              <Label htmlFor={`health-${index}`} className="text-sm font-medium">
-                Health
-              </Label>
-              <NumberInput
-                name="health"
-                value={layer.object.survivor.health}
-                min={1}
-                max={100}
-                onChange={(_, value) =>
-                  onUpdate({
-                    survivor: {
-                      ...layer.object.survivor,
-                      health: value
-                    }
-                  })
-                }
-              />
-            </div>
-          </div>
-        )}
-
-        {layer.object.oneofKind === 'rubble' && (
-          <div className="space-y-3 pt-2 border-t">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor={`energy-${index}`} className="text-sm font-medium">
-                  Energy Required
-                </Label>
-                <NumberInput
-                  name="energyRequired"
-                  value={layer.object.rubble?.energyRequired ?? 0}
-                  min={1}
-                  max={999}
-                  onChange={(_, value) =>
-                    onUpdate({
-                      rubble: {
-                        ...layer.object.rubble,
-                        energyRequired: value
-                      }
-                    })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`agents-${index}`} className="text-sm font-medium">
-                  Agents Required
-                </Label>
-                <NumberInput
-                  name="agentsRequired"
-                  value={layer.object.rubble?.agentsRequired ?? 0}
-                  min={1}
-                  max={10}
-                  onChange={(_, value) =>
-                    onUpdate({
-                      rubble: {
-                        ...layer.object.rubble,
-                        agentsRequired: value
-                      }
-                    })
-                  }
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   )
