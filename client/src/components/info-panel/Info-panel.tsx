@@ -50,7 +50,7 @@ export default function InfoPanel(): JSX.Element | null {
           <StepperItem
             key={i}
             step={i + 1}
-            className="relative items-start not-last:flex-1"
+            className={`relative items-start not-last:flex-1 ${i + 1 < step ? "opacity-50" : ""}`}
           >
             <StepperTrigger className="items-start rounded pb-4 last:pb-0 pointer-events-none">
               <StepperIndicator />
