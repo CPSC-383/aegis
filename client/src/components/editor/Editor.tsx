@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import useRound from '@/hooks/useRound'
 import { Runner } from '@/core/Runner'
 import Game from '@/core/Game'
@@ -36,53 +36,69 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false)
   const [selectedTile, setSelectedTile] = useState<Vector | undefined>(undefined)
 
+  const editorGames = useAppStore((state) => state.editorGames)
   const setEditorGames = useAppStore((state) => state.setEditorGames)
-
-  const editorGame = useRef<Games | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     if (!isOpen) {
-      setEditorGames(editorGame.current)
       Runner.setGames(undefined)
       return
     }
 
-    const storedEditorGames = useAppStore.getState().editorGames
-    if (storedEditorGames) {
-      editorGame.current = storedEditorGames
-    } else if (worldParams.imported) {
-      editorGame.current = worldParams.imported
-    } else if (!editorGame.current || worldParams.imported === null) {
-      const games = new Games(false)
-      const agents = new Agents(games)
-      const world = World.fromParams(
-        worldParams.height,
-        worldParams.width,
-        worldParams.initialEnergy
-      )
-      const game = new Game(games, world, agents)
-      games.currentGame = game
-      editorGame.current = games
+    let games = editorGames
+
+    if (worldParams.imported) {
+      games = worldParams.imported
+    } else if (!games || worldParams.imported === null) {
+      games = createNewEditorGames(worldParams)
     }
 
-    worldParams.imported = undefined
-    setEditorGames(null)
+    if (!games) return
 
-    Runner.setGame(editorGame.current.currentGame)
-    const round = editorGame.current.currentGame!.currentRound
-    const loadedBrushes = round.world.getBrushes(round)
+    setEditorGames(games)
+    Runner.setGame(games.currentGame!)
+
+    const round = games.currentGame!.currentRound
+    const world = round.world
+
+    // check so it doesnt get stuck in a render loop
+    if (
+      world.size.width !== worldParams.width ||
+      world.size.height !== worldParams.height ||
+      world.startEnergy !== worldParams.initialEnergy
+    ) {
+      setWorldParams((prev) => ({
+        ...prev,
+        width: world.size.width,
+        height: world.size.height,
+        initialEnergy: world.startEnergy,
+      }))
+    }
+
+    const loadedBrushes = world.getBrushes(round)
     loadedBrushes[0].open = true
     setBrushes(loadedBrushes)
-    setIsWorldEmpty(round.world.isEmpty())
+    setIsWorldEmpty(world.isEmpty())
+    if (worldParams.imported) setWorldParams((prev) => ({ ...prev, imported: undefined }))
   }, [isOpen, worldParams])
 
   const worldEmpty = () => !round || round.world.isEmpty()
   const currentBrush = brushes.find((b) => b.open)
 
   const clearWorld = () => {
-    setIsWorldEmpty(true)
+    setEditorGames(null)
     setWorldParams({ ...worldParams, imported: null })
+    setIsWorldEmpty(true)
+  }
+
+  function createNewEditorGames(params: WorldParams): Games {
+    const games = new Games(false)
+    const agents = new Agents(games)
+    const world = World.fromParams(params.width, params.height, params.initialEnergy)
+    const game = new Game(games, world, agents)
+    games.currentGame = game
+    return games
   }
 
   const handleImport = async (
@@ -101,6 +117,11 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     })
     // Reset so we can import the same file after we clear (weird edge case ngl)
     e.target.value = ''
+  }
+
+  const handleParamChange = (name: string, val: number) => {
+    setEditorGames(null)
+    setWorldParams((prev) => ({ ...prev, [name]: val, imported: null }))
   }
 
   const handleBrushChange = (name: string) => {
@@ -134,6 +155,14 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     Renderer.fullRender()
   }
 
+  const renderBrushes = useMemo(() => {
+    return brushes.map((brush) => (
+      <TabsContent key={brush.name} value={brush.name} className="mt-2">
+        <Brush brush={brush} />
+      </TabsContent>
+    ))
+  }, [brushes])
+
   useEffect(() => {
     if (mouseDown && hoveredTile) applyBrush(hoveredTile, rightClick)
   }, [hoveredTile, rightClick, mouseDown])
@@ -158,21 +187,15 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
             </TabsTrigger>
           ))}
         </TabsList>
-        {brushes.map((brush) => (
-          <TabsContent key={brush.name} value={brush.name} className="mt-2">
-            <Brush brush={brush} />
-          </TabsContent>
-        ))}
+        {renderBrushes}
       </Tabs>
       <section className="space-y-2 border-t pt-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-foreground">Map Configuration</h3>
           <ConfirmClearDialog onConfirm={clearWorld} disabled={isWorldEmpty} />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-          <div
-            className={`space-y-1 ${isWorldEmpty ? '' : 'pointer-events-none opacity-50'}`}
-          >
+        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 w-full space-y-1 ${isWorldEmpty ? '' : 'pointer-events-none opacity-50'}`}>
+          <div>
             <Label htmlFor="width" className="text-xs text-muted-foreground">
               Width
             </Label>
@@ -181,15 +204,11 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
               value={worldParams.width}
               min={MAP_MIN}
               max={MAP_MAX}
-              onChange={(name, val) =>
-                setWorldParams((prev) => ({ ...prev, [name]: val, imported: null }))
-              }
+              onChange={handleParamChange}
             />
           </div>
 
-          <div
-            className={`space-y-1 ${isWorldEmpty ? '' : 'pointer-events-none opacity-50'}`}
-          >
+          <div>
             <Label htmlFor="height" className="text-xs text-muted-foreground">
               Height
             </Label>
@@ -198,9 +217,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
               value={worldParams.height}
               min={MAP_MIN}
               max={MAP_MAX}
-              onChange={(name, val) =>
-                setWorldParams((prev) => ({ ...prev, [name]: val, imported: null }))
-              }
+              onChange={handleParamChange}
             />
           </div>
 
@@ -213,9 +230,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
               value={worldParams.initialEnergy}
               min={1}
               max={1000}
-              onChange={(name, val) =>
-                setWorldParams((prev) => ({ ...prev, [name]: val }))
-              }
+              onChange={handleParamChange}
             />
           </div>
         </div>
@@ -232,6 +247,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
           />
         </div>
       </section>
+
       <LayerEditor
         tile={isEditorOpen ? selectedTile : undefined}
         round={round}

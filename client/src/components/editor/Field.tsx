@@ -8,19 +8,23 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import NumberInput from '../NumberInput'
+import { useState } from 'react'
 
 interface FieldProps {
   field: EditorField
-  onChange?: (value: any) => void
+  onChange: () => void
 }
 
 export default function Field({ field, onChange }: FieldProps) {
+  const [, setInternal] = useState(String(field.value))
+
   const handleChange = (newValue: any) => {
     const processedValue =
       field.type === EditorBrushTypes.POSITIVE_INTEGER ? Number(newValue) : newValue
 
     field.value = processedValue
-    onChange?.(processedValue)
+    setInternal(processedValue)
+    onChange?.()
   }
 
   return (
@@ -35,7 +39,7 @@ export default function Field({ field, onChange }: FieldProps) {
             name={field.label}
             value={field.value}
             min={1}
-            max={100}
+            max={1000}
             onChange={(_, val) => handleChange(val)}
           />
         )}

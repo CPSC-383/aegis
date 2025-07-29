@@ -24,7 +24,7 @@ export default class World {
     public readonly seed: number,
     public readonly cells: schema.Cell[],
     public readonly startEnergy: number
-  ) {}
+  ) { }
 
   public applyRound(round: schema.Round | null): void {
     if (!round) return

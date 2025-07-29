@@ -1,37 +1,50 @@
-import { useState } from 'react'
 import Field from '@/components/editor/Field'
-import { EditorBrush } from '@/core/Brushes'
+import { EditorBrush, EditorBrushTypes } from '@/core/Brushes'
+import { useForceUpdate } from '@/utils/util'
 
 export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
+  const forceUpdate = useForceUpdate()
   const objectTypeField = brush.fields.objectType
-  const [objectType, setObjectType] = useState(() => objectTypeField?.value as string)
+  const objectTypeValue = objectTypeField?.value
+  const options = objectTypeField?.options || []
 
-  const generalFields = []
-  const objectFields = []
+  const currentOption = options.find((opt) => opt.value === objectTypeValue)
 
-  for (const [key, field] of Object.entries(brush.fields)) {
-    if (key === 'objectType') {
-      generalFields.push(
-        <Field key={key} field={field} onChange={(val) => setObjectType(val)} />
-      )
-    } else if (!objectTypeField) {
-      generalFields.push(<Field key={key} field={field} />)
-    } else if (key.startsWith(objectType + '_')) {
-      objectFields.push(<Field key={key} field={field} />)
-    }
+  const nestedFields = currentOption?.attributes?.fields || {}
+
+  const combinedFields = {
+    ...brush.fields,
+    ...nestedFields,
+  }
+
+  const selectFields = Object.entries(combinedFields).filter(
+    ([_, field]) => field.type === EditorBrushTypes.SINGLE_SELECT
+  )
+  const otherFields = Object.entries(combinedFields).filter(
+    ([_, field]) => field.type !== EditorBrushTypes.SINGLE_SELECT
+  )
+
+  const handleChange = () => {
+    forceUpdate()
   }
 
   return (
-    <div className="space-y-4 px-1">
-      {generalFields.length > 0 && <div className="space-y-2">{generalFields}</div>}
-
-      {objectTypeField && objectFields.length > 0 && (
-        <div className="space-y-2 mt-2">
-          <div className="flex flex-col md:flex-row md:flex-wrap md:gap-4">
-            {objectFields}
+    <div className="flex flex-col">
+      <div className="flex flex-col space-y-4">
+        {selectFields.map(([key, field]) => (
+          <div key={key}>
+            <Field field={field} onChange={handleChange} />
           </div>
-        </div>
-      )}
+        ))}
+      </div>
+
+      <div className={`flex flex-row gap-6 flex-wrap ${selectFields.length === 0 ? "" : "mt-2"}`}>
+        {otherFields.map(([key, field]) => (
+          <div key={key} className="flex-1 min-w-[120px]">
+            <Field field={field} onChange={handleChange} />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

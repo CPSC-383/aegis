@@ -7,15 +7,24 @@ export enum EditorBrushTypes {
   SINGLE_SELECT
 }
 
+
 export type EditorFieldBase = {
   type: EditorBrushTypes
   value: any
   label: string
-  options?: { value: any; label: string }[]
+  options?: EditorFieldOption[]
 }
 
 export type EditorField = EditorFieldBase & {
   type: EditorBrushTypes.POSITIVE_INTEGER | EditorBrushTypes.SINGLE_SELECT
+}
+
+export type EditorFieldOption = {
+  value: any
+  label: string
+  attributes?: {
+    fields: Record<string, EditorField>
+  }
 }
 
 export abstract class EditorBrush {
@@ -29,7 +38,7 @@ export abstract class EditorBrush {
   ): void
   public open: boolean = false
 
-  constructor(public readonly world: World) {}
+  constructor(public readonly world: World) { }
 
   withOpen(open: boolean): this {
     const clone = Object.create(Object.getPrototypeOf(this))
@@ -88,29 +97,38 @@ export class LayersBrush extends EditorBrush {
       label: 'Layer Type',
       value: 'survivor',
       options: [
-        { label: 'Survivor', value: 'survivor' },
-        { label: 'Rubble', value: 'rubble' }
+        {
+          label: 'Survivor',
+          value: 'survivor',
+          attributes: {
+            fields: {
+              survivor_hp: {
+                type: EditorBrushTypes.POSITIVE_INTEGER,
+                label: "Survivor HP",
+                value: 1
+              }
+            }
+          }
+        },
+        {
+          label: 'Rubble',
+          value: 'rubble',
+          attributes: {
+            fields: {
+              rubble_energyRequired: {
+                type: EditorBrushTypes.POSITIVE_INTEGER,
+                label: "Energy Required",
+                value: 1
+              },
+              rubble_agentsRequired: {
+                type: EditorBrushTypes.POSITIVE_INTEGER,
+                label: "Energy Required",
+                value: 1
+              }
+            }
+          }
+        }
       ]
-    },
-
-    // Use the format <layerName>_<propertyName> for any new layer-specific fields
-    // e.g., survivor_hp, rubble_energyRequired
-
-    survivor_hp: {
-      type: EditorBrushTypes.POSITIVE_INTEGER,
-      value: 1,
-      label: 'Survivor HP'
-    },
-
-    rubble_energyRequired: {
-      type: EditorBrushTypes.POSITIVE_INTEGER,
-      value: 1,
-      label: 'Energy Required'
-    },
-    rubble_agentsRequired: {
-      type: EditorBrushTypes.POSITIVE_INTEGER,
-      value: 1,
-      label: 'Agents Required'
     }
   }
 
@@ -127,16 +145,18 @@ export class LayersBrush extends EditorBrush {
     const cell = this.world.cellAt(x, y)
     if (!cell) return
 
-    const type = fields.objectType.value
-
     if (rightClick) {
       cell.layers.pop()
       return
     }
 
+    const type = fields.objectType.value
+    const object = fields.objectType.options!.find(opt => opt.value === type)!
+
     if (type === 'survivor') {
-      const hp = fields.survivor_hp.value
-      const surv: schema.Survivor = schema.Survivor.create({
+      const attributes = object.attributes!.fields
+      const hp = attributes.survivor_hp.value
+      const survivor: schema.Survivor = schema.Survivor.create({
         id: this.nextID++,
         health: hp,
         state: schema.SurvivorState.ALIVE
@@ -144,18 +164,19 @@ export class LayersBrush extends EditorBrush {
       cell.layers.push({
         object: {
           oneofKind: 'survivor',
-          survivor: surv
+          survivor
         }
       })
     }
 
     if (type === 'rubble') {
-      const energy = fields.rubble_energyRequired.value
-      const agents = fields.rubble_agentsRequired.value
+      const attributes = object.attributes!.fields
+      const energyRequired = attributes.rubble_energyRequired.value
+      const agentsRequired = attributes.rubble_agentsRequired.value
       const rubble: schema.Rubble = schema.Rubble.create({
         id: this.nextID++,
-        energyRequired: energy,
-        agentsRequired: agents
+        energyRequired,
+        agentsRequired
       })
       cell.layers.push({
         object: {
