@@ -7,7 +7,6 @@ export enum EditorBrushTypes {
   SINGLE_SELECT
 }
 
-
 export type EditorFieldBase = {
   type: EditorBrushTypes
   value: any
@@ -38,7 +37,7 @@ export abstract class EditorBrush {
   ): void
   public open: boolean = false
 
-  constructor(public readonly world: World) { }
+  constructor(public readonly world: World) {}
 
   withOpen(open: boolean): this {
     const clone = Object.create(Object.getPrototypeOf(this))
@@ -104,7 +103,7 @@ export class LayersBrush extends EditorBrush {
             fields: {
               survivor_hp: {
                 type: EditorBrushTypes.POSITIVE_INTEGER,
-                label: "Survivor HP",
+                label: 'Survivor HP',
                 value: 1
               }
             }
@@ -117,12 +116,12 @@ export class LayersBrush extends EditorBrush {
             fields: {
               rubble_energyRequired: {
                 type: EditorBrushTypes.POSITIVE_INTEGER,
-                label: "Energy Required",
+                label: 'Energy Required',
                 value: 1
               },
               rubble_agentsRequired: {
                 type: EditorBrushTypes.POSITIVE_INTEGER,
-                label: "Energy Required",
+                label: 'Energy Required',
                 value: 1
               }
             }
@@ -151,7 +150,7 @@ export class LayersBrush extends EditorBrush {
     }
 
     const type = fields.objectType.value
-    const object = fields.objectType.options!.find(opt => opt.value === type)!
+    const object = fields.objectType.options!.find((opt) => opt.value === type)!
 
     if (type === 'survivor') {
       const attributes = object.attributes!.fields

@@ -125,12 +125,12 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
         <DialogHeader className="pb-4">
           <div className="flex items-center gap-2">
             <MapPin className="w-5 h-5 text-blue-600" />
-            <DialogTitle className="text-lg">
-              Layers Editor
-            </DialogTitle>
+            <DialogTitle className="text-lg">Layers Editor</DialogTitle>
           </div>
           <DialogDescription className="flex items-center gap-2">
-            <span>Position: ({tile.x}, {tile.y})</span>
+            <span>
+              Position: ({tile.x}, {tile.y})
+            </span>
           </DialogDescription>
         </DialogHeader>
 
@@ -189,11 +189,7 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
               <X className="w-4 h-4 mr-1" />
               Cancel
             </Button>
-            <Button
-              size="sm"
-              onClick={handleSave}
-              disabled={!hasChanges}
-            >
+            <Button size="sm" onClick={handleSave} disabled={!hasChanges}>
               <Save className="w-4 h-4 mr-1" />
               Save Changes
             </Button>
@@ -228,7 +224,7 @@ function SortableLayer({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.8 : 1,
-    zIndex: isDragging ? 50 : 'auto',
+    zIndex: isDragging ? 50 : 'auto'
   }
 
   return (
@@ -236,8 +232,9 @@ function SortableLayer({
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className={`transition-all duration-200 ${isDragging ? 'shadow-lg rotate-2 scale-105' : 'hover:shadow-md'
-        }`}
+      className={`transition-all duration-200 ${
+        isDragging ? 'shadow-lg rotate-2 scale-105' : 'hover:shadow-md'
+      }`}
     >
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
@@ -250,13 +247,13 @@ function SortableLayer({
             </div>
 
             <div className="flex items-center gap-2">
-              <Badge className={`${getLayerColor(layer.object.oneofKind)} font-medium pointer-events-none`}>
+              <Badge
+                className={`${getLayerColor(layer.object.oneofKind)} font-medium pointer-events-none`}
+              >
                 {getLayerIcon(layer.object.oneofKind)}
                 <span className="ml-1 capitalize">{layer.object.oneofKind}</span>
               </Badge>
-              <span className="text-sm text-muted-foreground">
-                Layer {index + 1}
-              </span>
+              <span className="text-sm text-muted-foreground">Layer {index + 1}</span>
             </div>
           </div>
 

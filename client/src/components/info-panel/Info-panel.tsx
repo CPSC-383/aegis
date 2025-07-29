@@ -1,5 +1,5 @@
-import useCanvas from "@/hooks/useCanvas"
-import { useEffect, useRef } from "react"
+import useCanvas from '@/hooks/useCanvas'
+import { useEffect, useRef } from 'react'
 import {
   Stepper,
   StepperDescription,
@@ -7,18 +7,18 @@ import {
   StepperItem,
   StepperSeparator,
   StepperTitle,
-  StepperTrigger,
-} from "@/components/ui/stepper"
-import useRound from "@/hooks/useRound"
-import { schema } from "aegis-schema"
-import World from "@/core/World"
+  StepperTrigger
+} from '@/components/ui/stepper'
+import useRound from '@/hooks/useRound'
+import { schema } from 'aegis-schema'
+import World from '@/core/World'
 
 export default function InfoPanel(): JSX.Element | null {
   const { selectedTile } = useCanvas()
   const round = useRound()
   const initialWorldRef = useRef<World | null>(null)
 
-  const currentWorld = round?.game.world.copy() ?? null
+  const currentWorld = round?.world.copy() ?? null
   const initialWorld = initialWorldRef.current
 
   useEffect(() => {
@@ -30,21 +30,21 @@ export default function InfoPanel(): JSX.Element | null {
   if (!round) return null
   if (!selectedTile) return <div>Select a cell to look at</div>
 
-  const currentLayers =
-    currentWorld
-      ? currentWorld.cellAt(selectedTile.x, selectedTile.y).layers
-      : []
+  const currentLayers = currentWorld
+    ? currentWorld.cellAt(selectedTile.x, selectedTile.y).layers
+    : []
 
-  const initialLayers =
-    initialWorld
-      ? initialWorld.cellAt(selectedTile.x, selectedTile.y).layers
-      : []
+  const initialLayers = initialWorld
+    ? initialWorld.cellAt(selectedTile.x, selectedTile.y).layers
+    : []
 
   const step = initialLayers.length - currentLayers.length + 1
 
   return (
     <div>
-      <h2 className="text-center my-4 font-medium">Cell: (X: {selectedTile.x}, Y: {selectedTile.y})</h2>
+      <h2 className="text-center my-4 font-medium">
+        Cell: (X: {selectedTile.x}, Y: {selectedTile.y})
+      </h2>
       <Stepper orientation="vertical" value={step}>
         {initialLayers.map((layer, i) => (
           <StepperItem
@@ -71,24 +71,28 @@ function ObjectDisplay({ layer }: { layer: schema.WorldObject }) {
 
   const title = () => {
     switch (object.oneofKind) {
-      case "survivor":
-        return "Survivor"
-      case "rubble":
-        return "Rubble"
+      case 'survivor':
+        return 'Survivor'
+      case 'rubble':
+        return 'Rubble'
       default:
-        return "Unknown Object"
+        return 'Unknown Object'
     }
   }
 
   const description = () => {
     switch (object.oneofKind) {
-      case "survivor":
+      case 'survivor':
         return <span className="block">Health: {object.survivor.health}</span>
-      case "rubble":
+      case 'rubble':
         return (
           <>
-            <span className="block">Energy Required: {object.rubble.energyRequired}</span>
-            <span className="block">Agents Required: {object.rubble.agentsRequired}</span>
+            <span className="block">
+              Energy Required: {object.rubble.energyRequired}
+            </span>
+            <span className="block">
+              Agents Required: {object.rubble.agentsRequired}
+            </span>
           </>
         )
       default:

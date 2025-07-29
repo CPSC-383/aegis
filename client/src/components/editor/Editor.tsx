@@ -75,7 +75,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
         ...prev,
         width: world.size.width,
         height: world.size.height,
-        initialEnergy: world.startEnergy,
+        initialEnergy: world.startEnergy
       }))
     }
 
@@ -83,7 +83,8 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     loadedBrushes[0].open = true
     setBrushes(loadedBrushes)
     setIsWorldEmpty(world.isEmpty())
-    if (worldParams.imported) setWorldParams((prev) => ({ ...prev, imported: undefined }))
+    if (worldParams.imported)
+      setWorldParams((prev) => ({ ...prev, imported: undefined }))
   }, [isOpen, worldParams])
 
   const worldEmpty = () => !round || round.world.isEmpty()
@@ -162,15 +163,16 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     return brushes.map((brush) => (
       <TabsContent key={brush.name} value={brush.name} className="mt-4 px-1">
         <Brush brush={brush} />
-        {brush.name === "Layers" &&
+        {brush.name === 'Layers' && (
           <div className="mt-2 p-3 rounded-lg bg-muted/30 border-dashed border">
             <p className="text-xs text-muted-foreground text-center">
-              <kbd className="px-2 py-1 text-xs font-mono bg-muted rounded border">e</kbd>
-              {" "}to edit cell details when hovering a cell.
+              <kbd className="px-2 py-1 text-xs font-mono bg-muted rounded border">
+                e
+              </kbd>{' '}
+              to edit cell details when hovering a cell.
             </p>
           </div>
-
-        }
+        )}
       </TabsContent>
     ))
   }, [brushes])
@@ -219,10 +221,12 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
           <ConfirmClearDialog onConfirm={clearWorld} disabled={isWorldEmpty} />
         </div>
 
-        <div className={cn(
-          "grid grid-cols-1 sm:grid-cols-2 gap-4",
-          !isWorldEmpty && "opacity-50 pointer-events-none bg-muted/10"
-        )}>
+        <div
+          className={cn(
+            'grid grid-cols-1 sm:grid-cols-2 gap-4',
+            !isWorldEmpty && 'opacity-50 pointer-events-none bg-muted/10'
+          )}
+        >
           <div className="space-y-2">
             <Label htmlFor="width" className="text-xs text-muted-foreground">
               Width
@@ -266,9 +270,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
               max={1000}
               onChange={handleParamChange}
             />
-            <p className="text-xs text-muted-foreground">
-              Range: 1-1000
-            </p>
+            <p className="text-xs text-muted-foreground">Range: 1-1000</p>
           </div>
         </div>
 

@@ -14,7 +14,7 @@ export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
 
   const combinedFields = {
     ...brush.fields,
-    ...nestedFields,
+    ...nestedFields
   }
 
   const selectFields = Object.entries(combinedFields).filter(
@@ -38,7 +38,9 @@ export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
         ))}
       </div>
 
-      <div className={`flex flex-row gap-6 flex-wrap ${selectFields.length === 0 ? "" : "mt-2"}`}>
+      <div
+        className={`flex flex-row gap-6 flex-wrap ${selectFields.length === 0 ? '' : 'mt-2'}`}
+      >
         {otherFields.map(([key, field]) => (
           <div key={key} className="flex-1 min-w-[120px]">
             <Field field={field} onChange={handleChange} />

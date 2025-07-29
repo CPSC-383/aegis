@@ -47,7 +47,7 @@ export default function ExportDialog({ onConfirm }: Props) {
       }}
     >
       <DialogTrigger asChild>
-        <Button className='flex-1 items-center h-10'>
+        <Button className="flex-1 items-center h-10">
           <Download />
           Export
         </Button>
