@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Download } from 'lucide-react'
 
 interface Props {
   onConfirm: (filename: string) => Promise<string | null>
@@ -46,7 +47,10 @@ export default function ExportDialog({ onConfirm }: Props) {
       }}
     >
       <DialogTrigger asChild>
-        <Button>Export</Button>
+        <Button className='flex-1 items-center h-10'>
+          <Download />
+          Export
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

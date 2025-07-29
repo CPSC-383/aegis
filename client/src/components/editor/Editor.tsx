@@ -21,6 +21,9 @@ import { importWorld, exportWorld } from './MapGenerator'
 import ConfirmClearDialog from '../ConfirmClearDialog'
 import LayerEditor from '../LayerEditor'
 import { useAppStore } from '@/store/useAppStore'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
+import { Upload } from 'lucide-react'
 
 export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
@@ -157,8 +160,17 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
 
   const renderBrushes = useMemo(() => {
     return brushes.map((brush) => (
-      <TabsContent key={brush.name} value={brush.name} className="mt-2">
+      <TabsContent key={brush.name} value={brush.name} className="mt-4 px-1">
         <Brush brush={brush} />
+        {brush.name === "Layers" &&
+          <div className="mt-2 p-3 rounded-lg bg-muted/30 border-dashed border">
+            <p className="text-xs text-muted-foreground text-center">
+              <kbd className="px-2 py-1 text-xs font-mono bg-muted rounded border">e</kbd>
+              {" "}to edit cell details when hovering a cell.
+            </p>
+          </div>
+
+        }
       </TabsContent>
     ))
   }, [brushes])
@@ -170,32 +182,48 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   if (!isOpen || brushes.length === 0 || !currentBrush) return null
 
   return (
-    <div className="space-y-3">
-      <Tabs
-        value={currentBrush.name}
-        onValueChange={handleBrushChange}
-        className="w-full"
-      >
-        <TabsList className="flex items-center justify-center flex-wrap h-auto space-y-1">
-          {brushes.map((brush) => (
-            <TabsTrigger
-              key={brush.name}
-              value={brush.name}
-              className="text-xs sm:text-sm lg:px-4"
-            >
-              {brush.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {renderBrushes}
-      </Tabs>
-      <section className="space-y-2 border-t pt-2">
+    <div className="flex flex-col gap-6 p-1">
+      <div className="space-y-3">
+        <h2 className="font-semibold tracking-tight">Brush Tools</h2>
+
+        <Tabs
+          value={currentBrush.name}
+          onValueChange={handleBrushChange}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 h-auto p-1 bg-muted/50">
+            {brushes.map((brush) => (
+              <TabsTrigger
+                key={brush.name}
+                value={brush.name}
+                className="text-xs font-medium py-2 px-3 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
+              >
+                {brush.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {renderBrushes}
+        </Tabs>
+      </div>
+
+      <Separator />
+
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-foreground">Map Configuration</h3>
+          <div>
+            <h2 className="font-semibold tracking-tight">World Configuration</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Configure map dimensions and initial settings
+            </p>
+          </div>
           <ConfirmClearDialog onConfirm={clearWorld} disabled={isWorldEmpty} />
         </div>
-        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 w-full space-y-1 ${isWorldEmpty ? '' : 'pointer-events-none opacity-50'}`}>
-          <div>
+
+        <div className={cn(
+          "grid grid-cols-1 sm:grid-cols-2 gap-4",
+          !isWorldEmpty && "opacity-50 pointer-events-none bg-muted/10"
+        )}>
+          <div className="space-y-2">
             <Label htmlFor="width" className="text-xs text-muted-foreground">
               Width
             </Label>
@@ -206,9 +234,12 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
               max={MAP_MAX}
               onChange={handleParamChange}
             />
+            <p className="text-xs text-muted-foreground">
+              Range: {MAP_MIN}-{MAP_MAX}
+            </p>
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="height" className="text-xs text-muted-foreground">
               Height
             </Label>
@@ -219,9 +250,12 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
               max={MAP_MAX}
               onChange={handleParamChange}
             />
+            <p className="text-xs text-muted-foreground">
+              Range: {MAP_MIN}-{MAP_MAX}
+            </p>
           </div>
 
-          <div className="col-span-1 sm:col-span-2 space-y-1">
+          <div className="col-span-1 sm:col-span-2 space-y-2">
             <Label htmlFor="initialEnergy" className="text-xs text-muted-foreground">
               Initial Energy
             </Label>
@@ -232,13 +266,42 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
               max={1000}
               onChange={handleParamChange}
             />
+            <p className="text-xs text-muted-foreground">
+              Range: 1-1000
+            </p>
           </div>
         </div>
-      </section>
-      <section className="space-y-2 border-t pt-2">
-        <h3 className="text-sm font-medium text-foreground">Import & Export</h3>
-        <div className="flex flex-row gap-4">
-          <Button onClick={() => fileInputRef.current?.click()}>Import</Button>
+
+        {!isWorldEmpty && (
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-muted border border-border">
+            <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+            <p className="text-xs text-foreground">
+              Clear the world to modify configuration settings
+            </p>
+          </div>
+        )}
+      </div>
+
+      <Separator />
+
+      <div className="space-y-4">
+        <div>
+          <h2 className="font-semibold tracking-tight">Import & Export</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Export your world or import existing world files
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-3">
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            variant="outline"
+            className="flex-1 items-center h-10"
+          >
+            <Upload />
+            Import World
+          </Button>
+
           <ExportDialog
             onConfirm={async (filename) => {
               const error = await exportWorld(round!.world, filename)
@@ -246,7 +309,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
             }}
           />
         </div>
-      </section>
+      </div>
 
       <LayerEditor
         tile={isEditorOpen ? selectedTile : undefined}
