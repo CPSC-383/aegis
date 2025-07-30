@@ -270,19 +270,16 @@ export default class World {
 
       const topLayer = layers[0]
       const kind = topLayer.object.oneofKind
+      const [, , , moveCost] = getMoveCostColor(this.cellAt(x, y).moveCost)
 
       if (kind === 'survivor') {
-        const [, , , moveCost] = getMoveCostColor(this.cellAt(x, y).moveCost)
-
         if (moveCost <= 5) {
           ctx.drawImage(darkSurv, coords.x, coords.y, 1, 1)
-          ctx.fillStyle = '#0919ff'
         } else {
           ctx.drawImage(lightSurv, coords.x, coords.y, 1, 1)
-          ctx.fillStyle = '#0f8cff'
         }
       } else if (kind === 'rubble') {
-        ctx.drawImage(rubble, coords.x + 0.05, coords.y, 0.8, 0.8)
+        ctx.drawImage(rubble, coords.x + 0.025, coords.y + 0.025, 0.95, 0.95)
       }
 
       ctx.font = '0.3px Arial'
@@ -290,6 +287,11 @@ export default class World {
 
       if (survivorCount > 0) {
         ctx.textAlign = 'right'
+        if (moveCost <= 5) {
+          ctx.fillStyle = '#0919ff'
+        } else {
+          ctx.fillStyle = '#0f8cff'
+        }
         ctx.fillText(String(survivorCount), coords.x + 0.97, coords.y + 1.01)
       }
 
