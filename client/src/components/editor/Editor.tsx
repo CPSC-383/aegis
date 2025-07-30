@@ -1,29 +1,29 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import useRound from '@/hooks/useRound'
-import { Runner } from '@/core/Runner'
-import Game from '@/core/Game'
-import World from '@/core/World'
-import { Vector, WorldParams } from '@/types'
-import Games from '@/core/Games'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Agents from '@/core/Agents'
 import { EditorBrush } from '@/core/Brushes'
-import Brush from './Brush'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import useHover from '@/hooks/useHover'
-import useCanvas from '@/hooks/useCanvas'
+import Game from '@/core/Game'
+import Games from '@/core/Games'
 import { Renderer } from '@/core/Renderer'
+import { Runner } from '@/core/Runner'
+import World from '@/core/World'
+import useCanvas from '@/hooks/useCanvas'
+import useHover from '@/hooks/useHover'
+import useRound from '@/hooks/useRound'
+import { cn } from '@/lib/utils'
+import { useAppStore } from '@/store/useAppStore'
+import { Vector, WorldParams } from '@/types'
 import { MAP_MAX, MAP_MIN } from '@/utils/constants'
-import NumberInput from '../NumberInput'
-import ExportDialog from '../ExportDialog'
-import { Label } from '../ui/label'
-import { Button } from '../ui/button'
-import { importWorld, exportWorld } from './MapGenerator'
+import { Upload } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import ConfirmClearDialog from '../ConfirmClearDialog'
 import LayerEditor from '../dnd/LayerEditor'
-import { useAppStore } from '@/store/useAppStore'
-import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
-import { Upload } from 'lucide-react'
+import ExportDialog from '../ExportDialog'
+import NumberInput from '../NumberInput'
+import { Button } from '../ui/button'
+import { Label } from '../ui/label'
+import Brush from './Brush'
+import { exportWorld, importWorld } from './MapGenerator'
 
 export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
@@ -169,7 +169,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
               <kbd className="px-2 py-1 text-xs font-mono bg-muted rounded border">
                 e
               </kbd>{' '}
-              to edit cell details when hovering a cell.
+              to edit cell layers when hovering a cell.
             </p>
           </div>
         )}
@@ -294,14 +294,14 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-3">
+        <div className="flex flex-col xl:flex-row gap-3">
           <Button
             onClick={() => fileInputRef.current?.click()}
             variant="outline"
             className="flex-1 items-center h-10"
           >
             <Upload />
-            Import World
+            Import
           </Button>
 
           <ExportDialog

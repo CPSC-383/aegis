@@ -1,12 +1,12 @@
-import { HTMLAttributes, forwardRef } from 'react'
-import { Card, CardContent } from '../ui/card'
 import { schema } from 'aegis-schema'
 import { GripVertical, Trash2 } from 'lucide-react'
-import { Badge } from '../ui/badge'
-import { getLayerColor, getLayerIcon } from './dnd-utils'
-import { Label } from '../ui/label'
+import { HTMLAttributes, forwardRef } from 'react'
 import NumberInput from '../NumberInput'
+import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
+import { Card, CardContent } from '../ui/card'
+import { Label } from '../ui/label'
+import { getLayerColor, getLayerIcon } from './dnd-utils'
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   layer: schema.WorldObject
@@ -129,5 +129,7 @@ const Layer = forwardRef<HTMLDivElement, Props>(
     )
   }
 )
+
+Layer.displayName = 'Layer'
 
 export default Layer

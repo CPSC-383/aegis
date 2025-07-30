@@ -121,7 +121,7 @@ export class LayersBrush extends EditorBrush {
               },
               rubble_agentsRequired: {
                 type: EditorBrushTypes.POSITIVE_INTEGER,
-                label: 'Energy Required',
+                label: 'Agents Required',
                 value: 1
               }
             }
@@ -145,7 +145,20 @@ export class LayersBrush extends EditorBrush {
     if (!cell) return
 
     if (rightClick) {
-      cell.layers.pop()
+      // only pop the layer that is the same as the selected brush type (dont allow having the ruble brush selected and right clicking to pop a surv off)
+      const type = fields.objectType.value
+      const object = fields.objectType.options!.find((opt) => opt.value === type)!
+      if (object.attributes!.fields.survivor_hp) {
+        const survivor = cell.layers.find((l) => l.object.oneofKind === 'survivor')
+        if (survivor) {
+          cell.layers.splice(cell.layers.indexOf(survivor), 1)
+        }
+      } else if (object.attributes!.fields.rubble_energyRequired) {
+        const rubble = cell.layers.find((l) => l.object.oneofKind === 'rubble')
+        if (rubble) {
+          cell.layers.splice(cell.layers.indexOf(rubble), 1)
+        }
+      }
       return
     }
 

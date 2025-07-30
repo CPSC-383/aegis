@@ -1,4 +1,3 @@
-import { EditorField, EditorBrushTypes } from '@/core/Brushes'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -7,8 +6,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import NumberInput from '../NumberInput'
+import { EditorBrushTypes, EditorField } from '@/core/Brushes'
 import { useState } from 'react'
+import NumberInput from '../NumberInput'
 
 interface FieldProps {
   field: EditorField
@@ -28,7 +28,7 @@ export default function Field({ field, onChange }: FieldProps) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="">
       {field.label && (
         <Label className="text-xs text-muted-foreground">{field.label}</Label>
       )}
