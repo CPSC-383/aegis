@@ -23,15 +23,9 @@ from .common.commands.agent_commands import (
 )
 from .common.location import Location
 from .common.objects.rubble import Rubble
+from .conditional_imports import get_predict_command
 from .constants import Constants
 from .logger import LOGGER
-
-try:
-    # from .common.commands.aegis_commands.save_result import SaveResult
-    from .common.commands.agent_commands.predict import Predict
-except ImportError:
-    SaveResult = None
-    Predict = None
 
 if TYPE_CHECKING:
     from .agent_predictions.prediction_handler import (
@@ -80,13 +74,15 @@ class CommandProcessor:
                 recipient.handle_aegis_command(res)
 
     def _process(self, commands: list[AgentCommand]) -> None:
+        predict = get_predict_command()
+
         for cmd in commands:
             agent_id = cmd.get_id()
             agent = self._game.get_agent(agent_id)
 
             if (
-                Predict is not None
-                and isinstance(cmd, Predict)
+                predict is not None
+                and isinstance(cmd, predict)
                 and is_feature_enabled("ENABLE_PREDICTIONS")
             ):
                 pass

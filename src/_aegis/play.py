@@ -20,7 +20,7 @@ def run(args: Args) -> None:
     else:
         setup_console_logging()
 
-    if args.agent1 is None and args.agent2 is None:
+    if args.agent is None and args.agent2 is None:
         error = "At least one agent must be provided"
         raise ValueError(error)
 
