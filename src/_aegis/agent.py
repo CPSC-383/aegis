@@ -4,8 +4,6 @@ import traceback
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from _aegis.constants import Constants
-
 from .command_manager import CommandManager
 from .common import CellInfo, Direction, Location
 from .common.commands.aegis_command import AegisCommand
@@ -15,16 +13,12 @@ from .common.commands.aegis_commands import (
     SendMessageResult,
     WorldUpdate,
 )
+from .common.commands.aegis_commands.save_result import SaveResult
+from .constants import Constants
 from .logger import LOGGER
 from .sandbox import Sandbox
 from .team import Team
 from .world_parser import load_agent_world
-
-try:
-    from _aegis.common.commands.aegis_commands.save_result import SaveResult
-except ImportError:
-    SaveResult = None
-
 
 if TYPE_CHECKING:
     from .game import Game
@@ -79,11 +73,7 @@ class Agent:
                 ):
                     self.sandbox.handle_observe(result)  # pyright: ignore[reportUnknownMemberType]
 
-                elif (
-                    SaveResult is not None
-                    and isinstance(result, SaveResult)
-                    and self.sandbox.has_handle_save()
-                ):
+                elif isinstance(result, SaveResult) and self.sandbox.has_handle_save():
                     self.sandbox.handle_save(result)  # pyright: ignore[reportUnknownMemberType]
         self.results.clear()
 
@@ -137,7 +127,7 @@ class Agent:
             self.set_energy_level(world_update.energy_level)
             self.set_location(curr_info.location)
             self.update_surround(world_update.surround)
-        elif SaveResult is not None and isinstance(aegis_command, SaveResult):
+        elif isinstance(aegis_command, SaveResult):
             self.results.append(aegis_command)
         elif isinstance(aegis_command, RechargeResult):
             recharge_result: RechargeResult = aegis_command

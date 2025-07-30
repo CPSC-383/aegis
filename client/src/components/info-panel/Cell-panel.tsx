@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
-import { AgentInfoDict, CellDict, Game } from '@/core/game'
+import { AgentInfoDict, CellDict, Game } from '@/core/Game'
 // import { drawAgent } from '@/utils/renderUtils'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 
 type Props = {
   selectedCell: { x: number; y: number }

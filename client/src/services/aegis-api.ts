@@ -1,8 +1,8 @@
 type AegisAPI = {
   openAegisDirectory: () => Promise<string | undefined>
-  toggleMoveCost: (config_path: string, value: boolean) => void
   getAppPath: () => Promise<string>
   exportWorld: (name: string, world: Uint8Array) => Promise<void>
+  read_config: (aegisPath: string) => Promise<any>
   path: {
     join: (...args: string[]) => Promise<string>
     dirname: (dir: string) => Promise<string>
@@ -20,7 +20,6 @@ type AegisAPI = {
       world: string,
       agent: string,
       aegisPath: string,
-      config: string,
       debug: boolean
     ) => Promise<string>
     kill: (aegisPid: string) => void
@@ -28,7 +27,6 @@ type AegisAPI = {
     onStderr: (callback: (data: string) => void) => void
     onExit: (callback: () => void) => void
   }
-  read_config_presets: (aegisPath: string, context?: string) => Promise<string[]>
 }
 
 // @ts-ignore

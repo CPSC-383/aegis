@@ -1,5 +1,4 @@
-import { AgentInfoDict, Game } from '@/core/game'
-import { CellContent } from '@/core/world'
+import Game from '@/core/Game'
 
 type Props = {
   selectedAgent: AgentInfoDict

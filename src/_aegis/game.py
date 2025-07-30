@@ -1,5 +1,5 @@
 import random
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .agent import Agent
 from .agent_controller import AgentController
@@ -7,8 +7,10 @@ from .args_parser import Args
 from .command_processor import CommandProcessor
 from .common import Cell, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
+from .common.commands.aegis_commands.save_result import SaveResult
 from .common.commands.agent_commands import Dig, Move, Observe, Save, SendMessage
 from .common.objects import Rubble, Survivor
+from .conditional_imports import get_prediction_handler
 from .constants import Constants
 from .game_pb import GamePb
 from .id_gen import IDGenerator
@@ -16,13 +18,6 @@ from .logger import LOGGER
 from .team import Team
 from .team_info import TeamInfo
 from .world import World
-
-try:
-    from .common.commands.aegis_commands.save_result import SaveResult
-except ImportError:
-    predictions_imported = False
-else:
-    predictions_imported = True
 
 if TYPE_CHECKING:
     from .agent_predictions.prediction_handler import (
@@ -45,15 +40,20 @@ class Game:
         self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
         self._agent_commands: list[AgentCommand] = []
-        self._prediction_handler: PredictionHandlerType | None = None
+
+        prediction_handler_class = get_prediction_handler()
+        self._prediction_handler: PredictionHandlerType | None = (
+            prediction_handler_class() if prediction_handler_class else None
+        )
+
         self._command_processor: CommandProcessor = CommandProcessor(
             self,
             self._agents,
             self._prediction_handler,
         )
         self.team_agents: dict[Team, str] = {}
-        if self.args.agent1 is not None:
-            self.team_agents[Team.GOOBS] = self.args.agent1
+        if self.args.agent is not None:
+            self.team_agents[Team.GOOBS] = self.args.agent
         if self.args.agent2 is not None:
             self.team_agents[Team.VOIDSEERS] = self.args.agent2
         self._init_spawn()
@@ -61,9 +61,9 @@ class Game:
     def _init_spawn(self) -> None:
         spawns = self.get_spawns()
         loc = random.choice(spawns)
-        if self.args.agent1 and (self.args.agent2 is None):
+        if self.args.agent and (self.args.agent2 is None):
             self.spawn_agent(loc, Team.GOOBS)
-        elif self.args.agent2 and (self.args.agent1 is None):
+        elif self.args.agent2 and (self.args.agent is None):
             self.spawn_agent(loc, Team.VOIDSEERS)
         else:
             for team in Team:
@@ -105,7 +105,7 @@ class Game:
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
             print()  # noqa: T201
-            LOGGER.info("Max rounds reached.")
+            LOGGER.info(f"Max rounds reached ({self.world.rounds}).")
             return True
 
         if len(self._agents) == 0:
@@ -117,7 +117,7 @@ class Game:
         saved_seers = self.team_info.get_saved(Team.VOIDSEERS)
         if saved_goobs + saved_seers == self.world.total_survivors:
             print()  # noqa: T201
-            LOGGER.info("All survivors saved")
+            LOGGER.info("All survivors saved.")
             return True
 
         return False
@@ -198,12 +198,7 @@ class Game:
         agent.set_location(dest_cell.location)
 
     def on_map(self, location: Location) -> bool:
-        return (
-            location.x >= 0
-            and location.y >= 0
-            and location.x < self.world.width
-            and location.y < self.world.height
-        )
+        return self.world.on_map(location)
 
     def get_cell_at(self, location: Location) -> Cell:
         return self.world.get_cell_at(location)
@@ -224,12 +219,12 @@ class Game:
         ]
 
     def get_spawns(self) -> list[Location]:
-        return [cell.location for cell in self.world.cells if cell.is_spawn_cell()]
+        return self.world.get_spawns()
 
     def get_charging_cells(self) -> list[Location]:
-        return [cell.location for cell in self.world.cells if cell.is_charging_cell()]
+        return self.world.get_charging_cells()
 
-    def create_methods(self, ac: AgentController):  # noqa: ANN202
+    def create_methods(self, ac: AgentController) -> dict[str, Any]:
         methods = {
             "Dig": Dig,
             "Direction": Direction,
@@ -257,7 +252,6 @@ class Game:
             "log": ac.log,
         }
 
-        if predictions_imported:
-            methods["SaveResult"] = SaveResult  # pyright: ignore[reportPossiblyUnboundVariable, reportArgumentType]
+        methods["SaveResult"] = SaveResult
 
         return methods

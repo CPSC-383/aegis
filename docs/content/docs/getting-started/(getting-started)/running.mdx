@@ -14,18 +14,16 @@ To run Aegis from the terminal, use the aegis command:
 ```
 aegis [--amount AMOUNT] --world WORLD \
   --rounds ROUNDS --agent AGENT \
-  --group GROUP [--client] \
-  [--config CONFIG] [--debug] [--log]
+  [--client] [--debug] [--log]
 ```
 
 ### Example
 
-Here's an example of running Aegis with a sample agent, `ExampleWorld.world` and 50 rounds:
+Here's an example of running Aegis with a "test" agent, `ExampleWorld.world` and 50 rounds:
 
 ```
 aegis --world worlds/ExampleWorld.world \
-  --rounds 50 --agent agents/test/main.py \
-  --group "cli"
+  --rounds 50 --agent agents/test/main.py
 ```
 
 ### Example with Logging
@@ -35,7 +33,7 @@ To save console output to a log file:
 ```
 aegis --world worlds/ExampleWorld.world \
   --rounds 50 --agent agents/test/main.py \
-  --group "cli" --log
+  --log
 ```
 
 ### Full Command Options
@@ -47,9 +45,7 @@ options:
   --world WORLD    World file to use.
   --rounds ROUNDS  Number of simulation rounds
   --agent AGENT    Path to the agent file
-  --group GROUP    Group name
   --client         Set to wait for the client to connect
-  --config CONFIG  Config preset to use (default: default)
   --debug          Enable agent debug logging output
   --log            Enable AEGIS console output logging to file
 
@@ -135,8 +131,7 @@ the **Aegis** tab.
 
 ### Configure Simulation Options
 
-Navigate to the **Aegis** tab and select the world, agent, group name, number of rounds, and configuration
-preset you wish to use.
+Navigate to the **Aegis** tab and fill in the required options before starting up a simulation.
 
 </Step>
 

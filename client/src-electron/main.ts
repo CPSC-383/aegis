@@ -1,8 +1,8 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import path from 'path'
-import fs from 'fs'
 import child_process from 'child_process'
+import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import fs from 'fs'
+import path from 'path'
 import yaml from 'yaml'
 
 class ElectronApp {
@@ -68,8 +68,7 @@ class ElectronApp {
         args[2], // world
         args[3], // agent
         args[4], // aegis path
-        args[5], // config
-        args[6] // debug
+        args[5] // debug
       )
     })
 
@@ -77,8 +76,8 @@ class ElectronApp {
       this.killProcess(pid)
     })
 
-    ipcMain.handle('read_config_presets', async (_, aegisPath, context) => {
-      return this.readConfigPresets(aegisPath, context)
+    ipcMain.handle('read_config', async (_, aegisPath) => {
+      return this.readConfig(aegisPath)
     })
   }
 
@@ -93,10 +92,6 @@ class ElectronApp {
     switch (command) {
       case 'openAegisDirectory':
         return this.openAegisDirectory()
-      case 'toggleMoveCost':
-        const updates = { Enable_Move_Cost: args[1] }
-        this.updateConfig(args[0], updates)
-        return
       case 'getAppPath':
         return app.getAppPath()
       case 'path.join':
@@ -120,8 +115,7 @@ class ElectronApp {
           args[2], // world
           args[3], // agent
           args[4], // aegis path
-          args[5], // config
-          args[6] // debug
+          args[5] // debug
         )
       case 'aegis_child_process.kill':
         return this.killProcess(args[0])
@@ -146,22 +140,53 @@ class ElectronApp {
     }
   }
 
-  private readConfig(filePath: string) {
+  private readConfig(aegisPath: string) {
     try {
-      const fileContent = fs.readFileSync(filePath, 'utf8')
+      const configPath = path.join(aegisPath, 'config', 'config.yaml')
+      const fileContent = fs.readFileSync(configPath, 'utf8')
       const config = yaml.parse(fileContent) as Record<string, any>
       return config
     } catch (error) {
-      // @ts-ignore: error type
-      console.error(`Error reading the config file: ${error.message}`)
-      throw error
+      console.error(`Error reading the config file: ${error}`)
+      // Return default config if file can't be read
+      return {
+        features: {
+          ENABLE_PREDICTIONS: false,
+          ENABLE_VARIABLE_AGENT_AMOUNT: false,
+          DEFAULT_AGENT_AMOUNT: 1
+        },
+        assignment_specific: {
+          ENABLE_MOVE_COST: false
+        },
+        competition_specific: {
+          VERSUS_MODE: false
+        },
+        client: {
+          CONFIG_TYPE: 'assignment',
+          SHOW_DEBUG_MODE: true,
+          SHOW_MULTI_AGENT_OPTIONS: false
+        }
+      }
     }
   }
   private updateConfig(filePath: string, updates: any) {
-    // TODO: Decide if we want to allow the client to edit the config file once it lives away from the system?
     try {
       const config = this.readConfig(filePath) as Record<string, any>
-      Object.assign(config, updates)
+
+      // Handle nested updates (like assignment_specific.ENABLE_MOVE_COST)
+      for (const [key, value] of Object.entries(updates)) {
+        if (typeof value === 'object' && value !== null) {
+          // Handle nested objects
+          if (!config[key]) {
+            config[key] = {}
+          }
+          Object.assign(config[key], value)
+        } else {
+          // Handle direct properties
+          config[key] = value
+        }
+      }
+
       fs.writeFileSync(filePath, yaml.stringify(config))
     } catch (error) {
       // @ts-ignore: error type
@@ -176,20 +201,17 @@ class ElectronApp {
     world: string,
     agent: string,
     aegisPath: string,
-    config: string,
     debug: boolean
   ) {
     const procArgs = [
       '--amount',
       amount,
-      '--agent2',
+      '--agent',
       `agents/${agent}/main.py`,
       '--world',
       `worlds/${world}`,
       '--rounds',
       rounds,
-      '--config',
-      config,
       '--client',
       ...(debug ? ['--debug'] : [])
     ]
@@ -225,49 +247,6 @@ class ElectronApp {
         }
       })
     })
-  }
-
-  private readConfigPresets(aegisPath: string, context: string = 'all') {
-    try {
-      const presetsDir = path.join(aegisPath, 'config', 'presets')
-      if (!fs.existsSync(presetsDir)) {
-        return []
-      }
-
-      // Read metadata file to determine visibility
-      const metadataPath = path.join(presetsDir, 'metadata.yaml')
-      let metadata: any = {}
-
-      if (fs.existsSync(metadataPath)) {
-        const metadataContent = fs.readFileSync(metadataPath, 'utf8')
-        metadata = yaml.parse(metadataContent)
-      }
-
-      const files = fs.readdirSync(presetsDir)
-      const yamlFiles = files.filter(
-        (file) => file.endsWith('.yaml') && file !== 'metadata.yaml'
-      )
-      const allPresets = yamlFiles.map((file) => file.replace('.yaml', ''))
-
-      // If context is 'all', return all presets
-      if (context === 'all') {
-        return allPresets
-      }
-
-      // Filter presets based on metadata
-      const visiblePresets = allPresets.filter((preset) => {
-        const presetMetadata = metadata.presets?.[preset]
-        if (!presetMetadata || !presetMetadata.visible_for) {
-          return false // Default to not visible if no metadata
-        }
-        return presetMetadata.visible_for.includes(context)
-      })
-
-      return visiblePresets
-    } catch (error) {
-      console.error(`Error reading config presets: ${error}`)
-      return []
-    }
   }
 
   private killProcess(pid: string) {

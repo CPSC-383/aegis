@@ -1,4 +1,4 @@
-from .common import Cell, Location
+from .common import Cell, CellInfo, Location
 from .constants import Constants
 
 
@@ -44,3 +44,16 @@ class World:
     def get_cell_at(self, loc: Location) -> Cell:
         index = loc.x + loc.y * self.width
         return self.cells[index]
+
+    def get_cell_info_at(self, loc: Location) -> CellInfo:
+        cell = self.get_cell_at(loc)
+        return cell.get_cell_info()
+
+    def on_map(self, loc: Location) -> bool:
+        return 0 <= loc.x < self.width and 0 <= loc.y < self.height
+
+    def get_spawns(self) -> list[Location]:
+        return [cell.location for cell in self.cells if cell.is_spawn()]
+
+    def get_charging_cells(self) -> list[Location]:
+        return [cell.location for cell in self.cells if cell.is_charging_cell()]

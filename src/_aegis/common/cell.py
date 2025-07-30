@@ -104,6 +104,9 @@ class Cell:
                 count += 1
         return count
 
+    def is_spawn(self) -> bool:
+        return self.type == CellType.SPAWN_CELL
+
     @override
     def __str__(self) -> str:
         if not self.layers:

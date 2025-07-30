@@ -13,9 +13,9 @@ const invoke = (command: string, ...args: any[]) => {
 
 const electronAPI = {
   openAegisDirectory: () => invoke('openAegisDirectory'),
-  toggleMoveCost: (...args: any[]) => invoke('toggleMoveCost', ...args),
   getAppPath: (...args: any[]) => invoke('getAppPath', ...args),
   exportWorld: (...args: any[]) => invoke('exportWorld', ...args),
+  read_config: (aegisPath: string) => ipcRenderer.invoke('read_config', aegisPath),
   path: {
     join: (...args: any[]) => invoke('path.join', ...args),
     dirname: (...args: any[]) => invoke('path.dirname', ...args)
@@ -33,7 +33,6 @@ const electronAPI = {
       world: string,
       agent: string,
       aegisPath: string,
-      config: string,
       debug: boolean
     ) =>
       ipcRenderer.invoke(
@@ -43,7 +42,6 @@ const electronAPI = {
         world,
         agent,
         aegisPath,
-        config,
         debug
       ),
     kill: (pid: string) => ipcRenderer.invoke('aegis_child_process.kill', pid),
@@ -53,10 +51,7 @@ const electronAPI = {
       ipcRenderer.on('aegis_child_process.stderr', (_, data) => callback(data)),
     onExit: (callback: () => void) =>
       ipcRenderer.on('aegis_child_process.exit', () => callback())
-  },
-
-  read_config_presets: (aegisPath: string, context?: string) =>
-    ipcRenderer.invoke('read_config_presets', aegisPath, context)
+  }
 }
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI)

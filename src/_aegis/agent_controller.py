@@ -1,17 +1,17 @@
 # pyright: reportImportCycles = false
 from typing import TYPE_CHECKING
 
-from .agent import Agent
 from .common import Cell, Location
 from .common.commands.agent_command import AgentCommand
 from .team import Team
 
 if TYPE_CHECKING:
+    from .agent import Agent
     from .game import Game
 
 
 class AgentController:
-    def __init__(self, game: "Game", agent: Agent) -> None:
+    def __init__(self, game: "Game", agent: "Agent") -> None:
         self._game: Game = game
         self._agent: Agent = agent
 

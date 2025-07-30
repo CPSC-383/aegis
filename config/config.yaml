@@ -1,5 +1,4 @@
-# Pathfinding Assignment Configuration Template
-# Copy these settings to config/config.yaml and modify as needed
+# This is the configuration file for all AEGIS system features.
 
 # General aegis features
 features:
@@ -14,3 +13,7 @@ assignment_specific:
 # Settings more specific to competitions, usually only competitions will decide to enable these
 competition_specific:
   VERSUS_MODE: false
+
+# Client-specific configuration
+client:
+  CONFIG_TYPE: "assignment" # "assignment" or "competition"
