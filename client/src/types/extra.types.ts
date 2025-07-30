@@ -25,9 +25,9 @@ const shadesOfBrown = [
 ]
 
 // Move cost 1 = lightest, move cost 10+ = darkest
-export function getMoveCostColor(moveCost: number): [number, number, number] {
+export function getMoveCostColor(moveCost: number): [number, number, number, number] {
   const index = Math.min(Math.max(moveCost, 1), 10) - 1
-  return shadesOfBrown[index] as [number, number, number]
+  return [...shadesOfBrown[index], moveCost] as [number, number, number, number]
 }
 
 export type Config = {

@@ -1,12 +1,13 @@
-import survivorSrc from '@/assets/survivor.png'
 import rubbleSrc from '@/assets/rubble.png'
+import survivorSrcDark from '@/assets/survivor-dark.png'
+import survivorSrcLight from '@/assets/survivor-light.png'
 import { getMoveCostColor, Size, Vector } from '@/types'
-import { schema } from 'aegis-schema'
-import Game from './Game'
 import { THICKNESS } from '@/utils/constants'
 import { renderCoords } from '@/utils/renderUtils'
 import { getImage } from '@/utils/util'
+import { schema } from 'aegis-schema'
 import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from './Brushes'
+import Game from './Game'
 import Round from './Round'
 
 /**
@@ -169,7 +170,7 @@ export default class World {
         if (!cell) continue
 
         const [r, g, b] = getMoveCostColor(cell.moveCost)
-        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b})`
 
         const coords = renderCoords(x, y, this.size)
         ctx.fillRect(
@@ -246,9 +247,11 @@ export default class World {
   }
 
   public drawLayers(game: Game, ctx: CanvasRenderingContext2D, full: boolean): void {
-    const surv = getImage(survivorSrc)
+    const lightSurv = getImage(survivorSrcLight)
+    const darkSurv = getImage(survivorSrcDark)
     const rubble = getImage(rubbleSrc)
-    if (!surv || !rubble) throw new Error('layer images should be loaded already')
+    if (!lightSurv || !darkSurv || !rubble)
+      throw new Error('layer images should be loaded already')
 
     const locs = full ? this.getAllLocations() : game.currentRound.layersRemoved
 
@@ -269,24 +272,31 @@ export default class World {
       const kind = topLayer.object.oneofKind
 
       if (kind === 'survivor') {
-        ctx.drawImage(surv, coords.x, coords.y, 1, 1)
+        const [, , , moveCost] = getMoveCostColor(this.cellAt(x, y).moveCost)
+
+        if (moveCost <= 5) {
+          ctx.drawImage(darkSurv, coords.x, coords.y, 1, 1)
+          ctx.fillStyle = '#0919ff'
+        } else {
+          ctx.drawImage(lightSurv, coords.x, coords.y, 1, 1)
+          ctx.fillStyle = '#0f8cff'
+        }
       } else if (kind === 'rubble') {
-        ctx.drawImage(rubble, coords.x + 0.1, coords.y, 0.8, 0.8)
+        ctx.drawImage(rubble, coords.x + 0.05, coords.y, 0.8, 0.8)
       }
 
       ctx.font = '0.3px Arial'
       ctx.textBaseline = 'bottom'
 
       if (survivorCount > 0) {
-        ctx.fillStyle = 'blue'
         ctx.textAlign = 'right'
-        ctx.fillText(String(survivorCount), coords.x + 0.97, coords.y + 0.98)
+        ctx.fillText(String(survivorCount), coords.x + 0.97, coords.y + 1.01)
       }
 
       if (rubbleCount > 0) {
         ctx.fillStyle = '#444444'
         ctx.textAlign = 'left'
-        ctx.fillText(String(rubbleCount), coords.x + 0.03, coords.y + 0.98)
+        ctx.fillText(String(rubbleCount), coords.x + 0.03, coords.y + 1.01)
       }
     }
   }

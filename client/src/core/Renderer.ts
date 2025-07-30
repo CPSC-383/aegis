@@ -1,14 +1,15 @@
-import { TILE_SIZE } from '@/utils/constants'
-import { Runner } from './Runner'
 import { CanvasLayers, Size, Vector } from '@/types'
+import { TILE_SIZE } from '@/utils/constants'
 import { loadImage } from '@/utils/util'
+import { Runner } from './Runner'
 
 import goobA from '@/assets/goob-team-a.png'
 import goobB from '@/assets/goob-team-b.png'
-import survivor from '@/assets/survivor.png'
 import rubble from '@/assets/rubble.png'
-import { ListenerKey, notify } from './Listeners'
+import darkSurvivor from '@/assets/survivor-dark.png'
+import lightSurvivor from '@/assets/survivor-light.png'
 import { renderCoords } from '@/utils/renderUtils'
+import { ListenerKey, notify } from './Listeners'
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any
@@ -44,7 +45,8 @@ class RendererClass {
 
     loadImage(goobA)
     loadImage(goobB)
-    loadImage(survivor)
+    loadImage(lightSurvivor)
+    loadImage(darkSurvivor)
     loadImage(rubble)
   }
 
