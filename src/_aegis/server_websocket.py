@@ -1,3 +1,4 @@
+# pyright: reportMissingTypeStubs = false
 import base64
 import logging
 import queue
@@ -7,7 +8,7 @@ from typing import NamedTuple
 
 from websocket_server import WebsocketServer  # pyright: ignore[reportMissingTypeStubs]
 
-LOGGER = logging.getLogger("aegis")
+from .logger import LOGGER
 
 
 class Client(NamedTuple):
@@ -47,8 +48,8 @@ class WebSocketServer:
             while not self._incoming_events.empty():
                 event = self._incoming_events.get()
                 self._process_event(event)
-        except Exception:
-            LOGGER.exception("Error processing queue")
+        except (OSError, RuntimeError) as e:
+            LOGGER.exception("Error processing queue: %s", e)
 
     def _process_event(self, event: str) -> None:
         if self._server is not None:
@@ -98,5 +99,9 @@ class WebSocketServer:
         try:
             self._queue_thread.join()
             self.shutdown_gracefully()
-        except Exception:
-            LOGGER.exception("Error shutting down server")
+        except (OSError, RuntimeError) as e:
+            LOGGER.exception("Error shutting down server: %s", e)
+
+    def set_wait_for_client(self) -> None:
+        self._wait_for_client = True
+
