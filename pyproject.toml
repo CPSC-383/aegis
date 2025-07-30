@@ -9,7 +9,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "protobuf==5.29.5",
-    "pyyaml>=6.0.2",
     "restrictedpython>=8.0",
     "websocket-server==0.6.4",
 ]
