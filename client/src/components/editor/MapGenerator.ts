@@ -4,6 +4,7 @@ import Games from '@/core/Games'
 import World from '@/core/World'
 import { aegisAPI } from '@/services'
 import { schema } from 'aegis-schema'
+import invariant from 'tiny-invariant'
 
 class WorldValidator {
   static validate(world: World): string {
@@ -75,7 +76,7 @@ export async function exportWorld(
     const binary = schema.World.toBinary(protoWorld)
 
     const aegisPath = localStorage.getItem('aegisPath')
-    if (!aegisPath) throw new Error('Aegis path not found in localStorage')
+    invariant(aegisPath, 'Aegis path not found in localStorage')
 
     const fullName = `${worldName}.world`
     const fullPath = await aegisAPI.path.join(aegisPath, 'worlds', fullName)

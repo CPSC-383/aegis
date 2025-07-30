@@ -3,12 +3,14 @@ import { schema } from 'aegis-schema'
 import Round from './Round'
 import Agents from './Agents'
 import Games from './Games'
+import RoundStats from './Stats'
 
 const SNAPSHOT_INTERVAL = 25
 
 export default class Game {
   public maxRound: number = 1
   public currentRound: Round
+  public readonly stats: RoundStats[] = []
   private readonly rounds: schema.Round[] = []
   private readonly snapshots: Round[] = []
 

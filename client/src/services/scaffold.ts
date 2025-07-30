@@ -6,6 +6,7 @@ import { useAppStore } from '@/store/useAppStore'
 import { ConsoleLine } from '@/types'
 import { useForceUpdate } from '@/utils/util'
 import { useEffect, useRef, useState } from 'react'
+import invariant from 'tiny-invariant'
 
 export type Scaffold = {
   aegisPath: string | undefined
@@ -57,9 +58,7 @@ export function createScaffold(): Scaffold {
     config: string,
     debug: boolean
   ) => {
-    if (!aegisPath) {
-      throw new Error("Can't find AEGIS path!")
-    }
+    invariant(aegisPath, "Can't find AEGIS path!")
 
     // Reset output
     setOutput([])
@@ -78,9 +77,7 @@ export function createScaffold(): Scaffold {
   }
 
   const readAegisConfig = async () => {
-    if (!aegisPath) {
-      throw new Error("Can't find AEGIS path!")
-    }
+    invariant(aegisPath, "Can't find AEGIS path!")
 
     const fs = aegisAPI.fs
     const path = aegisAPI.path

@@ -2,6 +2,7 @@ import Agents from './Agents'
 import Game from './Game'
 import { schema } from 'aegis-schema'
 import World from './World'
+import RoundStats from './Stats'
 
 export default class Round {
   public turn: number = 0
@@ -12,14 +13,17 @@ export default class Round {
     public round: number,
     public agents: Agents,
     private currentRound: schema.Round | null = null
-  ) {}
+  ) {
+    if (round === 0) this.stats.applyRound(this, null)
+  }
 
   public startRound(round: schema.Round | null): void {
     this.agents.processRound(this.currentRound)
 
     this.round += 1
 
-    this.world.applyRound(round)
+    this.world.applyRound(this.currentRound)
+    this.stats.applyRound(this, this.currentRound)
 
     this.turn = 0
     this.currentRound = round
@@ -45,6 +49,15 @@ export default class Round {
 
   get layersRemoved(): schema.Location[] {
     return this.currentRound?.layersRemoved ?? []
+  }
+
+  get stats(): RoundStats {
+    const stats = this.game.stats[this.round]
+    if (stats) return stats
+
+    const newStats = new RoundStats(this.game)
+    this.game.stats[this.round] = newStats
+    return newStats
   }
 
   public copy(): Round {

@@ -1,6 +1,7 @@
 import Game from '@/core/Game'
 import Games from '@/core/Games'
 import { schema } from 'aegis-schema'
+import invariant from 'tiny-invariant'
 
 export class ClientWebSocket {
   private url: string = 'ws://localhost:6003'
@@ -38,9 +39,7 @@ export class ClientWebSocket {
       const event = schema.Event.fromBinary(decoded)
 
       if (!this.games) {
-        if (event.event.oneofKind !== 'gamesHeader') {
-          throw new Error('First event must be the GamesHeader.')
-        }
+        invariant(event.event.oneofKind === 'gamesHeader', 'First event must be the GamesHeader.')
 
         this.games = new Games(true)
         return

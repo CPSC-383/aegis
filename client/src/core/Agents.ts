@@ -5,6 +5,7 @@ import { getImage } from '@/utils/util'
 import { schema } from 'aegis-schema'
 import Game from './Game'
 import Games from './Games'
+import invariant from 'tiny-invariant'
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()
@@ -112,7 +113,7 @@ export class Agent {
 
   public default(): void {
     const currentGame = this.games.currentGame
-    if (!currentGame) throw new Error('No active game found for agent initialization')
+    invariant(currentGame, 'No active game found for agent initialization')
     this.energyLevel = currentGame.world.startEnergy
   }
 }

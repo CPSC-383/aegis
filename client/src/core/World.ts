@@ -9,6 +9,7 @@ import { schema } from 'aegis-schema'
 import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from './Brushes'
 import Game from './Game'
 import Round from './Round'
+import invariant from 'tiny-invariant'
 
 /**
  * Represents a world in aegis.
@@ -25,7 +26,7 @@ export default class World {
     public readonly seed: number,
     public readonly cells: schema.Cell[],
     public readonly startEnergy: number
-  ) {}
+  ) { }
 
   public applyRound(round: schema.Round | null): void {
     if (!round) return
@@ -250,8 +251,7 @@ export default class World {
     const lightSurv = getImage(survivorSrcLight)
     const darkSurv = getImage(survivorSrcDark)
     const rubble = getImage(rubbleSrc)
-    if (!lightSurv || !darkSurv || !rubble)
-      throw new Error('layer images should be loaded already')
+    invariant(lightSurv && darkSurv && rubble, 'layer images should be loaded already')
 
     const locs = full ? this.getAllLocations() : game.currentRound.layersRemoved
 
