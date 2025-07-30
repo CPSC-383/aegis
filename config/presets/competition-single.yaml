@@ -1,11 +1,11 @@
-# Multi-Agent Assignment Configuration Template
+# Competition Single Team Configuration Template
 # Copy these settings to config/config.yaml and modify as needed
 
 # General aegis features
 features:
-  ENABLE_PREDICTIONS: false
+  ENABLE_PREDICTIONS: true
   ENABLE_VARIABLE_AGENTS: true
-  DEFAULT_AGENT_AMOUNT: 7
+  DEFAULT_AGENT_AMOUNT: 5
 
 # Assignment specific settings, mostly assignments will decide to enable these
 assignment_specific:

@@ -11,6 +11,9 @@ def think() -> None:
     if get_round_number() == 1:
         send(Move(Direction.CENTER))
         return
+    
+    
+    
 
     # Fetch the cell at the agent's current location. If the location is outside
     # the world's bounds, return a default move action and end the turn.
