@@ -1,19 +1,31 @@
 class Constants:
+    # Charging constants
     NORMAL_CHARGE: int = 5
     LOW_CHARGE: int = 1
     SUPER_CHARGE: int = 20
-    DEFAULT_MAX_ENERGY_LEVEL: int = 1000
-    SAVE_STATE_ALIVE: int = 0
-    SAVE_STATE_DEAD: int = 1
+    MAX_ENERGY_LEVEL: int = 1000
+
+    # World constants
     WORLD_MIN: int = 3
     WORLD_MAX: int = 30
-    SURVIVOR_SAVE_SCORE: int = 100
+
+    # Game constants
+    DEFAULT_MAX_ROUNDS: int = 1000
+
+    # Points constants
+    SURVIVOR_SAVE_ALIVE_SCORE: int = 100
+    SURVIVOR_SAVE_DEAD_SCORE: int = 50
     PRED_CORRECT_SCORE: int = 10
-    NUM_OF_TESTING_IMAGES: int = 704
+
+    # Energy constants
     OBSERVE_ENERGY_COST: int = 1
     SAVE_ENERGY_COST: int = 1
     PREDICTION_ENERGY_COST: int = 1
     DIG_ENERGY_COST: int = 1
     MOVE_ENERGY_COST: int = 1
+
+    # Directives constants
     MAX_DIRECTIVES: int = 5
-    DEFAULT_MAX_ROUNDS: int = 1000
+
+    # Symbol prediction constants
+    NUM_OF_TESTING_IMAGES: int = 704

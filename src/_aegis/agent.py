@@ -123,7 +123,7 @@ class Agent:
 
     def add_energy(self, energy: int) -> None:
         self.energy_level += energy
-        self.energy_level = min(Constants.DEFAULT_MAX_ENERGY_LEVEL, self.energy_level)
+        self.energy_level = min(Constants.MAX_ENERGY_LEVEL, self.energy_level)
 
     def add_step_taken(self) -> None:
         self.steps_taken += 1

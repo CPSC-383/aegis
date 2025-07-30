@@ -112,9 +112,9 @@ class CommandProcessor:
         if cell and cell.is_charging_cell():
             if (
                 agent.energy_level + Constants.NORMAL_CHARGE
-                > Constants.DEFAULT_MAX_ENERGY_LEVEL
+                > Constants.MAX_ENERGY_LEVEL
             ):
-                agent.set_energy_level(Constants.DEFAULT_MAX_ENERGY_LEVEL)
+                agent.set_energy_level(Constants.MAX_ENERGY_LEVEL)
             else:
                 agent.add_energy(Constants.NORMAL_CHARGE)
 

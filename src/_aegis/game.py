@@ -187,7 +187,7 @@ class Game:
             survivor = world_object
             is_alive = survivor.get_health() > 0
             self.team_info.add_saved(team, 1, is_alive=is_alive)
-            self.team_info.add_score(team, Constants.SURVIVOR_SAVE_SCORE)
+            self.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
 
     def move_agent(self, agent_id: int, loc: Location) -> None:
         agent = self.get_agent(agent_id)
