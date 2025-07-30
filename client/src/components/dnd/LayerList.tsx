@@ -1,6 +1,8 @@
 import { SetStateAction, useEffect, useRef } from 'react'
 import LayerItem from './LayerItem'
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
+import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element';
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { reorderWithEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge'
 import { flushSync } from 'react-dom'
@@ -30,44 +32,52 @@ export default function LayerList({
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    return monitorForElements({
-      canMonitor({ source }) {
-        return source.data?.id != null
-      },
-      onDrop: ({ source, location }) => {
-        const dest = location.current.dropTargets[0]
-        if (!dest) return
+    const container = containerRef.current
+    if (!container) return
 
-        const sourceId = source.data.id as string
-        const destId = dest.data.id as string
-        const closestEdge = extractClosestEdge(dest.data)
+    return combine(
+      autoScrollForElements({
+        element: container
+      }),
+      monitorForElements({
+        canMonitor({ source }) {
+          return source.data?.id != null
+        },
+        onDrop: ({ source, location }) => {
+          const dest = location.current.dropTargets[0]
+          if (!dest) return
 
-        const sourceIndex = layers.findIndex((layer) => getObjectId(layer) === sourceId)
-        const destIndex = layers.findIndex((layer) => getObjectId(layer) === destId)
+          const sourceId = source.data.id as string
+          const destId = dest.data.id as string
+          const closestEdge = extractClosestEdge(dest.data)
 
-        flushSync(() => {
-          setLayers((prev) => {
-            if (sourceIndex < 0 || destIndex < 0) {
-              return prev
-            }
-            const next = reorderWithEdge({
-              list: prev,
-              startIndex: sourceIndex,
-              indexOfTarget: destIndex,
-              closestEdgeOfTarget: closestEdge,
-              axis: 'vertical'
+          const sourceIndex = layers.findIndex((layer) => getObjectId(layer) === sourceId)
+          const destIndex = layers.findIndex((layer) => getObjectId(layer) === destId)
+
+          flushSync(() => {
+            setLayers((prev) => {
+              if (sourceIndex < 0 || destIndex < 0) {
+                return prev
+              }
+              const next = reorderWithEdge({
+                list: prev,
+                startIndex: sourceIndex,
+                indexOfTarget: destIndex,
+                closestEdgeOfTarget: closestEdge,
+                axis: 'vertical'
+              })
+              setHasChanges(!isEqual(next, originalLayers))
+              return next
             })
-            setHasChanges(!isEqual(next, originalLayers))
-            return next
           })
-        })
-      }
-    })
+        }
+      })
+    )
   }, [layers])
 
   return (
-    <div className="flex-1 min-h-0">
-      <div className="flex flex-col p-2 gap-2 relative" ref={containerRef}>
+    <div className="flex-1 min-h-0 overflow-y-auto" ref={containerRef}>
+      <div className="flex flex-col p-2 gap-2 relative">
         {layers.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-8 text-center">
