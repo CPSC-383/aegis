@@ -274,19 +274,19 @@ export default class World {
         ctx.drawImage(rubble, coords.x + 0.1, coords.y, 0.8, 0.8)
       }
 
-      ctx.font = '0.2px Arial'
+      ctx.font = '0.3px Arial'
       ctx.textBaseline = 'bottom'
 
       if (survivorCount > 0) {
         ctx.fillStyle = 'blue'
         ctx.textAlign = 'right'
-        ctx.fillText(String(survivorCount), coords.x + 0.95, coords.y + 0.95)
+        ctx.fillText(String(survivorCount), coords.x + 0.97, coords.y + 0.98)
       }
 
       if (rubbleCount > 0) {
-        ctx.fillStyle = '#555555'
+        ctx.fillStyle = '#444444'
         ctx.textAlign = 'left'
-        ctx.fillText(String(rubbleCount), coords.x + 0.05, coords.y + 0.95)
+        ctx.fillText(String(rubbleCount), coords.x + 0.03, coords.y + 0.98)
       }
     }
   }
