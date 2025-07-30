@@ -1,7 +1,7 @@
-import { schema } from "aegis-schema"
-import Game from "./Game";
-import Round from "./Round";
-import invariant from "tiny-invariant";
+import { schema } from 'aegis-schema'
+import Game from './Game'
+import Round from './Round'
+import invariant from 'tiny-invariant'
 
 export default class RoundStats {
   private readonly teams: Map<schema.Team, TeamStats>
@@ -9,16 +9,18 @@ export default class RoundStats {
 
   constructor(game: Game, teams?: Map<schema.Team, TeamStats>) {
     this.game = game
-    this.teams = teams ?? new Map([
-      [schema.Team.GOOBS, new TeamStats()],
-      [schema.Team.VOIDSEERS, new TeamStats()]
-    ])
+    this.teams =
+      teams ??
+      new Map([
+        [schema.Team.GOOBS, new TeamStats()],
+        [schema.Team.VOIDSEERS, new TeamStats()]
+      ])
   }
 
   public getTeamStats(team: schema.Team): TeamStats {
     const stats = this.teams.get(team)
     invariant(stats, 'team not found in `getTeamStats`')
-    return stats;
+    return stats
   }
 
   applyRound(round: Round, delta: schema.Round | null): void {
@@ -29,13 +31,13 @@ export default class RoundStats {
 
         invariant(teamStats, 'team not found in `applyRound` for stats')
 
-        teamStats.saved_alive = teamInfo.savedAlive;
-        teamStats.saved_dead = teamInfo.savedDead;
-        teamStats.saved = teamInfo.saved;
-        teamStats.predicted_right = teamInfo.predictedRight;
-        teamStats.predicted_wrong = teamInfo.predictedWrong;
-        teamStats.predicted = teamInfo.predicted;
-        teamStats.score = teamInfo.score;
+        teamStats.saved_alive = teamInfo.savedAlive
+        teamStats.saved_dead = teamInfo.savedDead
+        teamStats.saved = teamInfo.saved
+        teamStats.predicted_right = teamInfo.predictedRight
+        teamStats.predicted_wrong = teamInfo.predictedWrong
+        teamStats.predicted = teamInfo.predicted
+        teamStats.score = teamInfo.score
       }
     }
 
@@ -48,16 +50,15 @@ export default class RoundStats {
       teamStats.units++
     }
   }
-
 }
 
 class TeamStats {
-  saved_alive: number = 0;
-  saved_dead: number = 0;
-  saved: number = 0;
-  predicted_right: number = 0;
-  predicted_wrong: number = 0;
-  predicted: number = 0;
-  score: number = 0;
-  units: number = 0;
+  saved_alive: number = 0
+  saved_dead: number = 0
+  saved: number = 0
+  predicted_right: number = 0
+  predicted_wrong: number = 0
+  predicted: number = 0
+  score: number = 0
+  units: number = 0
 }

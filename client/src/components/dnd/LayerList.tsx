@@ -1,8 +1,8 @@
 import { SetStateAction, useEffect, useRef } from 'react'
 import LayerItem from './LayerItem'
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
-import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element';
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
 import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
 import { reorderWithEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge'
 import { flushSync } from 'react-dom'
@@ -51,7 +51,9 @@ export default function LayerList({
           const destId = dest.data.id as string
           const closestEdge = extractClosestEdge(dest.data)
 
-          const sourceIndex = layers.findIndex((layer) => getObjectId(layer) === sourceId)
+          const sourceIndex = layers.findIndex(
+            (layer) => getObjectId(layer) === sourceId
+          )
           const destIndex = layers.findIndex((layer) => getObjectId(layer) === destId)
 
           flushSync(() => {

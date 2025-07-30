@@ -39,7 +39,10 @@ export class ClientWebSocket {
       const event = schema.Event.fromBinary(decoded)
 
       if (!this.games) {
-        invariant(event.event.oneofKind === 'gamesHeader', 'First event must be the GamesHeader.')
+        invariant(
+          event.event.oneofKind === 'gamesHeader',
+          'First event must be the GamesHeader.'
+        )
 
         this.games = new Games(true)
         return
