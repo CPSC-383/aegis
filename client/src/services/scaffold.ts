@@ -7,35 +7,42 @@ import { ConsoleLine } from '@/types'
 import { useForceUpdate } from '@/utils/util'
 import { useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
+import {
+  ClientConfig,
+  getConfigValue as getDynamicConfigValue,
+  parseClientConfig
+} from './config'
 
 export type Scaffold = {
   aegisPath: string | undefined
   setupAegisPath: () => Promise<void>
   worlds: string[]
   agents: string[]
-  configPresets: string[]
   output: ConsoleLine[]
   startSimulation: (
     rounds: string,
     amount: string,
     world: string,
     agent: string,
-    config: string,
     debug: boolean
   ) => void
   killSim: (() => void) | undefined
-  readAegisConfig: () => Promise<string>
-  refreshConfigPresets: () => Promise<void>
+  readAegisConfig: () => Promise<ClientConfig>
   refreshWorldsAndAgents: () => Promise<void>
+  getConfigValue: (path: string) => any
+  getConfig: () => ClientConfig | null
+  isAssignmentConfig: () => boolean
+  getDefaultAgentAmount: () => number
+  isMultiAgentEnabled: () => boolean
 }
 
 export function createScaffold(): Scaffold {
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
-  const [_allConfigPresets, setAllConfigPresets] = useState<string[]>([])
-  const [configPresets, setConfigPresets] = useState<string[]>([])
   const [output, setOutput] = useState<ConsoleLine[]>([])
+  const [config, setConfig] = useState<ClientConfig | null>(null)
+  const [rawConfigData, setRawConfigData] = useState<any>(null)
   const aegisPid = useRef<string | undefined>(undefined)
   const forceUpdate = useForceUpdate()
 
@@ -55,10 +62,10 @@ export function createScaffold(): Scaffold {
     amount: string,
     world: string,
     agent: string,
-    config: string,
     debug: boolean
-  ) => {
+  ): Promise<void> => {
     invariant(aegisPath, "Can't find AEGIS path!")
+    invariant(config, 'Config not loaded. Please ensure config.yaml is valid.')
 
     // Reset output
     setOutput([])
@@ -69,61 +76,49 @@ export function createScaffold(): Scaffold {
       world,
       agent,
       aegisPath,
-      config,
       debug
     )
     aegisPid.current = pid
     forceUpdate()
   }
 
-  const readAegisConfig = async () => {
+  const readAegisConfig = async (): Promise<ClientConfig> => {
     invariant(aegisPath, "Can't find AEGIS path!")
 
-    const fs = aegisAPI.fs
-    const path = aegisAPI.path
+    try {
+      const rawConfig = (await aegisAPI.read_config(aegisPath)) as any
+      setRawConfigData(rawConfig)
 
-    const config_path = await path.join(aegisPath, 'config', 'config.yaml')
-    const config = await fs.readFileSync(config_path)
+      const parsedConfig = parseClientConfig(rawConfig)
+      setConfig(parsedConfig)
+      return parsedConfig
+    } catch (error) {
+      console.error('Error reading config:', error)
+      setConfig(null)
+      setRawConfigData(null)
+      throw new Error(`Failed to load config.yaml: ${error}`)
+    }
+  }
+
+  const getConfigValue = (path: string): unknown => {
+    if (!rawConfigData) return null
+    return getDynamicConfigValue(rawConfigData, path)
+  }
+
+  const getConfig = (): ClientConfig | null => {
     return config
   }
 
-  const getAllConfigPresets = async () => {
-    if (!aegisPath) {
-      return []
-    }
-
-    try {
-      // Always get all presets initially
-      const presets = await aegisAPI.read_config_presets(aegisPath, 'all')
-      return presets
-    } catch (error) {
-      console.error('Error reading config presets:', error)
-      return []
-    }
+  const isAssignmentConfig = (): boolean => {
+    return config?.configType === 'assignment'
   }
 
-  const getFilteredConfigPresets = async (context: string) => {
-    if (!aegisPath) {
-      return []
-    }
-
-    try {
-      const presets = await aegisAPI.read_config_presets(aegisPath, context)
-      return presets
-    } catch (error) {
-      console.error('Error reading filtered config presets:', error)
-      return []
-    }
+  const getDefaultAgentAmount = (): number => {
+    return config?.defaultAgentAmount || 1
   }
 
-  const refreshConfigPresets = async () => {
-    const compMode = localStorage.getItem('aegis_comp_mode') === 'true'
-    const context = compMode ? 'competition' : 'assignments'
-    const filteredPresets = await getFilteredConfigPresets(context)
-    setConfigPresets(filteredPresets)
-
-    // Always clear selected config when toggle changes
-    localStorage.removeItem('aegis_config')
+  const isMultiAgentEnabled = (): boolean => {
+    return config?.variableAgentAmount || false
   }
 
   const refreshWorldsAndAgents = async () => {
@@ -178,40 +173,36 @@ export function createScaffold(): Scaffold {
     if (!aegisPath) return
 
     const loadData = async () => {
-      const [worldsData, agentsData, allPresets] = await Promise.all([
+      const [worldsData, agentsData] = await Promise.all([
         getWorlds(aegisPath),
-        getAgents(aegisPath),
-        getAllConfigPresets()
+        getAgents(aegisPath)
       ])
 
       setWorlds(worldsData)
       setAgents(agentsData)
-      setAllConfigPresets(allPresets)
 
-      // Initial filtering based on current comp mode
-      const compMode = localStorage.getItem('aegis_comp_mode') === 'true'
-      const context = compMode ? 'competition' : 'assignments'
-      const filteredPresets = await getFilteredConfigPresets(context)
-      setConfigPresets(filteredPresets)
+      await readAegisConfig()
     }
 
     loadData()
     localStorage.setItem('aegisPath', aegisPath)
   }, [aegisPath])
 
-  const killSim = aegisPid.current ? killSimulation : undefined
   return {
     aegisPath,
     setupAegisPath,
     worlds,
     agents,
-    configPresets,
     output,
     startSimulation,
-    killSim,
+    killSim: aegisPid.current ? killSimulation : undefined,
     readAegisConfig,
-    refreshConfigPresets,
-    refreshWorldsAndAgents
+    refreshWorldsAndAgents,
+    getConfigValue,
+    getConfig,
+    isAssignmentConfig,
+    getDefaultAgentAmount,
+    isMultiAgentEnabled
   }
 }
 

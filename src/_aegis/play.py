@@ -34,8 +34,7 @@ def run(args: Args) -> None:
     game = Game(args, world, game_pb)
 
     LOGGER.info("========== AEGIS SIMULATION START ==========")
-    LOGGER.info("Running %d rounds", world.rounds)
-    print()  # noqa: T201
+    # LOGGER.info(f"Running {world.rounds} rounds")
     ws_server.start()
 
     game_pb.make_game_header(world)

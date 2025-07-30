@@ -3,6 +3,7 @@
 from _aegis.cli import main
 from _aegis.common import CellInfo, Direction, Location
 from _aegis.common.commands.aegis_commands import ObserveResult, SendMessageResult
+from _aegis.common.commands.aegis_commands.save_result import SaveResult
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     Dig,
@@ -23,6 +24,7 @@ __all__ = [  # noqa: RUF022
     "Observe",
     "Recharge",
     "Save",
+    "SaveResult",
     "AgentCommand",
     "CellInfo",
     "Direction",
@@ -36,13 +38,10 @@ __all__ = [  # noqa: RUF022
 ]
 
 try:
-    from _aegis.common.commands.aegis_commands.save_result import (
-        SaveResult,
-    )
     from _aegis.common.commands.agent_commands.predict import Predict
 except ImportError:
     pass
 else:
-    __all__ += ["Predict", "SaveResult"]
+    __all__ += ["Predict"]
 
 __version__ = "2.0.0"

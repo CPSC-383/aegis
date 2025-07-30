@@ -4,8 +4,6 @@ import traceback
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from .aegis_config import is_feature_enabled
-from .agent_controller import AgentController
 from .command_manager import CommandManager
 from .common import CellInfo, Direction, Location
 from .common.commands.aegis_command import AegisCommand

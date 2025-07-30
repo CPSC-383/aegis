@@ -105,7 +105,7 @@ class Game:
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
             print()  # noqa: T201
-            LOGGER.info("Max rounds reached.")
+            LOGGER.info(f"Max rounds reached ({self.world.rounds}).")
             return True
 
         if len(self._agents) == 0:

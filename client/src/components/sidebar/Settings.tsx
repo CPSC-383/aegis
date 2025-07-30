@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Bug, Folder, SettingsIcon, Trophy } from 'lucide-react'
+import { Bug, Folder, Settings as SettingsIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -12,14 +12,60 @@ type Props = {
 }
 
 const Settings = ({ scaffold }: Props): JSX.Element => {
-  const { aegisPath, setupAegisPath, refreshConfigPresets } = scaffold
-  const [compMode, setCompMode] = useLocalStorage<boolean>('aegis_comp_mode', false)
+  const { aegisPath, setupAegisPath } = scaffold
   const [debugMode, setDebugMode] = useLocalStorage<boolean>('aegis_debug_mode', false)
 
-  const handleCompModeToggle = async (checked: boolean): Promise<void> => {
-    setCompMode(checked)
-    localStorage.removeItem('aegis_config')
-    await refreshConfigPresets()
+  const rawConfigData = ((): Record<string, unknown> | null => {
+    try {
+      const configType = scaffold.getConfigValue('client.CONFIG_TYPE')
+      if (configType) {
+        return {
+          'client.CONFIG_TYPE': scaffold.getConfigValue('client.CONFIG_TYPE'),
+          'features.ENABLE_VARIABLE_AGENT_AMOUNT': scaffold.getConfigValue(
+            'features.ENABLE_VARIABLE_AGENT_AMOUNT'
+          ),
+          'features.DEFAULT_AGENT_AMOUNT': scaffold.getConfigValue(
+            'features.DEFAULT_AGENT_AMOUNT'
+          )
+        }
+      }
+      return null
+    } catch {
+      return null
+    }
+  })()
+
+  const renderConfigValue = (value: unknown): JSX.Element => {
+    if (typeof value === 'boolean') {
+      return (
+        <span
+          className={`px-2 py-1 rounded text-xs font-medium ${
+            value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`}
+        >
+          {value ? 'Enabled' : 'Disabled'}
+        </span>
+      )
+    }
+    if (typeof value === 'number') {
+      return (
+        <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+          {value}
+        </span>
+      )
+    }
+    if (typeof value === 'string') {
+      return (
+        <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+          {value}
+        </span>
+      )
+    }
+    return (
+      <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
+        {String(value)}
+      </span>
+    )
   }
 
   return (
@@ -42,20 +88,49 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
             Reconfigure Aegis Path
           </Button>
         </div>
+
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <Trophy className="w-6 h-6" />
-            <h2 className="text-lg font-semibold">Competitive Mode</h2>
+            <SettingsIcon className="w-6 h-6" />
+            <h2 className="text-lg font-semibold">Configuration</h2>
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <Label>Enable Comp Mode</Label>
-              <p className="text-xs text-muted-foreground">
-                Enable competitive mode settings and configs
+          {rawConfigData ? (
+            <>
+              <div className="text-xs text-muted-foreground">
+                Read from config.yaml
+              </div>
+              <div className="space-y-3 p-3 bg-gray-50 rounded-lg border">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      Config Type
+                    </span>
+                    {renderConfigValue(rawConfigData['client.CONFIG_TYPE'])}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      Variable Agent Amount
+                    </span>
+                    {renderConfigValue(
+                      rawConfigData['features.ENABLE_VARIABLE_AGENT_AMOUNT']
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">
+                      Default Agent Amount
+                    </span>
+                    {renderConfigValue(rawConfigData['features.DEFAULT_AGENT_AMOUNT'])}
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800">
+                No config found. Please ensure config.yaml is properly loaded.
               </p>
             </div>
-            <Switch checked={compMode} onCheckedChange={handleCompModeToggle} />
-          </div>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -68,21 +143,7 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
               <Label>Enable Debug Mode</Label>
               <p className="text-xs text-muted-foreground">Enables detailed logs</p>
             </div>
-            <Switch
-              checked={debugMode}
-              onCheckedChange={(checked) => setDebugMode(checked)}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <SettingsIcon className="w-6 h-6" />
-            <h2 className="text-lg font-semibold">Config Settings</h2>
-          </div>
-          <div className="text-sm text-muted-foreground">
-            <p>Config settings are now managed through config presets.</p>
-            <p>Select a config preset in the Aegis tab to configure your simulation.</p>
+            <Switch checked={debugMode} onCheckedChange={setDebugMode} />
           </div>
         </div>
       </div>

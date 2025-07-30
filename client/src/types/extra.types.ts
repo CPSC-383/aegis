@@ -30,19 +30,6 @@ export function getMoveCostColor(moveCost: number): [number, number, number, num
   return [...shadesOfBrown[index], moveCost] as [number, number, number, number]
 }
 
-export type Config = {
-  Send_Message: {
-    enabled: boolean
-    target: string
-  }
-  Sleep_On_Every: boolean
-  Save_Surv: {
-    strategy: string
-    tie_strategy: string
-  }
-  Enable_Move_Cost: boolean
-}
-
 export type ConsoleLine = {
   has_error: boolean
   message: string
