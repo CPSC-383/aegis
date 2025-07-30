@@ -9,10 +9,11 @@ import { useState } from 'react'
 
 import Round from '@/core/Round'
 import { Vector } from '@/types'
-import {
-  MapPin,
-} from 'lucide-react'
+import { MapPin, Save, X } from 'lucide-react'
 import LayerList from './LayerList'
+import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
+import { isEqual } from 'lodash'
 
 interface Props {
   tile: Vector | undefined
@@ -40,6 +41,44 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
     onClose()
   }
 
+  const updateLayer = (index: number, updates: any) => {
+    setLayers((prev) => {
+      const current = prev[index]
+      const updatedObject = {
+        ...current.object,
+        ...updates
+      }
+
+      const next = [...prev]
+      next[index] = {
+        ...current,
+        object: updatedObject
+      }
+
+      const original = originalLayers[index]
+
+      if (
+        original &&
+        isEqual(updatedObject, original.object) &&
+        isEqual(
+          next.map((l) => l.object),
+          originalLayers.map((l) => l.object)
+        )
+      ) {
+        setHasChanges(false) // state is back to original
+      } else {
+        setHasChanges(true) // modified from original
+      }
+
+      return next
+    })
+  }
+
+  const deleteLayer = (index: number) => {
+    setLayers((prev) => prev.filter((_, i) => i !== index))
+    setHasChanges(true)
+  }
+
   return (
     <Dialog open={!!tile} onOpenChange={(open) => !open && handleCancel()}>
       <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
@@ -54,7 +93,33 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
             </span>
           </DialogDescription>
         </DialogHeader>
-        <LayerList originalLayers={originalLayers} />
+        <LayerList
+          layers={layers}
+          originalLayers={originalLayers}
+          setLayers={setLayers}
+          setHasChanges={setHasChanges}
+          updateLayer={updateLayer}
+          deleteLayer={deleteLayer}
+        />
+        <div className="flex justify-between items-center pt-4">
+          <div className="flex items-center gap-2">
+            {hasChanges && (
+              <Badge variant="outline" className="text-yellow-600 border-yellow-300">
+                Unsaved changes
+              </Badge>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handleCancel}>
+              <X className="w-4 h-4 mr-1" />
+              Cancel
+            </Button>
+            <Button size="sm" onClick={handleSave} disabled={!hasChanges}>
+              <Save className="w-4 h-4 mr-1" />
+              Save Changes
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )
