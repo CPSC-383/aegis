@@ -12,10 +12,12 @@ import {
 import useRound from '@/hooks/useRound'
 import { schema } from 'aegis-schema'
 import World from '@/core/World'
+import useGames from '@/hooks/useGames'
 
 export default function InfoPanel(): JSX.Element | null {
   const { selectedTile } = useCanvas()
   const round = useRound()
+  const games = useGames()
   const initialWorldRef = useRef<World | null>(null)
 
   const currentWorld = round?.world.copy() ?? null
@@ -27,7 +29,7 @@ export default function InfoPanel(): JSX.Element | null {
     }
   }, [round])
 
-  if (!round) return null
+  if (!round || !games?.playable) return null
   if (!selectedTile) return <div>Select a cell to look at</div>
 
   const currentLayers = currentWorld
