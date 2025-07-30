@@ -138,6 +138,8 @@ class CommandProcessor:
     def _handle_move(self, cmd: Move) -> None:
         agent = self._game.get_agent(cmd.get_id())
         dest = agent.location.add(cmd.direction)
+        if not self._game.on_map(dest):
+            return
         dest_cell = self._game.get_cell_at(dest)
 
         if cmd.direction == Direction.CENTER:
@@ -176,7 +178,10 @@ class CommandProcessor:
 
             surround: dict[Direction, CellInfo] = {}
             for direction in Direction:
-                cell = self._game.get_cell_at(location.add(direction))
+                loc = location.add(direction)
+                if not self._game.on_map(loc):
+                    continue
+                cell = self._game.get_cell_at(loc)
                 surround[direction] = cell.get_cell_info() if cell else CellInfo()
 
             result_commands = self._handle_command(

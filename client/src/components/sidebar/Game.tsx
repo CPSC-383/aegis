@@ -1,15 +1,12 @@
-import { useAppContext } from '@/contexts/AppContext'
-import { EventType, listenEvent } from '@/events'
-import { ASSIGNMENT_A3, getCurrentAssignment, useForceUpdate } from '@/utils/util'
 import { motion } from 'framer-motion'
-import { AlertTriangle, Trophy } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
+import useRound from '@/hooks/useRound'
+import { schema } from 'aegis-schema'
 
-const Game = (): JSX.Element => {
-  const { appState } = useAppContext()
-  const forceUpdate = useForceUpdate()
-  listenEvent(EventType.RENDER, forceUpdate)
+export default function Game(): JSX.Element {
+  const round = useRound()
 
-  if (!appState.simulation) {
+  if (!round) {
     return (
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -18,7 +15,7 @@ const Game = (): JSX.Element => {
         className="flex justify-center items-center h-60"
       >
         <div className="text-center p-4">
-          <AlertTriangle className="mx-auto mb-4" size={48} />
+          <AlertTriangle className="mx-auto mb-4 text-orange-500" size={48} />
           <p className="text-lg font-bold text-center text-black">
             Run A Simulation To See Game Stats!
           </p>
@@ -27,108 +24,60 @@ const Game = (): JSX.Element => {
     )
   }
 
-  if (appState.simulation.getRoundNumber() === 0) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        className="flex justify-center items-center h-60"
-      >
-        <div className="text-center p-4">
-          <Trophy className="mx-auto mb-4" size={48} />
-          <p className="text-lg font-bold text-center text-black">
-            Game Stats Will Be Available After The First Round!
-          </p>
-        </div>
-      </motion.div>
-    )
-  }
-
-  const stats = appState.simulation.getStats()
+  const stats = round.game.stats[round.round]
+  const goobs = stats.getTeamStats(schema.Team.GOOBS)
+  const voidseers = stats.getTeamStats(schema.Team.VOIDSEERS)
 
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
+      className="p-4 space-y-6"
     >
-      <div className="p-2 max-h-60 scrollbar overflow-auto">
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          {Object.entries(stats.worldStats).map(([key, stat]) => (
-            <div key={key} className="flex">
-              <div className="w-1 h-full bg-foreground"></div>
-              <div className="flex-1 p-4 bg-gradient-to-r from-background to-transparent bg-opacity-60 flex items-center">
-                <div className="mr-4">{stat.icon && <stat.icon />}</div>
-                <div className="flex-grow">
-                  <p className="text-xs font-medium text-black">
-                    {key.replace(/([A-Z])/g, ' $1').trim()}
-                  </p>
-                  <p className="text-lg font-bold text-black">{stat.value}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {getCurrentAssignment() === ASSIGNMENT_A3 && (
-          <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full text-sm border-collapse border text-center">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="px-2 py-2">Group Stats Table</th>
-                  {stats.groupStats!.map((group) => (
-                    <th key={group.gid} className="px-4 py-2">
-                      {group.name}
-                      <br /> ID: {group.gid}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="px-2 py-2">
-                    Survivors
-                    <br />
-                    Saved
-                  </td>
-                  {stats.groupStats!.map((group) => (
-                    <td key={group.gid} className="px-4 py-2">
-                      {group.survivorsSaved}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b">
-                  <td className="px-2 py-2">
-                    Correct
-                    <br />
-                    Predictions
-                  </td>
-                  {stats.groupStats!.map((group) => (
-                    <td key={group.gid} className="px-4 py-2">
-                      {group.correctPredictions}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b">
-                  <td className="px-2 py-2">
-                    Incorrect
-                    <br />
-                    Predictions
-                  </td>
-                  {stats.groupStats!.map((group) => (
-                    <td key={group.gid} className="px-4 py-2">
-                      {group.incorrectPredictions}
-                    </td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        )}
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm border border-gray-300 rounded overflow-hidden bg-white shadow">
+          <thead className="bg-gray-100 text-gray-700">
+            <tr>
+              <th className="px-4 py-2 text-left">Metric</th>
+              <th className="px-4 py-2 text-center">Goobs</th>
+              <th className="px-4 py-2 text-center">Voidseers</th>
+            </tr>
+          </thead>
+          <tbody className="text-center">
+            <tr className="border-t">
+              <td className="px-4 py-2 text-left">Score</td>
+              <td>{goobs.score}</td>
+              <td>{voidseers.score}</td>
+            </tr>
+            <tr className="border-t">
+              <td className="px-4 py-2 text-left">Units</td>
+              <td>{goobs.units}</td>
+              <td>{voidseers.units}</td>
+            </tr>
+            <tr className="border-t">
+              <td className="px-4 py-2 text-left">Saved (Alive)</td>
+              <td>{goobs.saved_alive}</td>
+              <td>{voidseers.saved_alive}</td>
+            </tr>
+            <tr className="border-t">
+              <td className="px-4 py-2 text-left">Saved (Dead)</td>
+              <td>{goobs.saved_dead}</td>
+              <td>{voidseers.saved_dead}</td>
+            </tr>
+            <tr className="border-t">
+              <td className="px-4 py-2 text-left">Correct Predictions</td>
+              <td>{goobs.predicted_right}</td>
+              <td>{voidseers.predicted_right}</td>
+            </tr>
+            <tr className="border-t">
+              <td className="px-4 py-2 text-left">Incorrect Predictions</td>
+              <td>{goobs.predicted_wrong}</td>
+              <td>{voidseers.predicted_wrong}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </motion.div>
   )
 }
-
-export default Game

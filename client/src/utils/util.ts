@@ -1,4 +1,3 @@
-import { EventType, dispatchEvent } from '@/events'
 import { useCallback, useState } from 'react'
 
 // Forces a re-render
@@ -21,9 +20,6 @@ export function loadImage(path: string): Promise<HTMLImageElement> {
     img.onload = () => {
       loadedImages.set(path, img)
       resolve(img)
-
-      dispatchEvent(EventType.RENDER_STACK, {})
-      dispatchEvent(EventType.RENDER, {})
     }
     img.onerror = (error) => {
       reject(error)
@@ -37,26 +33,6 @@ export function getImage(path: string): HTMLImageElement | undefined {
   if (loadedImages.has(path)) return loadedImages.get(path)
   loadImage(path)
   return undefined
-}
-
-export function whatBucket(
-  min: number,
-  max: number,
-  value: number,
-  numOfBuckets: number = 5
-): number {
-  const range = max - min
-  const bucketSize = range / numOfBuckets
-  let bucket = 0
-
-  for (let i = 0; i < numOfBuckets; i++) {
-    if (value <= min + bucketSize * (i + 1)) {
-      bucket = i
-      break
-    }
-  }
-
-  return bucket
 }
 
 // Format display of types

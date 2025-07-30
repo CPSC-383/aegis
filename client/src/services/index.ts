@@ -1,5 +1,3 @@
-import { Simulation } from '@/core/simulation'
-
 export interface ConsoleLine {
   has_error: boolean
   message: string
@@ -16,7 +14,6 @@ export interface Scaffold {
     rounds: string,
     amount: string,
     world: string,
-    group: string,
     agent: string,
     config: string,
     debug: boolean
@@ -24,6 +21,7 @@ export interface Scaffold {
   killSim: (() => void) | undefined
   readAegisConfig: () => Promise<string>
   refreshConfigPresets: () => Promise<void>
+  refreshWorldsAndAgents: () => Promise<void>
 }
 
 export { createScaffold } from './scaffold'

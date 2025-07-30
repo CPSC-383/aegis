@@ -6,12 +6,14 @@
 
 from . import (
     AgentCommand,
-    Cell,
+    CellInfo,
+    Dig,
     Direction,
     Location,
     Move,
     Observe,
     ObserveResult,
+    Rubble,
     Save,
     SaveResult,
     SendMessage,
@@ -63,9 +65,9 @@ def on_map(loc: Location) -> bool:
     """
 
 
-def get_cell_at(loc: Location) -> Cell | None:
+def get_cell_info_at(loc: Location) -> CellInfo | None:
     """
-    Return the cell object at a given location.
+    Return the cell info at a given location.
 
     Args:
         loc: The location to query.

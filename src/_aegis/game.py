@@ -5,14 +5,14 @@ from .agent import Agent
 from .agent_controller import AgentController
 from .args_parser import Args
 from .command_processor import CommandProcessor
-from .common import Cell, Direction, Location
+from .common import Cell, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
-from .common.commands.agent_commands import Move, Observe, Save, SendMessage
+from .common.commands.agent_commands import Dig, Move, Observe, Save, SendMessage
 from .common.objects import Rubble, Survivor
 from .constants import Constants
+from .game_pb import GamePb
 from .id_gen import IDGenerator
 from .logger import LOGGER
-from .server_websocket import WebSocketServer
 from .team import Team
 from .team_info import TeamInfo
 from .world import World
@@ -34,7 +34,7 @@ else:
 
 
 class Game:
-    def __init__(self, args: Args, world: World) -> None:
+    def __init__(self, args: Args, world: World, game_pb: GamePb) -> None:
         random.seed(world.seed)
         self.args: Args = args
         self.running: bool = True
@@ -42,11 +42,9 @@ class Game:
         self.round: int = 0
         self.id_gen: IDGenerator = IDGenerator()
         self.team_info: TeamInfo = TeamInfo()
+        self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
         self._agent_commands: list[AgentCommand] = []
-        self.ws_server: WebSocketServer = WebSocketServer()
-        if args.client:
-            self.ws_server.set_wait_for_client()
         self._prediction_handler: PredictionHandlerType | None = None
         self._command_processor: CommandProcessor = CommandProcessor(
             self,
@@ -73,9 +71,16 @@ class Game:
 
     def run_round(self) -> None:
         self.round += 1
+        self.game_pb.start_round(self.round)
+        self.process_agent_commands()
+        self.serialize_team_info()
+        self.game_pb.end_round()
+        self.process_end_of_round()
 
+    def process_agent_commands(self) -> None:
         commands: list[AgentCommand] = []
         messages: list[SendMessage] = []
+        agents: list[Agent] = []
 
         for agent in list(self._agents.values()):
             agent.run()
@@ -89,9 +94,13 @@ class Game:
 
             agent.log(f"Action received: {command}")
             agent.log(f"Directives received: {directives}")
+            agents.append(agent)  # defer end_turn
+            agent.command_manager.clear()
 
         self._command_processor.process(commands, messages)
-        self.process_end_of_round()
+
+        for agent in agents:
+            self.game_pb.end_turn(agent)
 
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
@@ -150,6 +159,7 @@ class Game:
         agent.load(self.team_agents[team], self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
         self.add_agent(agent, loc)
         self.team_info.add_units(agent.team, 1)
+        self.game_pb.add_spawn(agent.id, agent.team, agent.location)
 
     def add_agent(self, agent: Agent, loc: Location) -> None:
         if agent not in self._agents:
@@ -171,8 +181,7 @@ class Game:
     def remove_layer(self, loc: Location, team: Team) -> None:
         cell = self.get_cell_at(loc)
         world_object = cell.remove_top_layer()
-        if world_object is None:
-            return
+        self.game_pb.add_removed_layer(loc)
 
         if isinstance(world_object, Survivor):
             survivor = world_object
@@ -199,6 +208,16 @@ class Game:
     def get_cell_at(self, location: Location) -> Cell:
         return self.world.get_cell_at(location)
 
+    def serialize_team_info(self) -> None:
+        self.game_pb.add_team_info(Team.GOOBS, self.team_info)
+        self.game_pb.add_team_info(Team.VOIDSEERS, self.team_info)
+
+    def get_cell_info_at(self, location: Location) -> CellInfo:
+        cell = self.world.get_cell_at(location)
+        return CellInfo(
+            cell.type, cell.location, cell.move_cost, cell.agents, cell.get_top_layer()
+        )
+
     def get_survs(self) -> list[Location]:
         return [
             cell.location for cell in self.world.cells if cell.number_of_survivors() > 0
@@ -212,6 +231,7 @@ class Game:
 
     def create_methods(self, ac: AgentController):  # noqa: ANN202
         methods = {
+            "Dig": Dig,
             "Direction": Direction,
             "Location": Location,
             "Move": Move,
@@ -230,7 +250,7 @@ class Game:
             "send": ac.send,
             "spawn_agent": ac.spawn_agent,
             "on_map": self.on_map,
-            "get_cell_at": self.get_cell_at,
+            "get_cell_info_at": self.get_cell_info_at,
             "get_charging_cells": self.get_charging_cells,
             "get_spawns": self.get_spawns,
             "get_survs": self.get_survs,

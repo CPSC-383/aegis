@@ -1,26 +1,19 @@
-import { Simulation } from '@/core/simulation'
-import { WorldMap } from '@/core/world'
-import { ProtobufService } from './protobuf'
-import { SimulationEvent, WorldState, RoundUpdate } from '@/generated/aegis'
+import Game from '@/core/Game'
+import Games from '@/core/Games'
+import { schema } from 'aegis-schema'
+import invariant from 'tiny-invariant'
 
 export class ClientWebSocket {
   private url: string = 'ws://localhost:6003'
   private reconnectInterval: number = 500
-  private simulation: Simulation | undefined = undefined
-  private protobufService: ProtobufService
+  private games: Games | undefined = undefined
+  private game: Game | undefined = undefined
 
-  constructor(readonly onSimCreated: (sim: Simulation) => void) {
-    this.protobufService = ProtobufService.getInstance()
-    this.initializeProtobuf()
+  constructor(
+    readonly onGameCreated: (game: Game) => void,
+    readonly onGamesCreated: (games: Games) => void
+  ) {
     this.connect()
-  }
-
-  private async initializeProtobuf() {
-    try {
-      await this.protobufService.initialize()
-    } catch (error) {
-      console.error('Failed to initialize protobuf service:', error)
-    }
   }
 
   private connect() {
@@ -35,33 +28,38 @@ export class ClientWebSocket {
     }
 
     ws.onclose = () => {
-      this.simulation = undefined
-      setTimeout(() => {
-        this.connect()
-      }, this.reconnectInterval)
+      this.game = undefined
+      setTimeout(() => this.connect(), this.reconnectInterval)
     }
   }
 
   private handleEvent(data: string) {
     try {
-      const decodedBase64 = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
-      const event: SimulationEvent = this.protobufService.deserialize(decodedBase64)
+      const decoded = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
+      const event = schema.Event.fromBinary(decoded)
 
-      if (!this.simulation) {
-        // First event should be the world init data
-        if (event.event.oneofKind === 'worldInit') {
-          const world = WorldMap.fromProtobufWorldState(event.event.worldInit)
-          this.simulation = new Simulation(world)
-          this.onSimCreated(this.simulation)
-        }
-      } else {
-        // Handle round updates and completion
-        if (event.event.oneofKind === 'roundUpdate') {
-          this.simulation.addProtobufEvent(event.event.roundUpdate)
-        } else if (event.event.oneofKind === 'complete') {
-          this.simulation = undefined
-        }
+      if (!this.games) {
+        invariant(
+          event.event.oneofKind === 'gamesHeader',
+          'First event must be the GamesHeader.'
+        )
+
+        this.games = new Games(true)
+        return
       }
+
+      this.games.addEvent(event)
+
+      if (event.event.oneofKind === 'round') {
+        const games = this.games.games
+        const game = games[games.length - 1]
+        if (this.game === game) return
+
+        this.onGameCreated(game)
+        this.game = game
+      }
+
+      if (event.event.oneofKind === 'gameFooter') this.game = undefined
     } catch (error) {
       console.error('Failed to handle websocket event:', error)
     }

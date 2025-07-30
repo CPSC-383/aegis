@@ -18,9 +18,7 @@ class CommandManager:
         return self._action_command
 
     def get_directives(self) -> list[AgentCommand]:
-        directives = list(self._directive_commands)
-        self._directive_commands.clear()
-        return directives
+        return self._directive_commands[:]
 
     def send(self, command: AgentCommand) -> None:
         if isinstance(command, SendMessage):
@@ -34,15 +32,9 @@ class CommandManager:
             self._action_command = command
 
     def get_messages(self) -> list[SendMessage]:
-        messages = self._message_queue[:]
-        self._message_queue.clear()
-        return messages
+        return self._message_queue[:]
 
-    def reset_command(self) -> None:
+    def clear(self) -> None:
         self._action_command = None
-
-    def reset_directives(self) -> None:
         self._directive_commands.clear()
-
-    def reset_messages(self) -> None:
         self._message_queue.clear()

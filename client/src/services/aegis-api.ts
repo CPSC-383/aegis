@@ -2,7 +2,7 @@ type AegisAPI = {
   openAegisDirectory: () => Promise<string | undefined>
   toggleMoveCost: (config_path: string, value: boolean) => void
   getAppPath: () => Promise<string>
-  exportWorld: (name: string, world: string) => Promise<void>
+  exportWorld: (name: string, world: Uint8Array) => Promise<void>
   path: {
     join: (...args: string[]) => Promise<string>
     dirname: (dir: string) => Promise<string>
@@ -18,7 +18,6 @@ type AegisAPI = {
       rounds: string,
       amount: string,
       world: string,
-      group: string,
       agent: string,
       aegisPath: string,
       config: string,

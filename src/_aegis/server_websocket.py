@@ -1,10 +1,11 @@
 # pyright: reportMissingTypeStubs = false
+import base64
 import queue
 import threading
 import time
 from typing import NamedTuple
 
-from websocket_server import WebsocketServer
+from websocket_server import WebsocketServer  # pyright: ignore[reportMissingTypeStubs]
 
 from .logger import LOGGER
 
@@ -18,13 +19,11 @@ class Client(NamedTuple):
 
 
 class WebSocketServer:
-    """Serve a AEGIS Simulation over a websocket connection."""
-
-    def __init__(self) -> None:
+    def __init__(self, *, wait_for_client: bool) -> None:
         """Initialize a new server."""
         self._host: str = "localhost"
         self._port: int = 6003
-        self._wait_for_client: bool = False
+        self._wait_for_client: bool = wait_for_client
         self._connected: bool = False
         self._done: bool = False
         self._server: WebsocketServer | None = None
@@ -58,11 +57,12 @@ class WebSocketServer:
                     self._server.send_message(client, event)  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
                 self._previous_events.append(event)
 
-    def add_event(self, event: str) -> None:
+    def add_event(self, event: bytes) -> None:
         if self._done:
             error = "Can't add event, server already finished!"
             raise RuntimeError(error)
-        self._incoming_events.put(event)
+        encoded_event = base64.b64encode(event).decode("utf-8")
+        self._incoming_events.put(encoded_event)
 
     def _on_open(self, client: Client, server: WebsocketServer) -> None:
         self._connected = True
@@ -103,3 +103,4 @@ class WebSocketServer:
 
     def set_wait_for_client(self) -> None:
         self._wait_for_client = True
+

@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
-import { AgentInfoDict, CellDict, Simulation } from '@/core/simulation'
-import { drawAgent } from '@/utils/renderUtils'
+import { AgentInfoDict, CellDict, Game } from '@/core/game'
+// import { drawAgent } from '@/utils/renderUtils'
 import { useCallback, useEffect, useRef } from 'react'
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
   setSelectedAgent: (value: AgentInfoDict) => void
   cellInfo: CellDict | undefined
   agents: AgentInfoDict[]
-  simulation: Simulation
+  game: Game
 }
 
 const CellPanel = ({
@@ -16,7 +16,7 @@ const CellPanel = ({
   setSelectedAgent,
   cellInfo,
   agents,
-  simulation
+  game
 }: Props): JSX.Element => {
   const canvasRefs = useRef<{ [key: number]: HTMLCanvasElement | null }>({})
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -75,17 +75,17 @@ const CellPanel = ({
     })
   }, [agents, renderAgentCanvas])
 
-  useEffect(() => {
-    updateCanvasSize()
-    window.addEventListener('resize', updateCanvasSize)
-    return (): void => window.removeEventListener('resize', updateCanvasSize)
-  }, [agents, selectedCell, simulation, updateCanvasSize, renderAgentCanvas])
+  // useEffect(() => {
+  //   updateCanvasSize()
+  //   window.addEventListener('resize', updateCanvasSize)
+  //   return (): void => window.removeEventListener('resize', updateCanvasSize)
+  // }, [agents, selectedCell, game, updateCanvasSize, renderAgentCanvas])
 
   const handleAgentCanvasClick = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ): void => {
     const container = containerRef.current
-    if (!container || !simulation) return
+    if (!container || !game) return
 
     const agentSize = 32
     Object.values(canvasRefs.current).forEach((canvas, i) => {

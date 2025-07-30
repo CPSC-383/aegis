@@ -54,12 +54,10 @@ class Agent:
         self.results: list[AegisCommand] = []
         self.steps_taken: int = 0
         self.debug: bool = debug
-        self.logs: list[str] = []
 
     def process_start_of_turn(self) -> None:
         self._send_messages()
         self._send_results()
-        self.logs.clear()
 
     def run(self) -> None:
         if self.sandbox is None:
@@ -112,7 +110,7 @@ class Agent:
 
     def update_surround(self, surround: dict[Direction, CellInfo]) -> None:
         for cell_info in surround.values():
-            cell = self.game.get_cell_at(cell_info.location)
+            cell = self.world.get_cell_at(cell_info.location)
             cell.agents = cell_info.agents[:]
             cell.move_cost = cell_info.move_cost
             cell.set_top_layer(cell_info.top_layer)

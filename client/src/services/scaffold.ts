@@ -1,9 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import Game from '@/core/Game'
+import Games from '@/core/Games'
+import { Runner } from '@/core/Runner'
 import { ClientWebSocket, aegisAPI } from '@/services'
-import { useAppContext } from '@/contexts/AppContext'
-import { Simulation } from '@/core/simulation'
-import { useForceUpdate } from '@/utils/util'
+import { useAppStore } from '@/store/useAppStore'
 import { ConsoleLine } from '@/types'
+import { useForceUpdate } from '@/utils/util'
+import { useEffect, useRef, useState } from 'react'
+import invariant from 'tiny-invariant'
 
 export type Scaffold = {
   aegisPath: string | undefined
@@ -16,7 +19,6 @@ export type Scaffold = {
     rounds: string,
     amount: string,
     world: string,
-    group: string,
     agent: string,
     config: string,
     debug: boolean
@@ -24,14 +26,14 @@ export type Scaffold = {
   killSim: (() => void) | undefined
   readAegisConfig: () => Promise<string>
   refreshConfigPresets: () => Promise<void>
+  refreshWorldsAndAgents: () => Promise<void>
 }
 
 export function createScaffold(): Scaffold {
-  const { setAppState } = useAppContext()
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
-  const [allConfigPresets, setAllConfigPresets] = useState<string[]>([])
+  const [_allConfigPresets, setAllConfigPresets] = useState<string[]>([])
   const [configPresets, setConfigPresets] = useState<string[]>([])
   const [output, setOutput] = useState<ConsoleLine[]>([])
   const aegisPid = useRef<string | undefined>(undefined)
@@ -52,14 +54,11 @@ export function createScaffold(): Scaffold {
     rounds: string,
     amount: string,
     world: string,
-    group: string,
     agent: string,
     config: string,
     debug: boolean
   ) => {
-    if (!aegisPath) {
-      throw new Error("Can't find AEGIS path!")
-    }
+    invariant(aegisPath, "Can't find AEGIS path!")
 
     // Reset output
     setOutput([])
@@ -68,7 +67,6 @@ export function createScaffold(): Scaffold {
       rounds,
       amount,
       world,
-      group,
       agent,
       aegisPath,
       config,
@@ -79,9 +77,7 @@ export function createScaffold(): Scaffold {
   }
 
   const readAegisConfig = async () => {
-    if (!aegisPath) {
-      throw new Error("Can't find AEGIS path!")
-    }
+    invariant(aegisPath, "Can't find AEGIS path!")
 
     const fs = aegisAPI.fs
     const path = aegisAPI.path
@@ -130,6 +126,18 @@ export function createScaffold(): Scaffold {
     localStorage.removeItem('aegis_config')
   }
 
+  const refreshWorldsAndAgents = async () => {
+    if (!aegisPath) return
+
+    const [worldsData, agentsData] = await Promise.all([
+      getWorlds(aegisPath),
+      getAgents(aegisPath)
+    ])
+
+    setWorlds(worldsData)
+    setAgents(agentsData)
+  }
+
   const killSimulation = () => {
     if (!aegisPid.current) return
     aegisAPI.aegis_child_process.kill(aegisPid.current)
@@ -142,7 +150,6 @@ export function createScaffold(): Scaffold {
       setAegisPath(path)
     })
 
-    // Setup aegis listeners once
     aegisAPI.aegis_child_process.onStdout((data: string) => {
       addOutput(data, false)
     })
@@ -156,13 +163,15 @@ export function createScaffold(): Scaffold {
       forceUpdate()
     })
 
-    const onSimCreated = (sim: Simulation) => {
-      setAppState((prevAppState) => ({
-        ...prevAppState,
-        simulation: sim
-      }))
+    const onGamesCreated = (games: Games) => {
+      useAppStore.getState().pushToQueue(games)
+      Runner.setGames(games)
     }
-    new ClientWebSocket(onSimCreated)
+
+    const onGameCreated = (game: Game) => {
+      Runner.setGame(game)
+    }
+    new ClientWebSocket(onGameCreated, onGamesCreated)
   }, [])
 
   useEffect(() => {
@@ -201,7 +210,8 @@ export function createScaffold(): Scaffold {
     startSimulation,
     killSim,
     readAegisConfig,
-    refreshConfigPresets
+    refreshConfigPresets,
+    refreshWorldsAndAgents
   }
 }
 
