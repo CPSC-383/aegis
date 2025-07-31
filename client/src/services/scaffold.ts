@@ -236,7 +236,9 @@ const getWorlds = async (aegisPath: string) => {
   if (!(await fs.existsSync(worldsPath))) return []
 
   const worlds = await fs.readdirSync(worldsPath)
-  const filtered_worlds = worlds.filter((world: string) => world.endsWith('.world'))
+  const filtered_worlds = worlds
+    .filter((world: string) => world.endsWith('.world'))
+    .map((world: string) => world.replace(/\.world$/, ''))
   return filtered_worlds
 }
 

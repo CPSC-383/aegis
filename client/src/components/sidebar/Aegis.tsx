@@ -14,6 +14,7 @@ import {
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { Scaffold } from '@/services'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
+import NumberInput from '../NumberInput'
 
 type Props = {
   scaffold: Scaffold
@@ -87,14 +88,6 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
     [world, rounds, agent, configError]
   )
 
-  const handleRoundBlur = (e: React.FocusEvent<HTMLInputElement>): void => {
-    const value = parseInt(e.target.value)
-    if (!isNaN(value)) {
-      const newValue = Math.max(1, value)
-      setRounds(newValue)
-    }
-  }
-
   const showMultiAgentOptions = isMultiAgentEnabled()
 
   return (
@@ -141,13 +134,15 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       </div>
 
       <div>
-        <Label>Number of Rounds</Label>
-        <Input
-          type="number"
-          value={rounds === 0 ? '' : rounds}
-          onChange={(e) => setRounds(parseInt(e.target.value) || 0)}
-          onBlur={handleRoundBlur}
-          placeholder="Enter number of rounds"
+        <Label htmlFor="rounds" className="text-xs text-muted-foreground">
+          Number of Rounds
+        </Label>
+        <NumberInput
+          name="rounds"
+          value={rounds}
+          min={1}
+          max={1000}
+          onChange={(_, val) => setRounds(val)}
         />
       </div>
 
