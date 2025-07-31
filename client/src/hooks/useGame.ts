@@ -9,7 +9,7 @@ export default function useGame(): Game | undefined {
   const [, setMaxRound] = useState(games?.currentGame?.maxRound)
 
   useEffect(() => {
-    const unsubscribe = subscribe(ListenerKey.Games, () => {
+    const unsubscribe = subscribe(ListenerKey.Game, () => {
       setGame(games?.currentGame)
       setMaxRound(games?.currentGame?.maxRound)
     })

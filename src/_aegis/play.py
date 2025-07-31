@@ -11,13 +11,13 @@ from .world_parser import load_world
 
 def make_game_start_string(args: Args, world: str) -> str:
     if args.agent and not args.agent2:
-        return f"{Team.GOOBS} on {world}"
+        return f"GOOBS on {world}"
 
     if args.agent2 and not args.agent:
-        return f"{Team.VOIDSEERS} on {world}"
+        return f"VOIDSEERS on {world}"
 
     # TODO @dante: This will have to show actual team names #noqa: TD003
-    return f"{Team.GOOBS} vs {Team.VOIDSEERS} on {world}"
+    return f"GOOBS vs VOIDSEERS on {world}"
 
 
 def run(args: Args) -> None:
@@ -57,7 +57,6 @@ def run(args: Args) -> None:
                 game.running = False
 
         game_pb.make_game_footer()
-        LOGGER.info("========== AEGIS END ==========")
         LOGGER.info(f"Finished on round {game.round}")
         LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
         LOGGER.info("-" * 58)
@@ -69,6 +68,7 @@ def run(args: Args) -> None:
             predictions = game.team_info.get_predicted_right(team)
 
             LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
+        LOGGER.info("========== AEGIS END ==========")
         print()  # noqa: T201
     game_pb.make_games_footer()
     ws_server.finish()

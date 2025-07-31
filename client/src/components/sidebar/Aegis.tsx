@@ -12,10 +12,11 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
-import { Scaffold } from '@/services'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 import NumberInput from '../NumberInput'
 import { MultiSelect } from '../ui/multiselect'
+import { Scaffold } from '@/types'
+import GameCycler from '../GameCycler'
 
 type Props = {
   scaffold: Scaffold
@@ -85,7 +86,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   }, [getDefaultAgentAmount])
 
   const isButtonDisabled = useMemo(
-    () => !selectedWorlds || !rounds || !agent || configError !== null,
+    () => !selectedWorlds.length || !rounds || !agent || configError !== null,
     [selectedWorlds, rounds, agent, configError]
   )
 
@@ -192,6 +193,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
           </Button>
         )}
       </div>
+      <GameCycler />
     </motion.div>
   )
 }

@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useAppStore } from '@/store/useAppStore'
 import { TabNames } from '@/types'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
@@ -14,7 +13,7 @@ import Aegis from './Aegis'
 import Game from './Game'
 import Settings from './Settings'
 
-const Sidebar = (): JSX.Element => {
+export default function Sidebar(): JSX.Element {
   const scaffold = createScaffold()
   const { aegisPath, setupAegisPath, output } = scaffold
   const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
@@ -118,5 +117,3 @@ const Sidebar = (): JSX.Element => {
     </div>
   )
 }
-
-export default Sidebar

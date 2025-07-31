@@ -12,24 +12,27 @@ import {
   getConfigValue as getDynamicConfigValue,
   parseClientConfig
 } from './config'
+import RingBuffer from '@/utils/ringBuffer'
 
 export function createScaffold(): Scaffold {
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
-  const [output, setOutput] = useState<ConsoleLine[]>([])
   const [config, setConfig] = useState<ClientConfig | null>(null)
   const [rawConfigData, setRawConfigData] = useState<any>(null)
   const aegisPid = useRef<string | undefined>(undefined)
+  const currentGameIdx = useRef(0)
+  const output = useRef<RingBuffer<ConsoleLine>>(new RingBuffer(20000))
+  let didInit = false
   const forceUpdate = useForceUpdate()
 
   const addOutput = (line: ConsoleLine) => {
-    console.log(line.content)
-    // const splitData = data.split('\n')
-    // const formattedData = splitData.map((line) => ({ has_error, message: line, gameIdx: 0 }))
-    //
-    // console.log(formattedData)
-    // setOutput((prevOutput) => prevOutput.concat(formattedData))
+    line.gameIdx = currentGameIdx.current
+    output.current.push(line)
+
+    if (line.content.startsWith("[INFO][aegis]") && line.content.includes("AEGIS END")) {
+      currentGameIdx.current++
+    }
   }
 
   const setupAegisPath = async () => {
@@ -47,8 +50,8 @@ export function createScaffold(): Scaffold {
     invariant(aegisPath, "Can't find AEGIS path!")
     invariant(config, 'Config not loaded. Please ensure config.yaml is valid.')
 
-    // Reset output
-    setOutput([])
+    currentGameIdx.current = 0
+    output.current.clear()
 
     const pid = await aegisAPI.aegis_child_process.spawn(
       rounds,
@@ -121,32 +124,35 @@ export function createScaffold(): Scaffold {
   }
 
   useEffect(() => {
-    getAegisPath().then((path) => {
-      setAegisPath(path)
-    })
+    if (!didInit) {
+      didInit = true
+      getAegisPath().then((path) => {
+        setAegisPath(path)
+      })
 
-    aegisAPI.aegis_child_process.onStdout((data: string) => {
-      addOutput({ content: data, has_error: false, gameIdx: 0 })
-    })
+      aegisAPI.aegis_child_process.onStdout((data: string) => {
+        addOutput({ content: data, has_error: false, gameIdx: 0 })
+      })
 
-    aegisAPI.aegis_child_process.onStderr((data: string) => {
-      addOutput({ content: data, has_error: true, gameIdx: 0 })
-    })
+      aegisAPI.aegis_child_process.onStderr((data: string) => {
+        addOutput({ content: data, has_error: true, gameIdx: 0 })
+      })
 
-    aegisAPI.aegis_child_process.onExit(() => {
-      aegisPid.current = undefined
-      forceUpdate()
-    })
+      aegisAPI.aegis_child_process.onExit(() => {
+        aegisPid.current = undefined
+        forceUpdate()
+      })
 
-    const onGamesCreated = (games: Games) => {
-      useAppStore.getState().pushToQueue(games)
-      Runner.setGames(games)
+      const onGamesCreated = (games: Games) => {
+        useAppStore.getState().pushToQueue(games)
+        Runner.setGames(games)
+      }
+
+      const onGameCreated = (game: Game) => {
+        Runner.setGame(game)
+      }
+      new ClientWebSocket(onGameCreated, onGamesCreated)
     }
-
-    const onGameCreated = (game: Game) => {
-      Runner.setGame(game)
-    }
-    new ClientWebSocket(onGameCreated, onGamesCreated)
   }, [])
 
   useEffect(() => {
@@ -173,7 +179,7 @@ export function createScaffold(): Scaffold {
     setupAegisPath,
     worlds,
     agents,
-    output,
+    output: output.current,
     startSimulation,
     killSim: aegisPid.current ? killSimulation : undefined,
     readAegisConfig,

@@ -3,6 +3,7 @@ import child_process from 'child_process'
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import fs from 'fs'
 import path from 'path'
+import { l } from 'vite/dist/node/types.d-aGj9QkWt'
 import yaml from 'yaml'
 
 class ElectronApp {
@@ -169,31 +170,32 @@ class ElectronApp {
       }
     }
   }
-  private updateConfig(filePath: string, updates: any) {
-    try {
-      const config = this.readConfig(filePath) as Record<string, any>
 
-      // Handle nested updates (like assignment_specific.ENABLE_MOVE_COST)
-      for (const [key, value] of Object.entries(updates)) {
-        if (typeof value === 'object' && value !== null) {
-          // Handle nested objects
-          if (!config[key]) {
-            config[key] = {}
-          }
-          Object.assign(config[key], value)
-        } else {
-          // Handle direct properties
-          config[key] = value
-        }
-      }
-
-      fs.writeFileSync(filePath, yaml.stringify(config))
-    } catch (error) {
-      // @ts-ignore: error type
-      console.error(`Error updating the config file: ${error.message}`)
-      throw error
-    }
-  }
+  // private updateConfig(filePath: string, updates: any) {
+  //   try {
+  //     const config = this.readConfig(filePath) as Record<string, any>
+  //
+  //     // Handle nested updates (like assignment_specific.ENABLE_MOVE_COST)
+  //     for (const [key, value] of Object.entries(updates)) {
+  //       if (typeof value === 'object' && value !== null) {
+  //         // Handle nested objects
+  //         if (!config[key]) {
+  //           config[key] = {}
+  //         }
+  //         Object.assign(config[key], value)
+  //       } else {
+  //         // Handle direct properties
+  //         config[key] = value
+  //       }
+  //     }
+  //
+  //     fs.writeFileSync(filePath, yaml.stringify(config))
+  //   } catch (error) {
+  //     // @ts-ignore: error type
+  //     console.error(`Error updating the config file: ${error.message}`)
+  //     throw error
+  //   }
+  // }
 
   private spawnAegisProcess(
     rounds: string,
@@ -224,18 +226,31 @@ class ElectronApp {
         if (pid) {
           this.processes.set(pid, childAegis)
 
+
+          let stdoutBuffer = ''
+          let stderrBuffer = ''
+
+          function flushBuffer(buffer: string, data: string) {
+            buffer += data
+            const lines = buffer.split("\n")
+            buffer = lines.pop() ?? ''
+            return { lines, buffer }
+          }
+
           childAegis.stdout?.on('data', (data) => {
-            this.mainWindow?.webContents.send(
-              'aegis_child_process.stdout',
-              data.toString()
-            )
+            const { lines, buffer } = flushBuffer(stdoutBuffer, data.toString())
+            stdoutBuffer = buffer
+            lines.forEach((line) => {
+              this.mainWindow?.webContents.send('aegis_child_process.stdout', line)
+            })
           })
 
           childAegis.stderr?.on('data', (data) => {
-            this.mainWindow?.webContents.send(
-              'aegis_child_process.stderr',
-              data.toString()
-            )
+            const { lines, buffer } = flushBuffer(stdoutBuffer, data.toString())
+            stderrBuffer = buffer
+            lines.forEach((line) => {
+              this.mainWindow?.webContents.send('aegis_child_process.stderr', line)
+            })
           })
 
           childAegis.on('exit', () => {

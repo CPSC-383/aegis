@@ -1,4 +1,5 @@
 import { ClientConfig } from "@/services"
+import RingBuffer from "@/utils/ringBuffer"
 
 export enum TabNames {
   Aegis = 'Aegis',
@@ -43,7 +44,7 @@ export interface Scaffold {
   setupAegisPath: () => void
   worlds: string[]
   agents: string[]
-  output: ConsoleLine[]
+  output: RingBuffer<ConsoleLine>
   startSimulation: (
     rounds: string,
     amount: string,
