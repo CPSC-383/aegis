@@ -198,7 +198,7 @@ class ElectronApp {
   private spawnAegisProcess(
     rounds: string,
     amount: string,
-    world: string,
+    world: string[],
     agent: string,
     aegisPath: string,
     debug: boolean
@@ -209,7 +209,7 @@ class ElectronApp {
       '--agent',
       `${agent}`,
       '--world',
-      `${world}`,
+      ...world,
       '--rounds',
       rounds,
       '--client',

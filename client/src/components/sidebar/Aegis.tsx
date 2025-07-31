@@ -15,6 +15,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { Scaffold } from '@/services'
 import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
 import NumberInput from '../NumberInput'
+import { MultiSelect } from '../ui/multiselect'
 
 type Props = {
   scaffold: Scaffold
@@ -31,7 +32,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
     getDefaultAgentAmount,
     isMultiAgentEnabled
   } = scaffold
-  const [world, setWorld] = useLocalStorage<string>('aegis_world', '')
+  const [selectedWorlds, setSelectedWorlds] = useState<string[]>([])
   const [rounds, setRounds] = useLocalStorage<number>('aegis_rounds', 0)
   const [agent, setAgent] = useLocalStorage<string>('aegis_agent', '')
   const [agentAmount, setAgentAmount] = useLocalStorage<number>('aegis_agent_amount', 1)
@@ -57,23 +58,23 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
     }
   }
 
-  useEffect(() => {
-    const storedWorld = localStorage.getItem('aegis_world')
-    if (storedWorld) {
-      const worldName = JSON.parse(storedWorld)
-      if (worldName && !worlds.includes(worldName)) {
-        setWorld('')
-      }
-    }
-
-    const storedAgent = localStorage.getItem('aegis_agent')
-    if (storedAgent) {
-      const agentName = JSON.parse(storedAgent)
-      if (agentName && !agents.includes(agentName)) {
-        setAgent('')
-      }
-    }
-  }, [worlds, agents, setWorld, setAgent])
+  // useEffect(() => {
+  //   const storedWorld = localStorage.getItem('aegis_world')
+  //   if (storedWorld) {
+  //     const worldName = JSON.parse(storedWorld)
+  //     if (worldName && !worlds.includes(worldName)) {
+  //       setWorld('')
+  //     }
+  //   }
+  //
+  //   const storedAgent = localStorage.getItem('aegis_agent')
+  //   if (storedAgent) {
+  //     const agentName = JSON.parse(storedAgent)
+  //     if (agentName && !agents.includes(agentName)) {
+  //       setAgent('')
+  //     }
+  //   }
+  // }, [worlds, agents, setWorld, setAgent])
 
   // Update agent amount when config changes
   useEffect(() => {
@@ -84,8 +85,8 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   }, [getDefaultAgentAmount])
 
   const isButtonDisabled = useMemo(
-    () => !world || !rounds || !agent || configError !== null,
-    [world, rounds, agent, configError]
+    () => !selectedWorlds || !rounds || !agent || configError !== null,
+    [selectedWorlds, rounds, agent, configError]
   )
 
   const showMultiAgentOptions = isMultiAgentEnabled()
@@ -116,21 +117,15 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       )}
 
       <div>
-        <Label>Select a World</Label>
-        <Select value={world} onValueChange={(value) => setWorld(value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Choose a world">
-              {world || 'Select a world'}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {worlds.map((worldName) => (
-              <SelectItem key={worldName} value={worldName}>
-                {worldName}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Label className="text-xs text-muted-foreground">
+          Worlds
+        </Label>
+        <MultiSelect
+          options={worlds}
+          selected={selectedWorlds}
+          onChange={setSelectedWorlds}
+          placeholder='Choose worlds...'
+        />
       </div>
 
       <div>
@@ -147,7 +142,9 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       </div>
 
       <div>
-        <Label>Select an Agent</Label>
+        <Label className="text-xs text-muted-foreground">
+          Agent
+        </Label>
         <Select value={agent} onValueChange={(value) => setAgent(value)}>
           <SelectTrigger>
             <SelectValue placeholder="Choose an agent">
@@ -186,7 +183,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
           <Button
             onClick={() => {
               const amount = getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : agentAmount
-              startSimulation(rounds.toString(), amount.toString(), world, agent, debug)
+              startSimulation(rounds.toString(), amount.toString(), selectedWorlds, agent, debug)
             }}
             disabled={isButtonDisabled}
             className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}

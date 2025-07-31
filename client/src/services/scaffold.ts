@@ -3,7 +3,7 @@ import Games from '@/core/Games'
 import { Runner } from '@/core/Runner'
 import { ClientWebSocket, aegisAPI } from '@/services'
 import { useAppStore } from '@/store/useAppStore'
-import { ConsoleLine } from '@/types'
+import { ConsoleLine, Scaffold } from '@/types'
 import { useForceUpdate } from '@/utils/util'
 import { useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
@@ -12,29 +12,6 @@ import {
   getConfigValue as getDynamicConfigValue,
   parseClientConfig
 } from './config'
-
-export type Scaffold = {
-  aegisPath: string | undefined
-  setupAegisPath: () => Promise<void>
-  worlds: string[]
-  agents: string[]
-  output: ConsoleLine[]
-  startSimulation: (
-    rounds: string,
-    amount: string,
-    world: string,
-    agent: string,
-    debug: boolean
-  ) => void
-  killSim: (() => void) | undefined
-  readAegisConfig: () => Promise<ClientConfig>
-  refreshWorldsAndAgents: () => Promise<void>
-  getConfigValue: (path: string) => any
-  getConfig: () => ClientConfig | null
-  isAssignmentConfig: () => boolean
-  getDefaultAgentAmount: () => number
-  isMultiAgentEnabled: () => boolean
-}
 
 export function createScaffold(): Scaffold {
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
@@ -46,10 +23,13 @@ export function createScaffold(): Scaffold {
   const aegisPid = useRef<string | undefined>(undefined)
   const forceUpdate = useForceUpdate()
 
-  const addOutput = (data: string, has_error: boolean) => {
-    const splitData = data.split('\n')
-    const formattedData = splitData.map((line) => ({ has_error, message: line }))
-    setOutput((prevOutput) => prevOutput.concat(formattedData))
+  const addOutput = (line: ConsoleLine) => {
+    console.log(line.content)
+    // const splitData = data.split('\n')
+    // const formattedData = splitData.map((line) => ({ has_error, message: line, gameIdx: 0 }))
+    //
+    // console.log(formattedData)
+    // setOutput((prevOutput) => prevOutput.concat(formattedData))
   }
 
   const setupAegisPath = async () => {
@@ -60,7 +40,7 @@ export function createScaffold(): Scaffold {
   const startSimulation = async (
     rounds: string,
     amount: string,
-    world: string,
+    worlds: string[],
     agent: string,
     debug: boolean
   ): Promise<void> => {
@@ -73,7 +53,7 @@ export function createScaffold(): Scaffold {
     const pid = await aegisAPI.aegis_child_process.spawn(
       rounds,
       amount,
-      world,
+      worlds,
       agent,
       aegisPath,
       debug
@@ -146,11 +126,11 @@ export function createScaffold(): Scaffold {
     })
 
     aegisAPI.aegis_child_process.onStdout((data: string) => {
-      addOutput(data, false)
+      addOutput({ content: data, has_error: false, gameIdx: 0 })
     })
 
     aegisAPI.aegis_child_process.onStderr((data: string) => {
-      addOutput(data, true)
+      addOutput({ content: data, has_error: true, gameIdx: 0 })
     })
 
     aegisAPI.aegis_child_process.onExit(() => {

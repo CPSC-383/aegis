@@ -1,3 +1,5 @@
+import { ClientConfig } from "@/services"
+
 export enum TabNames {
   Aegis = 'Aegis',
   Game = 'Game',
@@ -32,5 +34,29 @@ export function getMoveCostColor(moveCost: number): [number, number, number, num
 
 export type ConsoleLine = {
   has_error: boolean
-  message: string
+  content: string
+  gameIdx: number
+}
+
+export interface Scaffold {
+  aegisPath: string | undefined
+  setupAegisPath: () => void
+  worlds: string[]
+  agents: string[]
+  output: ConsoleLine[]
+  startSimulation: (
+    rounds: string,
+    amount: string,
+    worlds: string[],
+    agent: string,
+    debug: boolean
+  ) => void
+  killSim: (() => void) | undefined
+  readAegisConfig: () => Promise<ClientConfig>
+  refreshWorldsAndAgents: () => Promise<void>
+  getConfigValue: (path: string) => any
+  getConfig: () => ClientConfig | null
+  isAssignmentConfig: () => boolean
+  getDefaultAgentAmount: () => number
+  isMultiAgentEnabled: () => boolean
 }

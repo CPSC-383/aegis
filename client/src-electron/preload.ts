@@ -30,7 +30,7 @@ const electronAPI = {
     spawn: (
       rounds: string,
       amount: string,
-      world: string,
+      world: string[],
       agent: string,
       aegisPath: string,
       debug: boolean
