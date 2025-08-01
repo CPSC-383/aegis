@@ -3,11 +3,9 @@ import survivorSrcDark from '@/assets/survivor-dark.png'
 import survivorSrcLight from '@/assets/survivor-light.png'
 import { getMoveCostColor, Size, Vector } from '@/types'
 import { THICKNESS } from '@/utils/constants'
-import { renderCoords } from '@/utils/renderUtils'
-import { getImage } from '@/utils/util'
+import { getImage, renderCoords } from '@/utils/util'
 import { schema } from 'aegis-schema'
 import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from './Brushes'
-import Game from './Game'
 import Round from './Round'
 import invariant from 'tiny-invariant'
 
@@ -20,20 +18,25 @@ import invariant from 'tiny-invariant'
  * @param startEnergy - Starting energy for agents.
  */
 export default class World {
+  private layerRemovals: schema.Location[] = []
+
   constructor(
     public readonly width: number,
     public readonly height: number,
     public readonly seed: number,
     public readonly cells: schema.Cell[],
     public readonly startEnergy: number
-  ) {}
+  ) { }
 
   public applyRound(round: schema.Round | null): void {
+    this.layerRemovals = []
+
     if (!round) return
 
     for (const loc of round.layersRemoved) {
       const cell = this.cellAt(loc.x, loc.y)!
       cell.layers.shift()
+      this.layerRemovals.push(loc)
     }
   }
 
@@ -247,13 +250,13 @@ export default class World {
     ctx.restore()
   }
 
-  public drawLayers(game: Game, ctx: CanvasRenderingContext2D, full: boolean): void {
+  public drawLayers(ctx: CanvasRenderingContext2D, full: boolean): void {
     const lightSurv = getImage(survivorSrcLight)
     const darkSurv = getImage(survivorSrcDark)
     const rubble = getImage(rubbleSrc)
     invariant(lightSurv && darkSurv && rubble, 'layer images should be loaded already')
 
-    const locs = full ? this.getAllLocations() : game.currentRound.layersRemoved
+    const locs = full ? this.getAllLocations() : this.layerRemovals
 
     for (const loc of locs) {
       const x = loc.x
@@ -262,7 +265,7 @@ export default class World {
       const coords = renderCoords(x, y, this.size)
       ctx.clearRect(coords.x, coords.y, 1, 1)
 
-      const layers = this.cellAt(x, y)!.layers
+      const layers = this.cellAt(x, y).layers
       if (!layers.length) continue
 
       const survivorCount = this.countByKind(layers, 'survivor')
@@ -282,7 +285,7 @@ export default class World {
         ctx.drawImage(rubble, coords.x + 0.025, coords.y + 0.025, 0.95, 0.95)
       }
 
-      ctx.font = '0.3px Arial'
+      ctx.font = '0.3px monospace'
       ctx.textBaseline = 'bottom'
 
       if (survivorCount > 0) {
