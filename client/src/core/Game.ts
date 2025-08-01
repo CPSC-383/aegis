@@ -4,6 +4,7 @@ import Round from './Round'
 import Agents from './Agents'
 import Games from './Games'
 import RoundStats from './Stats'
+import { ListenerKey, notify } from './Listeners'
 
 const SNAPSHOT_INTERVAL = 25
 
@@ -41,6 +42,10 @@ export default class Game {
     }
     this.rounds.push(round)
     this.maxRound++
+
+    // idk why maxRound isn't updating properly,
+    // so im adding this here for now
+    notify(ListenerKey.Game)
   }
 
   public stepRound(step: number): void {

@@ -93,6 +93,10 @@ class RendererClass {
     if (!game) return
     this.fullRedraw = true
     this.updateCanvasSize(game.world.size)
+    this.selectedTile = undefined
+    this.hoveredTile = undefined
+    notify(ListenerKey.Canvas)
+    notify(ListenerKey.Hover)
     this.fullRender()
   }
 
