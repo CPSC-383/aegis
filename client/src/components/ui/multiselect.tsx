@@ -6,10 +6,7 @@ interface MultiSelectProps {
   options: string[]
   selected: string[]
   onChange: (selected: string[]) => void
-  placeholder?: string
   className?: string
-  showCount?: boolean
-  maxHeight?: string
 }
 
 export function MultiSelect({
@@ -17,8 +14,6 @@ export function MultiSelect({
   selected,
   onChange,
   className = '',
-  showCount = true,
-  maxHeight = 'max-h-40',
 }: MultiSelectProps) {
   const toggleOption = (value: string) => {
     if (selected.includes(value)) {
@@ -44,11 +39,9 @@ export function MultiSelect({
       {/* Header with controls */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          {showCount && (
-            <Badge variant="secondary" className="text-xs">
-              {selected.length} selected
-            </Badge>
-          )}
+          <Badge variant="secondary" className="text-xs">
+            {selected.length} selected
+          </Badge>
         </div>
 
         <div className="flex items-center gap-2">
