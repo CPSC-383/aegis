@@ -61,9 +61,9 @@ class Game:
     def _init_spawn(self) -> None:
         spawns = self.get_spawns()
         loc = random.choice(spawns)
-        if self.args.agent and (self.args.agent2 is None):
+        if self.args.agent and self.args.agent2 is None:
             self.spawn_agent(loc, Team.GOOBS)
-        elif self.args.agent2 and (self.args.agent is None):
+        elif self.args.agent2 and self.args.agent is None:
             self.spawn_agent(loc, Team.VOIDSEERS)
         else:
             for team in Team:

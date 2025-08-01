@@ -82,6 +82,24 @@ class RunnerClass {
     Renderer.render()
     notify(ListenerKey.Round)
   }
+
+  public nextMatch(): void {
+    if (!this.game || !this.games) return
+    const prevIndex = this.games.games.indexOf(this.game)
+    if (prevIndex + 1 === this.games.games.length) {
+      this.setGames(undefined)
+    } else {
+      this.setGame(this.games.games[prevIndex + 1])
+    }
+  }
+
+  public prevMatch(): void {
+    if (!this.game || !this.games) return
+    const prevIndex = this.games.games.indexOf(this.game)
+    if (prevIndex > 0) {
+      this.setGame(this.games.games[prevIndex - 1])
+    }
+  }
 }
 
 export const Runner = new RunnerClass()

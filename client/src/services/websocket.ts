@@ -29,6 +29,7 @@ export class ClientWebSocket {
 
     ws.onclose = () => {
       this.game = undefined
+      this.games = undefined
       setTimeout(() => this.connect(), this.reconnectInterval)
     }
   }

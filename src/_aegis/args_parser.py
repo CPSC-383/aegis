@@ -23,8 +23,9 @@ def parse_args() -> Args:
     _ = parser.add_argument(
         "--world",
         type=str,
+        nargs="+",
         required=True,
-        help="World file to use.",
+        help="One or more world file names (without extensions), separated by spaces.",
     )
     _ = parser.add_argument(
         "--amount",
@@ -42,13 +43,19 @@ def parse_args() -> Args:
         "--agent",
         type=str,
         required=False,
-        help="Path to the agent file for team goobs",
+        help=(
+            "Name of the agent folder under 'agents/' with a main.py file "
+            "for team Goobs"
+        ),
     )
     _ = parser.add_argument(
         "--agent2",
         type=str,
         required=False,
-        help="Path to the agent file for team voidseers",
+        help=(
+            "Name of the agent folder under 'agents/' with a main.py file "
+            "for team Voidseers"
+        ),
     )
     _ = parser.add_argument(
         "--client",

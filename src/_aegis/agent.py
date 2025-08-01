@@ -82,8 +82,8 @@ class Agent:
             self.sandbox.handle_messages(self.inbox)  # pyright: ignore[reportUnknownMemberType]
         self.inbox.clear()
 
-    def load(self, agent_path: str, methods) -> None:  # pyright: ignore[reportUnknownParameterType, reportMissingParameterType] # noqa: ANN001
-        path = Path(agent_path).resolve()
+    def load(self, agent: str, methods) -> None:  # pyright: ignore[reportUnknownParameterType, reportMissingParameterType] # noqa: ANN001
+        path = Path(f"agents/{agent}/main.py").resolve()
         if not path.exists():
             error = "Agent not found"
             raise FileNotFoundError(error)
