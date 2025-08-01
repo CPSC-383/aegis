@@ -30,7 +30,10 @@ export function createScaffold(): Scaffold {
     line.gameIdx = currentGameIdx.current
     output.current.push(line)
 
-    if (line.content.startsWith("[INFO][aegis]") && line.content.includes("AEGIS END")) {
+    if (
+      line.content.startsWith('[INFO][aegis]') &&
+      line.content.includes('AEGIS END')
+    ) {
       currentGameIdx.current++
     }
   }

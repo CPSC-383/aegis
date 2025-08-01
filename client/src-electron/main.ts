@@ -226,13 +226,12 @@ class ElectronApp {
         if (pid) {
           this.processes.set(pid, childAegis)
 
-
           let stdoutBuffer = ''
           let stderrBuffer = ''
 
           function flushBuffer(buffer: string, data: string) {
             buffer += data
-            const lines = buffer.split("\n")
+            const lines = buffer.split('\n')
             buffer = lines.pop() ?? ''
             return { lines, buffer }
           }
