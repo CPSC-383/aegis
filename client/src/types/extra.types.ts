@@ -1,5 +1,5 @@
-import { ClientConfig } from "@/services"
-import RingBuffer from "@/utils/ringBuffer"
+import { ClientConfig } from '@/services'
+import RingBuffer from '@/utils/ringBuffer'
 
 export enum TabNames {
   Aegis = 'Aegis',

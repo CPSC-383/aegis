@@ -19,7 +19,10 @@ export default class Round {
   }
 
   public startRound(round: schema.Round | null): void {
-    invariant(this.turn === this.turnsLength, "Cannot start new round without completing the previous one")
+    invariant(
+      this.turn === this.turnsLength,
+      'Cannot start new round without completing the previous one'
+    )
     this.agents.processRound(this.currentRound)
 
     this.round += 1

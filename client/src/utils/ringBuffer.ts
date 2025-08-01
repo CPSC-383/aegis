@@ -1,80 +1,80 @@
 // https://www.tuckerleach.com/blog/ring-buffer
 export default class RingBuffer<T> {
-  private length: number;
-  private readonly capacity: number;
+  private length: number
+  private readonly capacity: number
 
-  private buffer: T[];
-  private headPos: number;
+  private buffer: T[]
+  private headPos: number
 
   constructor(capacity: number) {
-    this.capacity = capacity;
-    this.buffer = new Array(this.capacity);
-    this.length = 0;
-    this.headPos = 0;
+    this.capacity = capacity
+    this.buffer = new Array(this.capacity)
+    this.length = 0
+    this.headPos = 0
   }
 
   push(item: T): void {
     if (this.isFull()) {
-      throw new Error("Buffer is full");
+      throw new Error('Buffer is full')
     }
 
-    const newheadPos = mod(this.headPos - 1, this.capacity);
-    this.buffer[newheadPos] = item;
-    this.length++;
-    this.headPos = newheadPos;
+    const newheadPos = mod(this.headPos - 1, this.capacity)
+    this.buffer[newheadPos] = item
+    this.length++
+    this.headPos = newheadPos
   }
 
   pop(): T | undefined {
     if (this.isEmpty()) {
-      return undefined;
+      return undefined
     }
 
-    const tailIdx = this.getTailPos();
-    const lastEl = this.buffer[tailIdx];
-    this.buffer[tailIdx] = undefined as T;
-    this.length--;
+    const tailIdx = this.getTailPos()
+    const lastEl = this.buffer[tailIdx]
+    this.buffer[tailIdx] = undefined as T
+    this.length--
 
-    return lastEl;
+    return lastEl
   }
 
   clear(): void {
-    this.length = 0;
-    this.buffer = new Array(this.capacity);
+    this.length = 0
+    this.buffer = new Array(this.capacity)
   }
 
   isFull(): boolean {
-    return this.length === this.capacity;
+    return this.length === this.capacity
   }
 
   isEmpty(): boolean {
-    return this.length === 0;
+    return this.length === 0
   }
 
   getLength(): number {
-    return this.length;
+    return this.length
   }
 
   getCapacity(): number {
-    return this.capacity;
+    return this.capacity
   }
 
   getItems(): T[] {
-    const items = [];
+    const items = []
 
-    const max = this.headPos + this.length - 1;
+    const max = this.headPos + this.length - 1
     for (let i = max; i >= this.headPos; i--) {
-      const tmpIdx = i % this.capacity;
-      items.push(this.buffer[tmpIdx]);
+      const tmpIdx = i % this.capacity
+      items.push(this.buffer[tmpIdx])
     }
 
-    return items;
+    return items
   }
 
   private getTailPos(): number {
-    return mod(this.headPos + this.length - 1, this.capacity);
+    return mod(this.headPos + this.length - 1, this.capacity)
   }
 }
 
 function mod(n: number, m: number) {
-  return ((n % m) + m) % m;
+  return ((n % m) + m) % m
 }

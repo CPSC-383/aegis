@@ -96,9 +96,7 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
           </div>
           {rawConfigData ? (
             <>
-              <div className="text-xs text-muted-foreground">
-                Read from config.yaml
-              </div>
+              <div className="text-xs text-muted-foreground">Read from config.yaml</div>
               <div className="space-y-3 p-3 bg-gray-50 rounded-lg border">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">

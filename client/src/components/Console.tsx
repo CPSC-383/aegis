@@ -33,7 +33,9 @@ export default function Console({ output }: Props): JSX.Element {
         {parts.map((part, i) => (
           <span
             key={i}
-            className={part.toLowerCase() === query.toLowerCase() ? 'bg-yellow-200' : ''}
+            className={
+              part.toLowerCase() === query.toLowerCase() ? 'bg-yellow-200' : ''
+            }
           >
             {part}
           </span>
@@ -49,7 +51,9 @@ export default function Console({ output }: Props): JSX.Element {
           .getItems()
           .filter((line) => line.gameIdx === Runner.games?.games.indexOf(game!))
           .map((line, i) => {
-            const matches = searchTerm && line.content.toLowerCase().includes(searchTerm.toLowerCase())
+            const matches =
+              searchTerm &&
+              line.content.toLowerCase().includes(searchTerm.toLowerCase())
             return (
               <div
                 key={i}
@@ -82,8 +86,8 @@ export default function Console({ output }: Props): JSX.Element {
         <DialogContent
           className="min-w-[90vw] h-[90vh] flex flex-col"
           onKeyDown={(e) => {
-            if (e.key === "Escape") {
-              setSearchTerm("")
+            if (e.key === 'Escape') {
+              setSearchTerm('')
             }
           }}
         >

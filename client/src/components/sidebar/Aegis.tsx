@@ -118,14 +118,12 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       )}
 
       <div>
-        <Label className="text-xs text-muted-foreground">
-          Worlds
-        </Label>
+        <Label className="text-xs text-muted-foreground">Worlds</Label>
         <MultiSelect
           options={worlds}
           selected={selectedWorlds}
           onChange={setSelectedWorlds}
-          placeholder='Choose worlds...'
+          placeholder="Choose worlds..."
         />
       </div>
 
@@ -143,9 +141,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       </div>
 
       <div>
-        <Label className="text-xs text-muted-foreground">
-          Agent
-        </Label>
+        <Label className="text-xs text-muted-foreground">Agent</Label>
         <Select value={agent} onValueChange={(value) => setAgent(value)}>
           <SelectTrigger>
             <SelectValue placeholder="Choose an agent">
@@ -184,7 +180,13 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
           <Button
             onClick={() => {
               const amount = getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : agentAmount
-              startSimulation(rounds.toString(), amount.toString(), selectedWorlds, agent, debug)
+              startSimulation(
+                rounds.toString(),
+                amount.toString(),
+                selectedWorlds,
+                agent,
+                debug
+              )
             }}
             disabled={isButtonDisabled}
             className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}

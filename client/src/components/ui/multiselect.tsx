@@ -13,7 +13,7 @@ export function MultiSelect({
   options,
   selected,
   onChange,
-  className = '',
+  className = ''
 }: MultiSelectProps) {
   const toggleOption = (value: string) => {
     if (selected.includes(value)) {
@@ -24,7 +24,7 @@ export function MultiSelect({
   }
 
   const selectAll = () => {
-    const unselected = options.filter(opt => !selected.includes(opt))
+    const unselected = options.filter((opt) => !selected.includes(opt))
     onChange([...selected, ...unselected])
   }
 
@@ -32,7 +32,8 @@ export function MultiSelect({
     onChange([])
   }
 
-  const isAllSelected = options.length > 0 && options.every(opt => selected.includes(opt))
+  const isAllSelected =
+    options.length > 0 && options.every((opt) => selected.includes(opt))
 
   return (
     <div className={`w-full space-y-3 ${className}`}>
@@ -81,7 +82,11 @@ export function MultiSelect({
             No worlds available
           </div>
         ) : (
-          <ul className="divide-y divide-border" role="listbox" aria-multiselectable="true">
+          <ul
+            className="divide-y divide-border"
+            role="listbox"
+            aria-multiselectable="true"
+          >
             {options.map((opt) => {
               const isSelected = selected.includes(opt)
               return (
@@ -102,25 +107,25 @@ export function MultiSelect({
                       if (nextItem) nextItem.focus()
                     } else if (e.key === 'ArrowUp') {
                       e.preventDefault()
-                      const prevItem = e.currentTarget.previousElementSibling as HTMLElement
+                      const prevItem = e.currentTarget
+                        .previousElementSibling as HTMLElement
                       if (prevItem) prevItem.focus()
                     }
                   }}
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <div
-                      className={`flex-shrink-0 w-4 h-4 border-2 rounded-sm flex items-center justify-center transition-all ${isSelected
-                        ? 'bg-primary border-primary scale-110'
-                        : 'border-muted-foreground/30 group-hover:border-muted-foreground/50 group-hover:scale-105'
-                        }`}
+                      className={`flex-shrink-0 w-4 h-4 border-2 rounded-sm flex items-center justify-center transition-all ${
+                        isSelected
+                          ? 'bg-primary border-primary scale-110'
+                          : 'border-muted-foreground/30 group-hover:border-muted-foreground/50 group-hover:scale-105'
+                      }`}
                     >
                       {isSelected && (
                         <Check className="h-3 w-3 text-primary-foreground" />
                       )}
                     </div>
-                    <span className="truncate text-sm font-medium">
-                      {opt}
-                    </span>
+                    <span className="truncate text-sm font-medium">{opt}</span>
                   </div>
                 </li>
               )
