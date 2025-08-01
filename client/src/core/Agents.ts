@@ -1,7 +1,6 @@
 import goobA from '@/assets/goob-team-a.png'
 import goobB from '@/assets/goob-team-b.png'
-import { renderCoords } from '@/utils/renderUtils'
-import { getImage } from '@/utils/util'
+import { getImage, renderCoords } from '@/utils/util'
 import { schema } from 'aegis-schema'
 import Game from './Game'
 import Games from './Games'

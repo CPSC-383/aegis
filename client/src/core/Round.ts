@@ -3,6 +3,7 @@ import Game from './Game'
 import { schema } from 'aegis-schema'
 import World from './World'
 import RoundStats from './Stats'
+import invariant from 'tiny-invariant'
 
 export default class Round {
   public turn: number = 0
@@ -18,6 +19,7 @@ export default class Round {
   }
 
   public startRound(round: schema.Round | null): void {
+    invariant(this.turn === this.turnsLength, "Cannot start new round without completing the previous one")
     this.agents.processRound(this.currentRound)
 
     this.round += 1

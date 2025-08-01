@@ -1,15 +1,14 @@
 import { CanvasLayers, Size, Vector } from '@/types'
 import { TILE_SIZE } from '@/utils/constants'
-import { loadImage } from '@/utils/util'
+import { loadImage, renderCoords } from '@/utils/util'
 import { Runner } from './Runner'
+import { ListenerKey, notify } from './Listeners'
 
 import goobA from '@/assets/goob-team-a.png'
 import goobB from '@/assets/goob-team-b.png'
 import rubble from '@/assets/rubble.png'
 import darkSurvivor from '@/assets/survivor-dark.png'
 import lightSurvivor from '@/assets/survivor-light.png'
-import { renderCoords } from '@/utils/renderUtils'
-import { ListenerKey, notify } from './Listeners'
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any
@@ -86,7 +85,7 @@ class RendererClass {
 
     const full = this.fullRedraw
     this.fullRedraw = false
-    round.world.drawLayers(game, lctx, full)
+    round.world.drawLayers(lctx, full)
   }
 
   onGameChange() {
