@@ -16,7 +16,7 @@ import RingBuffer from '@/utils/ringBuffer'
 
 export function createScaffold(): Scaffold {
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
-  const [spawnError, setSpawnError] = useState<string>("")
+  const [spawnError, setSpawnError] = useState<string>('')
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
   const [config, setConfig] = useState<ClientConfig | null>(null)
@@ -67,7 +67,7 @@ export function createScaffold(): Scaffold {
         debug
       )
       aegisPid.current = pid
-      setSpawnError("")
+      setSpawnError('')
     } catch (error) {
       setSpawnError(
         '`aegis` command not found. Please activate your virtual environment and restart the client to try again.'
