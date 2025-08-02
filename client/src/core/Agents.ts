@@ -32,6 +32,10 @@ export default class Agents {
     const agent = this.getById(turn.agentId)
     agent.loc = { ...turn.loc! }
     agent.energyLevel = Math.max(turn.energyLevel, 0)
+
+    for (const spawn of turn.spawns) {
+      this.spawnAgent(spawn)
+    }
   }
 
   private getById(id: number): Agent {
@@ -40,8 +44,17 @@ export default class Agents {
     return agent
   }
 
+  public clearDead(): void {
+    for (const agent of this.agents.values()) {
+      if (!agent.dead) continue
+      this.agents.delete(agent.id)
+    }
+  }
+
   public spawnAgent(_agent: schema.Spawn): void {
     const id = _agent.agentId
+    invariant(!this.agents.has(id), `Cannot spawn agent: one already exists with ID ${id}`)
+
     const loc = _agent.loc!
     const team = _agent.team
 
@@ -102,10 +115,12 @@ export class Agent {
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
     const goob = getImage(this.imgPath)
-    if (!goob) return
+    invariant(goob, "goob should already be loaded")
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
+    if (this.dead) ctx.globalAlpha = 0.5
     ctx.drawImage(goob, pos.x, pos.y, 1, 1)
+    ctx.globalAlpha = 1
   }
 
   public copy(): Agent {

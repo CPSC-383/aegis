@@ -52,6 +52,8 @@ class GamePb:
 
         binary_string = event.SerializeToString()
         self.ws_server.add_event(binary_string)
+        # clear so it doesn't keep ids for agent turn spawns
+        self.spawns.clear()
 
     def start_round(self, game_round: int) -> None:
         self.round = game_round
@@ -91,8 +93,10 @@ class GamePb:
         if action_command is not None:
             commands.append(action_command)
         pb_turn.commands.extend(str(command) for command in commands)
+        pb_turn.spawns.extend(self.spawns)
 
         self.turns.append(pb_turn)
+        self.clear_turn()
 
     def make_game_footer(self) -> None:
         if self.ws_server is None:
@@ -161,3 +165,6 @@ class GamePb:
         self.turns.clear()
         self.removed_layers.clear()
         self.dead_ids.clear()
+
+    def clear_turn(self) -> None:
+        self.spawns.clear()
