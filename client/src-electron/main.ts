@@ -3,7 +3,6 @@ import child_process from 'child_process'
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import fs from 'fs'
 import path from 'path'
-import { l } from 'vite/dist/node/types.d-aGj9QkWt'
 import yaml from 'yaml'
 
 class ElectronApp {

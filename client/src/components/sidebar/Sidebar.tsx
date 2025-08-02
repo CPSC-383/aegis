@@ -15,7 +15,7 @@ import Settings from './Settings'
 
 export default function Sidebar(): JSX.Element {
   const scaffold = createScaffold()
-  const { aegisPath, setupAegisPath, output } = scaffold
+  const { aegisPath, setupAegisPath, output, spawnError } = scaffold
   const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const sidebarRef = useRef<HTMLDivElement | null>(null)
@@ -93,6 +93,12 @@ export default function Sidebar(): JSX.Element {
                   </TabsContent>
                 </div>
               </Tabs>
+
+              {spawnError && (
+                <div className="mt-4 rounded-md border border-red-300 bg-red-100 p-3 text-sm text-red-800">
+                  <strong>Error:</strong> {spawnError}
+                </div>
+              )}
 
               {(selectedTab === TabNames.Aegis || selectedTab === TabNames.Game) && (
                 <Console output={output} />

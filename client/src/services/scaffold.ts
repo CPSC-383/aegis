@@ -16,6 +16,7 @@ import RingBuffer from '@/utils/ringBuffer'
 
 export function createScaffold(): Scaffold {
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
+  const [spawnError, setSpawnError] = useState<string>("")
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
   const [config, setConfig] = useState<ClientConfig | null>(null)
@@ -23,8 +24,8 @@ export function createScaffold(): Scaffold {
   const aegisPid = useRef<string | undefined>(undefined)
   const currentGameIdx = useRef(0)
   const output = useRef<RingBuffer<ConsoleLine>>(new RingBuffer(20000))
-  let didInit = false
   const forceUpdate = useForceUpdate()
+  let didInit = false
 
   const addOutput = (line: ConsoleLine) => {
     line.gameIdx = currentGameIdx.current
@@ -56,15 +57,22 @@ export function createScaffold(): Scaffold {
     currentGameIdx.current = 0
     output.current.clear()
 
-    const pid = await aegisAPI.aegis_child_process.spawn(
-      rounds,
-      amount,
-      worlds,
-      agent,
-      aegisPath,
-      debug
-    )
-    aegisPid.current = pid
+    try {
+      const pid = await aegisAPI.aegis_child_process.spawn(
+        rounds,
+        amount,
+        worlds,
+        agent,
+        aegisPath,
+        debug
+      )
+      aegisPid.current = pid
+      setSpawnError("")
+    } catch (error) {
+      setSpawnError(
+        '`aegis` command not found. Please activate your virtual environment and restart the client to try again.'
+      )
+    }
     forceUpdate()
   }
 
@@ -191,7 +199,8 @@ export function createScaffold(): Scaffold {
     getConfig,
     isAssignmentConfig,
     getDefaultAgentAmount,
-    isMultiAgentEnabled
+    isMultiAgentEnabled,
+    spawnError
   }
 }
 

@@ -60,4 +60,5 @@ export interface Scaffold {
   isAssignmentConfig: () => boolean
   getDefaultAgentAmount: () => number
   isMultiAgentEnabled: () => boolean
+  spawnError: string
 }
