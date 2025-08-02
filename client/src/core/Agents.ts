@@ -53,7 +53,10 @@ export default class Agents {
 
   public spawnAgent(_agent: schema.Spawn): void {
     const id = _agent.agentId
-    invariant(!this.agents.has(id), `Cannot spawn agent: one already exists with ID ${id}`)
+    invariant(
+      !this.agents.has(id),
+      `Cannot spawn agent: one already exists with ID ${id}`
+    )
 
     const loc = _agent.loc!
     const team = _agent.team
@@ -115,7 +118,7 @@ export class Agent {
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
     const goob = getImage(this.imgPath)
-    invariant(goob, "goob should already be loaded")
+    invariant(goob, 'goob should already be loaded')
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
     if (this.dead) ctx.globalAlpha = 0.5

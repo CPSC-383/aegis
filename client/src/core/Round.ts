@@ -42,7 +42,7 @@ export default class Round {
 
   private stepTurn(): void {
     const turn = this.currentRound!.turns[this.turn]
-    invariant(turn, "Turn not found to step to")
+    invariant(turn, 'Turn not found to step to')
 
     if (this.turn === 0) this.agents.clearDead()
     this.agents.applyTurn(turn)
