@@ -21,6 +21,7 @@ class GamePb:
         self.turns: list[Turn] = []
         self.spawns: list[Spawn] = []
         self.removed_layers: list[PbLocation] = []
+        self.dead_ids: list[int] = []
         self.ws_server: WebSocketServer | None = None
 
     def make_games_header(self, ws_server: WebSocketServer) -> None:
@@ -64,6 +65,7 @@ class GamePb:
         pb_round.turns.extend(self.turns)
         pb_round.team_info.extend(self.team_info)
         pb_round.layers_removed.extend(self.removed_layers)
+        pb_round.dead_ids.extend(self.dead_ids)
 
         event = Event()
         event.round.CopyFrom(pb_round)
@@ -147,6 +149,9 @@ class GamePb:
         pb_loc.y = loc.y
         self.removed_layers.append(pb_loc)
 
+    def add_dead(self, agent_id: int) -> None:
+        self.dead_ids.append(agent_id)
+
     def team_to_schema(self, team: Team) -> PbTeam:
         return PbTeam.GOOBS if team == Team.GOOBS else PbTeam.VOIDSEERS
 
@@ -155,3 +160,4 @@ class GamePb:
         self.spawns.clear()
         self.turns.clear()
         self.removed_layers.clear()
+        self.dead_ids.clear()
