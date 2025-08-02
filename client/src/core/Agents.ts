@@ -18,7 +18,9 @@ export default class Agents {
 
   public processRound(round: schema.Round | null): void {
     if (round) {
-      // Process round data if needed
+      for (const id of round.deadIds) {
+        this.getById(id).dead = true
+      }
     }
 
     for (const agent of this.agents.values()) {
@@ -27,15 +29,35 @@ export default class Agents {
   }
 
   public applyTurn(turn: schema.Turn): void {
-    const agent = this.agents.get(turn.agentId)
-    if (!agent) return
-
+    const agent = this.getById(turn.agentId)
     agent.loc = { ...turn.loc! }
     agent.energyLevel = Math.max(turn.energyLevel, 0)
+
+    for (const spawn of turn.spawns) {
+      this.spawnAgent(spawn)
+    }
+  }
+
+  private getById(id: number): Agent {
+    const agent = this.agents.get(id)
+    invariant(agent, `Agent with ID ${id} does not exist.`)
+    return agent
+  }
+
+  public clearDead(): void {
+    for (const agent of this.agents.values()) {
+      if (!agent.dead) continue
+      this.agents.delete(agent.id)
+    }
   }
 
   public spawnAgent(_agent: schema.Spawn): void {
     const id = _agent.agentId
+    invariant(
+      !this.agents.has(id),
+      `Cannot spawn agent: one already exists with ID ${id}`
+    )
+
     const loc = _agent.loc!
     const team = _agent.team
 
@@ -82,6 +104,7 @@ export default class Agents {
 export class Agent {
   public energyLevel: number = 0
   public lastLoc: schema.Location
+  public dead: boolean = false
 
   constructor(
     private games: Games,
@@ -95,10 +118,12 @@ export class Agent {
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
     const goob = getImage(this.imgPath)
-    if (!goob) return
+    invariant(goob, 'goob should already be loaded')
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
+    if (this.dead) ctx.globalAlpha = 0.5
     ctx.drawImage(goob, pos.x, pos.y, 1, 1)
+    ctx.globalAlpha = 1
   }
 
   public copy(): Agent {
@@ -107,6 +132,7 @@ export class Agent {
     const copy = new Agent(this.games, this.id, this.team, { ...this.loc }, imgPath)
     copy.energyLevel = this.energyLevel
     copy.lastLoc = { ...this.lastLoc }
+    copy.dead = this.dead
     return copy
   }
 

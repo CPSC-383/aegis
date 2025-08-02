@@ -21,6 +21,7 @@ class GamePb:
         self.turns: list[Turn] = []
         self.spawns: list[Spawn] = []
         self.removed_layers: list[PbLocation] = []
+        self.dead_ids: list[int] = []
         self.ws_server: WebSocketServer | None = None
 
     def make_games_header(self, ws_server: WebSocketServer) -> None:
@@ -51,6 +52,8 @@ class GamePb:
 
         binary_string = event.SerializeToString()
         self.ws_server.add_event(binary_string)
+        # clear so it doesn't keep ids for agent turn spawns
+        self.spawns.clear()
 
     def start_round(self, game_round: int) -> None:
         self.round = game_round
@@ -64,6 +67,7 @@ class GamePb:
         pb_round.turns.extend(self.turns)
         pb_round.team_info.extend(self.team_info)
         pb_round.layers_removed.extend(self.removed_layers)
+        pb_round.dead_ids.extend(self.dead_ids)
 
         event = Event()
         event.round.CopyFrom(pb_round)
@@ -89,8 +93,10 @@ class GamePb:
         if action_command is not None:
             commands.append(action_command)
         pb_turn.commands.extend(str(command) for command in commands)
+        pb_turn.spawns.extend(self.spawns)
 
         self.turns.append(pb_turn)
+        self.clear_turn()
 
     def make_game_footer(self) -> None:
         if self.ws_server is None:
@@ -147,6 +153,9 @@ class GamePb:
         pb_loc.y = loc.y
         self.removed_layers.append(pb_loc)
 
+    def add_dead(self, agent_id: int) -> None:
+        self.dead_ids.append(agent_id)
+
     def team_to_schema(self, team: Team) -> PbTeam:
         return PbTeam.GOOBS if team == Team.GOOBS else PbTeam.VOIDSEERS
 
@@ -155,3 +164,7 @@ class GamePb:
         self.spawns.clear()
         self.turns.clear()
         self.removed_layers.clear()
+        self.dead_ids.clear()
+
+    def clear_turn(self) -> None:
+        self.spawns.clear()

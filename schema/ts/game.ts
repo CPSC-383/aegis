@@ -50,11 +50,15 @@ export interface Round {
      */
     layersRemoved: Location[];
     /**
-     * @generated from protobuf field: repeated aegis.Turn turns = 3
+     * @generated from protobuf field: repeated int32 dead_ids = 3
+     */
+    deadIds: number[];
+    /**
+     * @generated from protobuf field: repeated aegis.Turn turns = 4
      */
     turns: Turn[];
     /**
-     * @generated from protobuf field: repeated aegis.TeamInfo team_info = 4
+     * @generated from protobuf field: repeated aegis.TeamInfo team_info = 5
      */
     teamInfo: TeamInfo[];
 }
@@ -174,14 +178,16 @@ class Round$Type extends MessageType<Round> {
         super("aegis.Round", [
             { no: 1, name: "round", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "layers_removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Location },
-            { no: 3, name: "turns", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Turn },
-            { no: 4, name: "team_info", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => TeamInfo }
+            { no: 3, name: "dead_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "turns", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Turn },
+            { no: 5, name: "team_info", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => TeamInfo }
         ]);
     }
     create(value?: PartialMessage<Round>): Round {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.round = 0;
         message.layersRemoved = [];
+        message.deadIds = [];
         message.turns = [];
         message.teamInfo = [];
         if (value !== undefined)
@@ -199,10 +205,17 @@ class Round$Type extends MessageType<Round> {
                 case /* repeated aegis.Location layers_removed */ 2:
                     message.layersRemoved.push(Location.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated aegis.Turn turns */ 3:
+                case /* repeated int32 dead_ids */ 3:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.deadIds.push(reader.int32());
+                    else
+                        message.deadIds.push(reader.int32());
+                    break;
+                case /* repeated aegis.Turn turns */ 4:
                     message.turns.push(Turn.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated aegis.TeamInfo team_info */ 4:
+                case /* repeated aegis.TeamInfo team_info */ 5:
                     message.teamInfo.push(TeamInfo.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -223,12 +236,19 @@ class Round$Type extends MessageType<Round> {
         /* repeated aegis.Location layers_removed = 2; */
         for (let i = 0; i < message.layersRemoved.length; i++)
             Location.internalBinaryWrite(message.layersRemoved[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated aegis.Turn turns = 3; */
+        /* repeated int32 dead_ids = 3; */
+        if (message.deadIds.length) {
+            writer.tag(3, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.deadIds.length; i++)
+                writer.int32(message.deadIds[i]);
+            writer.join();
+        }
+        /* repeated aegis.Turn turns = 4; */
         for (let i = 0; i < message.turns.length; i++)
-            Turn.internalBinaryWrite(message.turns[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated aegis.TeamInfo team_info = 4; */
+            Turn.internalBinaryWrite(message.turns[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated aegis.TeamInfo team_info = 5; */
         for (let i = 0; i < message.teamInfo.length; i++)
-            TeamInfo.internalBinaryWrite(message.teamInfo[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            TeamInfo.internalBinaryWrite(message.teamInfo[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
