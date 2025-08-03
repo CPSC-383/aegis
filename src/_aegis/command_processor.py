@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from .aegis_config import is_feature_enabled
 from .agent import Agent
+from .agent_predictions.prediction_handler import PredictionHandler
 from .common import CellInfo, Direction
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
@@ -17,23 +18,18 @@ from .common.commands.agent_commands import (
     Dig,
     Move,
     Observe,
+    Predict,
     Recharge,
     Save,
     SendMessage,
 )
 from .common.location import Location
 from .common.objects.rubble import Rubble
-from .conditional_imports import get_predict_command
 from .constants import Constants
 from .logger import LOGGER
 
 if TYPE_CHECKING:
-    from .agent_predictions.prediction_handler import (
-        PredictionHandler as PredictionHandlerType,
-    )
     from .game import Game
-else:
-    PredictionHandlerType = object
 
 
 class CommandProcessor:
@@ -41,11 +37,11 @@ class CommandProcessor:
         self,
         game: "Game",
         agents: dict[int, Agent],
-        prediction_handler: PredictionHandlerType | None,
+        prediction_handler: PredictionHandler | None,
     ) -> None:
         self._agents: dict[int, Agent] = agents
         self._game: Game = game
-        self._prediction_handler: PredictionHandlerType | None = prediction_handler
+        self._prediction_handler: PredictionHandler | None = prediction_handler
 
     def process(
         self, commands: list[AgentCommand], messages: list[SendMessage]
@@ -74,17 +70,11 @@ class CommandProcessor:
                 recipient.handle_aegis_command(res)
 
     def _process(self, commands: list[AgentCommand]) -> None:
-        predict = get_predict_command()
-
         for cmd in commands:
             agent_id = cmd.get_id()
             agent = self._game.get_agent(agent_id)
 
-            if (
-                predict is not None
-                and isinstance(cmd, predict)
-                and is_feature_enabled("ENABLE_PREDICTIONS")
-            ):
+            if isinstance(cmd, Predict) and is_feature_enabled("ENABLE_PREDICTIONS"):
                 pass
             else:
                 match cmd:
@@ -99,8 +89,19 @@ class CommandProcessor:
                     case Observe():
                         agent = self._game.get_agent(cmd.get_id())
                         agent.add_energy(-Constants.OBSERVE_ENERGY_COST)
+                    case Predict():
+                        self._handle_predict(cmd)
                     case _:
                         LOGGER.warning("Aegis received an unknown command: %s", cmd)
+
+    def _handle_predict(self, cmd: Predict) -> None:
+        agent = self._game.get_agent(cmd.get_id())
+        if agent is None:
+            return
+        if self._prediction_handler is not None:
+            self._prediction_handler.set_prediction_result(
+                agent.id, agent.team, cmd.surv_id, prediction_correct=cmd.label
+            )
 
     def _handle_recharge(self, cmd: Recharge) -> None:
         agent = self._game.get_agent(cmd.get_id())

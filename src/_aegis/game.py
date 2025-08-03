@@ -1,16 +1,26 @@
 import random
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
+
+from _aegis.aegis_config import is_feature_enabled
 
 from .agent import Agent
 from .agent_controller import AgentController
+from .agent_predictions.prediction_handler import PredictionHandler
 from .args_parser import Args
 from .command_processor import CommandProcessor
 from .common import Cell, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.aegis_commands.save_result import SaveResult
-from .common.commands.agent_commands import Dig, Move, Observe, Save, SendMessage
+from .common.commands.agent_commands import (
+    Dig,
+    Move,
+    Observe,
+    Predict,
+    Save,
+    SendMessage,
+)
 from .common.objects import Rubble, Survivor
-from .conditional_imports import get_prediction_handler
 from .constants import Constants
 from .game_pb import GamePb
 from .id_gen import IDGenerator
@@ -20,12 +30,7 @@ from .team_info import TeamInfo
 from .world import World
 
 if TYPE_CHECKING:
-    from .agent_predictions.prediction_handler import (
-        PredictionHandler as PredictionHandlerType,
-    )
     from .common.commands.agent_command import AgentCommand
-else:
-    PredictionHandlerType = object
 
 
 class Game:
@@ -39,11 +44,9 @@ class Game:
         self.team_info: TeamInfo = TeamInfo()
         self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
-        self._agent_commands: list[AgentCommand] = []
 
-        prediction_handler_class = get_prediction_handler()
-        self._prediction_handler: PredictionHandlerType | None = (
-            prediction_handler_class() if prediction_handler_class else None
+        self._prediction_handler: PredictionHandler | None = (
+            PredictionHandler() if is_feature_enabled("ENABLE_PREDICTIONS") else None
         )
 
         self._command_processor: CommandProcessor = CommandProcessor(
@@ -156,7 +159,9 @@ class Game:
             self, agent_id, loc, team, self.world.start_energy, debug=self.args.debug
         )
         ac = AgentController(self, agent)
-        agent.load(self.team_agents[team], self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
+        # Extract just the directory name from the full path
+        agent_path = Path(self.team_agents[team]).parent.name
+        agent.load(agent_path, self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
         self.add_agent(agent, loc)
         self.team_info.add_units(agent.team, 1)
         self.game_pb.add_spawn(agent.id, agent.team, agent.location)
@@ -226,14 +231,16 @@ class Game:
         return self.world.get_charging_cells()
 
     def create_methods(self, ac: AgentController) -> dict[str, Any]:
-        methods = {
+        return {
             "Dig": Dig,
             "Direction": Direction,
             "Location": Location,
             "Move": Move,
             "Observe": Observe,
+            "Predict": Predict,
             "Rubble": Rubble,
             "Save": Save,
+            "SaveResult": SaveResult,
             "SendMessage": SendMessage,
             "Survivor": Survivor,
             "ObserveResult": ObserveResult,
@@ -252,7 +259,3 @@ class Game:
             "get_survs": self.get_survs,
             "log": ac.log,
         }
-
-        methods["SaveResult"] = SaveResult
-
-        return methods

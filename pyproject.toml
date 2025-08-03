@@ -33,6 +33,11 @@ ignore = [
   "ERA001", # Commented code
 ]
 
+[tool.pyright]
+ignore = [
+    "reportMissingTypeStubs",
+]
+
 [project.scripts]
 aegis = "aegis:main"
 

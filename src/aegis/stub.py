@@ -1,5 +1,7 @@
 """Stub functions for agent interaction with the Aegis environment."""
 # ruff: noqa: F401
+# pyright: reportReturnType=false
+# pyright: reportUnusedImport=false
 
 from . import (
     AgentCommand,
@@ -10,6 +12,7 @@ from . import (
     Move,
     Observe,
     ObserveResult,
+    Predict,
     Rubble,
     Save,
     SaveResult,
@@ -17,6 +20,12 @@ from . import (
     SendMessageResult,
     Survivor,
 )
+
+# import the predict command if predictions are enabled
+# try:
+#     from . import Predict
+# except ImportError:
+#     pass
 
 
 def get_round_number() -> int:
@@ -98,4 +107,10 @@ def spawn_agent(loc: Location) -> None:
 
 
 def log(*args: object) -> None:
-    """Log a message to the console."""
+    """
+    Log a message.
+
+    Args:
+        *args: The message to log.
+
+    """

@@ -1,45 +1,36 @@
+import importlib.util
 from typing import Any
 
 from .aegis_config import is_feature_enabled
 
 
-def get_prediction_handler() -> Any:  # noqa: ANN401
-    """Get the prediction handler if predictions are enabled."""
-    if is_feature_enabled("ENABLE_PREDICTIONS"):
-        from .agent_predictions.prediction_handler import (  # noqa: PLC0415
-            PredictionHandler,
-        )
+def is_prediction_available() -> bool:
+    """Check if the prediction system is fully available."""
+    if not is_feature_enabled("ENABLE_PREDICTIONS"):
+        return False
 
-        return PredictionHandler
+    return importlib.util.find_spec("numpy") is not None
+
+
+def get_numpy() -> Any:  # noqa: ANN401
+    """Get numpy if available and predictions are enabled."""
+    if not is_prediction_available():
+        return None
+
+    if importlib.util.find_spec("numpy") is not None:
+        import numpy as np  # noqa: PLC0415
+
+        return np
     return None
 
 
-def get_predict_command() -> Any:  # noqa: ANN401
-    """Get the predict command if predictions are enabled."""
-    if is_feature_enabled("ENABLE_PREDICTIONS"):
-        from .common.commands.agent_commands.predict import (  # noqa: PLC0415
-            Predict,
-        )
-
-        return Predict
-    return None
-
-
-# Check if TensorFlow should be imported
-def should_import_tensorflow() -> bool:
-    """Check if TensorFlow should be imported based on config."""
-    return is_feature_enabled("ENABLE_PREDICTIONS")
-
-
-# Conditional TensorFlow import
 def get_tensorflow() -> Any:  # noqa: ANN401
-    """Get TensorFlow if predictions are enabled."""
-    if should_import_tensorflow():
-        try:
-            import tensorflow as tf  # noqa: PLC0415
+    """Get tensorflow if available and predictions are enabled."""
+    if not is_prediction_available():
+        return None
 
-            return tf  # noqa: TRY300
-        except ImportError:
-            error = "Tensorflow not available, but predictions are enabled. Not good!"
-            raise ImportError(error) from None
+    if importlib.util.find_spec("tensorflow") is not None:
+        import tensorflow as tf  # noqa: PLC0415
+
+        return tf
     return None

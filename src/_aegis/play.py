@@ -35,8 +35,8 @@ def run(args: Args) -> None:
     ws_server.start()
 
     for arg_world in args.world:
-        world_name = f"{arg_world}.world"
-        world = load_world(Path(f"worlds/{world_name}"))
+        world_name = f"{arg_world}"
+        world = load_world(Path(world_name))
         if world is None:
             error = f"Unable to load world {world_name}!"
             raise ValueError(error)
