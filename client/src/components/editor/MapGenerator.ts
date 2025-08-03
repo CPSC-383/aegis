@@ -1,31 +1,33 @@
-import Agents from '@/core/Agents'
-import Game from '@/core/Game'
-import Games from '@/core/Games'
-import World from '@/core/World'
-import { aegisAPI } from '@/services'
-import { schema } from 'aegis-schema'
-import invariant from 'tiny-invariant'
+import Agents from "@/core/Agents"
+import Game from "@/core/Game"
+import Games from "@/core/Games"
+import World from "@/core/World"
+import { aegisAPI } from "@/services"
+import { schema } from "aegis-schema"
+import invariant from "tiny-invariant"
 
 class WorldValidator {
   static validate(world: World): string {
     if (world.getCellsByType(schema.CellType.SPAWN).length === 0) {
-      return 'Missing spawn zones!'
+      return "Missing spawn zones!"
     }
 
     if (!this.hasSurvivors(world)) {
-      return 'Missing at least 1 survivor!'
+      return "Missing at least 1 survivor!"
     }
 
     // This case should be impossible, but you never know
     const moveCostError = this.verifyMoveCosts(world)
-    if (moveCostError) return moveCostError
+    if (moveCostError) {
+      return moveCostError
+    }
 
-    return ''
+    return ""
   }
 
   private static hasSurvivors(world: World): boolean {
     return world.cells.some((cell) =>
-      cell.layers.some((layer) => layer.object.oneofKind === 'survivor')
+      cell.layers.some((layer) => layer.object.oneofKind === "survivor")
     )
   }
 
@@ -63,7 +65,9 @@ export async function exportWorld(
   worldName: string
 ): Promise<string | null> {
   const validationError = WorldValidator.validate(world)
-  if (validationError) return validationError
+  if (validationError) {
+    return validationError
+  }
 
   try {
     const protoWorld = schema.World.create({
@@ -71,15 +75,15 @@ export async function exportWorld(
       height: world.size.height,
       seed: Math.floor(Math.random() * 10000),
       startEnergy: world.startEnergy,
-      cells: world.cells
+      cells: world.cells,
     })
     const binary = schema.World.toBinary(protoWorld)
 
-    const aegisPath = localStorage.getItem('aegisPath')
-    invariant(aegisPath, 'Aegis path not found in localStorage')
+    const aegisPath = localStorage.getItem("aegisPath")
+    invariant(aegisPath, "Aegis path not found in localStorage")
 
     const fullName = `${worldName}.world`
-    const fullPath = await aegisAPI.path.join(aegisPath, 'worlds', fullName)
+    const fullPath = await aegisAPI.path.join(aegisPath, "worlds", fullName)
 
     await aegisAPI.exportWorld(fullPath, binary)
     return null

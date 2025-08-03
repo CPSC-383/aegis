@@ -1,6 +1,6 @@
-import Field from '@/components/editor/Field'
-import { EditorBrush, EditorBrushTypes } from '@/core/Brushes'
-import { useForceUpdate } from '@/utils/util'
+import Field from "@/components/editor/Field"
+import { EditorBrush, EditorBrushTypes } from "@/core/Brushes"
+import { useForceUpdate } from "@/utils/util"
 
 export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
   const forceUpdate = useForceUpdate()
@@ -14,17 +14,17 @@ export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
 
   const combinedFields = {
     ...brush.fields,
-    ...nestedFields
+    ...nestedFields,
   }
 
   const selectFields = Object.entries(combinedFields).filter(
-    ([_, field]) => field.type === EditorBrushTypes.SINGLE_SELECT
+    ([, field]) => field.type === EditorBrushTypes.SINGLE_SELECT
   )
   const otherFields = Object.entries(combinedFields).filter(
-    ([_, field]) => field.type !== EditorBrushTypes.SINGLE_SELECT
+    ([, field]) => field.type !== EditorBrushTypes.SINGLE_SELECT
   )
 
-  const handleChange = () => {
+  const handleChange = (): void => {
     forceUpdate()
   }
 
@@ -39,7 +39,7 @@ export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
       </div>
 
       <div
-        className={`flex flex-row gap-2 flex-wrap ${selectFields.length === 0 ? '' : 'mt-2'}`}
+        className={`flex flex-row gap-2 flex-wrap ${selectFields.length === 0 ? "" : "mt-2"}`}
       >
         {otherFields.map(([key, field]) => (
           <div key={key} className="flex-1 min-w-[120px]">

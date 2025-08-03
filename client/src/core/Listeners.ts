@@ -1,10 +1,10 @@
 export enum ListenerKey {
-  Games = 'games',
-  Game = 'game',
-  Round = 'round',
-  Control = 'control',
-  Canvas = 'canvas',
-  Hover = 'hover'
+  Games = "games",
+  Game = "game",
+  Round = "round",
+  Control = "control",
+  Canvas = "canvas",
+  Hover = "hover",
 }
 
 type Listener = () => void
@@ -15,11 +15,13 @@ const listenersMap: Record<ListenerKey, Listener[]> = {
   [ListenerKey.Round]: [],
   [ListenerKey.Control]: [],
   [ListenerKey.Canvas]: [],
-  [ListenerKey.Hover]: []
+  [ListenerKey.Hover]: [],
 }
 
 export function subscribe(key: ListenerKey, listener: Listener): () => void {
-  if (!listenersMap[key]) listenersMap[key] = []
+  if (!listenersMap[key]) {
+    listenersMap[key] = []
+  }
   listenersMap[key].push(listener)
 
   return () => {

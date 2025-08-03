@@ -1,22 +1,23 @@
-import { motion } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
+import { motion } from "framer-motion"
+import { useEffect, useMemo, useState } from "react"
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import { useLocalStorage } from '@/hooks/useLocalStorage'
-import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
-import NumberInput from '../NumberInput'
-import { MultiSelect } from '../ui/multiselect'
-import { Scaffold } from '@/types'
-import GameCycler from '../GameCycler'
+  SelectValue,
+} from "@/components/ui/select"
+import { useLocalStorage } from "@/hooks/useLocalStorage"
+import { ASSIGNMENT_A1, getCurrentAssignment } from "@/utils/util"
+import NumberInput from "../NumberInput"
+import { MultiSelect } from "../ui/multiselect"
+import { Scaffold } from "@/types"
+import GameCycler from "../GameCycler"
+import { ClientConfig } from "@/services"
 
 type Props = {
   scaffold: Scaffold
@@ -31,13 +32,13 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
     refreshWorldsAndAgents,
     readAegisConfig,
     getDefaultAgentAmount,
-    isMultiAgentEnabled
+    isMultiAgentEnabled,
   } = scaffold
   const [selectedWorlds, setSelectedWorlds] = useState<string[]>([])
-  const [rounds, setRounds] = useLocalStorage<number>('aegis_rounds', 0)
-  const [agent, setAgent] = useLocalStorage<string>('aegis_agent', '')
-  const [agentAmount, setAgentAmount] = useLocalStorage<number>('aegis_agent_amount', 1)
-  const [debug] = useLocalStorage<boolean>('aegis_debug_mode', false)
+  const [rounds, setRounds] = useLocalStorage<number>("aegis_rounds", 0)
+  const [agent, setAgent] = useLocalStorage<string>("aegis_agent", "")
+  const [agentAmount, setAgentAmount] = useLocalStorage<number>("aegis_agent_amount", 1)
+  const [debug] = useLocalStorage<boolean>("aegis_debug_mode", false)
   const [configError, setConfigError] = useState<string | null>(null)
 
   // Refresh worlds and agents when component mounts (when switching to this tab)
@@ -46,16 +47,18 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
     loadConfig()
   }, [])
 
-  const loadConfig = async () => {
+  const loadConfig = async (): Promise<ClientConfig | undefined> => {
     try {
       setConfigError(null)
-      await readAegisConfig()
+      const config = await readAegisConfig()
+      return config
     } catch (error) {
       setConfigError(
         error instanceof Error
           ? error.message
-          : 'Failed to load config. Please check your config.yaml file, and make sure it is in the correct path.'
+          : "Failed to load config. Please check your config.yaml file, and make sure it is in the correct path."
       )
+      return undefined
     }
   }
 
@@ -123,7 +126,6 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
           options={worlds}
           selected={selectedWorlds}
           onChange={setSelectedWorlds}
-          placeholder="Choose worlds..."
         />
       </div>
 
@@ -145,7 +147,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
         <Select value={agent} onValueChange={(value) => setAgent(value)}>
           <SelectTrigger>
             <SelectValue placeholder="Choose an agent">
-              {agent || 'Select an agent'}
+              {agent || "Select an agent"}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -189,7 +191,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
               )
             }}
             disabled={isButtonDisabled}
-            className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}
+            className={`${isButtonDisabled ? "cursor-not-allowed" : ""}`}
           >
             Start Up Game
           </Button>

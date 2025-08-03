@@ -1,17 +1,17 @@
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { TabNames } from '@/types'
-import { motion } from 'framer-motion'
-import { ChevronRight } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TabNames } from "@/types"
+import { motion } from "framer-motion"
+import { ChevronRight } from "lucide-react"
+import { useRef, useState } from "react"
 
-import { createScaffold } from '@/services'
-import Console from '../Console'
-import InfoPanel from '../info-panel/Info-panel'
-import Editor from '../editor/Editor'
-import Aegis from './Aegis'
-import Game from './Game'
-import Settings from './Settings'
+import { createScaffold } from "@/services"
+import Console from "../Console"
+import InfoPanel from "../info-panel/Info-panel"
+import Editor from "../editor/Editor"
+import Aegis from "./Aegis"
+import Game from "./Game"
+import Settings from "./Settings"
 
 export default function Sidebar(): JSX.Element {
   const scaffold = createScaffold()
@@ -20,15 +20,11 @@ export default function Sidebar(): JSX.Element {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const sidebarRef = useRef<HTMLDivElement | null>(null)
 
-  // useEffect(() => {
-  //   setIsCollapsed(!!selectedCell || !!editorSelectedCell)
-  // }, [selectedCell, editorSelectedCell])
-
   return (
     <div className="relative w-[30%]">
       <motion.div
         ref={sidebarRef}
-        animate={{ x: isCollapsed ? '100%' : '0%' }}
+        animate={{ x: isCollapsed ? "100%" : "0%" }}
         transition={{ duration: 0.5 }}
         className="h-screen w-full bg-background shadow-lg absolute right-0 top-0 z-50 border-l"
       >

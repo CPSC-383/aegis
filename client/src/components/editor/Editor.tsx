@@ -1,29 +1,29 @@
-import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import Agents from '@/core/Agents'
-import { EditorBrush } from '@/core/Brushes'
-import Game from '@/core/Game'
-import Games from '@/core/Games'
-import { Renderer } from '@/core/Renderer'
-import { Runner } from '@/core/Runner'
-import World from '@/core/World'
-import useCanvas from '@/hooks/useCanvas'
-import useHover from '@/hooks/useHover'
-import useRound from '@/hooks/useRound'
-import { cn } from '@/lib/utils'
-import { useAppStore } from '@/store/useAppStore'
-import { Vector, WorldParams } from '@/types'
-import { MAP_MAX, MAP_MIN } from '@/utils/constants'
-import { Upload } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import ConfirmClearDialog from '../ConfirmClearDialog'
-import LayerEditor from '../dnd/LayerEditor'
-import ExportDialog from '../ExportDialog'
-import NumberInput from '../NumberInput'
-import { Button } from '../ui/button'
-import { Label } from '../ui/label'
-import Brush from './Brush'
-import { exportWorld, importWorld } from './MapGenerator'
+import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Agents from "@/core/Agents"
+import { EditorBrush } from "@/core/Brushes"
+import Game from "@/core/Game"
+import Games from "@/core/Games"
+import { Renderer } from "@/core/Renderer"
+import { Runner } from "@/core/Runner"
+import World from "@/core/World"
+import useCanvas from "@/hooks/useCanvas"
+import useHover from "@/hooks/useHover"
+import useRound from "@/hooks/useRound"
+import { cn } from "@/lib/utils"
+import { useAppStore } from "@/store/useAppStore"
+import { Vector, WorldParams } from "@/types"
+import { MAP_MAX, MAP_MIN } from "@/utils/constants"
+import { Upload } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import ConfirmClearDialog from "../ConfirmClearDialog"
+import LayerEditor from "../dnd/LayerEditor"
+import ExportDialog from "../ExportDialog"
+import NumberInput from "../NumberInput"
+import { Button } from "../ui/button"
+import { Label } from "../ui/label"
+import Brush from "./Brush"
+import { exportWorld, importWorld } from "./MapGenerator"
 
 export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
@@ -33,7 +33,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   const [worldParams, setWorldParams] = useState<WorldParams>({
     width: 15,
     height: 15,
-    initialEnergy: 100
+    initialEnergy: 100,
   })
   const [isWorldEmpty, setIsWorldEmpty] = useState<boolean>(true)
   const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false)
@@ -57,7 +57,9 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
       games = createNewEditorGames(worldParams)
     }
 
-    if (!games) return
+    if (!games) {
+      return
+    }
 
     setEditorGames(games)
     Runner.setGame(games.currentGame!)
@@ -75,7 +77,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
         ...prev,
         width: world.size.width,
         height: world.size.height,
-        initialEnergy: world.startEnergy
+        initialEnergy: world.startEnergy,
       }))
     }
 
@@ -83,14 +85,15 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     loadedBrushes[0].open = true
     setBrushes(loadedBrushes)
     setIsWorldEmpty(world.isEmpty())
-    if (worldParams.imported)
+    if (worldParams.imported) {
       setWorldParams((prev) => ({ ...prev, imported: undefined }))
+    }
   }, [isOpen, worldParams])
 
-  const worldEmpty = () => !round || round.world.isEmpty()
+  const worldEmpty = (): boolean => !round || round.world.isEmpty()
   const currentBrush = brushes.find((b) => b.open)
 
-  const clearWorld = () => {
+  const clearWorld = (): void => {
     setEditorGames(null)
     setWorldParams({ ...worldParams, imported: null })
     setIsWorldEmpty(true)
@@ -109,31 +112,35 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     e: React.ChangeEvent<HTMLInputElement>
   ): Promise<void> => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file) {
+      return
+    }
     importWorld(file).then((games) => {
       const world = games.currentGame!.currentRound.world
       setWorldParams({
         width: world.size.width,
         height: world.size.height,
         initialEnergy: world.startEnergy,
-        imported: games
+        imported: games,
       })
     })
     // Reset so we can import the same file after we clear (weird edge case ngl)
-    e.target.value = ''
+    e.target.value = ""
   }
 
-  const handleParamChange = (name: string, val: number) => {
+  const handleParamChange = (name: string, val: number): void => {
     setEditorGames(null)
     setWorldParams((prev) => ({ ...prev, [name]: val, imported: null }))
   }
 
-  const handleBrushChange = (name: string) => {
+  const handleBrushChange = (name: string): void => {
     setBrushes((prev) => prev.map((b) => b.withOpen(b.name === name)))
   }
 
-  const applyBrush = (loc: { x: number; y: number }, rightClick: boolean) => {
-    if (!currentBrush) return
+  const applyBrush = (loc: { x: number; y: number }, rightClick: boolean): void => {
+    if (!currentBrush) {
+      return
+    }
     currentBrush.apply(loc.x, loc.y, currentBrush.fields, rightClick)
     Renderer.doFullRedraw()
     Renderer.fullRender()
@@ -141,18 +148,18 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   }
 
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === 'e' && hoveredTile) {
+    const onKeyDown = (e: KeyboardEvent): void => {
+      if (e.key.toLowerCase() === "e" && hoveredTile) {
         e.preventDefault()
         setSelectedTile(hoveredTile)
         setIsEditorOpen(true)
       }
     }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
   }, [hoveredTile])
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setIsEditorOpen(false)
     setSelectedTile(undefined)
     Renderer.doFullRedraw()
@@ -163,12 +170,12 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     return brushes.map((brush) => (
       <TabsContent key={brush.name} value={brush.name} className="mt-4 px-1">
         <Brush brush={brush} />
-        {brush.name === 'Layers' && (
+        {brush.name === "Layers" && (
           <div className="mt-2 p-3 rounded-lg bg-muted/30 border-dashed border">
             <p className="text-xs text-muted-foreground text-center">
               <kbd className="px-2 py-1 text-xs font-mono bg-muted rounded border">
                 e
-              </kbd>{' '}
+              </kbd>{" "}
               to edit cell layers when hovering a cell.
             </p>
           </div>
@@ -178,10 +185,14 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   }, [brushes])
 
   useEffect(() => {
-    if (mouseDown && hoveredTile) applyBrush(hoveredTile, rightClick)
+    if (mouseDown && hoveredTile) {
+      applyBrush(hoveredTile, rightClick)
+    }
   }, [hoveredTile, rightClick, mouseDown])
 
-  if (!isOpen || brushes.length === 0 || !currentBrush) return null
+  if (!isOpen || brushes.length === 0 || !currentBrush) {
+    return null
+  }
 
   return (
     <div className="flex flex-col gap-6 p-1">
@@ -223,8 +234,8 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
 
         <div
           className={cn(
-            'grid grid-cols-1 sm:grid-cols-2 gap-4',
-            !isWorldEmpty && 'opacity-50 pointer-events-none bg-muted/10'
+            "grid grid-cols-1 sm:grid-cols-2 gap-4",
+            !isWorldEmpty && "opacity-50 pointer-events-none bg-muted/10"
           )}
         >
           <div className="space-y-2">

@@ -1,22 +1,23 @@
-import { SetStateAction, useEffect, useRef } from 'react'
-import LayerItem from './LayerItem'
-import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
-import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
-import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
-import { reorderWithEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge'
-import { flushSync } from 'react-dom'
-import { schema } from 'aegis-schema'
-import { getObjectId } from './dnd-utils'
-import { Card, CardContent } from '../ui/card'
-import { Layers3 } from 'lucide-react'
-import { isEqual } from 'lodash'
+import { SetStateAction, useEffect, useRef } from "react"
+import LayerItem from "./LayerItem"
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
+import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
+import { flushSync } from "react-dom"
+import { schema } from "aegis-schema"
+import { getObjectId } from "./dnd-utils"
+import { Card, CardContent } from "../ui/card"
+import { Layers3 } from "lucide-react"
+import { isEqual } from "lodash"
 
 interface Props {
   layers: schema.WorldObject[]
   originalLayers: schema.WorldObject[]
   setLayers: (value: SetStateAction<schema.WorldObject[]>) => void
   setHasChanges: (value: SetStateAction<boolean>) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateLayer: (index: number, updates: any) => void
   deleteLayer: (index: number) => void
 }
@@ -27,25 +28,29 @@ export default function LayerList({
   setLayers,
   setHasChanges,
   updateLayer,
-  deleteLayer
-}: Props) {
+  deleteLayer,
+}: Props): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container) return
+    if (!container) {
+      return
+    }
 
     return combine(
       autoScrollForElements({
-        element: container
+        element: container,
       }),
       monitorForElements({
         canMonitor({ source }) {
-          return source.data?.id != null
+          return source.data?.id !== null
         },
         onDrop: ({ source, location }) => {
           const dest = location.current.dropTargets[0]
-          if (!dest) return
+          if (!dest) {
+            return
+          }
 
           const sourceId = source.data.id as string
           const destId = dest.data.id as string
@@ -66,13 +71,13 @@ export default function LayerList({
                 startIndex: sourceIndex,
                 indexOfTarget: destIndex,
                 closestEdgeOfTarget: closestEdge,
-                axis: 'vertical'
+                axis: "vertical",
               })
               setHasChanges(!isEqual(next, originalLayers))
               return next
             })
           })
-        }
+        },
       })
     )
   }, [layers])

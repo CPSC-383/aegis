@@ -1,19 +1,19 @@
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Runner } from '@/core/Runner'
-import useGame from '@/hooks/useGame'
-import { cn } from '@/lib/utils'
-import { ConsoleLine } from '@/types'
-import RingBuffer from '@/utils/ringBuffer'
-import { Maximize2 } from 'lucide-react'
-import { useState } from 'react'
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Runner } from "@/core/Runner"
+import useGame from "@/hooks/useGame"
+import { cn } from "@/lib/utils"
+import { ConsoleLine } from "@/types"
+import RingBuffer from "@/utils/ringBuffer"
+import { Maximize2 } from "lucide-react"
+import { useState } from "react"
 
 interface Props {
   output: RingBuffer<ConsoleLine>
@@ -21,20 +21,22 @@ interface Props {
 
 export default function Console({ output }: Props): JSX.Element {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState("")
   const game = useGame()
 
   const highlightMatch = (text: string, query: string): JSX.Element => {
-    if (!query) return <>{text}</>
+    if (!query) {
+      return <>{text}</>
+    }
 
-    const parts = text.split(new RegExp(`(${query})`, 'gi'))
+    const parts = text.split(new RegExp(`(${query})`, "gi"))
     return (
       <>
         {parts.map((part, i) => (
           <span
             key={i}
             className={
-              part.toLowerCase() === query.toLowerCase() ? 'bg-yellow-200' : ''
+              part.toLowerCase() === query.toLowerCase() ? "bg-yellow-200" : ""
             }
           >
             {part}
@@ -58,9 +60,9 @@ export default function Console({ output }: Props): JSX.Element {
               <div
                 key={i}
                 className={cn(
-                  'whitespace-pre break-words pt-1',
-                  line.has_error && 'text-destructive',
-                  matches && 'bg-muted'
+                  "whitespace-pre break-words pt-1",
+                  line.has_error && "text-destructive",
+                  matches && "bg-muted"
                 )}
               >
                 {highlightMatch(line.content, searchTerm)}
@@ -86,8 +88,8 @@ export default function Console({ output }: Props): JSX.Element {
         <DialogContent
           className="min-w-[90vw] h-[90vh] flex flex-col"
           onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              setSearchTerm('')
+            if (e.key === "Escape") {
+              setSearchTerm("")
             }
           }}
         >

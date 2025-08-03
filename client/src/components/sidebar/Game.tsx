@@ -1,7 +1,7 @@
-import { motion } from 'framer-motion'
-import { AlertTriangle } from 'lucide-react'
-import useRound from '@/hooks/useRound'
-import { schema } from 'aegis-schema'
+import { motion } from "framer-motion"
+import { AlertTriangle } from "lucide-react"
+import useRound from "@/hooks/useRound"
+import { schema } from "aegis-schema"
 
 export default function Game(): JSX.Element {
   const round = useRound()

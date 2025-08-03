@@ -1,6 +1,6 @@
-import { Check, X, Square } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Check, X, Square } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface MultiSelectProps {
   options: string[]
@@ -13,9 +13,9 @@ export function MultiSelect({
   options,
   selected,
   onChange,
-  className = ''
-}: MultiSelectProps) {
-  const toggleOption = (value: string) => {
+  className = "",
+}: MultiSelectProps): JSX.Element {
+  const toggleOption = (value: string): void => {
     if (selected.includes(value)) {
       onChange(selected.filter((v) => v !== value))
     } else {
@@ -23,12 +23,12 @@ export function MultiSelect({
     }
   }
 
-  const selectAll = () => {
+  const selectAll = (): void => {
     const unselected = options.filter((opt) => !selected.includes(opt))
     onChange([...selected, ...unselected])
   }
 
-  const clearAll = () => {
+  const clearAll = (): void => {
     onChange([])
   }
 
@@ -37,7 +37,6 @@ export function MultiSelect({
 
   return (
     <div className={`w-full space-y-3 ${className}`}>
-      {/* Header with controls */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="text-xs">
@@ -98,18 +97,22 @@ export function MultiSelect({
                   aria-selected={isSelected}
                   tabIndex={0}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault()
                       toggleOption(opt)
-                    } else if (e.key === 'ArrowDown') {
+                    } else if (e.key === "ArrowDown") {
                       e.preventDefault()
                       const nextItem = e.currentTarget.nextElementSibling as HTMLElement
-                      if (nextItem) nextItem.focus()
-                    } else if (e.key === 'ArrowUp') {
+                      if (nextItem) {
+                        nextItem.focus()
+                      }
+                    } else if (e.key === "ArrowUp") {
                       e.preventDefault()
                       const prevItem = e.currentTarget
                         .previousElementSibling as HTMLElement
-                      if (prevItem) prevItem.focus()
+                      if (prevItem) {
+                        prevItem.focus()
+                      }
                     }
                   }}
                 >
@@ -117,8 +120,8 @@ export function MultiSelect({
                     <div
                       className={`flex-shrink-0 w-4 h-4 border-2 rounded-sm flex items-center justify-center transition-all ${
                         isSelected
-                          ? 'bg-primary border-primary scale-110'
-                          : 'border-muted-foreground/30 group-hover:border-muted-foreground/50 group-hover:scale-105'
+                          ? "bg-primary border-primary scale-110"
+                          : "border-muted-foreground/30 group-hover:border-muted-foreground/50 group-hover:scale-105"
                       }`}
                     >
                       {isSelected && (

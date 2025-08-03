@@ -103,4 +103,3 @@ class WebSocketServer:
 
     def set_wait_for_client(self) -> None:
         self._wait_for_client = True
-

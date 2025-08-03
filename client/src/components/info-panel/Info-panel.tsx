@@ -1,5 +1,5 @@
-import useCanvas from '@/hooks/useCanvas'
-import { useEffect, useRef } from 'react'
+import useCanvas from "@/hooks/useCanvas"
+import { useEffect, useRef } from "react"
 import {
   Stepper,
   StepperDescription,
@@ -7,12 +7,12 @@ import {
   StepperItem,
   StepperSeparator,
   StepperTitle,
-  StepperTrigger
-} from '@/components/ui/stepper'
-import useRound from '@/hooks/useRound'
-import { schema } from 'aegis-schema'
-import World from '@/core/World'
-import useGames from '@/hooks/useGames'
+  StepperTrigger,
+} from "@/components/ui/stepper"
+import useRound from "@/hooks/useRound"
+import { schema } from "aegis-schema"
+import World from "@/core/World"
+import useGames from "@/hooks/useGames"
 
 export default function InfoPanel(): JSX.Element | null {
   const { selectedTile } = useCanvas()
@@ -29,8 +29,12 @@ export default function InfoPanel(): JSX.Element | null {
     }
   }, [round])
 
-  if (!round || !games?.playable) return null
-  if (!selectedTile) return <div>Select a cell to look at</div>
+  if (!round || !games?.playable) {
+    return null
+  }
+  if (!selectedTile) {
+    return <div>Select a cell to look at</div>
+  }
 
   const currentLayers = currentWorld
     ? currentWorld.cellAt(selectedTile.x, selectedTile.y).layers
@@ -52,7 +56,7 @@ export default function InfoPanel(): JSX.Element | null {
           <StepperItem
             key={i}
             step={i + 1}
-            className={`relative items-start not-last:flex-1 ${i + 1 < step ? 'opacity-50' : ''}`}
+            className={`relative items-start not-last:flex-1 ${i + 1 < step ? "opacity-50" : ""}`}
           >
             <StepperTrigger className="items-start rounded pb-4 last:pb-0 pointer-events-none">
               <StepperIndicator />
@@ -68,25 +72,25 @@ export default function InfoPanel(): JSX.Element | null {
   )
 }
 
-function ObjectDisplay({ layer }: { layer: schema.WorldObject }) {
+function ObjectDisplay({ layer }: { layer: schema.WorldObject }): JSX.Element {
   const { object } = layer
 
-  const title = () => {
+  const title = (): string => {
     switch (object.oneofKind) {
-      case 'survivor':
-        return 'Survivor'
-      case 'rubble':
-        return 'Rubble'
+      case "survivor":
+        return "Survivor"
+      case "rubble":
+        return "Rubble"
       default:
-        return 'Unknown Object'
+        return "Unknown Object"
     }
   }
 
-  const description = () => {
+  const description = (): JSX.Element => {
     switch (object.oneofKind) {
-      case 'survivor':
+      case "survivor":
         return <span className="block">Health: {object.survivor.health}</span>
-      case 'rubble':
+      case "rubble":
         return (
           <>
             <span className="block">

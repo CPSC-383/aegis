@@ -15,7 +15,7 @@ export default class RingBuffer<T> {
 
   push(item: T): void {
     if (this.isFull()) {
-      throw new Error('Buffer is full')
+      throw new Error("Buffer is full")
     }
 
     const newheadPos = mod(this.headPos - 1, this.capacity)
@@ -75,6 +75,6 @@ export default class RingBuffer<T> {
   }
 }
 
-function mod(n: number, m: number) {
+function mod(n: number, m: number): number {
   return ((n % m) + m) % m
 }
