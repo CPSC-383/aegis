@@ -10,7 +10,7 @@ export const getObjectId = (obj: schema.WorldObject): string => {
   return "unknown"
 }
 
-export const getLayerIcon = (type: string) => {
+export const getLayerIcon = (type: string): JSX.Element => {
   switch (type) {
     case "survivor":
       return <User className="w-4 h-4" />
@@ -21,7 +21,7 @@ export const getLayerIcon = (type: string) => {
   }
 }
 
-export const getLayerColor = (type: string) => {
+export const getLayerColor = (type: string): string => {
   switch (type) {
     case "survivor":
       return "bg-green-100 text-green-800 border-green-200"

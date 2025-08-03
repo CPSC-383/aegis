@@ -15,7 +15,9 @@ export default class Round {
     public agents: Agents,
     private currentRound: schema.Round | null = null
   ) {
-    if (round === 0) this.stats.applyRound(this, null)
+    if (round === 0) {
+      this.stats.applyRound(this, null)
+    }
   }
 
   public startRound(round: schema.Round | null): void {
@@ -35,16 +37,22 @@ export default class Round {
   }
 
   public jumpToTurn(turn: number): void {
-    if (!this.currentRound) return
+    if (!this.currentRound) {
+      return
+    }
 
-    while (this.turn < turn) this.stepTurn()
+    while (this.turn < turn) {
+      this.stepTurn()
+    }
   }
 
   private stepTurn(): void {
     const turn = this.currentRound!.turns[this.turn]
     invariant(turn, "Turn not found to step to")
 
-    if (this.turn === 0) this.agents.clearDead()
+    if (this.turn === 0) {
+      this.agents.clearDead()
+    }
     this.agents.applyTurn(turn)
     this.turn += 1
   }
@@ -59,7 +67,9 @@ export default class Round {
 
   get stats(): RoundStats {
     const stats = this.game.stats[this.round]
-    if (stats) return stats
+    if (stats) {
+      return stats
+    }
 
     const newStats = new RoundStats(this.game)
     this.game.stats[this.round] = newStats

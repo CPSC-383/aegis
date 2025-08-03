@@ -15,10 +15,11 @@ interface FieldProps {
   onChange: () => void
 }
 
-export default function Field({ field, onChange }: FieldProps) {
+export default function Field({ field, onChange }: FieldProps): JSX.Element {
   const [, setInternal] = useState(String(field.value))
 
-  const handleChange = (newValue: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleChange = (newValue: any): void => {
     const processedValue =
       field.type === EditorBrushTypes.POSITIVE_INTEGER ? Number(newValue) : newValue
 

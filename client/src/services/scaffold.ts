@@ -20,6 +20,7 @@ export function createScaffold(): Scaffold {
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
   const [config, setConfig] = useState<ClientConfig | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [rawConfigData, setRawConfigData] = useState<any>(null)
   const aegisPid = useRef<string | undefined>(undefined)
   const currentGameIdx = useRef(0)
@@ -27,7 +28,7 @@ export function createScaffold(): Scaffold {
   const forceUpdate = useForceUpdate()
   let didInit = false
 
-  const addOutput = (line: ConsoleLine) => {
+  const addOutput = (line: ConsoleLine): void => {
     line.gameIdx = currentGameIdx.current
     output.current.push(line)
 
@@ -39,9 +40,11 @@ export function createScaffold(): Scaffold {
     }
   }
 
-  const setupAegisPath = async () => {
+  const setupAegisPath = async (): Promise<void> => {
     const path = await aegisAPI!.openAegisDirectory()
-    if (path) setAegisPath(path)
+    if (path) {
+      setAegisPath(path)
+    }
   }
 
   const startSimulation = async (
@@ -80,6 +83,7 @@ export function createScaffold(): Scaffold {
     invariant(aegisPath, "Can't find AEGIS path!")
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rawConfig = (await aegisAPI.read_config(aegisPath)) as any
       setRawConfigData(rawConfig)
 
@@ -95,7 +99,9 @@ export function createScaffold(): Scaffold {
   }
 
   const getConfigValue = (path: string): unknown => {
-    if (!rawConfigData) return null
+    if (!rawConfigData) {
+      return null
+    }
     return getDynamicConfigValue(rawConfigData, path)
   }
 
@@ -115,8 +121,8 @@ export function createScaffold(): Scaffold {
     return config?.variableAgentAmount || false
   }
 
-  const refreshWorldsAndAgents = async () => {
-    if (!aegisPath) return
+  const refreshWorldsAndAgents = async (): Promise<void> => {
+    invariant(aegisPath, "Can't find AEGIS path!")
 
     const [worldsData, agentsData] = await Promise.all([
       getWorlds(aegisPath),
@@ -127,8 +133,8 @@ export function createScaffold(): Scaffold {
     setAgents(agentsData)
   }
 
-  const killSimulation = () => {
-    if (!aegisPid.current) return
+  const killSimulation = (): void => {
+    invariant(aegisPid.current, "Can't kill a game if no game has started")
     aegisAPI.aegis_child_process.kill(aegisPid.current)
     aegisPid.current = undefined
     forceUpdate()
@@ -154,12 +160,12 @@ export function createScaffold(): Scaffold {
         forceUpdate()
       })
 
-      const onGamesCreated = (games: Games) => {
+      const onGamesCreated = (games: Games): void => {
         useAppStore.getState().pushToQueue(games)
         Runner.setGames(games)
       }
 
-      const onGameCreated = (game: Game) => {
+      const onGameCreated = (game: Game): void => {
         Runner.setGame(game)
       }
       new ClientWebSocket(onGameCreated, onGamesCreated)
@@ -167,9 +173,11 @@ export function createScaffold(): Scaffold {
   }, [])
 
   useEffect(() => {
-    if (!aegisPath) return
+    if (!aegisPath) {
+      return
+    }
 
-    const loadData = async () => {
+    const loadData = async (): Promise<void> => {
       const [worldsData, agentsData] = await Promise.all([
         getWorlds(aegisPath),
         getAgents(aegisPath),
@@ -204,34 +212,38 @@ export function createScaffold(): Scaffold {
   }
 }
 
-const getAegisPath = async () => {
+const getAegisPath = async (): Promise<string | undefined> => {
   const localPath = localStorage.getItem("aegisPath")
-  if (localPath) return localPath
+  if (localPath) {
+    return localPath
+  }
 
-  let currentDir: string = await aegisAPI!.getAppPath()
   const fs = aegisAPI!.fs
   const path = aegisAPI!.path
+  let currentDir: string = await aegisAPI!.getAppPath()
 
-  while (true) {
+  let parentDir: string
+
+  while (currentDir !== (parentDir = await path.dirname(currentDir))) {
     const worldsDir = await path.join(currentDir, "worlds")
     if (await fs.existsSync(worldsDir)) {
       return currentDir
     }
 
-    currentDir = await path.dirname(currentDir)
-
-    if (currentDir === (await path.dirname(currentDir))) {
-      return undefined
-    }
+    currentDir = parentDir
   }
+
+  return undefined
 }
 
-const getWorlds = async (aegisPath: string) => {
+const getWorlds = async (aegisPath: string): Promise<string[]> => {
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
   const worldsPath = await path.join(aegisPath, "worlds")
-  if (!(await fs.existsSync(worldsPath))) return []
+  if (!(await fs.existsSync(worldsPath))) {
+    return []
+  }
 
   const worlds = await fs.readdirSync(worldsPath)
   const filtered_worlds = worlds
@@ -240,12 +252,14 @@ const getWorlds = async (aegisPath: string) => {
   return filtered_worlds
 }
 
-const getAgents = async (aegisPath: string) => {
+const getAgents = async (aegisPath: string): Promise<string[]> => {
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
   const agentsPath = await path.join(aegisPath, "agents")
-  if (!(await fs.existsSync(agentsPath))) return []
+  if (!(await fs.existsSync(agentsPath))) {
+    return []
+  }
 
   const agentsDirs = await fs.readdirSync(agentsPath)
 
@@ -253,9 +267,13 @@ const getAgents = async (aegisPath: string) => {
   const agents: string[] = []
   for (const agent of agentsDirs) {
     const agentPath = await path.join(agentsPath, agent)
-    if (!(await fs.isDirectory(agentPath))) continue
+    if (!(await fs.isDirectory(agentPath))) {
+      continue
+    }
     const agentFiles = await fs.readdirSync(agentPath)
-    if (!agentFiles.includes("main.py")) continue
+    if (!agentFiles.includes("main.py")) {
+      continue
+    }
     agents.push(agent)
   }
   return agents

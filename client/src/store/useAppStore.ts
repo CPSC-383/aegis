@@ -16,9 +16,9 @@ export const useAppStore = create<AppStore>((set) => ({
   queue: [],
   editorGames: null,
 
-  setQueue: (queue) => set({ queue }),
-  pushToQueue: (game) => set((state) => ({ queue: [...state.queue, game] })),
-  clearQueue: () => set({ queue: [] }),
+  setQueue: (queue): void => set({ queue }),
+  pushToQueue: (game): void => set((state) => ({ queue: [...state.queue, game] })),
+  clearQueue: (): void => set({ queue: [] }),
 
-  setEditorGames: (games) => set({ editorGames: games }),
+  setEditorGames: (games): void => set({ editorGames: games }),
 }))

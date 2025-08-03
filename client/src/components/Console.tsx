@@ -25,7 +25,9 @@ export default function Console({ output }: Props): JSX.Element {
   const game = useGame()
 
   const highlightMatch = (text: string, query: string): JSX.Element => {
-    if (!query) return <>{text}</>
+    if (!query) {
+      return <>{text}</>
+    }
 
     const parts = text.split(new RegExp(`(${query})`, "gi"))
     return (

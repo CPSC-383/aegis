@@ -14,8 +14,8 @@ export function MultiSelect({
   selected,
   onChange,
   className = "",
-}: MultiSelectProps) {
-  const toggleOption = (value: string) => {
+}: MultiSelectProps): JSX.Element {
+  const toggleOption = (value: string): void => {
     if (selected.includes(value)) {
       onChange(selected.filter((v) => v !== value))
     } else {
@@ -23,12 +23,12 @@ export function MultiSelect({
     }
   }
 
-  const selectAll = () => {
+  const selectAll = (): void => {
     const unselected = options.filter((opt) => !selected.includes(opt))
     onChange([...selected, ...unselected])
   }
 
-  const clearAll = () => {
+  const clearAll = (): void => {
     onChange([])
   }
 
@@ -37,7 +37,6 @@ export function MultiSelect({
 
   return (
     <div className={`w-full space-y-3 ${className}`}>
-      {/* Header with controls */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="text-xs">
@@ -104,12 +103,16 @@ export function MultiSelect({
                     } else if (e.key === "ArrowDown") {
                       e.preventDefault()
                       const nextItem = e.currentTarget.nextElementSibling as HTMLElement
-                      if (nextItem) nextItem.focus()
+                      if (nextItem) {
+                        nextItem.focus()
+                      }
                     } else if (e.key === "ArrowUp") {
                       e.preventDefault()
                       const prevItem = e.currentTarget
                         .previousElementSibling as HTMLElement
-                      if (prevItem) prevItem.focus()
+                      if (prevItem) {
+                        prevItem.focus()
+                      }
                     }
                   }}
                 >

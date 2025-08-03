@@ -16,25 +16,25 @@ export class ClientWebSocket {
     this.connect()
   }
 
-  private connect() {
+  private connect(): void {
     const ws: WebSocket = new WebSocket(this.url)
 
-    ws.onopen = () => {
+    ws.onopen = (): void => {
       console.log(`Connected to ${this.url}`)
     }
 
-    ws.onmessage = (event) => {
+    ws.onmessage = (event): void => {
       this.handleEvent(event.data)
     }
 
-    ws.onclose = () => {
+    ws.onclose = (): void => {
       this.game = undefined
       this.games = undefined
       setTimeout(() => this.connect(), this.reconnectInterval)
     }
   }
 
-  private handleEvent(data: string) {
+  private handleEvent(data: string): void {
     try {
       const decoded = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
       const event = schema.Event.fromBinary(decoded)
@@ -54,13 +54,17 @@ export class ClientWebSocket {
       if (event.event.oneofKind === "round") {
         const games = this.games.games
         const game = games[games.length - 1]
-        if (this.game === game) return
+        if (this.game === game) {
+          return
+        }
 
         this.onGameCreated(game)
         this.game = game
       }
 
-      if (event.event.oneofKind === "gameFooter") this.game = undefined
+      if (event.event.oneofKind === "gameFooter") {
+        this.game = undefined
+      }
     } catch (error) {
       console.error("Failed to handle websocket event:", error)
     }

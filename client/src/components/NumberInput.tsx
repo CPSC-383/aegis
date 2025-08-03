@@ -15,15 +15,15 @@ export default function NumberInput({
   min = -Infinity,
   max = Infinity,
   onChange,
-}: NumberInputProps) {
+}: NumberInputProps): JSX.Element {
   const [internal, setInternal] = useState(String(value))
 
   useEffect(() => {
     setInternal(String(value))
   }, [value])
-  const clamp = (val: number) => Math.max(min, Math.min(max, val))
+  const clamp = (val: number): number => Math.max(min, Math.min(max, val))
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const val = e.target.value
     setInternal(val)
 
@@ -33,7 +33,7 @@ export default function NumberInput({
     }
   }
 
-  const handleBlur = () => {
+  const handleBlur = (): void => {
     const parsed = Number(internal)
     if (isNaN(parsed)) {
       setInternal(String(value))

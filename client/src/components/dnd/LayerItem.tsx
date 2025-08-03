@@ -21,6 +21,7 @@ interface ListItemProps {
   index: number
   id: string
   onDelete: () => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdate: (updates: any) => void
 }
 
@@ -36,7 +37,7 @@ export default function LayerItem({
   id,
   onDelete,
   onUpdate,
-}: ListItemProps) {
+}: ListItemProps): JSX.Element {
   const itemRef = useRef<HTMLDivElement | null>(null)
   const mainRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TaskState>({ type: "idle" })
@@ -44,7 +45,9 @@ export default function LayerItem({
   useEffect(() => {
     const mainElement = mainRef.current
     const element = itemRef.current
-    if (!element || !mainElement) return
+    if (!element || !mainElement) {
+      return
+    }
 
     return combine(
       draggable({
@@ -89,10 +92,13 @@ export default function LayerItem({
         onDragEnter({ source, self }) {
           if (
             getObjectId(source.data.layer as schema.WorldObject) === getObjectId(layer)
-          )
+          ) {
             return
+          }
           const closestEdge = extractClosestEdge(self.data)
-          if (!closestEdge) return
+          if (!closestEdge) {
+            return
+          }
           setState({
             type: "is-over",
             rect: element.getBoundingClientRect(),
@@ -101,8 +107,12 @@ export default function LayerItem({
         },
         onDrag({ self, source }) {
           const closestEdge = extractClosestEdge(self.data)
-          if (self.data.id === source.data.id && closestEdge) return
-          if (!closestEdge) return
+          if (self.data.id === source.data.id && closestEdge) {
+            return
+          }
+          if (!closestEdge) {
+            return
+          }
           const proposedChanges: TaskState = {
             type: "is-over",
             rect: element.getBoundingClientRect(),
@@ -151,7 +161,7 @@ export default function LayerItem({
   )
 }
 
-function DragShadow({ rect }: { rect: DOMRect }) {
+function DragShadow({ rect }: { rect: DOMRect }): JSX.Element {
   return (
     <div
       style={{
@@ -162,7 +172,7 @@ function DragShadow({ rect }: { rect: DOMRect }) {
   )
 }
 
-function DragPreview({ index }: { index: number }) {
+function DragPreview({ index }: { index: number }): JSX.Element {
   return (
     <div className="bg-white w-full h-full rounded-lg shadow-xl p-3 border border-gray-300 text-sm scale-105 opacity-90">
       <div className="flex items-center justify-between">

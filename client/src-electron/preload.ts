@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { contextBridge, ipcRenderer } from "electron"
 
 const invoke = (command: string, ...args: any[]) => {

@@ -57,10 +57,14 @@ export default class Game {
    * @param {number} round - The round to jump to.
    */
   public jumpToRound(round: number): void {
-    if (this.snapshots.length === 0) return
+    if (this.snapshots.length === 0) {
+      return
+    }
 
-    round = Math.max(1, Math.min(round, this.maxRound))
-    if (round === this.currentRound.round) return
+    const clampedRound = Math.max(1, Math.min(round, this.maxRound))
+    if (clampedRound === this.currentRound.round) {
+      return
+    }
 
     const snapshot = this.getClosestSnapshot(round)
 
@@ -76,8 +80,9 @@ export default class Game {
           ? this.rounds[updatingRound.round]
           : null
       updatingRound.startRound(nextDelta)
-      if (updatingRound.round % SNAPSHOT_INTERVAL === 0)
+      if (updatingRound.round % SNAPSHOT_INTERVAL === 0) {
         this.snapshots.push(updatingRound.copy())
+      }
     }
     this.currentRound = updatingRound
   }
@@ -89,8 +94,8 @@ export default class Game {
     this.currentRound.jumpToTurn(this.currentRound.turnsLength)
     this.stepRound(1)
 
-    const roundChanged = round != this.currentRound.round
-    const turnChanged = turn != this.currentRound.turn || roundChanged
+    const roundChanged = round !== this.currentRound.round
+    const turnChanged = turn !== this.currentRound.turn || roundChanged
     return [roundChanged, turnChanged]
   }
 
@@ -100,7 +105,9 @@ export default class Game {
 
   private getClosestSnapshot(targetRound: number): Round {
     const snapIndex = Math.floor((targetRound - 1) / SNAPSHOT_INTERVAL)
-    if (snapIndex < this.snapshots.length) return this.snapshots[snapIndex]
+    if (snapIndex < this.snapshots.length) {
+      return this.snapshots[snapIndex]
+    }
     return this.snapshots[this.snapshots.length - 1]
   }
 

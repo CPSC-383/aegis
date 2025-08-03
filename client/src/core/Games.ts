@@ -23,18 +23,22 @@ export default class Games {
     switch (event.event.oneofKind) {
       case "gamesHeader":
         invariant(false, "Cannot add another GamesHeader event.")
-      case "gameHeader":
+      // fallthrough intentional because invariant throws
+      // eslint-disable-next-line no-fallthrough
+      case "gameHeader": {
         const header = event.event.gameHeader
         const game = Game.fromSchema(this, header)
         this.games.push(game)
         this.currentGame = game
         game.initEnergy()
         return
-      case "round":
+      }
+      case "round": {
         invariant(this.currentGame, "Cannot add rounds to an undefined game.")
         const round = event.event.round
         this.currentGame.addRound(round)
         return
+      }
       case "gameFooter":
         return
       case "gamesFooter":

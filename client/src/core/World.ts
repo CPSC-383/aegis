@@ -31,7 +31,9 @@ export default class World {
   public applyRound(round: schema.Round | null): void {
     this.layerRemovals = []
 
-    if (!round) return
+    if (!round) {
+      return
+    }
 
     for (const loc of round.layersRemoved) {
       const cell = this.cellAt(loc.x, loc.y)!
@@ -171,7 +173,9 @@ export default class World {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
         const cell = this.cellAt(x, y)
-        if (!cell) continue
+        if (!cell) {
+          continue
+        }
 
         const [r, g, b] = getMoveCostColor(cell.moveCost)
         ctx.fillStyle = `rgba(${r}, ${g}, ${b})`
@@ -193,12 +197,16 @@ export default class World {
    */
   private drawSpecialCells(ctx: CanvasRenderingContext2D): void {
     for (const cell of this.cells) {
-      if (!cell.loc) continue
+      if (!cell.loc) {
+        continue
+      }
       const { x, y } = cell.loc
 
       const coords = renderCoords(x, y, this.size)
 
-      if (cell.type === schema.CellType.NORMAL) continue
+      if (cell.type === schema.CellType.NORMAL) {
+        continue
+      }
 
       if (cell.type === schema.CellType.CHARGING) {
         ctx.fillStyle = "#3f00ff"
@@ -266,7 +274,9 @@ export default class World {
       ctx.clearRect(coords.x, coords.y, 1, 1)
 
       const layers = this.cellAt(x, y).layers
-      if (!layers.length) continue
+      if (!layers.length) {
+        continue
+      }
 
       const survivorCount = this.countByKind(layers, "survivor")
       const rubbleCount = this.countByKind(layers, "rubble")

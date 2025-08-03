@@ -75,6 +75,6 @@ export default class RingBuffer<T> {
   }
 }
 
-function mod(n: number, m: number) {
+function mod(n: number, m: number): number {
   return ((n % m) + m) % m
 }

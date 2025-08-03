@@ -18,7 +18,9 @@ class WorldValidator {
 
     // This case should be impossible, but you never know
     const moveCostError = this.verifyMoveCosts(world)
-    if (moveCostError) return moveCostError
+    if (moveCostError) {
+      return moveCostError
+    }
 
     return ""
   }
@@ -63,7 +65,9 @@ export async function exportWorld(
   worldName: string
 ): Promise<string | null> {
   const validationError = WorldValidator.validate(world)
-  if (validationError) return validationError
+  if (validationError) {
+    return validationError
+  }
 
   try {
     const protoWorld = schema.World.create({

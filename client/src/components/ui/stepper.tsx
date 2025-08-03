@@ -25,7 +25,7 @@ type StepState = "active" | "completed" | "inactive" | "loading"
 const StepperContext = createContext<StepperContextValue | undefined>(undefined)
 const StepItemContext = createContext<StepItemContextValue | undefined>(undefined)
 
-const useStepper = () => {
+const useStepper = (): StepperContextValue => {
   const context = useContext(StepperContext)
   if (!context) {
     throw new Error("useStepper must be used within a Stepper")
@@ -33,7 +33,7 @@ const useStepper = () => {
   return context
 }
 
-const useStepItem = () => {
+const useStepItem = (): StepItemContextValue => {
   const context = useContext(StepItemContext)
   if (!context) {
     throw new Error("useStepItem must be used within a StepperItem")
@@ -56,7 +56,7 @@ function Stepper({
   orientation = "horizontal",
   className,
   ...props
-}: StepperProps) {
+}: StepperProps): JSX.Element {
   const [activeStep, setInternalStep] = React.useState(defaultValue)
 
   const setActiveStep = React.useCallback(
@@ -108,7 +108,7 @@ function StepperItem({
   className,
   children,
   ...props
-}: StepperItemProps) {
+}: StepperItemProps): JSX.Element {
   const { activeStep } = useStepper()
 
   const state: StepState =
@@ -148,7 +148,7 @@ function StepperTrigger({
   className,
   children,
   ...props
-}: StepperTriggerProps) {
+}: StepperTriggerProps): JSX.Element {
   const { setActiveStep } = useStepper()
   const { step, isDisabled } = useStepItem()
 
@@ -187,7 +187,7 @@ function StepperIndicator({
   className,
   children,
   ...props
-}: StepperIndicatorProps) {
+}: StepperIndicatorProps): JSX.Element {
   const { state, step, isLoading } = useStepItem()
 
   return (
@@ -227,7 +227,7 @@ function StepperIndicator({
 function StepperTitle({
   className,
   ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
+}: React.HTMLAttributes<HTMLHeadingElement>): JSX.Element {
   return (
     <h3
       data-slot="stepper-title"
@@ -241,7 +241,7 @@ function StepperTitle({
 function StepperDescription({
   className,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
+}: React.HTMLAttributes<HTMLParagraphElement>): JSX.Element {
   return (
     <p
       data-slot="stepper-description"
@@ -255,7 +255,7 @@ function StepperDescription({
 function StepperSeparator({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLDivElement>): JSX.Element {
   return (
     <div
       data-slot="stepper-separator"

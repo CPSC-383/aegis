@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TabNames } from "@/types"
 import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 
 import { createScaffold } from "@/services"
 import Console from "../Console"
@@ -19,10 +19,6 @@ export default function Sidebar(): JSX.Element {
   const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const sidebarRef = useRef<HTMLDivElement | null>(null)
-
-  // useEffect(() => {
-  //   setIsCollapsed(!!selectedCell || !!editorSelectedCell)
-  // }, [selectedCell, editorSelectedCell])
 
   return (
     <div className="relative w-[30%]">

@@ -57,7 +57,9 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
       games = createNewEditorGames(worldParams)
     }
 
-    if (!games) return
+    if (!games) {
+      return
+    }
 
     setEditorGames(games)
     Runner.setGame(games.currentGame!)
@@ -83,14 +85,15 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     loadedBrushes[0].open = true
     setBrushes(loadedBrushes)
     setIsWorldEmpty(world.isEmpty())
-    if (worldParams.imported)
+    if (worldParams.imported) {
       setWorldParams((prev) => ({ ...prev, imported: undefined }))
+    }
   }, [isOpen, worldParams])
 
-  const worldEmpty = () => !round || round.world.isEmpty()
+  const worldEmpty = (): boolean => !round || round.world.isEmpty()
   const currentBrush = brushes.find((b) => b.open)
 
-  const clearWorld = () => {
+  const clearWorld = (): void => {
     setEditorGames(null)
     setWorldParams({ ...worldParams, imported: null })
     setIsWorldEmpty(true)
@@ -109,7 +112,9 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     e: React.ChangeEvent<HTMLInputElement>
   ): Promise<void> => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file) {
+      return
+    }
     importWorld(file).then((games) => {
       const world = games.currentGame!.currentRound.world
       setWorldParams({
@@ -123,17 +128,19 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     e.target.value = ""
   }
 
-  const handleParamChange = (name: string, val: number) => {
+  const handleParamChange = (name: string, val: number): void => {
     setEditorGames(null)
     setWorldParams((prev) => ({ ...prev, [name]: val, imported: null }))
   }
 
-  const handleBrushChange = (name: string) => {
+  const handleBrushChange = (name: string): void => {
     setBrushes((prev) => prev.map((b) => b.withOpen(b.name === name)))
   }
 
-  const applyBrush = (loc: { x: number; y: number }, rightClick: boolean) => {
-    if (!currentBrush) return
+  const applyBrush = (loc: { x: number; y: number }, rightClick: boolean): void => {
+    if (!currentBrush) {
+      return
+    }
     currentBrush.apply(loc.x, loc.y, currentBrush.fields, rightClick)
     Renderer.doFullRedraw()
     Renderer.fullRender()
@@ -141,7 +148,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   }
 
   useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
+    const onKeyDown = (e: KeyboardEvent): void => {
       if (e.key.toLowerCase() === "e" && hoveredTile) {
         e.preventDefault()
         setSelectedTile(hoveredTile)
@@ -152,7 +159,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [hoveredTile])
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setIsEditorOpen(false)
     setSelectedTile(undefined)
     Renderer.doFullRedraw()
@@ -178,10 +185,14 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   }, [brushes])
 
   useEffect(() => {
-    if (mouseDown && hoveredTile) applyBrush(hoveredTile, rightClick)
+    if (mouseDown && hoveredTile) {
+      applyBrush(hoveredTile, rightClick)
+    }
   }, [hoveredTile, rightClick, mouseDown])
 
-  if (!isOpen || brushes.length === 0 || !currentBrush) return null
+  if (!isOpen || brushes.length === 0 || !currentBrush) {
+    return null
+  }
 
   return (
     <div className="flex flex-col gap-6 p-1">

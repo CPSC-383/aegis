@@ -55,6 +55,7 @@ export interface Scaffold {
   killSim: (() => void) | undefined
   readAegisConfig: () => Promise<ClientConfig>
   refreshWorldsAndAgents: () => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getConfigValue: (path: string) => any
   getConfig: () => ClientConfig | null
   isAssignmentConfig: () => boolean

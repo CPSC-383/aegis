@@ -19,7 +19,9 @@ const listenersMap: Record<ListenerKey, Listener[]> = {
 }
 
 export function subscribe(key: ListenerKey, listener: Listener): () => void {
-  if (!listenersMap[key]) listenersMap[key] = []
+  if (!listenersMap[key]) {
+    listenersMap[key] = []
+  }
   listenersMap[key].push(listener)
 
   return () => {

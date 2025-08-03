@@ -3,7 +3,7 @@ import ControlsBar from "./components/controls-bar/Controls-bar"
 import Sidebar from "./components/sidebar/Sidebar"
 import useGames from "./hooks/useGames"
 
-function App() {
+export default function App(): JSX.Element {
   const games = useGames()
   return (
     <div className="flex bg-background overflow-hidden">
@@ -15,5 +15,3 @@ function App() {
     </div>
   )
 }
-
-export default App

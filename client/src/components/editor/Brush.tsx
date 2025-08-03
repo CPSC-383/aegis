@@ -18,13 +18,13 @@ export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
   }
 
   const selectFields = Object.entries(combinedFields).filter(
-    ([_, field]) => field.type === EditorBrushTypes.SINGLE_SELECT
+    ([, field]) => field.type === EditorBrushTypes.SINGLE_SELECT
   )
   const otherFields = Object.entries(combinedFields).filter(
-    ([_, field]) => field.type !== EditorBrushTypes.SINGLE_SELECT
+    ([, field]) => field.type !== EditorBrushTypes.SINGLE_SELECT
   )
 
-  const handleChange = () => {
+  const handleChange = (): void => {
     forceUpdate()
   }
 

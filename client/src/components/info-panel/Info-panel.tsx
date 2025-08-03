@@ -29,8 +29,12 @@ export default function InfoPanel(): JSX.Element | null {
     }
   }, [round])
 
-  if (!round || !games?.playable) return null
-  if (!selectedTile) return <div>Select a cell to look at</div>
+  if (!round || !games?.playable) {
+    return null
+  }
+  if (!selectedTile) {
+    return <div>Select a cell to look at</div>
+  }
 
   const currentLayers = currentWorld
     ? currentWorld.cellAt(selectedTile.x, selectedTile.y).layers
@@ -68,10 +72,10 @@ export default function InfoPanel(): JSX.Element | null {
   )
 }
 
-function ObjectDisplay({ layer }: { layer: schema.WorldObject }) {
+function ObjectDisplay({ layer }: { layer: schema.WorldObject }): JSX.Element {
   const { object } = layer
 
-  const title = () => {
+  const title = (): string => {
     switch (object.oneofKind) {
       case "survivor":
         return "Survivor"
@@ -82,7 +86,7 @@ function ObjectDisplay({ layer }: { layer: schema.WorldObject }) {
     }
   }
 
-  const description = () => {
+  const description = (): JSX.Element => {
     switch (object.oneofKind) {
       case "survivor":
         return <span className="block">Health: {object.survivor.health}</span>

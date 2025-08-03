@@ -12,6 +12,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   layer: schema.WorldObject
   index: number
   onDelete: () => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdate: (updates: any) => void
 }
 
@@ -52,14 +53,22 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                     value={layer.object.survivor.health}
                     min={1}
                     max={100}
-                    onChange={(_, value) =>
+                    onChange={(_, value) => {
+                      const survivor =
+                        layer.object.oneofKind === "survivor"
+                          ? layer.object.survivor
+                          : undefined
+                      if (!survivor) {
+                        return
+                      }
+
                       onUpdate({
                         survivor: {
-                          ...(layer.object as any).survivor,
+                          ...survivor,
                           health: value,
                         },
                       })
-                    }
+                    }}
                   />
                 </div>
               </div>
@@ -80,14 +89,22 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                       value={layer.object.rubble?.energyRequired ?? 0}
                       min={1}
                       max={999}
-                      onChange={(_, value) =>
+                      onChange={(_, value) => {
+                        const rubble =
+                          layer.object.oneofKind === "rubble"
+                            ? layer.object.rubble
+                            : undefined
+                        if (!rubble) {
+                          return
+                        }
+
                         onUpdate({
                           rubble: {
-                            ...(layer.object as any).rubble,
+                            ...rubble,
                             energyRequired: value,
                           },
                         })
-                      }
+                      }}
                     />
                   </div>
                   <div className="space-y-1">
@@ -102,14 +119,22 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                       value={layer.object.rubble?.agentsRequired ?? 0}
                       min={1}
                       max={10}
-                      onChange={(_, value) =>
+                      onChange={(_, value) => {
+                        const rubble =
+                          layer.object.oneofKind === "rubble"
+                            ? layer.object.rubble
+                            : undefined
+                        if (!rubble) {
+                          return
+                        }
+
                         onUpdate({
                           rubble: {
-                            ...(layer.object as any).rubble,
+                            ...rubble,
                             agentsRequired: value,
                           },
                         })
-                      }
+                      }}
                     />
                   </div>
                 </div>

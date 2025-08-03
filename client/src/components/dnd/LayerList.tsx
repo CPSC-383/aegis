@@ -17,6 +17,7 @@ interface Props {
   originalLayers: schema.WorldObject[]
   setLayers: (value: SetStateAction<schema.WorldObject[]>) => void
   setHasChanges: (value: SetStateAction<boolean>) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateLayer: (index: number, updates: any) => void
   deleteLayer: (index: number) => void
 }
@@ -28,12 +29,14 @@ export default function LayerList({
   setHasChanges,
   updateLayer,
   deleteLayer,
-}: Props) {
+}: Props): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container) return
+    if (!container) {
+      return
+    }
 
     return combine(
       autoScrollForElements({
@@ -41,11 +44,13 @@ export default function LayerList({
       }),
       monitorForElements({
         canMonitor({ source }) {
-          return source.data?.id != null
+          return source.data?.id !== null
         },
         onDrop: ({ source, location }) => {
           const dest = location.current.dropTargets[0]
-          if (!dest) return
+          if (!dest) {
+            return
+          }
 
           const sourceId = source.data.id as string
           const destId = dest.data.id as string

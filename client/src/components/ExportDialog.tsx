@@ -17,14 +17,16 @@ interface Props {
   onConfirm: (filename: string) => Promise<string | null>
 }
 
-export default function ExportDialog({ onConfirm }: Props) {
+export default function ExportDialog({ onConfirm }: Props): JSX.Element {
   const [open, setOpen] = useState(false)
   const [filename, setFilename] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const handleExport = async () => {
-    if (!filename.trim()) return
+  const handleExport = async (): Promise<void> => {
+    if (!filename.trim()) {
+      return
+    }
 
     setLoading(true)
     const result = await onConfirm(filename.trim())

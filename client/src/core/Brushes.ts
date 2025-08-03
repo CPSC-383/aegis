@@ -9,6 +9,7 @@ export enum EditorBrushTypes {
 
 export type EditorFieldBase = {
   type: EditorBrushTypes
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any
   label: string
   options?: EditorFieldOption[]
@@ -19,6 +20,7 @@ export type EditorField = EditorFieldBase & {
 }
 
 export type EditorFieldOption = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any
   label: string
   attributes?: {
@@ -73,7 +75,9 @@ export class ZoneBrush extends EditorBrush {
     rightClick: boolean
   ): void {
     const cell = this.world.cellAt(x, y)
-    if (!cell || cell.layers.length > 0) return
+    if (!cell || cell.layers.length > 0) {
+      return
+    }
 
     const cellType = fields.zoneType.value as schema.CellType
 
@@ -140,9 +144,11 @@ export class LayersBrush extends EditorBrush {
     y: number,
     fields: Record<string, EditorField>,
     rightClick: boolean
-  ) {
+  ): void {
     const cell = this.world.cellAt(x, y)
-    if (!cell || cell.type !== schema.CellType.NORMAL) return
+    if (!cell || cell.type !== schema.CellType.NORMAL) {
+      return
+    }
 
     if (rightClick) {
       // only pop the layer that is the same as the selected brush type (dont allow having the ruble brush selected and right clicking to pop a surv off)
@@ -222,11 +228,15 @@ export class MoveCostBrush extends EditorBrush {
     rightClick: boolean
   ): void {
     const cell = this.world.cellAt(x, y)
-    if (!cell || cell.type !== schema.CellType.NORMAL) return
+    if (!cell || cell.type !== schema.CellType.NORMAL) {
+      return
+    }
 
     const moveCost = fields.moveCost.value
 
-    if (cell.type !== schema.CellType.NORMAL) return
+    if (cell.type !== schema.CellType.NORMAL) {
+      return
+    }
 
     if (rightClick) {
       cell.moveCost = 1

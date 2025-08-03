@@ -18,7 +18,9 @@ function ControlsBar(): JSX.Element | null {
   const round = useRound()
   const [isMinimized, setIsMinimized] = useState<boolean>(false)
 
-  if (!round) return null
+  if (!round) {
+    return null
+  }
 
   return (
     <TooltipProvider>

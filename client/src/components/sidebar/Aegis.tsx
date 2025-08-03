@@ -17,6 +17,7 @@ import NumberInput from "../NumberInput"
 import { MultiSelect } from "../ui/multiselect"
 import { Scaffold } from "@/types"
 import GameCycler from "../GameCycler"
+import { ClientConfig } from "@/services"
 
 type Props = {
   scaffold: Scaffold
@@ -46,16 +47,18 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
     loadConfig()
   }, [])
 
-  const loadConfig = async () => {
+  const loadConfig = async (): Promise<ClientConfig | undefined> => {
     try {
       setConfigError(null)
-      await readAegisConfig()
+      const config = await readAegisConfig()
+      return config
     } catch (error) {
       setConfigError(
         error instanceof Error
           ? error.message
           : "Failed to load config. Please check your config.yaml file, and make sure it is in the correct path."
       )
+      return undefined
     }
   }
 
@@ -123,7 +126,6 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
           options={worlds}
           selected={selectedWorlds}
           onChange={setSelectedWorlds}
-          placeholder="Choose worlds..."
         />
       </div>
 

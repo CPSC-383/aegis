@@ -13,7 +13,7 @@ class ElectronApp {
     this.initialize()
   }
 
-  private initialize() {
+  private initialize(): void {
     app.whenReady().then(() => {
       this.createWindow()
       this.setupAppLifecycleHandlers()
@@ -21,7 +21,7 @@ class ElectronApp {
     })
   }
 
-  private createWindow() {
+  private createWindow(): void {
     this.mainWindow = new BrowserWindow({
       width: 1200,
       height: 800,
@@ -44,19 +44,24 @@ class ElectronApp {
     })
   }
 
-  private setupAppLifecycleHandlers() {
+  private setupAppLifecycleHandlers(): void {
     app.on("activate", () => {
-      if (this.mainWindow === null) this.createWindow()
+      if (this.mainWindow === null) {
+        this.createWindow()
+      }
     })
 
     app.on("before-quit", () => this.killAllProcesses())
 
     app.on("window-all-closed", () => {
-      if (process.platform !== "darwin") app.quit()
+      if (process.platform !== "darwin") {
+        app.quit()
+      }
     })
   }
 
-  private setupIpcHandlers() {
+  private setupIpcHandlers(): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ipcMain.handle("electronAPI", async (_, command: string, ...args: any[]) => {
       return this.handleElectronAPI(command, ...args)
     })
@@ -81,14 +86,15 @@ class ElectronApp {
     })
   }
 
-  private killAllProcesses() {
+  private killAllProcesses(): void {
     for (const [pid, process] of this.processes) {
       process.kill()
       this.processes.delete(pid)
     }
   }
 
-  private async handleElectronAPI(command: string, ...args: any[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async handleElectronAPI(command: string, ...args: any[]): Promise<any> {
     switch (command) {
       case "openAegisDirectory":
         return this.openAegisDirectory()
@@ -122,7 +128,7 @@ class ElectronApp {
     }
   }
 
-  private async openAegisDirectory() {
+  private async openAegisDirectory(): Promise<string | undefined> {
     const result = await dialog.showOpenDialog({
       properties: ["openDirectory"],
       title: "Select Aegis directory",
@@ -130,7 +136,7 @@ class ElectronApp {
     return result.canceled ? undefined : result.filePaths[0]
   }
 
-  private async exportWorld(defaultPath: string, content: string) {
+  private async exportWorld(defaultPath: string, content: string): Promise<void> {
     const exportResult = await dialog.showSaveDialog({
       defaultPath,
       title: "Export World",
@@ -140,10 +146,12 @@ class ElectronApp {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private readConfig(aegisPath: string) {
     try {
       const configPath = path.join(aegisPath, "config", "config.yaml")
       const fileContent = fs.readFileSync(configPath, "utf8")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const config = yaml.parse(fileContent) as Record<string, any>
       return config
     } catch (error) {
@@ -203,7 +211,7 @@ class ElectronApp {
     agent: string,
     aegisPath: string,
     debug: boolean
-  ) {
+  ): Promise<string> {
     const procArgs = [
       "--amount",
       amount,
@@ -228,15 +236,8 @@ class ElectronApp {
           let stdoutBuffer = ""
           let stderrBuffer = ""
 
-          function flushBuffer(buffer: string, data: string) {
-            buffer += data
-            const lines = buffer.split("\n")
-            buffer = lines.pop() ?? ""
-            return { lines, buffer }
-          }
-
           childAegis.stdout?.on("data", (data) => {
-            const { lines, buffer } = flushBuffer(stdoutBuffer, data.toString())
+            const { lines, buffer } = this.flushBuffer(stdoutBuffer, data.toString())
             stdoutBuffer = buffer
             lines.forEach((line) => {
               this.mainWindow?.webContents.send("aegis_child_process.stdout", line)
@@ -244,7 +245,7 @@ class ElectronApp {
           })
 
           childAegis.stderr?.on("data", (data) => {
-            const { lines, buffer } = flushBuffer(stdoutBuffer, data.toString())
+            const { lines, buffer } = this.flushBuffer(stderrBuffer, data.toString())
             stderrBuffer = buffer
             lines.forEach((line) => {
               this.mainWindow?.webContents.send("aegis_child_process.stderr", line)
@@ -262,7 +263,17 @@ class ElectronApp {
     })
   }
 
-  private killProcess(pid: string) {
+  private flushBuffer(
+    buffer: string,
+    data: string
+  ): { lines: string[]; buffer: string } {
+    const combined = buffer + data
+    const lines = combined.split("\n")
+    const newBuffer = lines.pop() ?? ""
+    return { lines, buffer: newBuffer }
+  }
+
+  private killProcess(pid: string): void {
     const process = this.processes.get(pid)
     if (process) {
       process.kill()

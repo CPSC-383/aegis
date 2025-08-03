@@ -18,10 +18,10 @@ interface ConfirmClearDialogProps {
 export default function ConfirmClearDialog({
   onConfirm,
   disabled,
-}: ConfirmClearDialogProps) {
+}: ConfirmClearDialogProps): JSX.Element {
   const [open, setOpen] = useState(false)
 
-  const handleConfirm = () => {
+  const handleConfirm = (): void => {
     onConfirm()
     setOpen(false)
   }

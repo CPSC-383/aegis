@@ -13,7 +13,9 @@ export default class Agents {
     public readonly games: Games,
     public initAgents?: schema.Spawn[]
   ) {
-    if (initAgents) this.insertAgents(initAgents)
+    if (initAgents) {
+      this.insertAgents(initAgents)
+    }
   }
 
   public processRound(round: schema.Round | null): void {
@@ -46,7 +48,9 @@ export default class Agents {
 
   public clearDead(): void {
     for (const agent of this.agents.values()) {
-      if (!agent.dead) continue
+      if (!agent.dead) {
+        continue
+      }
       this.agents.delete(agent.id)
     }
   }
@@ -76,7 +80,9 @@ export default class Agents {
     const agent = new Agent(this.games, id, team, loc, imgPath)
     this.agents.set(id, agent)
 
-    if (this.games.currentGame) agent.default()
+    if (this.games.currentGame) {
+      agent.default()
+    }
   }
 
   private insertAgents(spawns: schema.Spawn[]): void {
@@ -95,8 +101,9 @@ export default class Agents {
   public copy(): Agents {
     const newAgents = new Agents(this.games)
     newAgents.agents = new Map(this.agents)
-    for (const agent of this.agents.values())
+    for (const agent of this.agents.values()) {
       newAgents.agents.set(agent.id, agent.copy())
+    }
     return newAgents
   }
 }
@@ -121,7 +128,9 @@ export class Agent {
     invariant(goob, "goob should already be loaded")
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
-    if (this.dead) ctx.globalAlpha = 0.5
+    if (this.dead) {
+      ctx.globalAlpha = 0.5
+    }
     ctx.drawImage(goob, pos.x, pos.y, 1, 1)
     ctx.globalAlpha = 1
   }

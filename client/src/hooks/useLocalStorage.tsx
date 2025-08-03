@@ -16,7 +16,7 @@ export function useLocalStorage<T>(
     return defaultValue
   })
 
-  const setStoredValue = (val: T) => {
+  const setStoredValue = (val: T): void => {
     setValue(val)
     localStorage.setItem(key, JSON.stringify(val))
   }
