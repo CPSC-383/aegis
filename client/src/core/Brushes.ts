@@ -37,7 +37,7 @@ export abstract class EditorBrush {
   ): void
   public open: boolean = false
 
-  constructor(public readonly world: World) {}
+  constructor(public readonly world: World) { }
 
   withOpen(open: boolean): this {
     const clone = Object.create(Object.getPrototypeOf(this))
@@ -73,7 +73,7 @@ export class ZoneBrush extends EditorBrush {
     rightClick: boolean
   ): void {
     const cell = this.world.cellAt(x, y)
-    if (!cell) return
+    if (!cell || cell.layers.length > 0) return
 
     const cellType = fields.zoneType.value as schema.CellType
 
@@ -142,7 +142,7 @@ export class LayersBrush extends EditorBrush {
     rightClick: boolean
   ) {
     const cell = this.world.cellAt(x, y)
-    if (!cell) return
+    if (!cell || cell.type !== schema.CellType.NORMAL) return
 
     if (rightClick) {
       // only pop the layer that is the same as the selected brush type (dont allow having the ruble brush selected and right clicking to pop a surv off)
@@ -222,7 +222,7 @@ export class MoveCostBrush extends EditorBrush {
     rightClick: boolean
   ): void {
     const cell = this.world.cellAt(x, y)
-    if (!cell) return
+    if (!cell || cell.type !== schema.CellType.NORMAL) return
 
     const moveCost = fields.moveCost.value
 
