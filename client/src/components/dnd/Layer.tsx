@@ -1,17 +1,18 @@
-import { schema } from 'aegis-schema'
-import { GripVertical, Trash2 } from 'lucide-react'
-import { HTMLAttributes, forwardRef } from 'react'
-import NumberInput from '../NumberInput'
-import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import { Card, CardContent } from '../ui/card'
-import { Label } from '../ui/label'
-import { getLayerColor, getLayerIcon } from './dnd-utils'
+import { schema } from "aegis-schema"
+import { GripVertical, Trash2 } from "lucide-react"
+import { HTMLAttributes, forwardRef } from "react"
+import NumberInput from "../NumberInput"
+import { Badge } from "../ui/badge"
+import { Button } from "../ui/button"
+import { Card, CardContent } from "../ui/card"
+import { Label } from "../ui/label"
+import { getLayerColor, getLayerIcon } from "./dnd-utils"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   layer: schema.WorldObject
   index: number
   onDelete: () => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdate: (updates: any) => void
 }
 
@@ -38,7 +39,7 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                 </Badge>
               </div>
             </div>
-            {layer.object.oneofKind === 'survivor' && (
+            {layer.object.oneofKind === "survivor" && (
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col items-center gap-2">
                   <Label
@@ -52,20 +53,28 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                     value={layer.object.survivor.health}
                     min={1}
                     max={100}
-                    onChange={(_, value) =>
+                    onChange={(_, value) => {
+                      const survivor =
+                        layer.object.oneofKind === "survivor"
+                          ? layer.object.survivor
+                          : undefined
+                      if (!survivor) {
+                        return
+                      }
+
                       onUpdate({
                         survivor: {
-                          ...(layer.object as any).survivor,
-                          health: value
-                        }
+                          ...survivor,
+                          health: value,
+                        },
                       })
-                    }
+                    }}
                   />
                 </div>
               </div>
             )}
 
-            {layer.object.oneofKind === 'rubble' && (
+            {layer.object.oneofKind === "rubble" && (
               <div className="space-y-3 pt-2">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
@@ -80,14 +89,22 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                       value={layer.object.rubble?.energyRequired ?? 0}
                       min={1}
                       max={999}
-                      onChange={(_, value) =>
+                      onChange={(_, value) => {
+                        const rubble =
+                          layer.object.oneofKind === "rubble"
+                            ? layer.object.rubble
+                            : undefined
+                        if (!rubble) {
+                          return
+                        }
+
                         onUpdate({
                           rubble: {
-                            ...(layer.object as any).rubble,
-                            energyRequired: value
-                          }
+                            ...rubble,
+                            energyRequired: value,
+                          },
                         })
-                      }
+                      }}
                     />
                   </div>
                   <div className="space-y-1">
@@ -102,14 +119,22 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                       value={layer.object.rubble?.agentsRequired ?? 0}
                       min={1}
                       max={10}
-                      onChange={(_, value) =>
+                      onChange={(_, value) => {
+                        const rubble =
+                          layer.object.oneofKind === "rubble"
+                            ? layer.object.rubble
+                            : undefined
+                        if (!rubble) {
+                          return
+                        }
+
                         onUpdate({
                           rubble: {
-                            ...(layer.object as any).rubble,
-                            agentsRequired: value
-                          }
+                            ...rubble,
+                            agentsRequired: value,
+                          },
                         })
-                      }
+                      }}
                     />
                   </div>
                 </div>
@@ -130,6 +155,6 @@ const Layer = forwardRef<HTMLDivElement, Props>(
   }
 )
 
-Layer.displayName = 'Layer'
+Layer.displayName = "Layer"
 
 export default Layer

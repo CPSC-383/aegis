@@ -1,15 +1,13 @@
-import rubbleSrc from '@/assets/rubble.png'
-import survivorSrcDark from '@/assets/survivor-dark.png'
-import survivorSrcLight from '@/assets/survivor-light.png'
-import { getMoveCostColor, Size, Vector } from '@/types'
-import { THICKNESS } from '@/utils/constants'
-import { renderCoords } from '@/utils/renderUtils'
-import { getImage } from '@/utils/util'
-import { schema } from 'aegis-schema'
-import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from './Brushes'
-import Game from './Game'
-import Round from './Round'
-import invariant from 'tiny-invariant'
+import rubbleSrc from "@/assets/rubble.png"
+import survivorSrcDark from "@/assets/survivor-dark.png"
+import survivorSrcLight from "@/assets/survivor-light.png"
+import { getMoveCostColor, Size, Vector } from "@/types"
+import { THICKNESS } from "@/utils/constants"
+import { getImage, renderCoords } from "@/utils/util"
+import { schema } from "aegis-schema"
+import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from "./Brushes"
+import Round from "./Round"
+import invariant from "tiny-invariant"
 
 /**
  * Represents a world in aegis.
@@ -20,6 +18,8 @@ import invariant from 'tiny-invariant'
  * @param startEnergy - Starting energy for agents.
  */
 export default class World {
+  private layerRemovals: schema.Location[] = []
+
   constructor(
     public readonly width: number,
     public readonly height: number,
@@ -29,11 +29,16 @@ export default class World {
   ) {}
 
   public applyRound(round: schema.Round | null): void {
-    if (!round) return
+    this.layerRemovals = []
+
+    if (!round) {
+      return
+    }
 
     for (const loc of round.layersRemoved) {
       const cell = this.cellAt(loc.x, loc.y)!
       cell.layers.shift()
+      this.layerRemovals.push(loc)
     }
   }
 
@@ -69,7 +74,7 @@ export default class World {
         moveCost: 1,
         type: schema.CellType.NORMAL,
         agents: [],
-        layers: []
+        layers: [],
       })
     })
 
@@ -98,7 +103,7 @@ export default class World {
       moveCost: cell.moveCost,
       type: cell.type,
       agents: [...cell.agents],
-      layers: cell.layers.map((layer) => ({ ...layer }))
+      layers: cell.layers.map((layer) => ({ ...layer })),
     }
   }
 
@@ -140,10 +145,10 @@ export default class World {
    * @param ctx - Canvas rendering context.
    */
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.strokeStyle = 'black'
+    ctx.strokeStyle = "black"
     ctx.lineWidth = THICKNESS
 
-    ctx.fillStyle = '#000000'
+    ctx.fillStyle = "#000000"
     ctx.fillRect(0, 0, this.width, this.height)
 
     this.drawCells(ctx)
@@ -168,7 +173,9 @@ export default class World {
     for (let x = 0; x < this.width; x++) {
       for (let y = 0; y < this.height; y++) {
         const cell = this.cellAt(x, y)
-        if (!cell) continue
+        if (!cell) {
+          continue
+        }
 
         const [r, g, b] = getMoveCostColor(cell.moveCost)
         ctx.fillStyle = `rgba(${r}, ${g}, ${b})`
@@ -190,17 +197,21 @@ export default class World {
    */
   private drawSpecialCells(ctx: CanvasRenderingContext2D): void {
     for (const cell of this.cells) {
-      if (!cell.loc) continue
+      if (!cell.loc) {
+        continue
+      }
       const { x, y } = cell.loc
 
       const coords = renderCoords(x, y, this.size)
 
-      if (cell.type === schema.CellType.NORMAL) continue
+      if (cell.type === schema.CellType.NORMAL) {
+        continue
+      }
 
       if (cell.type === schema.CellType.CHARGING) {
-        ctx.fillStyle = '#3f00ff'
+        ctx.fillStyle = "#3f00ff"
       } else if (cell.type === schema.CellType.KILLER) {
-        ctx.fillStyle = '#cc0000'
+        ctx.fillStyle = "#cc0000"
       } else if (cell.type === schema.CellType.SPAWN) {
         this.drawSpawn(ctx, coords)
         continue
@@ -231,7 +242,7 @@ export default class World {
 
     for (let i = -numStripes; i < numStripes * 2; i++) {
       ctx.beginPath()
-      ctx.fillStyle = i % 2 === 0 ? '#ffff00' : '#000000'
+      ctx.fillStyle = i % 2 === 0 ? "#ffff00" : "#000000"
 
       const startPointX = coords.x + i * stripeWidth
       const endPointX = startPointX + stripeWidth
@@ -247,13 +258,13 @@ export default class World {
     ctx.restore()
   }
 
-  public drawLayers(game: Game, ctx: CanvasRenderingContext2D, full: boolean): void {
+  public drawLayers(ctx: CanvasRenderingContext2D, full: boolean): void {
     const lightSurv = getImage(survivorSrcLight)
     const darkSurv = getImage(survivorSrcDark)
     const rubble = getImage(rubbleSrc)
-    invariant(lightSurv && darkSurv && rubble, 'layer images should be loaded already')
+    invariant(lightSurv && darkSurv && rubble, "layer images should be loaded already")
 
-    const locs = full ? this.getAllLocations() : game.currentRound.layersRemoved
+    const locs = full ? this.getAllLocations() : this.layerRemovals
 
     for (const loc of locs) {
       const x = loc.x
@@ -262,42 +273,44 @@ export default class World {
       const coords = renderCoords(x, y, this.size)
       ctx.clearRect(coords.x, coords.y, 1, 1)
 
-      const layers = this.cellAt(x, y)!.layers
-      if (!layers.length) continue
+      const layers = this.cellAt(x, y).layers
+      if (!layers.length) {
+        continue
+      }
 
-      const survivorCount = this.countByKind(layers, 'survivor')
-      const rubbleCount = this.countByKind(layers, 'rubble')
+      const survivorCount = this.countByKind(layers, "survivor")
+      const rubbleCount = this.countByKind(layers, "rubble")
 
       const topLayer = layers[0]
       const kind = topLayer.object.oneofKind
       const [, , , moveCost] = getMoveCostColor(this.cellAt(x, y).moveCost)
 
-      if (kind === 'survivor') {
+      if (kind === "survivor") {
         if (moveCost <= 5) {
           ctx.drawImage(darkSurv, coords.x, coords.y, 1, 1)
         } else {
           ctx.drawImage(lightSurv, coords.x, coords.y, 1, 1)
         }
-      } else if (kind === 'rubble') {
+      } else if (kind === "rubble") {
         ctx.drawImage(rubble, coords.x + 0.025, coords.y + 0.025, 0.95, 0.95)
       }
 
-      ctx.font = '0.3px Arial'
-      ctx.textBaseline = 'bottom'
+      ctx.font = "0.3px monospace"
+      ctx.textBaseline = "bottom"
 
       if (survivorCount > 0) {
-        ctx.textAlign = 'right'
+        ctx.textAlign = "right"
         if (moveCost <= 5) {
-          ctx.fillStyle = '#0919ff'
+          ctx.fillStyle = "#0919ff"
         } else {
-          ctx.fillStyle = '#0f8cff'
+          ctx.fillStyle = "#0f8cff"
         }
         ctx.fillText(String(survivorCount), coords.x + 0.97, coords.y + 1.01)
       }
 
       if (rubbleCount > 0) {
-        ctx.fillStyle = '#444444'
-        ctx.textAlign = 'left'
+        ctx.fillStyle = "#444444"
+        ctx.textAlign = "left"
         ctx.fillText(String(rubbleCount), coords.x + 0.03, coords.y + 1.01)
       }
     }

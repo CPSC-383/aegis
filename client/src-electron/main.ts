@@ -1,9 +1,9 @@
-import { is } from '@electron-toolkit/utils'
-import child_process from 'child_process'
-import { app, BrowserWindow, dialog, ipcMain } from 'electron'
-import fs from 'fs'
-import path from 'path'
-import yaml from 'yaml'
+import { is } from "@electron-toolkit/utils"
+import child_process from "child_process"
+import { app, BrowserWindow, dialog, ipcMain } from "electron"
+import fs from "fs"
+import path from "path"
+import yaml from "yaml"
 
 class ElectronApp {
   private mainWindow: BrowserWindow | null = null
@@ -13,7 +13,7 @@ class ElectronApp {
     this.initialize()
   }
 
-  private initialize() {
+  private initialize(): void {
     app.whenReady().then(() => {
       this.createWindow()
       this.setupAppLifecycleHandlers()
@@ -21,47 +21,52 @@ class ElectronApp {
     })
   }
 
-  private createWindow() {
+  private createWindow(): void {
     this.mainWindow = new BrowserWindow({
       width: 1200,
       height: 800,
       autoHideMenuBar: true,
-      title: 'AEGIS',
+      title: "AEGIS",
       webPreferences: {
         devTools: is.dev,
-        preload: path.join(__dirname, '../preload/index.js')
-      }
+        preload: path.join(__dirname, "../preload/index.js"),
+      },
     })
 
     const URL = is.dev
-      ? 'http://localhost:5173'
-      : `file://${path.join(__dirname, '../renderer/index.html')}`
+      ? "http://localhost:5173"
+      : `file://${path.join(__dirname, "../renderer/index.html")}`
 
     this.mainWindow.loadURL(URL)
-    this.mainWindow.once('ready-to-show', () => this.mainWindow?.show())
-    this.mainWindow.on('closed', () => {
+    this.mainWindow.once("ready-to-show", () => this.mainWindow?.show())
+    this.mainWindow.on("closed", () => {
       this.mainWindow = null
     })
   }
 
-  private setupAppLifecycleHandlers() {
-    app.on('activate', () => {
-      if (this.mainWindow === null) this.createWindow()
+  private setupAppLifecycleHandlers(): void {
+    app.on("activate", () => {
+      if (this.mainWindow === null) {
+        this.createWindow()
+      }
     })
 
-    app.on('before-quit', () => this.killAllProcesses())
+    app.on("before-quit", () => this.killAllProcesses())
 
-    app.on('window-all-closed', () => {
-      if (process.platform !== 'darwin') app.quit()
+    app.on("window-all-closed", () => {
+      if (process.platform !== "darwin") {
+        app.quit()
+      }
     })
   }
 
-  private setupIpcHandlers() {
-    ipcMain.handle('electronAPI', async (_, command: string, ...args: any[]) => {
+  private setupIpcHandlers(): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ipcMain.handle("electronAPI", async (_, command: string, ...args: any[]) => {
       return this.handleElectronAPI(command, ...args)
     })
 
-    ipcMain.handle('aegis_child_process.spawn', async (_, ...args) => {
+    ipcMain.handle("aegis_child_process.spawn", async (_, ...args) => {
       return await this.spawnAegisProcess(
         args[0], // rounds
         args[1], // amount
@@ -72,43 +77,44 @@ class ElectronApp {
       )
     })
 
-    ipcMain.handle('aegis_child_process.kill', async (_, pid) => {
+    ipcMain.handle("aegis_child_process.kill", async (_, pid) => {
       this.killProcess(pid)
     })
 
-    ipcMain.handle('read_config', async (_, aegisPath) => {
+    ipcMain.handle("read_config", async (_, aegisPath) => {
       return this.readConfig(aegisPath)
     })
   }
 
-  private killAllProcesses() {
+  private killAllProcesses(): void {
     for (const [pid, process] of this.processes) {
       process.kill()
       this.processes.delete(pid)
     }
   }
 
-  private async handleElectronAPI(command: string, ...args: any[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async handleElectronAPI(command: string, ...args: any[]): Promise<any> {
     switch (command) {
-      case 'openAegisDirectory':
+      case "openAegisDirectory":
         return this.openAegisDirectory()
-      case 'getAppPath':
+      case "getAppPath":
         return app.getAppPath()
-      case 'path.join':
+      case "path.join":
         return path.join(...args)
-      case 'path.dirname':
+      case "path.dirname":
         return path.dirname(args[0])
-      case 'fs.existsSync':
+      case "fs.existsSync":
         return fs.existsSync(args[0])
-      case 'fs.readdirSync':
+      case "fs.readdirSync":
         return fs.readdirSync(args[0])
-      case 'fs.isDirectory':
+      case "fs.isDirectory":
         return fs.statSync(args[0]).isDirectory()
-      case 'fs.readFileSync':
-        return fs.readFileSync(args[0], 'utf8')
-      case 'exportWorld':
+      case "fs.readFileSync":
+        return fs.readFileSync(args[0], "utf8")
+      case "exportWorld":
         return this.exportWorld(args[0], args[1])
-      case 'aegis_child_process.spawn':
+      case "aegis_child_process.spawn":
         return this.spawnAegisProcess(
           args[0], // rounds
           args[1], // amount
@@ -117,33 +123,35 @@ class ElectronApp {
           args[4], // aegis path
           args[5] // debug
         )
-      case 'aegis_child_process.kill':
+      case "aegis_child_process.kill":
         return this.killProcess(args[0])
     }
   }
 
-  private async openAegisDirectory() {
+  private async openAegisDirectory(): Promise<string | undefined> {
     const result = await dialog.showOpenDialog({
-      properties: ['openDirectory'],
-      title: 'Select Aegis directory'
+      properties: ["openDirectory"],
+      title: "Select Aegis directory",
     })
     return result.canceled ? undefined : result.filePaths[0]
   }
 
-  private async exportWorld(defaultPath: string, content: string) {
+  private async exportWorld(defaultPath: string, content: string): Promise<void> {
     const exportResult = await dialog.showSaveDialog({
       defaultPath,
-      title: 'Export World'
+      title: "Export World",
     })
     if (!exportResult.canceled && exportResult.filePath) {
       fs.writeFileSync(exportResult.filePath, content)
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private readConfig(aegisPath: string) {
     try {
-      const configPath = path.join(aegisPath, 'config', 'config.yaml')
-      const fileContent = fs.readFileSync(configPath, 'utf8')
+      const configPath = path.join(aegisPath, "config", "config.yaml")
+      const fileContent = fs.readFileSync(configPath, "utf8")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const config = yaml.parse(fileContent) as Record<string, any>
       return config
     } catch (error) {
@@ -153,94 +161,100 @@ class ElectronApp {
         features: {
           ENABLE_PREDICTIONS: false,
           ENABLE_VARIABLE_AGENT_AMOUNT: false,
-          DEFAULT_AGENT_AMOUNT: 1
+          DEFAULT_AGENT_AMOUNT: 1,
         },
         assignment_specific: {
-          ENABLE_MOVE_COST: false
+          ENABLE_MOVE_COST: false,
         },
         competition_specific: {
-          VERSUS_MODE: false
+          VERSUS_MODE: false,
         },
         client: {
-          CONFIG_TYPE: 'assignment',
+          CONFIG_TYPE: "assignment",
           SHOW_DEBUG_MODE: true,
-          SHOW_MULTI_AGENT_OPTIONS: false
-        }
+          SHOW_MULTI_AGENT_OPTIONS: false,
+        },
       }
     }
   }
-  private updateConfig(filePath: string, updates: any) {
-    try {
-      const config = this.readConfig(filePath) as Record<string, any>
 
-      // Handle nested updates (like assignment_specific.ENABLE_MOVE_COST)
-      for (const [key, value] of Object.entries(updates)) {
-        if (typeof value === 'object' && value !== null) {
-          // Handle nested objects
-          if (!config[key]) {
-            config[key] = {}
-          }
-          Object.assign(config[key], value)
-        } else {
-          // Handle direct properties
-          config[key] = value
-        }
-      }
-
-      fs.writeFileSync(filePath, yaml.stringify(config))
-    } catch (error) {
-      // @ts-ignore: error type
-      console.error(`Error updating the config file: ${error.message}`)
-      throw error
-    }
-  }
+  // private updateConfig(filePath: string, updates: any) {
+  //   try {
+  //     const config = this.readConfig(filePath) as Record<string, any>
+  //
+  //     // Handle nested updates (like assignment_specific.ENABLE_MOVE_COST)
+  //     for (const [key, value] of Object.entries(updates)) {
+  //       if (typeof value === 'object' && value !== null) {
+  //         // Handle nested objects
+  //         if (!config[key]) {
+  //           config[key] = {}
+  //         }
+  //         Object.assign(config[key], value)
+  //       } else {
+  //         // Handle direct properties
+  //         config[key] = value
+  //       }
+  //     }
+  //
+  //     fs.writeFileSync(filePath, yaml.stringify(config))
+  //   } catch (error) {
+  //     // @ts-ignore: error type
+  //     console.error(`Error updating the config file: ${error.message}`)
+  //     throw error
+  //   }
+  // }
 
   private spawnAegisProcess(
     rounds: string,
     amount: string,
-    world: string,
+    world: string[],
     agent: string,
     aegisPath: string,
     debug: boolean
-  ) {
+  ): Promise<string> {
     const procArgs = [
-      '--amount',
+      "--amount",
       amount,
-      '--agent',
-      `agents/${agent}/main.py`,
-      '--world',
-      `worlds/${world}`,
-      '--rounds',
+      "--agent",
+      `${agent}`,
+      "--world",
+      ...world,
+      "--rounds",
       rounds,
-      '--client',
-      ...(debug ? ['--debug'] : [])
+      "--client",
+      ...(debug ? ["--debug"] : []),
     ]
-    const childAegis = child_process.spawn('aegis', [...procArgs], { cwd: aegisPath })
+    const childAegis = child_process.spawn("aegis", [...procArgs], { cwd: aegisPath })
 
     return new Promise((resolve, reject) => {
-      childAegis.on('error', reject)
-      childAegis.on('spawn', () => {
+      childAegis.on("error", reject)
+      childAegis.on("spawn", () => {
         const pid = childAegis.pid?.toString()
         if (pid) {
           this.processes.set(pid, childAegis)
 
-          childAegis.stdout?.on('data', (data) => {
-            this.mainWindow?.webContents.send(
-              'aegis_child_process.stdout',
-              data.toString()
-            )
+          let stdoutBuffer = ""
+          let stderrBuffer = ""
+
+          childAegis.stdout?.on("data", (data) => {
+            const { lines, buffer } = this.flushBuffer(stdoutBuffer, data.toString())
+            stdoutBuffer = buffer
+            lines.forEach((line) => {
+              this.mainWindow?.webContents.send("aegis_child_process.stdout", line)
+            })
           })
 
-          childAegis.stderr?.on('data', (data) => {
-            this.mainWindow?.webContents.send(
-              'aegis_child_process.stderr',
-              data.toString()
-            )
+          childAegis.stderr?.on("data", (data) => {
+            const { lines, buffer } = this.flushBuffer(stderrBuffer, data.toString())
+            stderrBuffer = buffer
+            lines.forEach((line) => {
+              this.mainWindow?.webContents.send("aegis_child_process.stderr", line)
+            })
           })
 
-          childAegis.on('exit', () => {
+          childAegis.on("exit", () => {
             this.processes.delete(pid)
-            this.mainWindow?.webContents.send('aegis_child_process.exit')
+            this.mainWindow?.webContents.send("aegis_child_process.exit")
           })
 
           resolve(pid)
@@ -249,7 +263,17 @@ class ElectronApp {
     })
   }
 
-  private killProcess(pid: string) {
+  private flushBuffer(
+    buffer: string,
+    data: string
+  ): { lines: string[]; buffer: string } {
+    const combined = buffer + data
+    const lines = combined.split("\n")
+    const newBuffer = lines.pop() ?? ""
+    return { lines, buffer: newBuffer }
+  }
+
+  private killProcess(pid: string): void {
     const process = this.processes.get(pid)
     if (process) {
       process.kill()

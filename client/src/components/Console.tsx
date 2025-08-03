@@ -1,34 +1,43 @@
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { ConsoleLine } from '@/types'
-import { Maximize2 } from 'lucide-react'
-import { useState } from 'react'
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Runner } from "@/core/Runner"
+import useGame from "@/hooks/useGame"
+import { cn } from "@/lib/utils"
+import { ConsoleLine } from "@/types"
+import RingBuffer from "@/utils/ringBuffer"
+import { Maximize2 } from "lucide-react"
+import { useState } from "react"
 
 interface Props {
-  output: ConsoleLine[]
+  output: RingBuffer<ConsoleLine>
 }
 
 export default function Console({ output }: Props): JSX.Element {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState("")
+  const game = useGame()
 
   const highlightMatch = (text: string, query: string): JSX.Element => {
-    if (!query) return <>{text}</>
+    if (!query) {
+      return <>{text}</>
+    }
 
-    const parts = text.split(new RegExp(`(${query})`, 'gi'))
+    const parts = text.split(new RegExp(`(${query})`, "gi"))
     return (
       <>
         {parts.map((part, i) => (
           <span
             key={i}
-            className={part.toLowerCase() === query.toLowerCase() ? 'bg-yellow-200' : ''}
+            className={
+              part.toLowerCase() === query.toLowerCase() ? "bg-yellow-200" : ""
+            }
           >
             {part}
           </span>
@@ -40,17 +49,26 @@ export default function Console({ output }: Props): JSX.Element {
   const renderOutput = (): JSX.Element => {
     return (
       <div className="h-full p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
-        {output.map((line, id) => {
-          const matches = searchTerm && line.message.toLowerCase().includes(searchTerm.toLowerCase())
-          return (
-            <div
-              key={id}
-              className={`${line.has_error ? 'text-destructive' : ''} ${matches ? 'bg-muted' : ''}`}
-            >
-              {highlightMatch(line.message, searchTerm)}
-            </div>
-          )
-        })}
+        {output
+          .getItems()
+          .filter((line) => line.gameIdx === Runner.games?.games.indexOf(game!))
+          .map((line, i) => {
+            const matches =
+              searchTerm &&
+              line.content.toLowerCase().includes(searchTerm.toLowerCase())
+            return (
+              <div
+                key={i}
+                className={cn(
+                  "whitespace-pre break-words pt-1",
+                  line.has_error && "text-destructive",
+                  matches && "bg-muted"
+                )}
+              >
+                {highlightMatch(line.content, searchTerm)}
+              </div>
+            )
+          })}
       </div>
     )
   }

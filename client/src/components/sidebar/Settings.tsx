@@ -1,11 +1,11 @@
-import { motion } from 'framer-motion'
-import { Bug, Folder, Settings as SettingsIcon } from 'lucide-react'
+import { motion } from "framer-motion"
+import { Bug, Folder, Settings as SettingsIcon } from "lucide-react"
 
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { useLocalStorage } from '@/hooks/useLocalStorage'
-import { Scaffold } from '@/services'
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { useLocalStorage } from "@/hooks/useLocalStorage"
+import { Scaffold } from "@/services"
 
 type Props = {
   scaffold: Scaffold
@@ -13,20 +13,20 @@ type Props = {
 
 const Settings = ({ scaffold }: Props): JSX.Element => {
   const { aegisPath, setupAegisPath } = scaffold
-  const [debugMode, setDebugMode] = useLocalStorage<boolean>('aegis_debug_mode', false)
+  const [debugMode, setDebugMode] = useLocalStorage<boolean>("aegis_debug_mode", false)
 
   const rawConfigData = ((): Record<string, unknown> | null => {
     try {
-      const configType = scaffold.getConfigValue('client.CONFIG_TYPE')
+      const configType = scaffold.getConfigValue("client.CONFIG_TYPE")
       if (configType) {
         return {
-          'client.CONFIG_TYPE': scaffold.getConfigValue('client.CONFIG_TYPE'),
-          'features.ENABLE_VARIABLE_AGENT_AMOUNT': scaffold.getConfigValue(
-            'features.ENABLE_VARIABLE_AGENT_AMOUNT'
+          "client.CONFIG_TYPE": scaffold.getConfigValue("client.CONFIG_TYPE"),
+          "features.ENABLE_VARIABLE_AGENT_AMOUNT": scaffold.getConfigValue(
+            "features.ENABLE_VARIABLE_AGENT_AMOUNT"
           ),
-          'features.DEFAULT_AGENT_AMOUNT': scaffold.getConfigValue(
-            'features.DEFAULT_AGENT_AMOUNT'
-          )
+          "features.DEFAULT_AGENT_AMOUNT": scaffold.getConfigValue(
+            "features.DEFAULT_AGENT_AMOUNT"
+          ),
         }
       }
       return null
@@ -36,25 +36,25 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
   })()
 
   const renderConfigValue = (value: unknown): JSX.Element => {
-    if (typeof value === 'boolean') {
+    if (typeof value === "boolean") {
       return (
         <span
           className={`px-2 py-1 rounded text-xs font-medium ${
-            value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
           }`}
         >
-          {value ? 'Enabled' : 'Disabled'}
+          {value ? "Enabled" : "Disabled"}
         </span>
       )
     }
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
       return (
         <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
           {value}
         </span>
       )
     }
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       return (
         <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
           {value}
@@ -82,7 +82,7 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
             <h2 className="text-lg font-semibold">Aegis Path</h2>
           </div>
           <p className="text-sm border-gray-400 border p-2 rounded break-words">
-            {aegisPath || 'No path configured'}
+            {aegisPath || "No path configured"}
           </p>
           <Button onClick={setupAegisPath} className="w-full">
             Reconfigure Aegis Path
@@ -96,30 +96,28 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
           </div>
           {rawConfigData ? (
             <>
-              <div className="text-xs text-muted-foreground">
-                Read from config.yaml
-              </div>
+              <div className="text-xs text-muted-foreground">Read from config.yaml</div>
               <div className="space-y-3 p-3 bg-gray-50 rounded-lg border">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-700">
                       Config Type
                     </span>
-                    {renderConfigValue(rawConfigData['client.CONFIG_TYPE'])}
+                    {renderConfigValue(rawConfigData["client.CONFIG_TYPE"])}
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-700">
                       Variable Agent Amount
                     </span>
                     {renderConfigValue(
-                      rawConfigData['features.ENABLE_VARIABLE_AGENT_AMOUNT']
+                      rawConfigData["features.ENABLE_VARIABLE_AGENT_AMOUNT"]
                     )}
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-700">
                       Default Agent Amount
                     </span>
-                    {renderConfigValue(rawConfigData['features.DEFAULT_AGENT_AMOUNT'])}
+                    {renderConfigValue(rawConfigData["features.DEFAULT_AGENT_AMOUNT"])}
                   </div>
                 </div>
               </div>

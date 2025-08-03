@@ -1,24 +1,25 @@
-import { Label } from '@/components/ui/label'
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import { EditorBrushTypes, EditorField } from '@/core/Brushes'
-import { useState } from 'react'
-import NumberInput from '../NumberInput'
+  SelectValue,
+} from "@/components/ui/select"
+import { EditorBrushTypes, EditorField } from "@/core/Brushes"
+import { useState } from "react"
+import NumberInput from "../NumberInput"
 
 interface FieldProps {
   field: EditorField
   onChange: () => void
 }
 
-export default function Field({ field, onChange }: FieldProps) {
+export default function Field({ field, onChange }: FieldProps): JSX.Element {
   const [, setInternal] = useState(String(field.value))
 
-  const handleChange = (newValue: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleChange = (newValue: any): void => {
     const processedValue =
       field.type === EditorBrushTypes.POSITIVE_INTEGER ? Number(newValue) : newValue
 

@@ -1,84 +1,81 @@
-import Game from '@/core/Game'
-import Games from '@/core/Games'
-import { Runner } from '@/core/Runner'
-import { ClientWebSocket, aegisAPI } from '@/services'
-import { useAppStore } from '@/store/useAppStore'
-import { ConsoleLine } from '@/types'
-import { useForceUpdate } from '@/utils/util'
-import { useEffect, useRef, useState } from 'react'
-import invariant from 'tiny-invariant'
+import Game from "@/core/Game"
+import Games from "@/core/Games"
+import { Runner } from "@/core/Runner"
+import { ClientWebSocket, aegisAPI } from "@/services"
+import { useAppStore } from "@/store/useAppStore"
+import { ConsoleLine, Scaffold } from "@/types"
+import { useForceUpdate } from "@/utils/util"
+import { useEffect, useRef, useState } from "react"
+import invariant from "tiny-invariant"
 import {
   ClientConfig,
   getConfigValue as getDynamicConfigValue,
-  parseClientConfig
-} from './config'
-
-export type Scaffold = {
-  aegisPath: string | undefined
-  setupAegisPath: () => Promise<void>
-  worlds: string[]
-  agents: string[]
-  output: ConsoleLine[]
-  startSimulation: (
-    rounds: string,
-    amount: string,
-    world: string,
-    agent: string,
-    debug: boolean
-  ) => void
-  killSim: (() => void) | undefined
-  readAegisConfig: () => Promise<ClientConfig>
-  refreshWorldsAndAgents: () => Promise<void>
-  getConfigValue: (path: string) => any
-  getConfig: () => ClientConfig | null
-  isAssignmentConfig: () => boolean
-  getDefaultAgentAmount: () => number
-  isMultiAgentEnabled: () => boolean
-}
+  parseClientConfig,
+} from "./config"
+import RingBuffer from "@/utils/ringBuffer"
 
 export function createScaffold(): Scaffold {
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
+  const [spawnError, setSpawnError] = useState<string>("")
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
-  const [output, setOutput] = useState<ConsoleLine[]>([])
   const [config, setConfig] = useState<ClientConfig | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [rawConfigData, setRawConfigData] = useState<any>(null)
   const aegisPid = useRef<string | undefined>(undefined)
+  const currentGameIdx = useRef(0)
+  const output = useRef<RingBuffer<ConsoleLine>>(new RingBuffer(20000))
   const forceUpdate = useForceUpdate()
+  let didInit = false
 
-  const addOutput = (data: string, has_error: boolean) => {
-    const splitData = data.split('\n')
-    const formattedData = splitData.map((line) => ({ has_error, message: line }))
-    setOutput((prevOutput) => prevOutput.concat(formattedData))
+  const addOutput = (line: ConsoleLine): void => {
+    line.gameIdx = currentGameIdx.current
+    output.current.push(line)
+
+    if (
+      line.content.startsWith("[INFO][aegis]") &&
+      line.content.includes("AEGIS END")
+    ) {
+      currentGameIdx.current++
+    }
   }
 
-  const setupAegisPath = async () => {
+  const setupAegisPath = async (): Promise<void> => {
     const path = await aegisAPI!.openAegisDirectory()
-    if (path) setAegisPath(path)
+    if (path) {
+      setAegisPath(path)
+    }
   }
 
   const startSimulation = async (
     rounds: string,
     amount: string,
-    world: string,
+    worlds: string[],
     agent: string,
     debug: boolean
   ): Promise<void> => {
     invariant(aegisPath, "Can't find AEGIS path!")
-    invariant(config, 'Config not loaded. Please ensure config.yaml is valid.')
+    invariant(config, "Config not loaded. Please ensure config.yaml is valid.")
 
-    // Reset output
-    setOutput([])
+    currentGameIdx.current = 0
+    output.current.clear()
 
-    const pid = await aegisAPI.aegis_child_process.spawn(
-      rounds,
-      amount,
-      world,
-      agent,
-      aegisPath,
-      debug
-    )
-    aegisPid.current = pid
+    try {
+      const pid = await aegisAPI.aegis_child_process.spawn(
+        rounds,
+        amount,
+        worlds,
+        agent,
+        aegisPath,
+        debug
+      )
+      aegisPid.current = pid
+      setSpawnError("")
+    } catch (error) {
+      setSpawnError(
+        "`aegis` command not found. Please activate your virtual environment and restart the client to try again."
+      )
+    }
     forceUpdate()
   }
 
@@ -86,6 +83,7 @@ export function createScaffold(): Scaffold {
     invariant(aegisPath, "Can't find AEGIS path!")
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rawConfig = (await aegisAPI.read_config(aegisPath)) as any
       setRawConfigData(rawConfig)
 
@@ -93,7 +91,7 @@ export function createScaffold(): Scaffold {
       setConfig(parsedConfig)
       return parsedConfig
     } catch (error) {
-      console.error('Error reading config:', error)
+      console.error("Error reading config:", error)
       setConfig(null)
       setRawConfigData(null)
       throw new Error(`Failed to load config.yaml: ${error}`)
@@ -101,7 +99,9 @@ export function createScaffold(): Scaffold {
   }
 
   const getConfigValue = (path: string): unknown => {
-    if (!rawConfigData) return null
+    if (!rawConfigData) {
+      return null
+    }
     return getDynamicConfigValue(rawConfigData, path)
   }
 
@@ -110,7 +110,7 @@ export function createScaffold(): Scaffold {
   }
 
   const isAssignmentConfig = (): boolean => {
-    return config?.configType === 'assignment'
+    return config?.configType === "assignment"
   }
 
   const getDefaultAgentAmount = (): number => {
@@ -121,61 +121,66 @@ export function createScaffold(): Scaffold {
     return config?.variableAgentAmount || false
   }
 
-  const refreshWorldsAndAgents = async () => {
-    if (!aegisPath) return
+  const refreshWorldsAndAgents = async (): Promise<void> => {
+    invariant(aegisPath, "Can't find AEGIS path!")
 
     const [worldsData, agentsData] = await Promise.all([
       getWorlds(aegisPath),
-      getAgents(aegisPath)
+      getAgents(aegisPath),
     ])
 
     setWorlds(worldsData)
     setAgents(agentsData)
   }
 
-  const killSimulation = () => {
-    if (!aegisPid.current) return
+  const killSimulation = (): void => {
+    invariant(aegisPid.current, "Can't kill a game if no game has started")
     aegisAPI.aegis_child_process.kill(aegisPid.current)
     aegisPid.current = undefined
     forceUpdate()
   }
 
   useEffect(() => {
-    getAegisPath().then((path) => {
-      setAegisPath(path)
-    })
+    if (!didInit) {
+      didInit = true
+      getAegisPath().then((path) => {
+        setAegisPath(path)
+      })
 
-    aegisAPI.aegis_child_process.onStdout((data: string) => {
-      addOutput(data, false)
-    })
+      aegisAPI.aegis_child_process.onStdout((data: string) => {
+        addOutput({ content: data, has_error: false, gameIdx: 0 })
+      })
 
-    aegisAPI.aegis_child_process.onStderr((data: string) => {
-      addOutput(data, true)
-    })
+      aegisAPI.aegis_child_process.onStderr((data: string) => {
+        addOutput({ content: data, has_error: true, gameIdx: 0 })
+      })
 
-    aegisAPI.aegis_child_process.onExit(() => {
-      aegisPid.current = undefined
-      forceUpdate()
-    })
+      aegisAPI.aegis_child_process.onExit(() => {
+        aegisPid.current = undefined
+        forceUpdate()
+      })
 
-    const onGamesCreated = (games: Games) => {
-      useAppStore.getState().pushToQueue(games)
-      Runner.setGames(games)
+      const onGamesCreated = (games: Games): void => {
+        useAppStore.getState().pushToQueue(games)
+        Runner.setGames(games)
+      }
+
+      const onGameCreated = (game: Game): void => {
+        Runner.setGame(game)
+      }
+      new ClientWebSocket(onGameCreated, onGamesCreated)
     }
-
-    const onGameCreated = (game: Game) => {
-      Runner.setGame(game)
-    }
-    new ClientWebSocket(onGameCreated, onGamesCreated)
   }, [])
 
   useEffect(() => {
-    if (!aegisPath) return
+    if (!aegisPath) {
+      return
+    }
 
-    const loadData = async () => {
+    const loadData = async (): Promise<void> => {
       const [worldsData, agentsData] = await Promise.all([
         getWorlds(aegisPath),
-        getAgents(aegisPath)
+        getAgents(aegisPath),
       ])
 
       setWorlds(worldsData)
@@ -185,7 +190,7 @@ export function createScaffold(): Scaffold {
     }
 
     loadData()
-    localStorage.setItem('aegisPath', aegisPath)
+    localStorage.setItem("aegisPath", aegisPath)
   }, [aegisPath])
 
   return {
@@ -193,7 +198,7 @@ export function createScaffold(): Scaffold {
     setupAegisPath,
     worlds,
     agents,
-    output,
+    output: output.current,
     startSimulation,
     killSim: aegisPid.current ? killSimulation : undefined,
     readAegisConfig,
@@ -202,50 +207,59 @@ export function createScaffold(): Scaffold {
     getConfig,
     isAssignmentConfig,
     getDefaultAgentAmount,
-    isMultiAgentEnabled
+    isMultiAgentEnabled,
+    spawnError,
   }
 }
 
-const getAegisPath = async () => {
-  const localPath = localStorage.getItem('aegisPath')
-  if (localPath) return localPath
+const getAegisPath = async (): Promise<string | undefined> => {
+  const localPath = localStorage.getItem("aegisPath")
+  if (localPath) {
+    return localPath
+  }
 
-  let currentDir: string = await aegisAPI!.getAppPath()
   const fs = aegisAPI!.fs
   const path = aegisAPI!.path
+  let currentDir: string = await aegisAPI!.getAppPath()
 
-  while (true) {
-    const worldsDir = await path.join(currentDir, 'worlds')
+  let parentDir: string
+
+  while (currentDir !== (parentDir = await path.dirname(currentDir))) {
+    const worldsDir = await path.join(currentDir, "worlds")
     if (await fs.existsSync(worldsDir)) {
       return currentDir
     }
 
-    currentDir = await path.dirname(currentDir)
-
-    if (currentDir === (await path.dirname(currentDir))) {
-      return undefined
-    }
+    currentDir = parentDir
   }
+
+  return undefined
 }
 
-const getWorlds = async (aegisPath: string) => {
+const getWorlds = async (aegisPath: string): Promise<string[]> => {
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
-  const worldsPath = await path.join(aegisPath, 'worlds')
-  if (!(await fs.existsSync(worldsPath))) return []
+  const worldsPath = await path.join(aegisPath, "worlds")
+  if (!(await fs.existsSync(worldsPath))) {
+    return []
+  }
 
   const worlds = await fs.readdirSync(worldsPath)
-  const filtered_worlds = worlds.filter((world: string) => world.endsWith('.world'))
+  const filtered_worlds = worlds
+    .filter((world: string) => world.endsWith(".world"))
+    .map((world: string) => world.replace(/\.world$/, ""))
   return filtered_worlds
 }
 
-const getAgents = async (aegisPath: string) => {
+const getAgents = async (aegisPath: string): Promise<string[]> => {
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
-  const agentsPath = await path.join(aegisPath, 'agents')
-  if (!(await fs.existsSync(agentsPath))) return []
+  const agentsPath = await path.join(aegisPath, "agents")
+  if (!(await fs.existsSync(agentsPath))) {
+    return []
+  }
 
   const agentsDirs = await fs.readdirSync(agentsPath)
 
@@ -253,9 +267,13 @@ const getAgents = async (aegisPath: string) => {
   const agents: string[] = []
   for (const agent of agentsDirs) {
     const agentPath = await path.join(agentsPath, agent)
-    if (!(await fs.isDirectory(agentPath))) continue
+    if (!(await fs.isDirectory(agentPath))) {
+      continue
+    }
     const agentFiles = await fs.readdirSync(agentPath)
-    if (!agentFiles.includes('main.py')) continue
+    if (!agentFiles.includes("main.py")) {
+      continue
+    }
     agents.push(agent)
   }
   return agents

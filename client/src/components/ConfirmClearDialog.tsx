@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react"
 import {
   Dialog,
   DialogTrigger,
@@ -6,9 +6,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
 interface ConfirmClearDialogProps {
   onConfirm: () => void
@@ -17,11 +17,11 @@ interface ConfirmClearDialogProps {
 
 export default function ConfirmClearDialog({
   onConfirm,
-  disabled
-}: ConfirmClearDialogProps) {
+  disabled,
+}: ConfirmClearDialogProps): JSX.Element {
   const [open, setOpen] = useState(false)
 
-  const handleConfirm = () => {
+  const handleConfirm = (): void => {
     onConfirm()
     setOpen(false)
   }
@@ -32,7 +32,7 @@ export default function ConfirmClearDialog({
         <Button
           variant="outline"
           size="sm"
-          className={`text-xs text-destructive hover:text-destructive-foreground hover:bg-destructive ${disabled ? 'invisible' : ''}`}
+          className={`text-xs text-destructive hover:text-destructive-foreground hover:bg-destructive ${disabled ? "invisible" : ""}`}
         >
           Clear
         </Button>

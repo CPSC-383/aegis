@@ -61,9 +61,9 @@ class Game:
     def _init_spawn(self) -> None:
         spawns = self.get_spawns()
         loc = random.choice(spawns)
-        if self.args.agent and (self.args.agent2 is None):
+        if self.args.agent and self.args.agent2 is None:
             self.spawn_agent(loc, Team.GOOBS)
-        elif self.args.agent2 and (self.args.agent is None):
+        elif self.args.agent2 and self.args.agent is None:
             self.spawn_agent(loc, Team.VOIDSEERS)
         else:
             for team in Team:
@@ -74,6 +74,7 @@ class Game:
         self.game_pb.start_round(self.round)
         self.process_agent_commands()
         self.serialize_team_info()
+        self.grim_reaper()
         self.game_pb.end_round()
         self.process_end_of_round()
 
@@ -142,7 +143,6 @@ class Game:
             self.remove_agent(agent.id)
 
     def process_end_of_round(self) -> None:
-        self.grim_reaper()
         if self._is_game_over():
             self.running = False
             return
@@ -174,6 +174,7 @@ class Game:
         del self._agents[agent_id]
         cell = self.get_cell_at(agent.location)
         cell.agents.remove(agent_id)
+        self.game_pb.add_dead(agent_id)
 
     def get_agent(self, agent_id: int) -> Agent:
         return self._agents[agent_id]

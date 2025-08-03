@@ -25,16 +25,18 @@ class GameHeader(_message.Message):
     def __init__(self, world: _Optional[_Union[_world_pb2.World, _Mapping]] = ..., rounds: _Optional[int] = ..., spawns: _Optional[_Iterable[_Union[_spawn_pb2.Spawn, _Mapping]]] = ...) -> None: ...
 
 class Round(_message.Message):
-    __slots__ = ("round", "layers_removed", "turns", "team_info")
+    __slots__ = ("round", "layers_removed", "dead_ids", "turns", "team_info")
     ROUND_FIELD_NUMBER: _ClassVar[int]
     LAYERS_REMOVED_FIELD_NUMBER: _ClassVar[int]
+    DEAD_IDS_FIELD_NUMBER: _ClassVar[int]
     TURNS_FIELD_NUMBER: _ClassVar[int]
     TEAM_INFO_FIELD_NUMBER: _ClassVar[int]
     round: int
     layers_removed: _containers.RepeatedCompositeFieldContainer[_location_pb2.Location]
+    dead_ids: _containers.RepeatedScalarFieldContainer[int]
     turns: _containers.RepeatedCompositeFieldContainer[_turn_pb2.Turn]
     team_info: _containers.RepeatedCompositeFieldContainer[_team_pb2.TeamInfo]
-    def __init__(self, round: _Optional[int] = ..., layers_removed: _Optional[_Iterable[_Union[_location_pb2.Location, _Mapping]]] = ..., turns: _Optional[_Iterable[_Union[_turn_pb2.Turn, _Mapping]]] = ..., team_info: _Optional[_Iterable[_Union[_team_pb2.TeamInfo, _Mapping]]] = ...) -> None: ...
+    def __init__(self, round: _Optional[int] = ..., layers_removed: _Optional[_Iterable[_Union[_location_pb2.Location, _Mapping]]] = ..., dead_ids: _Optional[_Iterable[int]] = ..., turns: _Optional[_Iterable[_Union[_turn_pb2.Turn, _Mapping]]] = ..., team_info: _Optional[_Iterable[_Union[_team_pb2.TeamInfo, _Mapping]]] = ...) -> None: ...
 
 class GameFooter(_message.Message):
     __slots__ = ()

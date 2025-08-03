@@ -1,24 +1,26 @@
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Maximize2, Minimize2, Pause, Play, SkipBack, SkipForward } from 'lucide-react'
-import { useState } from 'react'
-import Timeline from './Timeline'
-import useRound from '@/hooks/useRound'
-import useControl from '@/hooks/useControl'
-import { Runner } from '@/core/Runner'
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { AnimatePresence, motion } from "framer-motion"
+import { Maximize2, Minimize2, Pause, Play, SkipBack, SkipForward } from "lucide-react"
+import { useState } from "react"
+import Timeline from "./Timeline"
+import useRound from "@/hooks/useRound"
+import useControl from "@/hooks/useControl"
+import { Runner } from "@/core/Runner"
 
 function ControlsBar(): JSX.Element | null {
   const paused = useControl()
   const round = useRound()
   const [isMinimized, setIsMinimized] = useState<boolean>(false)
 
-  if (!round) return null
+  if (!round) {
+    return null
+  }
 
   return (
     <TooltipProvider>
@@ -30,9 +32,9 @@ function ControlsBar(): JSX.Element | null {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 50 }}
             transition={{
-              type: 'spring',
+              type: "spring",
               stiffness: 300,
-              damping: 20
+              damping: 20,
             }}
             className="fixed bottom-2 left-2 z-50"
           >
@@ -58,9 +60,9 @@ function ControlsBar(): JSX.Element | null {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 50 }}
             transition={{
-              type: 'spring',
+              type: "spring",
               stiffness: 300,
-              damping: 20
+              damping: 20,
             }}
             className="fixed bottom-2 z-50"
           >
@@ -117,7 +119,7 @@ function ControlsBar(): JSX.Element | null {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{Runner.paused ? 'Play' : 'Pause'}</p>
+                    <p>{Runner.paused ? "Play" : "Pause"}</p>
                   </TooltipContent>
                 </Tooltip>
 

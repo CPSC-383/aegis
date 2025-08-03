@@ -20,8 +20,9 @@ message GameHeader {
 message Round {
   int32 round = 1;  
   repeated Location layers_removed = 2;
-  repeated Turn turns = 3;
-  repeated TeamInfo team_info = 4;
+  repeated int32 dead_ids = 3;
+  repeated Turn turns = 4;
+  repeated TeamInfo team_info = 5;
 }
 
 message GameFooter {

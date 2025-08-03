@@ -1,19 +1,23 @@
-import { motion } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
+import { motion } from "framer-motion"
+import { useEffect, useMemo, useState } from "react"
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import { useLocalStorage } from '@/hooks/useLocalStorage'
-import { Scaffold } from '@/services'
-import { ASSIGNMENT_A1, getCurrentAssignment } from '@/utils/util'
+  SelectValue,
+} from "@/components/ui/select"
+import { useLocalStorage } from "@/hooks/useLocalStorage"
+import { ASSIGNMENT_A1, getCurrentAssignment } from "@/utils/util"
+import NumberInput from "../NumberInput"
+import { MultiSelect } from "../ui/multiselect"
+import { Scaffold } from "@/types"
+import GameCycler from "../GameCycler"
+import { ClientConfig } from "@/services"
 
 type Props = {
   scaffold: Scaffold
@@ -28,13 +32,13 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
     refreshWorldsAndAgents,
     readAegisConfig,
     getDefaultAgentAmount,
-    isMultiAgentEnabled
+    isMultiAgentEnabled,
   } = scaffold
-  const [world, setWorld] = useLocalStorage<string>('aegis_world', '')
-  const [rounds, setRounds] = useLocalStorage<number>('aegis_rounds', 0)
-  const [agent, setAgent] = useLocalStorage<string>('aegis_agent', '')
-  const [agentAmount, setAgentAmount] = useLocalStorage<number>('aegis_agent_amount', 1)
-  const [debug] = useLocalStorage<boolean>('aegis_debug_mode', false)
+  const [selectedWorlds, setSelectedWorlds] = useState<string[]>([])
+  const [rounds, setRounds] = useLocalStorage<number>("aegis_rounds", 0)
+  const [agent, setAgent] = useLocalStorage<string>("aegis_agent", "")
+  const [agentAmount, setAgentAmount] = useLocalStorage<number>("aegis_agent_amount", 1)
+  const [debug] = useLocalStorage<boolean>("aegis_debug_mode", false)
   const [configError, setConfigError] = useState<string | null>(null)
 
   // Refresh worlds and agents when component mounts (when switching to this tab)
@@ -43,36 +47,38 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
     loadConfig()
   }, [])
 
-  const loadConfig = async () => {
+  const loadConfig = async (): Promise<ClientConfig | undefined> => {
     try {
       setConfigError(null)
-      await readAegisConfig()
+      const config = await readAegisConfig()
+      return config
     } catch (error) {
       setConfigError(
         error instanceof Error
           ? error.message
-          : 'Failed to load config. Please check your config.yaml file, and make sure it is in the correct path.'
+          : "Failed to load config. Please check your config.yaml file, and make sure it is in the correct path."
       )
+      return undefined
     }
   }
 
-  useEffect(() => {
-    const storedWorld = localStorage.getItem('aegis_world')
-    if (storedWorld) {
-      const worldName = JSON.parse(storedWorld)
-      if (worldName && !worlds.includes(worldName)) {
-        setWorld('')
-      }
-    }
-
-    const storedAgent = localStorage.getItem('aegis_agent')
-    if (storedAgent) {
-      const agentName = JSON.parse(storedAgent)
-      if (agentName && !agents.includes(agentName)) {
-        setAgent('')
-      }
-    }
-  }, [worlds, agents, setWorld, setAgent])
+  // useEffect(() => {
+  //   const storedWorld = localStorage.getItem('aegis_world')
+  //   if (storedWorld) {
+  //     const worldName = JSON.parse(storedWorld)
+  //     if (worldName && !worlds.includes(worldName)) {
+  //       setWorld('')
+  //     }
+  //   }
+  //
+  //   const storedAgent = localStorage.getItem('aegis_agent')
+  //   if (storedAgent) {
+  //     const agentName = JSON.parse(storedAgent)
+  //     if (agentName && !agents.includes(agentName)) {
+  //       setAgent('')
+  //     }
+  //   }
+  // }, [worlds, agents, setWorld, setAgent])
 
   // Update agent amount when config changes
   useEffect(() => {
@@ -83,17 +89,9 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   }, [getDefaultAgentAmount])
 
   const isButtonDisabled = useMemo(
-    () => !world || !rounds || !agent || configError !== null,
-    [world, rounds, agent, configError]
+    () => !selectedWorlds.length || !rounds || !agent || configError !== null,
+    [selectedWorlds, rounds, agent, configError]
   )
-
-  const handleRoundBlur = (e: React.FocusEvent<HTMLInputElement>): void => {
-    const value = parseInt(e.target.value)
-    if (!isNaN(value)) {
-      const newValue = Math.max(1, value)
-      setRounds(newValue)
-    }
-  }
 
   const showMultiAgentOptions = isMultiAgentEnabled()
 
@@ -123,40 +121,33 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       )}
 
       <div>
-        <Label>Select a World</Label>
-        <Select value={world} onValueChange={(value) => setWorld(value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Choose a world">
-              {world || 'Select a world'}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {worlds.map((worldName) => (
-              <SelectItem key={worldName} value={worldName}>
-                {worldName}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label>Number of Rounds</Label>
-        <Input
-          type="number"
-          value={rounds === 0 ? '' : rounds}
-          onChange={(e) => setRounds(parseInt(e.target.value) || 0)}
-          onBlur={handleRoundBlur}
-          placeholder="Enter number of rounds"
+        <Label className="text-xs text-muted-foreground">Worlds</Label>
+        <MultiSelect
+          options={worlds}
+          selected={selectedWorlds}
+          onChange={setSelectedWorlds}
         />
       </div>
 
       <div>
-        <Label>Select an Agent</Label>
+        <Label htmlFor="rounds" className="text-xs text-muted-foreground">
+          Number of Rounds
+        </Label>
+        <NumberInput
+          name="rounds"
+          value={rounds}
+          min={1}
+          max={1000}
+          onChange={(_, val) => setRounds(val)}
+        />
+      </div>
+
+      <div>
+        <Label className="text-xs text-muted-foreground">Agent</Label>
         <Select value={agent} onValueChange={(value) => setAgent(value)}>
           <SelectTrigger>
             <SelectValue placeholder="Choose an agent">
-              {agent || 'Select an agent'}
+              {agent || "Select an agent"}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -191,15 +182,22 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
           <Button
             onClick={() => {
               const amount = getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : agentAmount
-              startSimulation(rounds.toString(), amount.toString(), world, agent, debug)
+              startSimulation(
+                rounds.toString(),
+                amount.toString(),
+                selectedWorlds,
+                agent,
+                debug
+              )
             }}
             disabled={isButtonDisabled}
-            className={`${isButtonDisabled ? 'cursor-not-allowed' : ''}`}
+            className={`${isButtonDisabled ? "cursor-not-allowed" : ""}`}
           >
             Start Up Game
           </Button>
         )}
       </div>
+      <GameCycler />
     </motion.div>
   )
 }

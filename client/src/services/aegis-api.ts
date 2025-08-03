@@ -2,6 +2,7 @@ type AegisAPI = {
   openAegisDirectory: () => Promise<string | undefined>
   getAppPath: () => Promise<string>
   exportWorld: (name: string, world: Uint8Array) => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   read_config: (aegisPath: string) => Promise<any>
   path: {
     join: (...args: string[]) => Promise<string>
@@ -17,7 +18,7 @@ type AegisAPI = {
     spawn: (
       rounds: string,
       amount: string,
-      world: string,
+      world: string[],
       agent: string,
       aegisPath: string,
       debug: boolean
@@ -29,5 +30,5 @@ type AegisAPI = {
   }
 }
 
-// @ts-ignore
+// @ts-ignore ignore type cast thing
 export const aegisAPI: AegisAPI = window.electronAPI as ElectronAPI

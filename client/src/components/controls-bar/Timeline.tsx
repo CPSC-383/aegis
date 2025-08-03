@@ -1,20 +1,21 @@
-import { MouseEvent } from 'react'
+import { MouseEvent } from "react"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip'
-import { Progress } from '@/components/ui/progress'
-import { TIMELINE_WIDTH } from '@/utils/constants'
-import useRound from '@/hooks/useRound'
-import { Runner } from '@/core/Runner'
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Progress } from "@/components/ui/progress"
+import { TIMELINE_WIDTH } from "@/utils/constants"
+import useRound from "@/hooks/useRound"
+import { Runner } from "@/core/Runner"
+import invariant from "tiny-invariant"
 
-function Timeline() {
+export default function Timeline(): JSX.Element {
   const round = useRound()
 
-  const handleSeek = (e: MouseEvent<HTMLDivElement>) => {
-    if (!round) return
+  const handleSeek = (e: MouseEvent<HTMLDivElement>): void => {
+    invariant(round, "Somehow using an undefined round to seek")
 
     const rect = e.currentTarget.getBoundingClientRect()
     const x = e.clientX - rect.left
@@ -63,5 +64,3 @@ function Timeline() {
     </TooltipProvider>
   )
 }
-
-export default Timeline

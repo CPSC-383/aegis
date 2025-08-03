@@ -1,7 +1,7 @@
-import { schema } from 'aegis-schema'
-import Game from './Game'
-import Round from './Round'
-import invariant from 'tiny-invariant'
+import { schema } from "aegis-schema"
+import Game from "./Game"
+import Round from "./Round"
+import invariant from "tiny-invariant"
 
 export default class RoundStats {
   private readonly teams: Map<schema.Team, TeamStats>
@@ -13,13 +13,13 @@ export default class RoundStats {
       teams ??
       new Map([
         [schema.Team.GOOBS, new TeamStats()],
-        [schema.Team.VOIDSEERS, new TeamStats()]
+        [schema.Team.VOIDSEERS, new TeamStats()],
       ])
   }
 
   public getTeamStats(team: schema.Team): TeamStats {
     const stats = this.teams.get(team)
-    invariant(stats, 'team not found in `getTeamStats`')
+    invariant(stats, "team not found in `getTeamStats`")
     return stats
   }
 
@@ -29,7 +29,7 @@ export default class RoundStats {
         const teamInfo = delta.teamInfo[i]
         const teamStats = this.teams.get(teamInfo.team)
 
-        invariant(teamStats, 'team not found in `applyRound` for stats')
+        invariant(teamStats, "team not found in `applyRound` for stats")
 
         teamStats.saved_alive = teamInfo.savedAlive
         teamStats.saved_dead = teamInfo.savedDead

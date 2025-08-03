@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react"
 import {
   Dialog,
   DialogTrigger,
@@ -6,25 +6,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Download } from 'lucide-react'
+  DialogDescription,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Download } from "lucide-react"
 
 interface Props {
   onConfirm: (filename: string) => Promise<string | null>
 }
 
-export default function ExportDialog({ onConfirm }: Props) {
+export default function ExportDialog({ onConfirm }: Props): JSX.Element {
   const [open, setOpen] = useState(false)
-  const [filename, setFilename] = useState('')
+  const [filename, setFilename] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const handleExport = async () => {
-    if (!filename.trim()) return
+  const handleExport = async (): Promise<void> => {
+    if (!filename.trim()) {
+      return
+    }
 
     setLoading(true)
     const result = await onConfirm(filename.trim())
@@ -56,7 +58,7 @@ export default function ExportDialog({ onConfirm }: Props) {
         <DialogHeader>
           <DialogTitle>Export World</DialogTitle>
           <DialogDescription>
-            Enter a filename to save your current world. Don’t include the{' '}
+            Enter a filename to save your current world. Don’t include the{" "}
             <code className="mr-1">.world</code>
             extension.
           </DialogDescription>
@@ -74,7 +76,7 @@ export default function ExportDialog({ onConfirm }: Props) {
         </div>
         <DialogFooter className="mt-4">
           <Button onClick={handleExport} disabled={loading}>
-            {loading ? 'Exporting...' : 'Export'}
+            {loading ? "Exporting..." : "Export"}
           </Button>
         </DialogFooter>
       </DialogContent>

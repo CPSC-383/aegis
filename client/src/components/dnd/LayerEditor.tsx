@@ -3,17 +3,17 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { useState } from 'react'
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { useState } from "react"
 
-import Round from '@/core/Round'
-import { Vector } from '@/types'
-import { MapPin, Save, X } from 'lucide-react'
-import LayerList from './LayerList'
-import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import { isEqual } from 'lodash'
+import Round from "@/core/Round"
+import { Vector } from "@/types"
+import { MapPin, Save, X } from "lucide-react"
+import LayerList from "./LayerList"
+import { Badge } from "../ui/badge"
+import { Button } from "../ui/button"
+import { isEqual } from "lodash"
 
 interface Props {
   tile: Vector | undefined
@@ -21,38 +21,45 @@ interface Props {
   onClose: () => void
 }
 
-export default function LayerEditor({ tile, round, onClose }: Props) {
-  if (!tile || !round) return null
+export default function LayerEditor({
+  tile,
+  round,
+  onClose,
+}: Props): JSX.Element | null {
+  if (!tile || !round) {
+    return null
+  }
 
   const originalLayers = round.world.cellAt(tile.x, tile.y).layers
   const [layers, setLayers] = useState([...originalLayers])
   const [hasChanges, setHasChanges] = useState(false)
 
-  const handleSave = () => {
+  const handleSave = (): void => {
     round.world.cellAt(tile.x, tile.y).layers = [...layers]
     setHasChanges(false)
     onClose()
   }
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     if (hasChanges) {
       setLayers([...originalLayers])
     }
     onClose()
   }
 
-  const updateLayer = (index: number, updates: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updateLayer = (index: number, updates: any): void => {
     setLayers((prev) => {
       const current = prev[index]
       const updatedObject = {
         ...current.object,
-        ...updates
+        ...updates,
       }
 
       const next = [...prev]
       next[index] = {
         ...current,
-        object: updatedObject
+        object: updatedObject,
       }
 
       const original = originalLayers[index]
@@ -74,7 +81,7 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
     })
   }
 
-  const deleteLayer = (index: number) => {
+  const deleteLayer = (index: number): void => {
     setLayers((prev) => prev.filter((_, i) => i !== index))
     setHasChanges(true)
   }

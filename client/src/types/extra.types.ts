@@ -1,14 +1,17 @@
+import { ClientConfig } from "@/services"
+import RingBuffer from "@/utils/ringBuffer"
+
 export enum TabNames {
-  Aegis = 'Aegis',
-  Game = 'Game',
-  Editor = 'Editor',
-  Settings = 'Settings'
+  Aegis = "Aegis",
+  Game = "Game",
+  Editor = "Editor",
+  Settings = "Settings",
 }
 
 export enum BrushType {
-  Zone = 'Zone',
-  Layers = 'Layers',
-  MoveCost = 'MoveCost'
+  Zone = "Zone",
+  Layers = "Layers",
+  MoveCost = "MoveCost",
 }
 
 const shadesOfBrown = [
@@ -21,7 +24,7 @@ const shadesOfBrown = [
   [102, 54, 10],
   [93, 48, 7],
   [79, 40, 5],
-  [65, 32, 2]
+  [65, 32, 2],
 ]
 
 // Move cost 1 = lightest, move cost 10+ = darkest
@@ -32,5 +35,31 @@ export function getMoveCostColor(moveCost: number): [number, number, number, num
 
 export type ConsoleLine = {
   has_error: boolean
-  message: string
+  content: string
+  gameIdx: number
+}
+
+export interface Scaffold {
+  aegisPath: string | undefined
+  setupAegisPath: () => void
+  worlds: string[]
+  agents: string[]
+  output: RingBuffer<ConsoleLine>
+  startSimulation: (
+    rounds: string,
+    amount: string,
+    worlds: string[],
+    agent: string,
+    debug: boolean
+  ) => void
+  killSim: (() => void) | undefined
+  readAegisConfig: () => Promise<ClientConfig>
+  refreshWorldsAndAgents: () => Promise<void>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getConfigValue: (path: string) => any
+  getConfig: () => ClientConfig | null
+  isAssignmentConfig: () => boolean
+  getDefaultAgentAmount: () => number
+  isMultiAgentEnabled: () => boolean
+  spawnError: string
 }

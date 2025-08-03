@@ -1,11 +1,10 @@
-import goobA from '@/assets/goob-team-a.png'
-import goobB from '@/assets/goob-team-b.png'
-import { renderCoords } from '@/utils/renderUtils'
-import { getImage } from '@/utils/util'
-import { schema } from 'aegis-schema'
-import Game from './Game'
-import Games from './Games'
-import invariant from 'tiny-invariant'
+import goobA from "@/assets/goob-team-a.png"
+import goobB from "@/assets/goob-team-b.png"
+import { getImage, renderCoords } from "@/utils/util"
+import { schema } from "aegis-schema"
+import Game from "./Game"
+import Games from "./Games"
+import invariant from "tiny-invariant"
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()
@@ -14,12 +13,16 @@ export default class Agents {
     public readonly games: Games,
     public initAgents?: schema.Spawn[]
   ) {
-    if (initAgents) this.insertAgents(initAgents)
+    if (initAgents) {
+      this.insertAgents(initAgents)
+    }
   }
 
   public processRound(round: schema.Round | null): void {
     if (round) {
-      // Process round data if needed
+      for (const id of round.deadIds) {
+        this.getById(id).dead = true
+      }
     }
 
     for (const agent of this.agents.values()) {
@@ -28,15 +31,37 @@ export default class Agents {
   }
 
   public applyTurn(turn: schema.Turn): void {
-    const agent = this.agents.get(turn.agentId)
-    if (!agent) return
-
+    const agent = this.getById(turn.agentId)
     agent.loc = { ...turn.loc! }
     agent.energyLevel = Math.max(turn.energyLevel, 0)
+
+    for (const spawn of turn.spawns) {
+      this.spawnAgent(spawn)
+    }
+  }
+
+  private getById(id: number): Agent {
+    const agent = this.agents.get(id)
+    invariant(agent, `Agent with ID ${id} does not exist.`)
+    return agent
+  }
+
+  public clearDead(): void {
+    for (const agent of this.agents.values()) {
+      if (!agent.dead) {
+        continue
+      }
+      this.agents.delete(agent.id)
+    }
   }
 
   public spawnAgent(_agent: schema.Spawn): void {
     const id = _agent.agentId
+    invariant(
+      !this.agents.has(id),
+      `Cannot spawn agent: one already exists with ID ${id}`
+    )
+
     const loc = _agent.loc!
     const team = _agent.team
 
@@ -55,7 +80,9 @@ export default class Agents {
     const agent = new Agent(this.games, id, team, loc, imgPath)
     this.agents.set(id, agent)
 
-    if (this.games.currentGame) agent.default()
+    if (this.games.currentGame) {
+      agent.default()
+    }
   }
 
   private insertAgents(spawns: schema.Spawn[]): void {
@@ -74,8 +101,9 @@ export default class Agents {
   public copy(): Agents {
     const newAgents = new Agents(this.games)
     newAgents.agents = new Map(this.agents)
-    for (const agent of this.agents.values())
+    for (const agent of this.agents.values()) {
       newAgents.agents.set(agent.id, agent.copy())
+    }
     return newAgents
   }
 }
@@ -83,6 +111,7 @@ export default class Agents {
 export class Agent {
   public energyLevel: number = 0
   public lastLoc: schema.Location
+  public dead: boolean = false
 
   constructor(
     private games: Games,
@@ -96,10 +125,14 @@ export class Agent {
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
     const goob = getImage(this.imgPath)
-    if (!goob) return
+    invariant(goob, "goob should already be loaded")
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
+    if (this.dead) {
+      ctx.globalAlpha = 0.5
+    }
     ctx.drawImage(goob, pos.x, pos.y, 1, 1)
+    ctx.globalAlpha = 1
   }
 
   public copy(): Agent {
@@ -108,12 +141,13 @@ export class Agent {
     const copy = new Agent(this.games, this.id, this.team, { ...this.loc }, imgPath)
     copy.energyLevel = this.energyLevel
     copy.lastLoc = { ...this.lastLoc }
+    copy.dead = this.dead
     return copy
   }
 
   public default(): void {
     const currentGame = this.games.currentGame
-    invariant(currentGame, 'No active game found for agent initialization')
+    invariant(currentGame, "No active game found for agent initialization")
     this.energyLevel = currentGame.world.startEnergy
   }
 }

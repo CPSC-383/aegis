@@ -1,8 +1,8 @@
-import Game from './Game'
-import Games from './Games'
-import { Renderer } from './Renderer'
-import { ListenerKey, notify } from './Listeners'
-import { ROUND_INTERVAL_DURATION } from '@/utils/constants'
+import Game from "./Game"
+import Games from "./Games"
+import { Renderer } from "./Renderer"
+import { ListenerKey, notify } from "./Listeners"
+import { ROUND_INTERVAL_DURATION } from "@/utils/constants"
 
 class RunnerClass {
   private gameLoop: NodeJS.Timeout | undefined = undefined
@@ -14,22 +14,30 @@ class RunnerClass {
   }
 
   private startGameLoop(): void {
-    if (this.gameLoop) return
+    if (this.gameLoop) {
+      return
+    }
 
     this.gameLoop = setInterval(() => {
       if (!this.game || this.paused) {
         this.stopGameLoop()
         return
       }
-      const [roundChanged, _] = this.game.stepGame()
+      const [roundChanged] = this.game.stepGame()
       Renderer.render()
-      if (roundChanged) notify(ListenerKey.Round)
-      if (this.game.currentRound.isEnd()) this.setPaused(true)
+      if (roundChanged) {
+        notify(ListenerKey.Round)
+      }
+      if (this.game.currentRound.isEnd()) {
+        this.setPaused(true)
+      }
     }, ROUND_INTERVAL_DURATION)
   }
 
   private stopGameLoop(): void {
-    if (!this.gameLoop) return
+    if (!this.gameLoop) {
+      return
+    }
     clearInterval(this.gameLoop)
     this.gameLoop = undefined
   }
@@ -43,14 +51,18 @@ class RunnerClass {
   }
 
   public setPaused(paused: boolean): void {
-    if (!this.game) return
+    if (!this.game) {
+      return
+    }
     this.paused = paused
     this.updateGameLoop()
     notify(ListenerKey.Control)
   }
 
   public setGames(games: Games | undefined): void {
-    if (this.games === games) return
+    if (this.games === games) {
+      return
+    }
     this.games = games
     notify(ListenerKey.Games)
   }
@@ -68,7 +80,9 @@ class RunnerClass {
   }
 
   public stepRound(step: number): void {
-    if (!this.game) return
+    if (!this.game) {
+      return
+    }
     this.game.stepRound(step)
     Renderer.doFullRedraw()
     Renderer.render()
@@ -76,11 +90,35 @@ class RunnerClass {
   }
 
   public jumpToRound(round: number): void {
-    if (!this.game || this.game.currentRound.round === round) return
+    if (!this.game || this.game.currentRound.round === round) {
+      return
+    }
     this.game.jumpToRound(round)
     Renderer.doFullRedraw()
     Renderer.render()
     notify(ListenerKey.Round)
+  }
+
+  public nextMatch(): void {
+    if (!this.game || !this.games) {
+      return
+    }
+    const prevIndex = this.games.games.indexOf(this.game)
+    if (prevIndex + 1 === this.games.games.length) {
+      this.setGames(undefined)
+    } else {
+      this.setGame(this.games.games[prevIndex + 1])
+    }
+  }
+
+  public prevMatch(): void {
+    if (!this.game || !this.games) {
+      return
+    }
+    const prevIndex = this.games.games.indexOf(this.game)
+    if (prevIndex > 0) {
+      this.setGame(this.games.games[prevIndex - 1])
+    }
   }
 }
 
