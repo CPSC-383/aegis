@@ -1,6 +1,6 @@
-import { Check, X, Square } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Check, X, Square } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface MultiSelectProps {
   options: string[]
@@ -13,7 +13,7 @@ export function MultiSelect({
   options,
   selected,
   onChange,
-  className = ''
+  className = "",
 }: MultiSelectProps) {
   const toggleOption = (value: string) => {
     if (selected.includes(value)) {
@@ -98,14 +98,14 @@ export function MultiSelect({
                   aria-selected={isSelected}
                   tabIndex={0}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                    if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault()
                       toggleOption(opt)
-                    } else if (e.key === 'ArrowDown') {
+                    } else if (e.key === "ArrowDown") {
                       e.preventDefault()
                       const nextItem = e.currentTarget.nextElementSibling as HTMLElement
                       if (nextItem) nextItem.focus()
-                    } else if (e.key === 'ArrowUp') {
+                    } else if (e.key === "ArrowUp") {
                       e.preventDefault()
                       const prevItem = e.currentTarget
                         .previousElementSibling as HTMLElement
@@ -117,8 +117,8 @@ export function MultiSelect({
                     <div
                       className={`flex-shrink-0 w-4 h-4 border-2 rounded-sm flex items-center justify-center transition-all ${
                         isSelected
-                          ? 'bg-primary border-primary scale-110'
-                          : 'border-muted-foreground/30 group-hover:border-muted-foreground/50 group-hover:scale-105'
+                          ? "bg-primary border-primary scale-110"
+                          : "border-muted-foreground/30 group-hover:border-muted-foreground/50 group-hover:scale-105"
                       }`}
                     >
                       {isSelected && (

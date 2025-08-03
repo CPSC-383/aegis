@@ -1,14 +1,14 @@
-import { MouseEvent } from 'react'
+import { MouseEvent } from "react"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip'
-import { Progress } from '@/components/ui/progress'
-import { TIMELINE_WIDTH } from '@/utils/constants'
-import useRound from '@/hooks/useRound'
-import { Runner } from '@/core/Runner'
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Progress } from "@/components/ui/progress"
+import { TIMELINE_WIDTH } from "@/utils/constants"
+import useRound from "@/hooks/useRound"
+import { Runner } from "@/core/Runner"
 
 function Timeline() {
   const round = useRound()

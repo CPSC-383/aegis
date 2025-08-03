@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Runner } from '@/core/Runner'
+import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Runner } from "@/core/Runner"
 
 export default function GameCycler() {
   const [index, setIndex] = useState<number>(-1)
@@ -33,7 +33,7 @@ export default function GameCycler() {
       </Button>
 
       <span className="text-sm text-muted-foreground">
-        {index >= 0 ? `Match ${index + 1} of ${total}` : 'No match selected'}
+        {index >= 0 ? `Match ${index + 1} of ${total}` : "No match selected"}
       </span>
 
       <Button onClick={goNext} disabled={index + 1 >= total} size="icon">

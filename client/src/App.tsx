@@ -1,7 +1,7 @@
-import GameArea from './components/Game-area'
-import ControlsBar from './components/controls-bar/Controls-bar'
-import Sidebar from './components/sidebar/Sidebar'
-import useGames from './hooks/useGames'
+import GameArea from "./components/Game-area"
+import ControlsBar from "./components/controls-bar/Controls-bar"
+import Sidebar from "./components/sidebar/Sidebar"
+import useGames from "./hooks/useGames"
 
 function App() {
   const games = useGames()

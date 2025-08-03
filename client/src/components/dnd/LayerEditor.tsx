@@ -3,17 +3,17 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { useState } from 'react'
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { useState } from "react"
 
-import Round from '@/core/Round'
-import { Vector } from '@/types'
-import { MapPin, Save, X } from 'lucide-react'
-import LayerList from './LayerList'
-import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import { isEqual } from 'lodash'
+import Round from "@/core/Round"
+import { Vector } from "@/types"
+import { MapPin, Save, X } from "lucide-react"
+import LayerList from "./LayerList"
+import { Badge } from "../ui/badge"
+import { Button } from "../ui/button"
+import { isEqual } from "lodash"
 
 interface Props {
   tile: Vector | undefined
@@ -46,13 +46,13 @@ export default function LayerEditor({ tile, round, onClose }: Props) {
       const current = prev[index]
       const updatedObject = {
         ...current.object,
-        ...updates
+        ...updates,
       }
 
       const next = [...prev]
       next[index] = {
         ...current,
-        object: updatedObject
+        object: updatedObject,
       }
 
       const original = originalLayers[index]

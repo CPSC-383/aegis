@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react'
-import { Size } from '@/types'
+import { useCallback, useState } from "react"
+import { Size } from "@/types"
 
 // Forces a re-render
 export function useForceUpdate(): () => void {
@@ -39,16 +39,16 @@ export function getImage(path: string): HTMLImageElement | undefined {
 // Format display of types
 export function formatDisplayText(text: string): string {
   const stringText = String(text)
-  const words = stringText.replace(/_/g, ' ').split(' ')
+  const words = stringText.replace(/_/g, " ").split(" ")
   const formattedWords = words.map(
     (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   )
-  return formattedWords.join(' ')
+  return formattedWords.join(" ")
 }
 
 // Assignment stuff
-export const ASSIGNMENT_A1 = 'a1'
-export const ASSIGNMENT_A3 = 'a3'
+export const ASSIGNMENT_A1 = "a1"
+export const ASSIGNMENT_A3 = "a3"
 
 export const getCurrentAssignment = (): string => {
   // @ts-ignore: module

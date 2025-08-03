@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from "react"
 import {
   draggable,
-  dropTargetForElements
-} from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
-import { setCustomNativeDragPreview } from '@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview'
-import { preserveOffsetOnSource } from '@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source'
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
+import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import {
   type Edge,
   attachClosestEdge,
-  extractClosestEdge
-} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
-import { createPortal } from 'react-dom'
-import { schema } from 'aegis-schema'
-import { getObjectId } from './dnd-utils'
-import Layer from './Layer'
+  extractClosestEdge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { createPortal } from "react-dom"
+import { schema } from "aegis-schema"
+import { getObjectId } from "./dnd-utils"
+import Layer from "./Layer"
 
 interface ListItemProps {
   layer: schema.WorldObject
@@ -25,21 +25,21 @@ interface ListItemProps {
 }
 
 type TaskState =
-  | { type: 'idle' }
-  | { type: 'preview'; container: HTMLElement; rect: DOMRect }
-  | { type: 'is-over'; edge: Edge; rect: DOMRect }
-  | { type: 'dragging-left-self' }
+  | { type: "idle" }
+  | { type: "preview"; container: HTMLElement; rect: DOMRect }
+  | { type: "is-over"; edge: Edge; rect: DOMRect }
+  | { type: "dragging-left-self" }
 
 export default function LayerItem({
   layer,
   index,
   id,
   onDelete,
-  onUpdate
+  onUpdate,
 }: ListItemProps) {
   const itemRef = useRef<HTMLDivElement | null>(null)
   const mainRef = useRef<HTMLDivElement | null>(null)
-  const [state, setState] = useState<TaskState>({ type: 'idle' })
+  const [state, setState] = useState<TaskState>({ type: "idle" })
 
   useEffect(() => {
     const mainElement = mainRef.current
@@ -51,24 +51,24 @@ export default function LayerItem({
         element: element,
         getInitialData: () => ({ layer, id }),
         onDrop: () => {
-          setState({ type: 'idle' })
+          setState({ type: "idle" })
         },
         onGenerateDragPreview({ nativeSetDragImage, location }) {
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({
               element: element,
-              input: location.current.input
+              input: location.current.input,
             }),
             render({ container }) {
               setState({
-                type: 'preview',
+                type: "preview",
                 container,
-                rect: element.getBoundingClientRect()
+                rect: element.getBoundingClientRect(),
               })
-            }
+            },
           })
-        }
+        },
       }),
       dropTargetForElements({
         element: mainElement,
@@ -77,7 +77,7 @@ export default function LayerItem({
           const trueId = getObjectId(layer)
           return attachClosestEdge(
             { layer, id: trueId },
-            { element, input, allowedEdges: ['top', 'bottom'] }
+            { element, input, allowedEdges: ["top", "bottom"] }
           )
         },
         canDrop({ source }) {
@@ -94,9 +94,9 @@ export default function LayerItem({
           const closestEdge = extractClosestEdge(self.data)
           if (!closestEdge) return
           setState({
-            type: 'is-over',
+            type: "is-over",
             rect: element.getBoundingClientRect(),
-            edge: closestEdge
+            edge: closestEdge,
           })
         },
         onDrag({ self, source }) {
@@ -104,34 +104,34 @@ export default function LayerItem({
           if (self.data.id === source.data.id && closestEdge) return
           if (!closestEdge) return
           const proposedChanges: TaskState = {
-            type: 'is-over',
+            type: "is-over",
             rect: element.getBoundingClientRect(),
-            edge: closestEdge
+            edge: closestEdge,
           }
           setState(proposedChanges)
         },
         onDragLeave: ({ source }) => {
           if (source.data.id === getObjectId(layer)) {
-            setState({ type: 'dragging-left-self' })
+            setState({ type: "dragging-left-self" })
             return
           }
-          setState({ type: 'idle' })
+          setState({ type: "idle" })
         },
         onDrop: () => {
-          setState({ type: 'idle' })
-        }
+          setState({ type: "idle" })
+        },
       })
     )
   }, [layer, id])
 
   return (
     <>
-      {state.type === 'is-over' && state.edge === 'top' ? (
+      {state.type === "is-over" && state.edge === "top" ? (
         <DragShadow rect={state.rect} />
       ) : null}
       <div
         ref={mainRef}
-        className={state.type === 'dragging-left-self' ? 'hidden' : ''}
+        className={state.type === "dragging-left-self" ? "hidden" : ""}
       >
         <Layer
           layer={layer}
@@ -141,10 +141,10 @@ export default function LayerItem({
           ref={itemRef}
         />
       </div>
-      {state.type === 'is-over' && state.edge === 'bottom' ? (
+      {state.type === "is-over" && state.edge === "bottom" ? (
         <DragShadow rect={state.rect} />
       ) : null}
-      {state.type === 'preview'
+      {state.type === "preview"
         ? createPortal(<DragPreview index={index} />, state.container)
         : null}
     </>
@@ -155,7 +155,7 @@ function DragShadow({ rect }: { rect: DOMRect }) {
   return (
     <div
       style={{
-        height: rect.height
+        height: rect.height,
       }}
       className="w-full rounded-lg bg-blue-200/60 border-2 border-blue-400 border-dashed transition-all duration-200"
     />

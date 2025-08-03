@@ -1,9 +1,9 @@
-import { schema } from 'aegis-schema'
+import { schema } from "aegis-schema"
 
 export enum CanvasLayers {
   Background,
   Layers,
-  Agent
+  Agent,
 }
 
 export type Size = {
@@ -17,10 +17,10 @@ export type Vector = {
 }
 
 export type Arguments =
-  | 'energy_level'
-  | 'number_of_survivors'
-  | 'energy_required'
-  | 'agents_required'
+  | "energy_level"
+  | "number_of_survivors"
+  | "energy_required"
+  | "agents_required"
 
 export type Rubble = {
   energy_required: number

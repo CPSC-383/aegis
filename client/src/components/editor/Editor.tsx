@@ -1,29 +1,29 @@
-import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import Agents from '@/core/Agents'
-import { EditorBrush } from '@/core/Brushes'
-import Game from '@/core/Game'
-import Games from '@/core/Games'
-import { Renderer } from '@/core/Renderer'
-import { Runner } from '@/core/Runner'
-import World from '@/core/World'
-import useCanvas from '@/hooks/useCanvas'
-import useHover from '@/hooks/useHover'
-import useRound from '@/hooks/useRound'
-import { cn } from '@/lib/utils'
-import { useAppStore } from '@/store/useAppStore'
-import { Vector, WorldParams } from '@/types'
-import { MAP_MAX, MAP_MIN } from '@/utils/constants'
-import { Upload } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import ConfirmClearDialog from '../ConfirmClearDialog'
-import LayerEditor from '../dnd/LayerEditor'
-import ExportDialog from '../ExportDialog'
-import NumberInput from '../NumberInput'
-import { Button } from '../ui/button'
-import { Label } from '../ui/label'
-import Brush from './Brush'
-import { exportWorld, importWorld } from './MapGenerator'
+import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Agents from "@/core/Agents"
+import { EditorBrush } from "@/core/Brushes"
+import Game from "@/core/Game"
+import Games from "@/core/Games"
+import { Renderer } from "@/core/Renderer"
+import { Runner } from "@/core/Runner"
+import World from "@/core/World"
+import useCanvas from "@/hooks/useCanvas"
+import useHover from "@/hooks/useHover"
+import useRound from "@/hooks/useRound"
+import { cn } from "@/lib/utils"
+import { useAppStore } from "@/store/useAppStore"
+import { Vector, WorldParams } from "@/types"
+import { MAP_MAX, MAP_MIN } from "@/utils/constants"
+import { Upload } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import ConfirmClearDialog from "../ConfirmClearDialog"
+import LayerEditor from "../dnd/LayerEditor"
+import ExportDialog from "../ExportDialog"
+import NumberInput from "../NumberInput"
+import { Button } from "../ui/button"
+import { Label } from "../ui/label"
+import Brush from "./Brush"
+import { exportWorld, importWorld } from "./MapGenerator"
 
 export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
   const round = useRound()
@@ -33,7 +33,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   const [worldParams, setWorldParams] = useState<WorldParams>({
     width: 15,
     height: 15,
-    initialEnergy: 100
+    initialEnergy: 100,
   })
   const [isWorldEmpty, setIsWorldEmpty] = useState<boolean>(true)
   const [isEditorOpen, setIsEditorOpen] = useState<boolean>(false)
@@ -75,7 +75,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
         ...prev,
         width: world.size.width,
         height: world.size.height,
-        initialEnergy: world.startEnergy
+        initialEnergy: world.startEnergy,
       }))
     }
 
@@ -116,11 +116,11 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
         width: world.size.width,
         height: world.size.height,
         initialEnergy: world.startEnergy,
-        imported: games
+        imported: games,
       })
     })
     // Reset so we can import the same file after we clear (weird edge case ngl)
-    e.target.value = ''
+    e.target.value = ""
   }
 
   const handleParamChange = (name: string, val: number) => {
@@ -142,14 +142,14 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === 'e' && hoveredTile) {
+      if (e.key.toLowerCase() === "e" && hoveredTile) {
         e.preventDefault()
         setSelectedTile(hoveredTile)
         setIsEditorOpen(true)
       }
     }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
   }, [hoveredTile])
 
   const handleClose = () => {
@@ -163,12 +163,12 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
     return brushes.map((brush) => (
       <TabsContent key={brush.name} value={brush.name} className="mt-4 px-1">
         <Brush brush={brush} />
-        {brush.name === 'Layers' && (
+        {brush.name === "Layers" && (
           <div className="mt-2 p-3 rounded-lg bg-muted/30 border-dashed border">
             <p className="text-xs text-muted-foreground text-center">
               <kbd className="px-2 py-1 text-xs font-mono bg-muted rounded border">
                 e
-              </kbd>{' '}
+              </kbd>{" "}
               to edit cell layers when hovering a cell.
             </p>
           </div>
@@ -223,8 +223,8 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
 
         <div
           className={cn(
-            'grid grid-cols-1 sm:grid-cols-2 gap-4',
-            !isWorldEmpty && 'opacity-50 pointer-events-none bg-muted/10'
+            "grid grid-cols-1 sm:grid-cols-2 gap-4",
+            !isWorldEmpty && "opacity-50 pointer-events-none bg-muted/10"
           )}
         >
           <div className="space-y-2">

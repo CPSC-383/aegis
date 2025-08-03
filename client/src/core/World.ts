@@ -1,13 +1,13 @@
-import rubbleSrc from '@/assets/rubble.png'
-import survivorSrcDark from '@/assets/survivor-dark.png'
-import survivorSrcLight from '@/assets/survivor-light.png'
-import { getMoveCostColor, Size, Vector } from '@/types'
-import { THICKNESS } from '@/utils/constants'
-import { getImage, renderCoords } from '@/utils/util'
-import { schema } from 'aegis-schema'
-import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from './Brushes'
-import Round from './Round'
-import invariant from 'tiny-invariant'
+import rubbleSrc from "@/assets/rubble.png"
+import survivorSrcDark from "@/assets/survivor-dark.png"
+import survivorSrcLight from "@/assets/survivor-light.png"
+import { getMoveCostColor, Size, Vector } from "@/types"
+import { THICKNESS } from "@/utils/constants"
+import { getImage, renderCoords } from "@/utils/util"
+import { schema } from "aegis-schema"
+import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from "./Brushes"
+import Round from "./Round"
+import invariant from "tiny-invariant"
 
 /**
  * Represents a world in aegis.
@@ -72,7 +72,7 @@ export default class World {
         moveCost: 1,
         type: schema.CellType.NORMAL,
         agents: [],
-        layers: []
+        layers: [],
       })
     })
 
@@ -101,7 +101,7 @@ export default class World {
       moveCost: cell.moveCost,
       type: cell.type,
       agents: [...cell.agents],
-      layers: cell.layers.map((layer) => ({ ...layer }))
+      layers: cell.layers.map((layer) => ({ ...layer })),
     }
   }
 
@@ -143,10 +143,10 @@ export default class World {
    * @param ctx - Canvas rendering context.
    */
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.strokeStyle = 'black'
+    ctx.strokeStyle = "black"
     ctx.lineWidth = THICKNESS
 
-    ctx.fillStyle = '#000000'
+    ctx.fillStyle = "#000000"
     ctx.fillRect(0, 0, this.width, this.height)
 
     this.drawCells(ctx)
@@ -201,9 +201,9 @@ export default class World {
       if (cell.type === schema.CellType.NORMAL) continue
 
       if (cell.type === schema.CellType.CHARGING) {
-        ctx.fillStyle = '#3f00ff'
+        ctx.fillStyle = "#3f00ff"
       } else if (cell.type === schema.CellType.KILLER) {
-        ctx.fillStyle = '#cc0000'
+        ctx.fillStyle = "#cc0000"
       } else if (cell.type === schema.CellType.SPAWN) {
         this.drawSpawn(ctx, coords)
         continue
@@ -234,7 +234,7 @@ export default class World {
 
     for (let i = -numStripes; i < numStripes * 2; i++) {
       ctx.beginPath()
-      ctx.fillStyle = i % 2 === 0 ? '#ffff00' : '#000000'
+      ctx.fillStyle = i % 2 === 0 ? "#ffff00" : "#000000"
 
       const startPointX = coords.x + i * stripeWidth
       const endPointX = startPointX + stripeWidth
@@ -254,7 +254,7 @@ export default class World {
     const lightSurv = getImage(survivorSrcLight)
     const darkSurv = getImage(survivorSrcDark)
     const rubble = getImage(rubbleSrc)
-    invariant(lightSurv && darkSurv && rubble, 'layer images should be loaded already')
+    invariant(lightSurv && darkSurv && rubble, "layer images should be loaded already")
 
     const locs = full ? this.getAllLocations() : this.layerRemovals
 
@@ -268,39 +268,39 @@ export default class World {
       const layers = this.cellAt(x, y).layers
       if (!layers.length) continue
 
-      const survivorCount = this.countByKind(layers, 'survivor')
-      const rubbleCount = this.countByKind(layers, 'rubble')
+      const survivorCount = this.countByKind(layers, "survivor")
+      const rubbleCount = this.countByKind(layers, "rubble")
 
       const topLayer = layers[0]
       const kind = topLayer.object.oneofKind
       const [, , , moveCost] = getMoveCostColor(this.cellAt(x, y).moveCost)
 
-      if (kind === 'survivor') {
+      if (kind === "survivor") {
         if (moveCost <= 5) {
           ctx.drawImage(darkSurv, coords.x, coords.y, 1, 1)
         } else {
           ctx.drawImage(lightSurv, coords.x, coords.y, 1, 1)
         }
-      } else if (kind === 'rubble') {
+      } else if (kind === "rubble") {
         ctx.drawImage(rubble, coords.x + 0.025, coords.y + 0.025, 0.95, 0.95)
       }
 
-      ctx.font = '0.3px monospace'
-      ctx.textBaseline = 'bottom'
+      ctx.font = "0.3px monospace"
+      ctx.textBaseline = "bottom"
 
       if (survivorCount > 0) {
-        ctx.textAlign = 'right'
+        ctx.textAlign = "right"
         if (moveCost <= 5) {
-          ctx.fillStyle = '#0919ff'
+          ctx.fillStyle = "#0919ff"
         } else {
-          ctx.fillStyle = '#0f8cff'
+          ctx.fillStyle = "#0f8cff"
         }
         ctx.fillText(String(survivorCount), coords.x + 0.97, coords.y + 1.01)
       }
 
       if (rubbleCount > 0) {
-        ctx.fillStyle = '#444444'
-        ctx.textAlign = 'left'
+        ctx.fillStyle = "#444444"
+        ctx.textAlign = "left"
         ctx.fillText(String(rubbleCount), coords.x + 0.03, coords.y + 1.01)
       }
     }

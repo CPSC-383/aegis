@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
-import useGame from './useGame'
-import { ListenerKey, subscribe } from '@/core/Listeners'
-import type Round from '@/core/Round'
+import { useEffect, useState } from "react"
+import useGame from "./useGame"
+import { ListenerKey, subscribe } from "@/core/Listeners"
+import type Round from "@/core/Round"
 
 export default function useRound(): Round | undefined {
   const game = useGame()

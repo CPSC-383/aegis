@@ -1,10 +1,10 @@
-import goobA from '@/assets/goob-team-a.png'
-import goobB from '@/assets/goob-team-b.png'
-import { getImage, renderCoords } from '@/utils/util'
-import { schema } from 'aegis-schema'
-import Game from './Game'
-import Games from './Games'
-import invariant from 'tiny-invariant'
+import goobA from "@/assets/goob-team-a.png"
+import goobB from "@/assets/goob-team-b.png"
+import { getImage, renderCoords } from "@/utils/util"
+import { schema } from "aegis-schema"
+import Game from "./Game"
+import Games from "./Games"
+import invariant from "tiny-invariant"
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()
@@ -118,7 +118,7 @@ export class Agent {
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
     const goob = getImage(this.imgPath)
-    invariant(goob, 'goob should already be loaded')
+    invariant(goob, "goob should already be loaded")
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
     if (this.dead) ctx.globalAlpha = 0.5
@@ -138,7 +138,7 @@ export class Agent {
 
   public default(): void {
     const currentGame = this.games.currentGame
-    invariant(currentGame, 'No active game found for agent initialization')
+    invariant(currentGame, "No active game found for agent initialization")
     this.energyLevel = currentGame.world.startEnergy
   }
 }

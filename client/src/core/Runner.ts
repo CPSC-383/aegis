@@ -1,8 +1,8 @@
-import Game from './Game'
-import Games from './Games'
-import { Renderer } from './Renderer'
-import { ListenerKey, notify } from './Listeners'
-import { ROUND_INTERVAL_DURATION } from '@/utils/constants'
+import Game from "./Game"
+import Games from "./Games"
+import { Renderer } from "./Renderer"
+import { ListenerKey, notify } from "./Listeners"
+import { ROUND_INTERVAL_DURATION } from "@/utils/constants"
 
 class RunnerClass {
   private gameLoop: NodeJS.Timeout | undefined = undefined

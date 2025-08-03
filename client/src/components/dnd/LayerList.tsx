@@ -1,16 +1,16 @@
-import { SetStateAction, useEffect, useRef } from 'react'
-import LayerItem from './LayerItem'
-import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
-import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
-import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge'
-import { reorderWithEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge'
-import { flushSync } from 'react-dom'
-import { schema } from 'aegis-schema'
-import { getObjectId } from './dnd-utils'
-import { Card, CardContent } from '../ui/card'
-import { Layers3 } from 'lucide-react'
-import { isEqual } from 'lodash'
+import { SetStateAction, useEffect, useRef } from "react"
+import LayerItem from "./LayerItem"
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
+import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
+import { flushSync } from "react-dom"
+import { schema } from "aegis-schema"
+import { getObjectId } from "./dnd-utils"
+import { Card, CardContent } from "../ui/card"
+import { Layers3 } from "lucide-react"
+import { isEqual } from "lodash"
 
 interface Props {
   layers: schema.WorldObject[]
@@ -27,7 +27,7 @@ export default function LayerList({
   setLayers,
   setHasChanges,
   updateLayer,
-  deleteLayer
+  deleteLayer,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -37,7 +37,7 @@ export default function LayerList({
 
     return combine(
       autoScrollForElements({
-        element: container
+        element: container,
       }),
       monitorForElements({
         canMonitor({ source }) {
@@ -66,13 +66,13 @@ export default function LayerList({
                 startIndex: sourceIndex,
                 indexOfTarget: destIndex,
                 closestEdgeOfTarget: closestEdge,
-                axis: 'vertical'
+                axis: "vertical",
               })
               setHasChanges(!isEqual(next, originalLayers))
               return next
             })
           })
-        }
+        },
       })
     )
   }, [layers])

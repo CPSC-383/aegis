@@ -1,9 +1,9 @@
-import Agents from './Agents'
-import Game from './Game'
-import { schema } from 'aegis-schema'
-import World from './World'
-import RoundStats from './Stats'
-import invariant from 'tiny-invariant'
+import Agents from "./Agents"
+import Game from "./Game"
+import { schema } from "aegis-schema"
+import World from "./World"
+import RoundStats from "./Stats"
+import invariant from "tiny-invariant"
 
 export default class Round {
   public turn: number = 0
@@ -21,7 +21,7 @@ export default class Round {
   public startRound(round: schema.Round | null): void {
     invariant(
       this.turn === this.turnsLength,
-      'Cannot start new round without completing the previous one'
+      "Cannot start new round without completing the previous one"
     )
     this.agents.processRound(this.currentRound)
 
@@ -42,7 +42,7 @@ export default class Round {
 
   private stepTurn(): void {
     const turn = this.currentRound!.turns[this.turn]
-    invariant(turn, 'Turn not found to step to')
+    invariant(turn, "Turn not found to step to")
 
     if (this.turn === 0) this.agents.clearDead()
     this.agents.applyTurn(turn)

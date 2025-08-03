@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Input } from '@/components/ui/input'
+import { useEffect, useState } from "react"
+import { Input } from "@/components/ui/input"
 
 interface NumberInputProps {
   name: string
@@ -14,7 +14,7 @@ export default function NumberInput({
   value,
   min = -Infinity,
   max = Infinity,
-  onChange
+  onChange,
 }: NumberInputProps) {
   const [internal, setInternal] = useState(String(value))
 

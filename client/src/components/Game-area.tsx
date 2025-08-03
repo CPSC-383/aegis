@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react'
-import { Renderer } from '@/core/Renderer'
-import useRound from '@/hooks/useRound'
-import useHover from '@/hooks/useHover'
+import { useEffect, useRef } from "react"
+import { Renderer } from "@/core/Renderer"
+import useRound from "@/hooks/useRound"
+import useHover from "@/hooks/useHover"
 
 export default function GameArea(): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null)

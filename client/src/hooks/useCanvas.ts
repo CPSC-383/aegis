@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
-import { ListenerKey, subscribe } from '@/core/Listeners'
-import { Renderer } from '@/core/Renderer'
+import { useEffect, useState } from "react"
+import { ListenerKey, subscribe } from "@/core/Listeners"
+import { Renderer } from "@/core/Renderer"
 
 export default function useCanvas() {
   const [rightClick, setRightClick] = useState(Renderer.getMouseDownRight())

@@ -1,10 +1,10 @@
-import Game from '@/core/Game'
-import Games from '@/core/Games'
-import { schema } from 'aegis-schema'
-import invariant from 'tiny-invariant'
+import Game from "@/core/Game"
+import Games from "@/core/Games"
+import { schema } from "aegis-schema"
+import invariant from "tiny-invariant"
 
 export class ClientWebSocket {
-  private url: string = 'ws://localhost:6003'
+  private url: string = "ws://localhost:6003"
   private reconnectInterval: number = 500
   private games: Games | undefined = undefined
   private game: Game | undefined = undefined
@@ -41,8 +41,8 @@ export class ClientWebSocket {
 
       if (!this.games) {
         invariant(
-          event.event.oneofKind === 'gamesHeader',
-          'First event must be the GamesHeader.'
+          event.event.oneofKind === "gamesHeader",
+          "First event must be the GamesHeader."
         )
 
         this.games = new Games(true)
@@ -51,7 +51,7 @@ export class ClientWebSocket {
 
       this.games.addEvent(event)
 
-      if (event.event.oneofKind === 'round') {
+      if (event.event.oneofKind === "round") {
         const games = this.games.games
         const game = games[games.length - 1]
         if (this.game === game) return
@@ -60,9 +60,9 @@ export class ClientWebSocket {
         this.game = game
       }
 
-      if (event.event.oneofKind === 'gameFooter') this.game = undefined
+      if (event.event.oneofKind === "gameFooter") this.game = undefined
     } catch (error) {
-      console.error('Failed to handle websocket event:', error)
+      console.error("Failed to handle websocket event:", error)
     }
   }
 }

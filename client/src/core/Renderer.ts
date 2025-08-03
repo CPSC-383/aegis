@@ -1,14 +1,14 @@
-import { CanvasLayers, Size, Vector } from '@/types'
-import { TILE_SIZE } from '@/utils/constants'
-import { loadImage, renderCoords } from '@/utils/util'
-import { Runner } from './Runner'
-import { ListenerKey, notify } from './Listeners'
+import { CanvasLayers, Size, Vector } from "@/types"
+import { TILE_SIZE } from "@/utils/constants"
+import { loadImage, renderCoords } from "@/utils/util"
+import { Runner } from "./Runner"
+import { ListenerKey, notify } from "./Listeners"
 
-import goobA from '@/assets/goob-team-a.png'
-import goobB from '@/assets/goob-team-b.png'
-import rubble from '@/assets/rubble.png'
-import darkSurvivor from '@/assets/survivor-dark.png'
-import lightSurvivor from '@/assets/survivor-light.png'
+import goobA from "@/assets/goob-team-a.png"
+import goobB from "@/assets/goob-team-b.png"
+import rubble from "@/assets/rubble.png"
+import darkSurvivor from "@/assets/survivor-dark.png"
+import lightSurvivor from "@/assets/survivor-light.png"
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as any
@@ -20,17 +20,17 @@ class RendererClass {
 
   constructor() {
     const numericLayers = Object.values(CanvasLayers).filter(
-      (value) => typeof value === 'number'
+      (value) => typeof value === "number"
     ) as number[]
     numericLayers.forEach((layerValue, index) => {
-      const canvas = document.createElement('canvas')
+      const canvas = document.createElement("canvas")
       canvas.style.zIndex = (index + 1).toString()
-      canvas.style.position = 'absolute'
-      canvas.style.top = '50%'
-      canvas.style.left = '50%'
-      canvas.style.maxWidth = '100%'
-      canvas.style.maxHeight = '100%'
-      canvas.style.transform = 'translate(-50%, -50%)'
+      canvas.style.position = "absolute"
+      canvas.style.top = "50%"
+      canvas.style.left = "50%"
+      canvas.style.maxWidth = "100%"
+      canvas.style.maxHeight = "100%"
+      canvas.style.transform = "translate(-50%, -50%)"
       const layerKey = CanvasLayers[layerValue] as keyof typeof CanvasLayers
       this.canvases[layerKey] = canvas
     })
@@ -62,7 +62,7 @@ class RendererClass {
 
   ctx(layer: CanvasLayers): CanvasRenderingContext2D | null {
     const canvas = this.canvases[CanvasLayers[layer] as keyof typeof CanvasLayers]
-    return canvas.getContext('2d')
+    return canvas.getContext("2d")
   }
 
   fullRender(): void {
@@ -102,7 +102,7 @@ class RendererClass {
 
   private updateCanvasSize(size: Size) {
     Object.values(this.canvases).forEach((canvas) => {
-      const ctx = canvas.getContext('2d')
+      const ctx = canvas.getContext("2d")
       if (!ctx) return
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       canvas.width = size.width * TILE_SIZE

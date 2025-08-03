@@ -1,5 +1,5 @@
-import { create } from 'zustand'
-import Games from '@/core/Games'
+import { create } from "zustand"
+import Games from "@/core/Games"
 
 interface AppStore {
   queue: Games[]
@@ -20,5 +20,5 @@ export const useAppStore = create<AppStore>((set) => ({
   pushToQueue: (game) => set((state) => ({ queue: [...state.queue, game] })),
   clearQueue: () => set({ queue: [] }),
 
-  setEditorGames: (games) => set({ editorGames: games })
+  setEditorGames: (games) => set({ editorGames: games }),
 }))

@@ -1,22 +1,22 @@
-import Game from '@/core/Game'
-import Games from '@/core/Games'
-import { Runner } from '@/core/Runner'
-import { ClientWebSocket, aegisAPI } from '@/services'
-import { useAppStore } from '@/store/useAppStore'
-import { ConsoleLine, Scaffold } from '@/types'
-import { useForceUpdate } from '@/utils/util'
-import { useEffect, useRef, useState } from 'react'
-import invariant from 'tiny-invariant'
+import Game from "@/core/Game"
+import Games from "@/core/Games"
+import { Runner } from "@/core/Runner"
+import { ClientWebSocket, aegisAPI } from "@/services"
+import { useAppStore } from "@/store/useAppStore"
+import { ConsoleLine, Scaffold } from "@/types"
+import { useForceUpdate } from "@/utils/util"
+import { useEffect, useRef, useState } from "react"
+import invariant from "tiny-invariant"
 import {
   ClientConfig,
   getConfigValue as getDynamicConfigValue,
-  parseClientConfig
-} from './config'
-import RingBuffer from '@/utils/ringBuffer'
+  parseClientConfig,
+} from "./config"
+import RingBuffer from "@/utils/ringBuffer"
 
 export function createScaffold(): Scaffold {
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)
-  const [spawnError, setSpawnError] = useState<string>('')
+  const [spawnError, setSpawnError] = useState<string>("")
   const [worlds, setWorlds] = useState<string[]>([])
   const [agents, setAgents] = useState<string[]>([])
   const [config, setConfig] = useState<ClientConfig | null>(null)
@@ -32,8 +32,8 @@ export function createScaffold(): Scaffold {
     output.current.push(line)
 
     if (
-      line.content.startsWith('[INFO][aegis]') &&
-      line.content.includes('AEGIS END')
+      line.content.startsWith("[INFO][aegis]") &&
+      line.content.includes("AEGIS END")
     ) {
       currentGameIdx.current++
     }
@@ -52,7 +52,7 @@ export function createScaffold(): Scaffold {
     debug: boolean
   ): Promise<void> => {
     invariant(aegisPath, "Can't find AEGIS path!")
-    invariant(config, 'Config not loaded. Please ensure config.yaml is valid.')
+    invariant(config, "Config not loaded. Please ensure config.yaml is valid.")
 
     currentGameIdx.current = 0
     output.current.clear()
@@ -67,10 +67,10 @@ export function createScaffold(): Scaffold {
         debug
       )
       aegisPid.current = pid
-      setSpawnError('')
+      setSpawnError("")
     } catch (error) {
       setSpawnError(
-        '`aegis` command not found. Please activate your virtual environment and restart the client to try again.'
+        "`aegis` command not found. Please activate your virtual environment and restart the client to try again."
       )
     }
     forceUpdate()
@@ -87,7 +87,7 @@ export function createScaffold(): Scaffold {
       setConfig(parsedConfig)
       return parsedConfig
     } catch (error) {
-      console.error('Error reading config:', error)
+      console.error("Error reading config:", error)
       setConfig(null)
       setRawConfigData(null)
       throw new Error(`Failed to load config.yaml: ${error}`)
@@ -104,7 +104,7 @@ export function createScaffold(): Scaffold {
   }
 
   const isAssignmentConfig = (): boolean => {
-    return config?.configType === 'assignment'
+    return config?.configType === "assignment"
   }
 
   const getDefaultAgentAmount = (): number => {
@@ -120,7 +120,7 @@ export function createScaffold(): Scaffold {
 
     const [worldsData, agentsData] = await Promise.all([
       getWorlds(aegisPath),
-      getAgents(aegisPath)
+      getAgents(aegisPath),
     ])
 
     setWorlds(worldsData)
@@ -172,7 +172,7 @@ export function createScaffold(): Scaffold {
     const loadData = async () => {
       const [worldsData, agentsData] = await Promise.all([
         getWorlds(aegisPath),
-        getAgents(aegisPath)
+        getAgents(aegisPath),
       ])
 
       setWorlds(worldsData)
@@ -182,7 +182,7 @@ export function createScaffold(): Scaffold {
     }
 
     loadData()
-    localStorage.setItem('aegisPath', aegisPath)
+    localStorage.setItem("aegisPath", aegisPath)
   }, [aegisPath])
 
   return {
@@ -200,12 +200,12 @@ export function createScaffold(): Scaffold {
     isAssignmentConfig,
     getDefaultAgentAmount,
     isMultiAgentEnabled,
-    spawnError
+    spawnError,
   }
 }
 
 const getAegisPath = async () => {
-  const localPath = localStorage.getItem('aegisPath')
+  const localPath = localStorage.getItem("aegisPath")
   if (localPath) return localPath
 
   let currentDir: string = await aegisAPI!.getAppPath()
@@ -213,7 +213,7 @@ const getAegisPath = async () => {
   const path = aegisAPI!.path
 
   while (true) {
-    const worldsDir = await path.join(currentDir, 'worlds')
+    const worldsDir = await path.join(currentDir, "worlds")
     if (await fs.existsSync(worldsDir)) {
       return currentDir
     }
@@ -230,13 +230,13 @@ const getWorlds = async (aegisPath: string) => {
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
-  const worldsPath = await path.join(aegisPath, 'worlds')
+  const worldsPath = await path.join(aegisPath, "worlds")
   if (!(await fs.existsSync(worldsPath))) return []
 
   const worlds = await fs.readdirSync(worldsPath)
   const filtered_worlds = worlds
-    .filter((world: string) => world.endsWith('.world'))
-    .map((world: string) => world.replace(/\.world$/, ''))
+    .filter((world: string) => world.endsWith(".world"))
+    .map((world: string) => world.replace(/\.world$/, ""))
   return filtered_worlds
 }
 
@@ -244,7 +244,7 @@ const getAgents = async (aegisPath: string) => {
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
-  const agentsPath = await path.join(aegisPath, 'agents')
+  const agentsPath = await path.join(aegisPath, "agents")
   if (!(await fs.existsSync(agentsPath))) return []
 
   const agentsDirs = await fs.readdirSync(agentsPath)
@@ -255,7 +255,7 @@ const getAgents = async (aegisPath: string) => {
     const agentPath = await path.join(agentsPath, agent)
     if (!(await fs.isDirectory(agentPath))) continue
     const agentFiles = await fs.readdirSync(agentPath)
-    if (!agentFiles.includes('main.py')) continue
+    if (!agentFiles.includes("main.py")) continue
     agents.push(agent)
   }
   return agents

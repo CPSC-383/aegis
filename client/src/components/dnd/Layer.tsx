@@ -1,12 +1,12 @@
-import { schema } from 'aegis-schema'
-import { GripVertical, Trash2 } from 'lucide-react'
-import { HTMLAttributes, forwardRef } from 'react'
-import NumberInput from '../NumberInput'
-import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import { Card, CardContent } from '../ui/card'
-import { Label } from '../ui/label'
-import { getLayerColor, getLayerIcon } from './dnd-utils'
+import { schema } from "aegis-schema"
+import { GripVertical, Trash2 } from "lucide-react"
+import { HTMLAttributes, forwardRef } from "react"
+import NumberInput from "../NumberInput"
+import { Badge } from "../ui/badge"
+import { Button } from "../ui/button"
+import { Card, CardContent } from "../ui/card"
+import { Label } from "../ui/label"
+import { getLayerColor, getLayerIcon } from "./dnd-utils"
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   layer: schema.WorldObject
@@ -38,7 +38,7 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                 </Badge>
               </div>
             </div>
-            {layer.object.oneofKind === 'survivor' && (
+            {layer.object.oneofKind === "survivor" && (
               <div className="space-y-3 pt-2">
                 <div className="flex flex-col items-center gap-2">
                   <Label
@@ -56,8 +56,8 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                       onUpdate({
                         survivor: {
                           ...(layer.object as any).survivor,
-                          health: value
-                        }
+                          health: value,
+                        },
                       })
                     }
                   />
@@ -65,7 +65,7 @@ const Layer = forwardRef<HTMLDivElement, Props>(
               </div>
             )}
 
-            {layer.object.oneofKind === 'rubble' && (
+            {layer.object.oneofKind === "rubble" && (
               <div className="space-y-3 pt-2">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
@@ -84,8 +84,8 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                         onUpdate({
                           rubble: {
                             ...(layer.object as any).rubble,
-                            energyRequired: value
-                          }
+                            energyRequired: value,
+                          },
                         })
                       }
                     />
@@ -106,8 +106,8 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                         onUpdate({
                           rubble: {
                             ...(layer.object as any).rubble,
-                            agentsRequired: value
-                          }
+                            agentsRequired: value,
+                          },
                         })
                       }
                     />
@@ -130,6 +130,6 @@ const Layer = forwardRef<HTMLDivElement, Props>(
   }
 )
 
-Layer.displayName = 'Layer'
+Layer.displayName = "Layer"
 
 export default Layer
