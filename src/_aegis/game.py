@@ -2,8 +2,6 @@ import random
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from _aegis.aegis_config import is_feature_enabled
-
 from .agent import Agent
 from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
@@ -45,8 +43,8 @@ class Game:
         self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
 
-        self._prediction_handler: PredictionHandler | None = (
-            PredictionHandler() if is_feature_enabled("ENABLE_PREDICTIONS") else None
+        self._prediction_handler: PredictionHandler | None = PredictionHandler(
+            testing_for_marking=args.testing_for_marking
         )
 
         self._command_processor: CommandProcessor = CommandProcessor(
