@@ -157,9 +157,9 @@ class Game:
             self, agent_id, loc, team, self.world.start_energy, debug=self.args.debug
         )
         ac = AgentController(self, agent)
-        # Extract just the directory name from the full path
-        agent_path = Path(self.team_agents[team]).parent.name
-        agent.load(agent_path, self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
+        # Use the agent name directly
+        agent_name = self.team_agents[team]
+        agent.load(agent_name, self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
         self.add_agent(agent, loc)
         self.team_info.add_units(agent.team, 1)
         self.game_pb.add_spawn(agent.id, agent.team, agent.location)

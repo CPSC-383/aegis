@@ -36,9 +36,11 @@ def run(args: Args) -> None:
 
     for arg_world in args.world:
         world_name = f"{arg_world}"
-        world = load_world(Path(world_name))
+        # Construct the full path to the world file
+        world_path = Path("worlds") / f"{world_name}.world"
+        world = load_world(world_path)
         if world is None:
-            error = f"Unable to load world {world_name}!"
+            error = f"Unable to load world {world_path}!"
             raise ValueError(error)
 
         world.rounds = args.rounds
@@ -69,6 +71,8 @@ def run(args: Args) -> None:
 
             LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
         LOGGER.info("========== AEGIS END ==========")
+        print()  # noqa: T201
+        print("=" * 80)  # noqa: T201
         print()  # noqa: T201
     game_pb.make_games_footer()
     ws_server.finish()

@@ -8,7 +8,7 @@ from .constants import Constants
 @dataclass
 class Args:
     amount: int
-    world: str
+    world: list[str]
     rounds: int
     agent: str | None
     agent2: str | None
@@ -19,14 +19,31 @@ class Args:
 
 
 def parse_args() -> Args:
-    parser = argparse.ArgumentParser(description="AEGIS Simulation Configuration")
+    parser = argparse.ArgumentParser(
+        description="AEGIS Simulation Configuration",
+        epilog="""
+Examples:
+  # Run a single agent simulation
+  aegis --world ExampleWorld --agent agent_path --rounds 100
+
+  # Run a two-team simulation
+  aegis --world ExampleWorld --agent agent_path --agent2 agent_mas --rounds 200
+
+  # Run with debug output
+  aegis --world ExampleWorld --agent agent_path --debug
+
+  # Run multiple worlds
+  aegis --world ExampleWorld test --agent agent_path
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
 
     _ = parser.add_argument(
         "--world",
         type=str,
         nargs="+",
         required=True,
-        help="One or more world file names (without extensions), separated by spaces.",
+        help="One or more world names (without .world extension), separated by spaces.",
     )
     _ = parser.add_argument(
         "--amount",
@@ -46,7 +63,7 @@ def parse_args() -> Args:
         required=False,
         help=(
             "Name of the agent folder under 'agents/' with a main.py file "
-            "for team Goobs"
+            "for team Goobs (e.g., 'agent_path', 'agent_mas')"
         ),
     )
     _ = parser.add_argument(
@@ -55,7 +72,7 @@ def parse_args() -> Args:
         required=False,
         help=(
             "Name of the agent folder under 'agents/' with a main.py file "
-            "for team Voidseers"
+            "for team Voidseers (e.g., 'agent_path', 'agent_mas')"
         ),
     )
     _ = parser.add_argument(
