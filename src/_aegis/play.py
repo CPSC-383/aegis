@@ -23,7 +23,6 @@ def make_game_start_string(args: Args, world: str) -> str:
 def run(args: Args) -> None:
     ws_server = WebSocketServer(wait_for_client=args.client)
     game_pb = GamePb()
-    game_pb.make_games_header(ws_server)
 
     # Set up logging based on whether file logging is enabled
     setup_console_and_file_logging() if args.log else setup_console_logging()
@@ -33,6 +32,7 @@ def run(args: Args) -> None:
         raise ValueError(error)
 
     ws_server.start()
+    game_pb.make_games_header(ws_server)
 
     for arg_world in args.world:
         world_name = f"{arg_world}"

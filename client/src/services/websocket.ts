@@ -46,6 +46,7 @@ export class ClientWebSocket {
         )
 
         this.games = new Games(true)
+        this.onGamesCreated(this.games)
         return
       }
 
