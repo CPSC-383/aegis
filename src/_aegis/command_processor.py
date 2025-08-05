@@ -101,20 +101,16 @@ class CommandProcessor:
     def _handle_predict(self, cmd: Predict) -> None:
         agent = self._game.get_agent(cmd.get_id())
         if self._prediction_handler is not None:
-            prediction_result = self._prediction_handler.check_agent_prediction(
-                agent.id, agent.team, SurvivorID(cmd.surv_id), cmd.label
+            prediction_result = self._prediction_handler.predict(
+                agent.team, SurvivorID(cmd.surv_id), cmd.label
             )
 
-            LOGGER.info(f"Prediction result: {prediction_result}")
-
-            self._prediction_handler.set_prediction_result(
-                agent.id,
-                agent.team,
-                SurvivorID(cmd.surv_id),
-                prediction_correct=prediction_result,
-            )
-
-            if prediction_result:
+            if prediction_result is None:
+                # No valid pending prediction exists (already predicted or never created)
+                LOGGER.warning(
+                    f"Agent {agent.id} attempted invalid prediction for surv_id {cmd.surv_id}"
+                )
+            elif prediction_result:
                 self._game.team_info.add_score(agent.team, Constants.PRED_CORRECT_SCORE)
                 self._game.team_info.add_predicted(agent.team, 1, correct=True)
             else:
@@ -182,10 +178,9 @@ class CommandProcessor:
             self._game.team_info.add_saved(team, 1, is_alive=is_alive)
             self._game.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
 
-            # Add the agent that saved the survivor to the prediction handler
+            # Create a pending prediction for this survivor
             if self._prediction_handler is not None:
-                self._prediction_handler.add_agent_to_no_pred_yet(
-                    agent.id,
+                self._prediction_handler.create_pending_prediction(
                     team,
                     SurvivorID(survivor.id),
                 )
@@ -248,20 +243,9 @@ class CommandProcessor:
             case _:
                 return []
 
-    def _handle_save_cmd(self, agent: Agent) -> list[AegisCommand]:
-        results: list[AegisCommand] = []
-
-        # Check if predictions are enabled and we have a prediction handler
-        if self._prediction_handler is not None:
-            # Get prediction info for this agent
-            pred_info = self._prediction_handler.get_pred_info_for_agent(
-                agent.id, agent.team
-            )
-            if pred_info:
-                surv_id, image, unique_labels = pred_info
-                # results.append(SaveResult(surv_id, image, unique_labels)) # TODO(gang slime): decide if we do this approach or the other
-
-        return results
+    def _handle_save_cmd(self, _: Agent) -> list[AegisCommand]:
+        # Not returning pred info in surv result anymore, so don't need this i think
+        return []
 
     # def _handle_top_layer(
     #     self,

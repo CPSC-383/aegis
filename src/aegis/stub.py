@@ -22,6 +22,7 @@ from . import (
     SendMessage,
     SendMessageResult,
     Survivor,
+    SurvivorID,
 )
 
 # import the predict command if predictions are enabled
@@ -119,15 +120,11 @@ def log(*args: object) -> None:
     """
 
 
-def get_prediction_info_for_agent() -> tuple[int, Any, Any] | None:
+def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]] | None:
     """
-    Get prediction information for an agent.
-
-    Args:
-        agent_id: The agent's ID
-        team: The agent's team
+    Get prediction information for a survivour saved by an agent's team.
 
     Returns:
-        Tuple of (survivor_id, image, unique_labels) or None if no prediction needed
+        List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
 
     """

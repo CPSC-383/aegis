@@ -1,131 +1,113 @@
 import random
 from typing import Any, cast
 
-from _aegis.conditional_imports import is_prediction_available
-from _aegis.constants import Constants
+from _aegis.logger import LOGGER
 from _aegis.team import Team
 from _aegis.types.prediction import (
-    PredictionData,
+    CompletedPrediction,
+    PendingPrediction,
     PredictionLabel,
-    PredictionResult,
     SurvivorID,
 )
 
 from .data_loader import PredictionDataLoader
 
-TeamSurvivorKey = tuple[Team, SurvivorID]
-TeamPredictionResults = dict[SurvivorID, PredictionResult]
-NoPredictionYet = dict[TeamSurvivorKey, PredictionData]
-AllPredictionResults = dict[Team, TeamPredictionResults]
+PendingPredictions = dict[tuple[Team, SurvivorID], PendingPrediction]
+CompletedPredictions = dict[tuple[Team, SurvivorID], CompletedPrediction]
 
 
 class PredictionHandler:
     def __init__(self, testing_for_marking: bool = False) -> None:
         # Prediction handler always works now
 
-        # Track survivors that haven't been predicted yet
-        self._no_pred_yet: NoPredictionYet = {}
+        # Track pending predictions (team, surv_id) -> PendingPrediction
+        self._pending_predictions: PendingPredictions = {}
 
-        # Track prediction results for each team
-        self._pred_results: AllPredictionResults = {}
+        # Track completed predictions (team, surv_id) -> CompletedPrediction
+        self._completed_predictions: CompletedPredictions = {}
 
         # Initialize data loader
-        self._data_loader = PredictionDataLoader(
+        self._data_loader: PredictionDataLoader = PredictionDataLoader(
             testing_for_marking=testing_for_marking
         )
 
     def get_image_from_index(self, index: int) -> Any:  # noqa: ANN401
-        return cast("Any", self._data_loader.x_test[index])
+        return self._data_loader.x_test[index]
 
     def get_label_from_index(self, index: int) -> PredictionLabel:
-        return cast("PredictionLabel", self._data_loader.y_test[index])
+        return self._data_loader.y_test[index]
 
-    def is_team_in_no_pred_yet(self, team: Team, survivor_id: SurvivorID) -> bool:
-        key: TeamSurvivorKey = (team, survivor_id)
-        return key in self._no_pred_yet
+    def create_pending_prediction(self, team: Team, surv_id: SurvivorID) -> None:
+        """
+        Create a pending prediction for a team-survivor combination.
 
-    def is_agent_in_saving_group(
-        self, agent_id: int, team: Team, survivor_id: SurvivorID
-    ) -> bool:
-        key: TeamSurvivorKey = (team, survivor_id)
-        prediction_data = self._no_pred_yet.get(key)
-        if prediction_data is None:
-            return False
-        return agent_id in prediction_data["agent_group"]
+        If one already exists, this method does nothing.
+        """
+        key: tuple[Team, SurvivorID] = (team, surv_id)
 
-    def add_agent_to_no_pred_yet(
-        self, agent_id: int, team: Team, survivor_id: SurvivorID
-    ) -> None:
-        key: TeamSurvivorKey = (team, survivor_id)
-        if key in self._no_pred_yet:
-            self._no_pred_yet[key]["agent_group"].append(agent_id)
-        else:
+        # Only create if no pending prediction exists
+        if key not in self._pending_predictions:
             random_index = random.randint(0, self._data_loader.num_testing_images - 1)
-            prediction_data: PredictionData = {
-                "agent_group": [agent_id],
-                "image_index": random_index,
+            pending_prediction: PendingPrediction = {
+                "image_to_predict": self.get_image_from_index(random_index),
+                "correct_label": self.get_label_from_index(random_index),
             }
-            self._no_pred_yet[key] = prediction_data
+            self._pending_predictions[key] = pending_prediction
 
-    def _remove_team_surv_from_no_pred_yet(
-        self, team: Team, survivor_id: SurvivorID
-    ) -> None:
-        key: TeamSurvivorKey = (team, survivor_id)
-        _ = self._no_pred_yet.pop(key, None)
+    def read_pending_predictions(self, team: Team) -> list[tuple[SurvivorID, Any, Any]]:
+        """
+        Agents call this to get all pending predictions for their team. Gives them the data of the pending prediction, without the correct label.
 
-    def get_pred_info_for_agent(
-        self, agent_id: int, team: Team
-    ) -> tuple[SurvivorID, Any, Any] | None:
-        # find agent in a list of agent(s) helped saved and
-        # return pred_info for it, otherwise return None
-        for (team_key, surv_id), prediction_data in self._no_pred_yet.items():
-            if team_key == team and agent_id in prediction_data["agent_group"]:
-                return (
-                    surv_id,
-                    self._data_loader.x_test[prediction_data["image_index"]],
-                    self._data_loader.unique_labels,
+        Returns list of tuples: (surv_id, image_to_predict, all_unique_labels)
+        """
+        pending_list = []
+        for (
+            team_key,
+            surv_id,
+        ), pending_prediction in self._pending_predictions.items():
+            if team_key == team:
+                pending_list.append(
+                    (
+                        surv_id,
+                        pending_prediction["image_to_predict"],
+                        self._data_loader.unique_labels,
+                    )
                 )
-        return None
+        return pending_list
 
-    def check_agent_prediction(
-        self,
-        agent_id: int,  # noqa: ARG002
-        team: Team,
-        survivor_id: SurvivorID,
-        label: PredictionLabel,
-    ) -> bool:
-        key: TeamSurvivorKey = (team, survivor_id)
-        prediction_data = self._no_pred_yet.get(key)
-        if prediction_data is None:
-            return False
-        return (
-            cast(
-                "PredictionLabel",
-                self._data_loader.y_test[prediction_data["image_index"]],
+    def predict(
+        self, team: Team, surv_id: SurvivorID, prediction: PredictionLabel
+    ) -> bool | None:
+        """
+        Process a prediction for a specific team-survivor combination.
+
+        Returns:
+            - bool: True if prediction was correct, False if incorrect
+            - None: If no valid pending prediction exists (already predicted or never created)
+
+        """
+        key: tuple[Team, SurvivorID] = (team, surv_id)
+
+        # Check if there's a valid pending prediction
+        if key not in self._pending_predictions:
+            LOGGER.warning(
+                f"Agent attempted to predict surv_id {surv_id} for team {team}, but no valid pending prediction exists. Did another agent on your team predict this survivor before you?"
             )
-            == label
-        )
+            return None
 
-    def set_prediction_result(
-        self,
-        agent_id: int,
-        team: Team,
-        survivor_id: SurvivorID,
-        *,
-        prediction_correct: bool,
-    ) -> None:
-        prediction_result: PredictionResult = {
-            "agent_id": agent_id,
-            "prediction_correct": prediction_correct,
+        # Get the pending prediction and check if correct
+        pending_prediction = self._pending_predictions[key]
+        is_correct = pending_prediction["correct_label"] == prediction
+
+        # Create completed prediction
+        completed_prediction: CompletedPrediction = {
+            "team": team,
+            "surv_id": surv_id,
+            "is_correct": is_correct,
         }
-        self._pred_results.setdefault(team, {})[survivor_id] = prediction_result
-        self._remove_team_surv_from_no_pred_yet(team, survivor_id)
 
-    def get_prediction_result(
-        self, agent_id: int, team: Team
-    ) -> tuple[SurvivorID, bool] | None:
-        preds = self._pred_results.get(team, {})
-        for surv_id, prediction_result in preds.items():
-            if prediction_result["agent_id"] == agent_id:
-                return surv_id, prediction_result["prediction_correct"]
-        return None
+        # Move from pending to completed
+        self._completed_predictions[key] = completed_prediction
+        del self._pending_predictions[key]
+
+        return is_correct

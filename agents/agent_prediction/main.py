@@ -26,9 +26,10 @@ def think() -> None:
         return
 
     # If there is a pending prediction from a save survivour for our team, predict!
-    prediction_info = get_prediction_info_for_agent()
+    prediction_info = read_pending_predictions()
     if prediction_info is not None:
-        surv_saved_id, image_to_predict, unique_labels = prediction_info
+        # grab just the first pending prediction
+        surv_saved_id, image_to_predict, _ = prediction_info[0]
 
         # Get the path to the model file in the agent's directory
         model_path = Path("agents/agent_prediction/trained_net.keras")

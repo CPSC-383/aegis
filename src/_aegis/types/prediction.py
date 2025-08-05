@@ -1,4 +1,4 @@
-from typing import NewType, TypedDict
+from typing import Any, NewType, TypedDict
 
 from _aegis.team import Team
 
@@ -6,13 +6,14 @@ SurvivorID = NewType("SurvivorID", int)
 PredictionLabel = NewType("PredictionLabel", int)
 
 
-# Type for prediction data associated with a team-survivor pair
-class PredictionData(TypedDict):
-    agent_group: list[int]
-    image_index: int
+# Type for pending predictions
+class PendingPrediction(TypedDict):
+    image_to_predict: Any
+    correct_label: PredictionLabel
 
 
-# Type for prediction results
-class PredictionResult(TypedDict):
-    agent_id: int
-    prediction_correct: bool
+# Type for completed predictions
+class CompletedPrediction(TypedDict):
+    team: Team
+    surv_id: SurvivorID
+    is_correct: bool

@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any
 from .common import Cell, Location
 from .common.commands.agent_command import AgentCommand
 from .team import Team
+from .types.prediction import SurvivorID
 
 if TYPE_CHECKING:
     from .agent import Agent
@@ -65,12 +66,10 @@ class AgentController:
         self.assert_spawn(loc, self._agent.team)
         self._game.spawn_agent(loc, self._agent.team)
 
-    def get_prediction_info_for_agent(
+    def read_pending_predictions(
         self,
-    ) -> tuple[int, Any, Any] | None:  # pyright: ignore[reportExplicitAny]
-        return self._game.get_prediction_info_for_agent(
-            self._agent.id, self._agent.team
-        )
+    ) -> list[tuple[SurvivorID, Any, Any]] | None:
+        return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:
         self._agent.log(*args)

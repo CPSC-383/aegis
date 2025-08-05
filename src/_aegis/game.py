@@ -25,6 +25,7 @@ from .id_gen import IDGenerator
 from .logger import LOGGER
 from .team import Team
 from .team_info import TeamInfo
+from .types.prediction import SurvivorID
 from .world import World
 
 if TYPE_CHECKING:
@@ -223,21 +224,24 @@ class Game:
         return self.world.get_charging_cells()
 
     def get_prediction_info_for_agent(
-        self, agent_id: int, team: Team
-    ) -> tuple[int, Any, Any] | None:
+        self, team: Team
+    ) -> list[tuple[SurvivorID, Any, Any]] | None:
         """
-        Get prediction information for an agent.
+        Get prediction information for a survivour saved by an agent's team.
 
         Args:
-            agent_id: The agent's ID
             team: The agent's team
 
         Returns:
-            Tuple of (survivor_id, image, unique_labels) or None if no prediction needed
+            List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
 
         """
         if self._prediction_handler is not None:
-            return self._prediction_handler.get_pred_info_for_agent(agent_id, team)
+            pending_predictions = self._prediction_handler.read_pending_predictions(
+                team
+            )
+            if pending_predictions:
+                return pending_predictions
         return None
 
     def create_methods(self, ac: AgentController) -> dict[str, Any]:
@@ -267,6 +271,6 @@ class Game:
             "get_charging_cells": self.get_charging_cells,
             "get_spawns": self.get_spawns,
             "get_survs": self.get_survs,
-            "get_prediction_info_for_agent": ac.get_prediction_info_for_agent,
+            "read_pending_predictions": ac.read_pending_predictions,
             "log": ac.log,
         }
