@@ -85,6 +85,7 @@ class AgentController:
         self._game.save(top_layer, self._agent)
 
     def recharge(self) -> None:
+        # TODO @dante: assert recharge
         cell = self._game.get_cell_at(self._agent.location)
         if not cell.is_charging_cell():
             return
@@ -105,6 +106,10 @@ class AgentController:
             return
 
         self._game.dig(top_layer, self._agent)
+
+    def predict(self, surv_id: int, label: int) -> None:
+        # TODO @dante: assert predict
+        self._game.predict(surv_id, label, self._agent)
 
     def send_message(self, message: str, dest_ids: list[int]) -> None:
         # TODO @dante: add assert for message
@@ -168,7 +173,7 @@ class AgentController:
 
     def read_pending_predictions(
         self,
-    ) -> list[tuple[SurvivorID, Any, Any]] | None:
+    ) -> list[tuple[SurvivorID, Any, Any]]:
         return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:

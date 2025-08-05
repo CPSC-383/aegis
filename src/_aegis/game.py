@@ -7,11 +7,6 @@ from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
 from .args_parser import Args
 from .common import Cell, CellContents, CellInfo, Direction, Location
-from .common.commands.aegis_commands import ObserveResult
-from .common.commands.agent_commands import (
-    Observe,
-    Predict,
-)
 from .common.objects import Rubble, Survivor
 from .constants import Constants
 from .game_pb import GamePb
@@ -19,7 +14,7 @@ from .id_gen import IDGenerator
 from .logger import LOGGER
 from .team import Team
 from .team_info import TeamInfo
-from .types.prediction import SurvivorID
+from .types.prediction import PredictionLabel, SurvivorID
 from .world import World
 
 
@@ -226,7 +221,7 @@ class Game:
         self.team_info.add_saved(agent.team, 1, is_alive=is_alive)
         self.team_info.add_score(agent.team, points)
 
-        if self._prediction_handler is not None:
+        if is_feature_enabled("ENABLE_PREDICTIONS"):
             self._prediction_handler.create_pending_prediction(
                 agent.team,
                 SurvivorID(survivor.id),
@@ -249,6 +244,23 @@ class Game:
         energy = -rubble.energy_required + Constants.DIG_ENERGY_COST
         agent.add_energy(energy)
         self.remove_layer(cell.location)
+
+    def predict(self, surv_id: int, label: int, agent: Agent) -> None:
+        if is_feature_enabled("ENABLE_PREDICTIONS"):
+            return
+
+        is_correct = self._prediction_handler.predict(
+            agent.team, SurvivorID(surv_id), PredictionLabel(label)
+        )
+
+        if is_correct is None:
+            LOGGER.warning(
+                f"Agent {agent.id} attempted invalid prediction for surv_id {surv_id}"
+            )
+            return
+        score = Constants.PRED_CORRECT_SCORE if is_correct else 0
+        self.team_info.add_score(agent.team, score)
+        self.team_info.add_predicted(agent.team, 1, correct=is_correct)
 
     def on_map(self, loc: Location) -> bool:
         return 0 <= loc.x < self.world.width and 0 <= loc.y < self.world.height
@@ -301,11 +313,8 @@ class Game:
         return {
             "Direction": Direction,
             "Location": Location,
-            "Observe": Observe,
-            "Predict": Predict,
             "Rubble": Rubble,
             "Survivor": Survivor,
-            "ObserveResult": ObserveResult,
             "drone_scan": ac.drone_scan,
             "get_round_number": ac.get_round_number,
             "get_id": ac.get_id,
@@ -318,6 +327,7 @@ class Game:
             "move": ac.move,
             "save": ac.save,
             "recharge": ac.recharge,
+            "predict": ac.predict,
             "spawn_agent": ac.spawn_agent,
             "get_cell_contents_at": ac.get_cell_contents_at,
             "on_map": self.on_map,

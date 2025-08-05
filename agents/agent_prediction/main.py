@@ -25,7 +25,7 @@ def think() -> None:
 
     # If there is a pending prediction from a save survivour for our team, predict!
     prediction_info = read_pending_predictions()
-    if prediction_info is not None:
+    if prediction_info:
         # grab just the first pending prediction
         surv_saved_id, image_to_predict, _ = prediction_info[0]
 
@@ -49,7 +49,7 @@ def think() -> None:
         log(f"Predicted symbol: {predicted_label} with confidence: {confidence:.4f}")
 
         # Send the prediction using the survivor ID from the save result
-        Predict(surv_saved_id, predicted_label)
+        predict(surv_saved_id, predicted_label)
 
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and make a prediction.

@@ -5,12 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .common import Direction, Location
-from .common.commands.aegis_command import AegisCommand
-from .common.commands.aegis_commands import (
-    ObserveResult,
-)
 from .constants import Constants
-from .logger import LOGGER
 from .message_buffer import MessageBuffer
 from .sandbox import Sandbox
 from .team import Team
@@ -38,7 +33,6 @@ class Agent:
         self.energy_level: int = energy_level
         self.sandbox: Sandbox | None = None
         self.message_buffer: MessageBuffer = MessageBuffer()
-        self.results: list[AegisCommand] = []
         self.steps_taken: int = 0
         self.debug: bool = debug
 
@@ -82,15 +76,6 @@ class Agent:
     def add_energy(self, energy: int) -> None:
         self.energy_level += energy
         self.energy_level = min(Constants.MAX_ENERGY_LEVEL, self.energy_level)
-
-    def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
-        if isinstance(aegis_command, ObserveResult):
-            self.results.append(aegis_command)
-        else:
-            LOGGER.warning(
-                "Got unrecognized reply from AEGIS: ",
-                f"{aegis_command.__class__.__name__}.",
-            )
 
     def log(self, *args: object) -> None:
         if not self.debug:

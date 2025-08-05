@@ -15,8 +15,6 @@ from . import (
     Location,
     Message,
     Observe,
-    ObserveResult,
-    Predict,
     Rubble,
     Survivor,
     SurvivorID,
@@ -72,6 +70,17 @@ def recharge() -> None:
     Recharge the agent's energy.
 
     This function only works if the agent is currently on a charging cell.
+    """
+
+
+def predict(surv_id: int, label: int) -> None:
+    """
+    Submit a prediction.
+
+    Args:
+        surv_id (int): The unique ID of the survivor.
+        label (int): The predicted label/classification for the survivor.
+
     """
 
 
@@ -173,10 +182,11 @@ def log(*args: object) -> None:
 
 def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]]:
     """
-    Get prediction information for a survivour saved by an agent's team.
+    Retrieve the list of pending predictions stored by the agent's team.
 
     Returns:
-        List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
+        list[tuple[SurvivorID, Any, Any]]: A list of tuples representing pending survivor predictions.
+            Returns an empty list if no pending predictions are available.
 
     """
 
