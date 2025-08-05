@@ -34,4 +34,4 @@ class Constants:
 
     # Other
     DRONE_SCAN_DURATION: int = 5
-    
+
