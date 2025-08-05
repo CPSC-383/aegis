@@ -83,6 +83,18 @@ class AgentController:
 
         self._game.save(top_layer, self._agent)
 
+    def recharge(self) -> None:
+        cell = self._game.get_cell_at(self._agent.location)
+        if not cell.is_charging_cell():
+            return
+
+        energy = min(
+            Constants.NORMAL_CHARGE,
+            Constants.MAX_ENERGY_LEVEL - self._agent.energy_level,
+        )
+
+        self._agent.add_energy(energy)
+
     def dig(self) -> None:
         # TODO @dante: add assert for unit type once thats added
         cell = self._game.get_cell_at(self._agent.location)

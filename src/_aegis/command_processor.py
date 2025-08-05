@@ -9,14 +9,12 @@ from .common import CellInfo, Direction
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
     ObserveResult,
-    RechargeResult,
     SendMessageResult,
 )
 from .common.commands.agent_command import AgentCommand
 from .common.commands.agent_commands import (
     Observe,
     Predict,
-    Recharge,
     SendMessage,
 )
 from .common.location import Location
@@ -71,8 +69,6 @@ class CommandProcessor:
             agent = self._game.get_agent(agent_id)
 
             match cmd:
-                case Recharge():
-                    self._handle_recharge(cmd)
                 case Observe():
                     agent = self._game.get_agent(cmd.get_id())
                     agent.add_energy(-Constants.OBSERVE_ENERGY_COST)
@@ -104,19 +100,6 @@ class CommandProcessor:
             else:
                 self._game.team_info.add_predicted(agent.team, 1, correct=False)
 
-    def _handle_recharge(self, cmd: Recharge) -> None:
-        agent = self._game.get_agent(cmd.get_id())
-        cell = self._game.get_cell_at(agent.location)
-        if cell and cell.is_charging_cell():
-            if (
-                agent.energy_level + Constants.NORMAL_CHARGE
-                > Constants.MAX_ENERGY_LEVEL
-            ):
-                pass
-                # agent.set_energy_level(Constants.MAX_ENERGY_LEVEL)
-            else:
-                agent.add_energy(Constants.NORMAL_CHARGE)
-
     def _results(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:
             agent = self._game.get_agent(cmd.get_id())
@@ -147,15 +130,10 @@ class CommandProcessor:
         cmd: AgentCommand,
         _agent: Agent,
         energy: int,
-        location: Location,
+        _location: Location,
         _surround: dict[Direction, CellInfo],
     ) -> list[AegisCommand]:
         match cmd:
-            case Recharge():
-                agent_cell = self._game.get_cell_at(location)
-                success = agent_cell.is_charging_cell()
-                return [RechargeResult(energy, was_successful=success)]
-
             case Observe():
                 cell_info, layers = CellInfo(), []
                 cell = self._game.get_cell_at(cmd.location)

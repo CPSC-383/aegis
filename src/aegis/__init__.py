@@ -7,7 +7,6 @@ from _aegis.common.commands.aegis_commands.save_result import SaveResult
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     Observe,
-    Recharge,
     SendMessage,
 )
 from _aegis.common.objects import Rubble, Survivor
@@ -20,7 +19,6 @@ __all__ = [
     "Location",
     "Observe",
     "ObserveResult",
-    "Recharge",
     "Rubble",
     "SaveResult",
     "SendMessage",

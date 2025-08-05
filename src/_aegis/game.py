@@ -321,6 +321,7 @@ class Game:
             "send": ac.send,
             "move": ac.move,
             "save": ac.save,
+            "recharge": ac.recharge,
             "spawn_agent": ac.spawn_agent,
             "get_cell_contents_at": ac.get_cell_contents_at,
             "on_map": self.on_map,

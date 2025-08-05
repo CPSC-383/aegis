@@ -11,7 +11,6 @@ from .common import Location
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
     ObserveResult,
-    RechargeResult,
     SendMessageResult,
 )
 from .common.commands.aegis_commands.save_result import SaveResult
@@ -112,14 +111,7 @@ class Agent:
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SendMessageResult):
             self.inbox.append(aegis_command)
-        elif isinstance(aegis_command, SaveResult):
-            self.results.append(aegis_command)
-        elif isinstance(aegis_command, RechargeResult):
-            pass
-            # recharge_result: RechargeResult = aegis_command
-            # if recharge_result.was_successful:
-            #     self.set_energy_level(recharge_result.charge_energy)
-        elif isinstance(aegis_command, ObserveResult):
+        elif isinstance(aegis_command, (SaveResult, ObserveResult)):
             self.results.append(aegis_command)
         else:
             LOGGER.warning(
