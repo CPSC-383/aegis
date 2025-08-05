@@ -1,10 +1,10 @@
 # pyright: reportImportCycles = false
 from typing import TYPE_CHECKING, Any
 
-from _aegis.constants import Constants
-
-from .common import CellContents, Location
+from .aegis_config import is_feature_enabled
+from .common import CellContents, CellInfo, Direction, Location
 from .common.commands.agent_command import AgentCommand
+from .constants import Constants
 from .team import Team
 from .types.prediction import SurvivorID
 
@@ -39,6 +39,14 @@ class AgentController:
             error = "Location is not on the map"
             raise AgentError(error)
 
+    def assert_move(self, direction: Direction) -> None:
+        self.assert_not_none(direction)
+        new_loc = self._agent.location.add(direction)
+
+        if not self._game.on_map(new_loc):
+            error = "Agent moved off the map"
+            raise AgentError(error)
+
     # Public Agent Methods
 
     def get_round_number(self) -> int:
@@ -56,6 +64,15 @@ class AgentController:
     def get_energy_level(self) -> int:
         return self._agent.energy_level
 
+    def move(self, direction: Direction) -> None:
+        self.assert_move(direction)
+        new_loc = self._agent.location.add(direction)
+        self._game.move_agent(self._agent.id, self._agent.location, new_loc)
+        self._agent.location = new_loc
+
+        if direction != Direction.CENTER:
+            self._agent.steps_taken += 1
+
     def send(self, command: AgentCommand) -> None:
         command.set_id(self.get_id())
         self._agent.command_manager.send(command)
@@ -65,20 +82,26 @@ class AgentController:
         self._game.start_drone_scan(loc, self._agent.team)
         self._agent.add_energy(-Constants.DRONE_SCAN_ENERGY_COST)
 
-    # def get_cell_at(self, loc: Location) -> Cell | None:
-    #     self.assert_loc(loc)
-    #     return self._game.get_cell_at(loc)
-
     def get_cell_contents_at(self, loc: Location) -> CellContents | None:
         self.assert_loc(loc)
 
-        # Only give cell contents if the cell is within 1 tile of the agent, or being drone scanned
-        dist_to_loc = self.get_location().distance_to_chebyshev(loc)
+        is_adjacent = self._agent.location.is_adjacent_to(loc)
         is_drone_scanned = self._game.is_loc_drone_scanned(loc, self._agent.team)
-        if dist_to_loc <= 1 or is_drone_scanned:
+        if is_adjacent or is_drone_scanned:
             return self._game.get_cell_contents_at(loc)
 
         return None
+
+    def get_cell_info_at(self, loc: Location) -> CellInfo:
+        self.assert_loc(loc)
+        cell_info = self._game.get_cell_info_at(loc)
+        cell_info.agents = []
+        if (
+            not is_feature_enabled("ENABLE_MOVE_COST")
+            and not self._agent.has_visited[loc.x + loc.y * self._game.world.width]
+        ):
+            cell_info.move_cost = 1
+        return cell_info
 
     def spawn_agent(self, loc: Location) -> None:
         self.assert_spawn(loc, self._agent.team)
@@ -86,7 +109,7 @@ class AgentController:
 
     def read_pending_predictions(
         self,
-    ) -> list[tuple[SurvivorID, Any, Any]] | None:
+    ) -> list[tuple[SurvivorID, Any, Any]]:
         return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:

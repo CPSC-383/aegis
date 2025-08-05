@@ -1,11 +1,11 @@
 import random
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
+from .aegis_config import is_feature_enabled
 from .agent import Agent
 from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
 from .args_parser import Args
-from .command_processor import CommandProcessor
 from .common import Cell, CellContents, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.aegis_commands.save_result import SaveResult
@@ -27,9 +27,6 @@ from .team_info import TeamInfo
 from .types.prediction import SurvivorID
 from .world import World
 
-if TYPE_CHECKING:
-    from .common.commands.agent_command import AgentCommand
-
 
 class Game:
     def __init__(self, args: Args, world: World, game_pb: GamePb) -> None:
@@ -42,16 +39,9 @@ class Game:
         self.team_info: TeamInfo = TeamInfo()
         self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
-        # drone scans: loc -> (team -> duration)
         self._drone_scans: dict[Location, dict[Team, int]] = {}
-        # pending drone scans: loc -> (team -> duration) - will be activated next round
         self._pending_drone_scans: dict[Location, dict[Team, int]] = {}
-        self._prediction_handler: PredictionHandler | None = PredictionHandler(args)
-        self._command_processor: CommandProcessor = CommandProcessor(
-            self,
-            self._agents,
-            self._prediction_handler,
-        )
+        self._prediction_handler: PredictionHandler = PredictionHandler(args)
         self.team_agents: dict[Team, str] = {}
         if self.args.agent is not None:
             self.team_agents[Team.GOOBS] = self.args.agent
@@ -74,7 +64,8 @@ class Game:
         self.tick_drone_scans()
         self.round += 1
         self.game_pb.start_round(self.round)
-        self.process_agent_commands()
+        for agent in self._agents.values():
+            agent.run()
         self.activate_pending_drone_scans()
         self.game_pb.send_drone_scan_update(self._drone_scans)
         self.serialize_team_info()
@@ -82,31 +73,6 @@ class Game:
         self.serialize_drone_scans()
         self.game_pb.end_round()
         self.process_end_of_round()
-
-    def process_agent_commands(self) -> None:
-        commands: list[AgentCommand] = []
-        messages: list[SendMessage] = []
-        agents: list[Agent] = []
-
-        for agent in list(self._agents.values()):
-            agent.run()
-            command = agent.command_manager.get_action_command()
-            if command is not None:
-                commands.append(command)
-
-            directives = agent.command_manager.get_directives()
-            commands.extend(directives)
-            messages.extend(agent.command_manager.get_messages())
-
-            agent.log(f"Action received: {command}")
-            agent.log(f"Directives received: {directives}")
-            agents.append(agent)  # defer end_turn
-            agent.command_manager.clear()
-
-        self._command_processor.process(commands, messages)
-
-        for agent in agents:
-            self.game_pb.end_turn(agent)
 
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
@@ -191,13 +157,30 @@ class Game:
         _ = cell.remove_top_layer()
         self.game_pb.add_removed_layer(loc)
 
-    def move_agent(self, agent_id: int, loc: Location) -> None:
+    def mark_surrounding_cells_visited(self, agent: Agent, loc: Location) -> None:
+        for direction in Direction:
+            if direction == Direction.CENTER:
+                continue
+
+            new_loc = loc.add(direction)
+            if not self.on_map(new_loc):
+                continue
+
+            index = new_loc.x + new_loc.y * self.world.width
+            agent.has_visited[index] = True
+
+    def add_agent_to_loc(self, agent_id: int, loc: Location) -> None:
+        self.get_cell_at(loc).agents.append(agent_id)
         agent = self.get_agent(agent_id)
-        curr_cell = self.get_cell_at(agent.location)
-        dest_cell = self.get_cell_at(loc)
-        curr_cell.agents.remove(agent.id)
-        dest_cell.agents.append(agent.id)
-        agent.set_location(dest_cell.location)
+        if not is_feature_enabled("ENABLE_MOVE_COST"):
+            self.mark_surrounding_cells_visited(agent, loc)
+
+    def remove_agent_from_loc(self, agent_id: int, loc: Location) -> None:
+        self.get_cell_at(loc).agents.remove(agent_id)
+
+    def move_agent(self, agent_id: int, start_loc: Location, end_loc: Location) -> None:
+        self.remove_agent_from_loc(agent_id, start_loc)
+        self.add_agent_to_loc(agent_id, end_loc)
 
     def start_drone_scan(self, loc: Location, team: Team) -> None:
         if loc not in self._pending_drone_scans:
@@ -238,24 +221,25 @@ class Game:
             for team, duration in teams.items():
                 self.game_pb.add_drone_scan(loc, team, duration)
 
-    def on_map(self, location: Location) -> bool:
-        return self.world.on_map(location)
+    def on_map(self, loc: Location) -> bool:
+        return 0 <= loc.x < self.world.width and 0 <= loc.y < self.world.height
 
-    def get_cell_at(self, location: Location) -> Cell:
-        return self.world.get_cell_at(location)
+    def get_cell_at(self, loc: Location) -> Cell:
+        index = loc.x + loc.y * self.world.width
+        return self.world.cells[index]
+
+    def get_cell_info_at(self, location: Location) -> CellInfo:
+        cell = self.get_cell_at(location)
+        return CellInfo(
+            cell.type, cell.location, cell.move_cost, cell.agents, cell.get_top_layer()
+        )
 
     def serialize_team_info(self) -> None:
         self.game_pb.add_team_info(Team.GOOBS, self.team_info)
         self.game_pb.add_team_info(Team.VOIDSEERS, self.team_info)
 
-    def get_cell_info_at(self, location: Location) -> CellInfo:
-        cell = self.world.get_cell_at(location)
-        return CellInfo(
-            cell.type, cell.location, cell.move_cost, cell.agents, cell.get_top_layer()
-        )
-
     def get_cell_contents_at(self, location: Location) -> CellContents:
-        cell = self.world.get_cell_at(location)
+        cell = self.get_cell_at(location)
         return CellContents(cell.layers, cell.agents)
 
     def get_survs(self) -> list[Location]:
@@ -264,14 +248,14 @@ class Game:
         ]
 
     def get_spawns(self) -> list[Location]:
-        return self.world.get_spawns()
+        return [cell.location for cell in self.world.cells if cell.is_spawn()]
 
     def get_charging_cells(self) -> list[Location]:
-        return self.world.get_charging_cells()
+        return [cell.location for cell in self.world.cells if cell.is_charging_cell()]
 
     def get_prediction_info_for_agent(
         self, team: Team
-    ) -> list[tuple[SurvivorID, Any, Any]] | None:
+    ) -> list[tuple[SurvivorID, Any, Any]]:
         """
         Get prediction information for a survivour saved by an agent's team.
 
@@ -282,13 +266,7 @@ class Game:
             List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
 
         """
-        if self._prediction_handler is not None:
-            pending_predictions = self._prediction_handler.read_pending_predictions(
-                team
-            )
-            if pending_predictions:
-                return pending_predictions
-        return None
+        return self._prediction_handler.read_pending_predictions(team)
 
     def create_methods(self, ac: AgentController) -> dict[str, Any]:
         return {
@@ -310,12 +288,13 @@ class Game:
             "get_id": ac.get_id,
             "get_team": ac.get_team,
             "get_location": ac.get_location,
+            "get_cell_info_at": ac.get_cell_info_at,
             "get_energy_level": ac.get_energy_level,
             "send": ac.send,
+            "move": ac.move,
             "spawn_agent": ac.spawn_agent,
+            "get_cell_contents_at": ac.get_cell_contents_at,
             "on_map": self.on_map,
-            "get_cell_info_at": self.get_cell_info_at,
-            "get_cell_contents_at": self.get_cell_contents_at,
             "get_charging_cells": self.get_charging_cells,
             "get_spawns": self.get_spawns,
             "get_survs": self.get_survs,

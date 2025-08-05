@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .command_manager import CommandManager
-from .common import CellInfo, Direction, Location
+from .common import Location
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
     ObserveResult,
@@ -18,11 +18,9 @@ from .constants import Constants
 from .logger import LOGGER
 from .sandbox import Sandbox
 from .team import Team
-from .world_parser import load_agent_world
 
 if TYPE_CHECKING:
     from .game import Game
-    from .world import World
 
 
 class Agent:
@@ -37,7 +35,7 @@ class Agent:
         debug: bool,
     ) -> None:
         self.game: Game = game
-        self.world: World = load_agent_world(game.world)
+        self.has_visited: list[bool] = [False] * (game.world.height * game.world.width)
         self.id: int = agent_id
         self.team: Team = team
         self.location: Location = location
@@ -98,16 +96,6 @@ class Agent:
 
         self.sandbox = sandbox
 
-    def update_surround(self, surround: dict[Direction, CellInfo]) -> None:
-        for cell_info in surround.values():
-            cell = self.world.get_cell_at(cell_info.location)
-            cell.agents = cell_info.agents[:]
-            cell.move_cost = cell_info.move_cost
-            cell.set_top_layer(cell_info.top_layer)
-
-    def set_location(self, location: Location) -> None:
-        self.location = location
-
     def set_energy_level(self, energy_level: int) -> None:
         self.energy_level = energy_level
 
@@ -115,18 +103,13 @@ class Agent:
         self.energy_level += energy
         self.energy_level = min(Constants.MAX_ENERGY_LEVEL, self.energy_level)
 
-    def add_step_taken(self) -> None:
-        self.steps_taken += 1
-
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SendMessageResult):
             self.inbox.append(aegis_command)
         elif isinstance(aegis_command, WorldUpdate):
             world_update = aegis_command
-            curr_info = world_update.surround[Direction.CENTER]
+            # curr_info = world_update.surround[Direction.CENTER]
             self.set_energy_level(world_update.energy_level)
-            self.set_location(curr_info.location)
-            self.update_surround(world_update.surround)
         elif isinstance(aegis_command, SaveResult):
             self.results.append(aegis_command)
         elif isinstance(aegis_command, RechargeResult):

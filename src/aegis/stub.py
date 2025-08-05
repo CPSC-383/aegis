@@ -54,6 +54,16 @@ def get_energy_level() -> int:
     """Return the current energy level of the agent."""
 
 
+def move(direction: Direction) -> None:
+    """
+    Move the agent in the specified direction.
+
+    Args:
+        direction (Direction): The direction in which the agent should move.
+
+    """
+
+
 def send(command: AgentCommand) -> None:
     """
     Send a command to Aegis for execution.
@@ -77,7 +87,7 @@ def on_map(loc: Location) -> bool:
     """
 
 
-def get_cell_info_at(loc: Location) -> CellInfo | None:
+def get_cell_info_at(loc: Location) -> CellInfo:
     """
     Return the cell info at a given location.
 
@@ -85,7 +95,7 @@ def get_cell_info_at(loc: Location) -> CellInfo | None:
         loc: The location to query.
 
     Returns:
-        The `Cell` at the specified location, or `None` if out of bounds.
+        The `CellInfo` at the specified location.
 
     """
 
@@ -135,7 +145,7 @@ def log(*args: object) -> None:
     """
 
 
-def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]] | None:
+def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]]:
     """
     Get prediction information for a survivour saved by an agent's team.
 
