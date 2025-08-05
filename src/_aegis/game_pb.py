@@ -88,10 +88,6 @@ class GamePb:
                 drone_scan.duration = duration
                 pb_drone_update.drone_scans.append(drone_scan)
 
-        print(
-            f"Sending drone scan update with {len(pb_drone_update.drone_scans)} drone scans"
-        )
-
         event = Event()
         event.drone_scan_update.CopyFrom(pb_drone_update)
 

@@ -246,7 +246,7 @@ class Game:
         self.remove_layer(cell.location)
 
     def predict(self, surv_id: int, label: int, agent: Agent) -> None:
-        if is_feature_enabled("ENABLE_PREDICTIONS"):
+        if not is_feature_enabled("ENABLE_PREDICTIONS"):
             return
 
         is_correct = self._prediction_handler.predict(

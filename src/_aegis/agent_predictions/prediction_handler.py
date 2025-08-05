@@ -19,15 +19,8 @@ CompletedPredictions = dict[tuple[Team, SurvivorID], CompletedPrediction]
 
 class PredictionHandler:
     def __init__(self, args: Args) -> None:
-        # Prediction handler always works now
-
-        # Track pending predictions (team, surv_id) -> PendingPrediction
         self._pending_predictions: PendingPredictions = {}
-
-        # Track completed predictions (team, surv_id) -> CompletedPrediction
         self._completed_predictions: CompletedPredictions = {}
-
-        # Initialize data loader
         self._data_loader: PredictionDataLoader = PredictionDataLoader(args)
 
     def get_image_from_index(self, index: int) -> Any:  # noqa: ANN401

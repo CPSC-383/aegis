@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Any
 
 from .aegis_config import is_feature_enabled
 from .common import CellContents, CellInfo, Direction, Location
-from .common.commands.agent_command import AgentCommand
 from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
 from .constants import Constants
@@ -136,10 +135,6 @@ class AgentController:
         if round_num == -1:
             return self._agent.message_buffer.get_all_messages()
         return self._agent.message_buffer.get_messages(round_num)
-
-    def send(self, command: AgentCommand) -> None:
-        command.set_id(self.get_id())
-        self._agent.command_manager.send(command)
 
     def drone_scan(self, loc: Location) -> None:
         self.assert_loc(loc)
