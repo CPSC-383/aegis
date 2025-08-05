@@ -15,7 +15,6 @@ class Args:
     client: bool
     debug: bool
     log: bool
-    testing_for_marking: bool
 
 
 def parse_args() -> Args:
@@ -75,11 +74,6 @@ def parse_args() -> Args:
         "--log",
         action="store_true",
         help="Enable AEGIS console output logging to a file",
-    )
-    _ = parser.add_argument(
-        "--testing-for-marking",
-        action="store_true",
-        help="Use marking testing data instead of standard testing data",
     )
 
     args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]

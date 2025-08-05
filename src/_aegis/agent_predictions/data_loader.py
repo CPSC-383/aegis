@@ -16,7 +16,7 @@ class PredictionDataLoader:
         Initialize the data loader.
 
         Args:
-            args: The arguments object containing the testing_for_marking flag
+            args: The arguments object
 
         """
         self.args: Args = args
@@ -25,11 +25,8 @@ class PredictionDataLoader:
         self._unique_labels: Any = None
 
     def load_testing_data(self) -> None:
-        """Load the appropriate testing data based on marking mode."""
-        if self.args.testing_for_marking:
-            data_dir = Path("prediction_data/testing-marking")
-        else:
-            data_dir = Path("prediction_data/testing")
+        """Load testing data from the testing directory."""
+        data_dir = Path("prediction_data/testing")
 
         x_path = data_dir / "x_test_symbols.npy"
         y_path = data_dir / "y_test_symbols.npy"
