@@ -66,12 +66,10 @@ class AgentController:
 
     def move(self, direction: Direction) -> None:
         self.assert_move(direction)
+        self._agent.apply_movement_cost(direction)
         new_loc = self._agent.location.add(direction)
         self._game.move_agent(self._agent.id, self._agent.location, new_loc)
         self._agent.location = new_loc
-
-        if direction != Direction.CENTER:
-            self._agent.steps_taken += 1
 
     def send(self, command: AgentCommand) -> None:
         command.set_id(self.get_id())

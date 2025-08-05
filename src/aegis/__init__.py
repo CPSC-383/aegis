@@ -7,7 +7,6 @@ from _aegis.common.commands.aegis_commands.save_result import SaveResult
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     Dig,
-    Move,
     Observe,
     Recharge,
     Save,
@@ -21,7 +20,6 @@ from _aegis.types.prediction import SurvivorID
 
 __all__ = [  # noqa: RUF022
     "Dig",
-    "Move",
     "Observe",
     "Recharge",
     "Save",

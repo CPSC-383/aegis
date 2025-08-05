@@ -4,6 +4,8 @@ import traceback
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from _aegis.common.direction import Direction
+
 from .command_manager import CommandManager
 from .common import Location
 from .common.commands.aegis_command import AegisCommand
@@ -96,8 +98,13 @@ class Agent:
 
         self.sandbox = sandbox
 
-    def set_energy_level(self, energy_level: int) -> None:
-        self.energy_level = energy_level
+    def apply_movement_cost(self, direction: Direction) -> None:
+        if direction == Direction.CENTER:
+            return
+
+        cell = self.game.get_cell_at(self.location.add(direction))
+        self.add_energy(-cell.move_cost)
+        self.steps_taken += 1
 
     def add_energy(self, energy: int) -> None:
         self.energy_level += energy
@@ -107,15 +114,17 @@ class Agent:
         if isinstance(aegis_command, SendMessageResult):
             self.inbox.append(aegis_command)
         elif isinstance(aegis_command, WorldUpdate):
-            world_update = aegis_command
+            pass
+            # world_update = aegis_command
             # curr_info = world_update.surround[Direction.CENTER]
-            self.set_energy_level(world_update.energy_level)
+            # self.set_energy_level(world_update.energy_level)
         elif isinstance(aegis_command, SaveResult):
             self.results.append(aegis_command)
         elif isinstance(aegis_command, RechargeResult):
-            recharge_result: RechargeResult = aegis_command
-            if recharge_result.was_successful:
-                self.set_energy_level(recharge_result.charge_energy)
+            pass
+            # recharge_result: RechargeResult = aegis_command
+            # if recharge_result.was_successful:
+            #     self.set_energy_level(recharge_result.charge_energy)
         elif isinstance(aegis_command, ObserveResult):
             self.results.append(aegis_command)
         else:

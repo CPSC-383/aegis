@@ -14,7 +14,6 @@ from . import (
     Dig,
     Direction,
     Location,
-    Move,
     Observe,
     ObserveResult,
     Predict,

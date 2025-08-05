@@ -7,12 +7,20 @@ def think() -> None:
     log("Thinking")
 
     cell = get_cell_info_at(get_location())
-    if cell is None:
-        send(Move(Direction.CENTER))
-        return
-    
+
     if get_round_number() == 2:
         drone_scan(Location(5, 9))
+
+    # On the first round, send a request for surrounding information
+    # by moving to the center (not moving). This will help initiate pathfinding.
+    if get_round_number() == 1:
+        move(Direction.CENTER)
+        return
+
+    # Fetch the cell at the agent's current location.
+    # If you want to check a different location, use `on_map(loc)` first
+    # to ensure it's within the world bounds. The agent's own location is always valid.
+    cell = get_cell_info_at(get_location())
 
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and end the turn.
@@ -21,4 +29,4 @@ def think() -> None:
         return
 
     # Default action: Move the agent north if no other specific conditions are met.
-    send(Move(Direction.NORTH))
+    move(Direction.NORTH)

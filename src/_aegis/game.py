@@ -11,7 +11,6 @@ from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.aegis_commands.save_result import SaveResult
 from .common.commands.agent_commands import (
     Dig,
-    Move,
     Observe,
     Predict,
     Save,
@@ -273,7 +272,6 @@ class Game:
             "Dig": Dig,
             "Direction": Direction,
             "Location": Location,
-            "Move": Move,
             "Observe": Observe,
             "Predict": Predict,
             "Rubble": Rubble,
