@@ -8,7 +8,6 @@ from .agent_predictions.prediction_handler import PredictionHandler
 from .args_parser import Args
 from .common import Cell, CellContents, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
-from .common.commands.aegis_commands.save_result import SaveResult
 from .common.commands.agent_commands import (
     Observe,
     Predict,
@@ -35,10 +34,16 @@ class Game:
         self.id_gen: IDGenerator = IDGenerator()
         self.team_info: TeamInfo = TeamInfo()
         self.game_pb: GamePb = game_pb
-        self._agents: dict[int, Agent] = {}
         self._drone_scans: dict[Location, dict[Team, int]] = {}
         self._pending_drone_scans: dict[Location, dict[Team, int]] = {}
         self._prediction_handler: PredictionHandler = PredictionHandler(args)
+        self.agents: dict[int, Agent] = {}
+
+        self._command_processor: CommandProcessor = CommandProcessor(
+            self,
+            self.agents,
+            self._prediction_handler,
+        )
         self.team_agents: dict[Team, str] = {}
         if self.args.agent is not None:
             self.team_agents[Team.GOOBS] = self.args.agent
@@ -61,7 +66,7 @@ class Game:
         self.tick_drone_scans()
         self.round += 1
         self.game_pb.start_round(self.round)
-        for agent in self._agents.values():
+        for agent in self.agents.values():
             agent.run()
         self.activate_pending_drone_scans()
         self.game_pb.send_drone_scan_update(self._drone_scans)
@@ -77,7 +82,7 @@ class Game:
             LOGGER.info(f"Max rounds reached ({self.world.rounds}).")
             return True
 
-        if len(self._agents) == 0:
+        if len(self.agents) == 0:
             print()
             LOGGER.info("All agents are dead.")
             return True
@@ -94,7 +99,7 @@ class Game:
     def grim_reaper(self) -> None:
         dead_agents: list[Agent] = []
 
-        for agent in self._agents.values():
+        for agent in self.agents.values():
             died = False
             cell = self.get_cell_at(agent.location)
             if agent.energy_level <= 0:
@@ -132,22 +137,22 @@ class Game:
         self.game_pb.add_spawn(agent.id, agent.team, agent.location)
 
     def add_agent(self, agent: Agent, loc: Location) -> None:
-        if agent not in self._agents:
-            self._agents[agent.id] = agent
+        if agent not in self.agents:
+            self.agents[agent.id] = agent
 
             cell = self.get_cell_at(loc)
             cell.agents.append(agent.id)
             LOGGER.info("Added agent %s", agent.id)
 
     def remove_agent(self, agent_id: int) -> None:
-        agent = self._agents[agent_id]
-        del self._agents[agent_id]
+        agent = self.agents[agent_id]
+        del self.agents[agent_id]
         cell = self.get_cell_at(agent.location)
         cell.agents.remove(agent_id)
         self.game_pb.add_dead(agent_id)
 
     def get_agent(self, agent_id: int) -> Agent:
-        return self._agents[agent_id]
+        return self.agents[agent_id]
 
     def remove_layer(self, loc: Location) -> None:
         cell = self.get_cell_at(loc)
@@ -306,7 +311,6 @@ class Game:
             "Observe": Observe,
             "Predict": Predict,
             "Rubble": Rubble,
-            "SaveResult": SaveResult,
             "SendMessage": SendMessage,
             "Survivor": Survivor,
             "ObserveResult": ObserveResult,
@@ -319,6 +323,8 @@ class Game:
             "get_cell_info_at": ac.get_cell_info_at,
             "get_energy_level": ac.get_energy_level,
             "send": ac.send,
+            "send_message": ac.send_message,
+            "read_messages": ac.read_messages,
             "move": ac.move,
             "save": ac.save,
             "recharge": ac.recharge,

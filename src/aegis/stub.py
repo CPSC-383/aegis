@@ -13,13 +13,11 @@ from . import (
     CellInfo,
     Direction,
     Location,
+    Message,
     Observe,
     ObserveResult,
     Predict,
     Rubble,
-    SaveResult,
-    SendMessage,
-    SendMessageResult,
     Survivor,
     SurvivorID,
 )
@@ -63,6 +61,43 @@ def move(direction: Direction) -> None:
 
 def save() -> None:
     """Save a survivor."""
+
+
+def dig() -> None:
+    """Dig rubble."""
+
+
+def recharge() -> None:
+    """
+    Recharge the agent's energy.
+
+    This function only works if the agent is currently on a charging cell.
+    """
+
+
+def send_message(message: str, dest_ids: list[int]) -> None:
+    """
+    Send a message to specified destination agents on the same team, excluding self.
+
+    Args:
+        message (str): The content of the message to send.
+        dest_ids (list[int]): List of agent IDs to send the message to. If empty, message is broadcast to team excluding self.
+
+    """
+
+
+def read_messages(round_num: int = -1) -> list[Message]:
+    """
+    Retrieve messages from the message buffer.
+
+    Args:
+        round_num (int, optional): The round number to retrieve messages from.
+            Defaults to -1, which returns messages from all rounds.
+
+    Returns:
+        list[Message]: List of messages.
+
+    """
 
 
 def send(command: AgentCommand) -> None:

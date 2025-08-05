@@ -1,15 +1,10 @@
-# ruff: noqa: F403 F405, INP001, D100
+# ruff: noqa: RUF100 F403 F405, INP001, D100, D101, D102 PLW0603
 from aegis.stub import *
 
 
 def think() -> None:
     """Do not remove this function, it must always be defined."""
     log("Thinking")
-
-    cell = get_cell_info_at(get_location())
-
-    if get_round_number() == 2:
-        drone_scan(Location(5, 9))
 
     # On the first round, send a request for surrounding information
     # by moving to the center (not moving). This will help initiate pathfinding.

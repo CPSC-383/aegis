@@ -7,6 +7,7 @@ from .common.commands.agent_command import AgentCommand
 from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
 from .constants import Constants
+from .message import Message
 from .team import Team
 from .types.prediction import SurvivorID
 
@@ -105,6 +106,32 @@ class AgentController:
 
         self._game.dig(top_layer, self._agent)
 
+    def send_message(self, message: str, dest_ids: list[int]) -> None:
+        # TODO @dante: add assert for message
+
+        if not dest_ids:
+            dest_ids = [
+                agent.id
+                for agent in self._game.agents.values()
+                if agent.team == self._agent.team and agent.id != self._agent.id
+            ]
+        else:
+            dest_ids = [aid for aid in dest_ids if aid != self._agent.id]
+
+        msg = Message(
+            message=message,
+            round_num=self._game.round,
+            sender_id=self._agent.id,
+        )
+
+        for agent_id in dest_ids:
+            self._game.get_agent(agent_id).message_buffer.add_message(msg)
+
+    def read_messages(self, round_num: int = -1) -> list[Message]:
+        if round_num == -1:
+            return self._agent.message_buffer.get_all_messages()
+        return self._agent.message_buffer.get_messages(round_num)
+
     def send(self, command: AgentCommand) -> None:
         command.set_id(self.get_id())
         self._agent.command_manager.send(command)
@@ -136,12 +163,12 @@ class AgentController:
         return cell_info
 
     def spawn_agent(self, loc: Location) -> None:
-        self.assert_spawn(loc, self._agent.team)
+        # self.assert_spawn(loc, self._agent.team)
         self._game.spawn_agent(loc, self._agent.team)
 
     def read_pending_predictions(
         self,
-    ) -> list[tuple[SurvivorID, Any, Any]]:
+    ) -> list[tuple[SurvivorID, Any, Any]] | None:
         return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:

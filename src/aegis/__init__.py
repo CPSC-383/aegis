@@ -2,14 +2,13 @@
 
 from _aegis.cli import main
 from _aegis.common import CellInfo, Direction, Location
-from _aegis.common.commands.aegis_commands import ObserveResult, SendMessageResult
-from _aegis.common.commands.aegis_commands.save_result import SaveResult
+from _aegis.common.commands.aegis_commands import ObserveResult
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
     Observe,
-    SendMessage,
 )
 from _aegis.common.objects import Rubble, Survivor
+from _aegis.message import Message
 from _aegis.types.prediction import SurvivorID
 
 __all__ = [
@@ -17,12 +16,10 @@ __all__ = [
     "CellInfo",
     "Direction",
     "Location",
+    "Message",
     "Observe",
     "ObserveResult",
     "Rubble",
-    "SaveResult",
-    "SendMessage",
-    "SendMessageResult",
     "Survivor",
     "SurvivorID",
     "main",

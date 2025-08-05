@@ -4,18 +4,16 @@ import traceback
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from _aegis.common.direction import Direction
-
 from .command_manager import CommandManager
-from .common import Location
+from .common import Direction, Location
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
     ObserveResult,
     SendMessageResult,
 )
-from .common.commands.aegis_commands.save_result import SaveResult
 from .constants import Constants
 from .logger import LOGGER
+from .message_buffer import MessageBuffer
 from .sandbox import Sandbox
 from .team import Team
 
@@ -42,6 +40,7 @@ class Agent:
         self.energy_level: int = energy_level
         self.command_manager: CommandManager = CommandManager()
         self.sandbox: Sandbox | None = None
+        self.message_buffer: MessageBuffer = MessageBuffer()
         self.inbox: list[SendMessageResult] = []
         self.results: list[AegisCommand] = []
         self.steps_taken: int = 0
@@ -62,6 +61,8 @@ class Agent:
         except Exception:  # noqa: BLE001
             self.log(traceback.format_exc(limit=5))
 
+        self.message_buffer.next_round(self.game.round + 1)
+
     def _send_results(self) -> None:
         if self.results and self.sandbox:
             for result in self.results:
@@ -71,8 +72,6 @@ class Agent:
                 ):
                     self.sandbox.handle_observe(result)  # pyright: ignore[reportUnknownMemberType]
 
-                elif isinstance(result, SaveResult) and self.sandbox.has_handle_save():
-                    self.sandbox.handle_save(result)  # pyright: ignore[reportUnknownMemberType]
         self.results.clear()
 
     def _send_messages(self) -> None:
@@ -111,7 +110,7 @@ class Agent:
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SendMessageResult):
             self.inbox.append(aegis_command)
-        elif isinstance(aegis_command, (SaveResult, ObserveResult)):
+        elif isinstance(aegis_command, ObserveResult):
             self.results.append(aegis_command)
         else:
             LOGGER.warning(
