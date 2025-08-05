@@ -6,7 +6,13 @@ def think() -> None:
     """Do not remove this function, it must always be defined."""
     log("Thinking")
 
-    cell_contents = get_cell_contents_at(get_location())
+    cell = get_cell_info_at(get_location())
+    if cell is None:
+        send(Move(Direction.CENTER))
+        return
+    
+    if get_round_number() == 2:
+        drone_scan(Location(5, 9))
 
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and end the turn.

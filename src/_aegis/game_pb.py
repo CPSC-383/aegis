@@ -1,7 +1,15 @@
 from .agent import Agent
 from .common import Location
 from .schemas.event_pb2 import Event
-from .schemas.game_pb2 import GameFooter, GameHeader, GamesFooter, GamesHeader, Round
+from .schemas.game_pb2 import (
+    DroneScan,
+    DroneScanUpdate,
+    GameFooter,
+    GameHeader,
+    GamesFooter,
+    GamesHeader,
+    Round,
+)
 from .schemas.location_pb2 import Location as PbLocation
 from .schemas.spawn_pb2 import Spawn
 from .schemas.team_pb2 import Team as PbTeam
@@ -22,8 +30,8 @@ class GamePb:
         self.spawns: list[Spawn] = []
         self.removed_layers: list[PbLocation] = []
         self.dead_ids: list[int] = []
+        self.drone_scans: list[DroneScan] = []
         self.ws_server: WebSocketServer | None = None
-        self.drone_scans: dict[Location, dict[Team, int]] = {}
 
     def make_games_header(self, ws_server: WebSocketServer) -> None:
         self.ws_server = ws_server
@@ -59,6 +67,37 @@ class GamePb:
     def start_round(self, game_round: int) -> None:
         self.round = game_round
 
+    def send_drone_scan_update(
+        self, drone_scans: dict[Location, dict[Team, int]]
+    ) -> None:
+        """Send drone scan data to the client."""
+        if self.ws_server is None:
+            error = "Server should have started."
+            raise ValueError(error)
+
+        pb_drone_update = DroneScanUpdate()
+
+        for loc, teams in drone_scans.items():
+            for team, duration in teams.items():
+                drone_scan = DroneScan()
+                drone_scan.location.x = loc.x
+                drone_scan.location.y = loc.y
+                drone_scan.team = (
+                    PbTeam.GOOBS if team == Team.GOOBS else PbTeam.VOIDSEERS
+                )
+                drone_scan.duration = duration
+                pb_drone_update.drone_scans.append(drone_scan)
+
+        print(
+            f"Sending drone scan update with {len(pb_drone_update.drone_scans)} drone scans"
+        )
+
+        event = Event()
+        event.drone_scan_update.CopyFrom(pb_drone_update)
+
+        binary_string = event.SerializeToString()
+        self.ws_server.add_event(binary_string)
+
     def end_round(self) -> None:
         if self.ws_server is None:
             error = "Server should have started."
@@ -69,6 +108,7 @@ class GamePb:
         pb_round.team_info.extend(self.team_info)
         pb_round.layers_removed.extend(self.removed_layers)
         pb_round.dead_ids.extend(self.dead_ids)
+        pb_round.drone_scans.extend(self.drone_scans)
 
         event = Event()
         event.round.CopyFrom(pb_round)
@@ -157,6 +197,16 @@ class GamePb:
     def add_dead(self, agent_id: int) -> None:
         self.dead_ids.append(agent_id)
 
+    def add_drone_scan(self, loc: Location, team: Team, duration: int) -> None:
+        pb_drone_scan = DroneScan()
+        pb_loc = PbLocation()
+        pb_loc.x = loc.x
+        pb_loc.y = loc.y
+        pb_drone_scan.location.CopyFrom(pb_loc)
+        pb_drone_scan.team = self.team_to_schema(team)
+        pb_drone_scan.duration = duration
+        self.drone_scans.append(pb_drone_scan)
+
     def team_to_schema(self, team: Team) -> PbTeam:
         return PbTeam.GOOBS if team == Team.GOOBS else PbTeam.VOIDSEERS
 
@@ -166,6 +216,7 @@ class GamePb:
         self.turns.clear()
         self.removed_layers.clear()
         self.dead_ids.clear()
+        self.drone_scans.clear()
 
     def clear_turn(self) -> None:
         self.spawns.clear()

@@ -8,6 +8,16 @@ import "team.proto";
 import "turn.proto";
 import "world.proto";
 
+message DroneScan {
+  Location location = 1;
+  Team team = 2;
+  int32 duration = 3;
+}
+
+message DroneScanUpdate {
+  repeated DroneScan drone_scans = 1;
+}
+
 message GamesHeader {
 }
 
@@ -23,6 +33,7 @@ message Round {
   repeated int32 dead_ids = 3;
   repeated Turn turns = 4;
   repeated TeamInfo team_info = 5;
+  repeated DroneScan drone_scans = 6;
 }
 
 message GameFooter {

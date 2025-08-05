@@ -1,3 +1,4 @@
+import droneScanEyeSrc from "@/assets/drone-scan-eye.png"
 import rubbleSrc from "@/assets/rubble.png"
 import survivorSrcDark from "@/assets/survivor-dark.png"
 import survivorSrcLight from "@/assets/survivor-light.png"
@@ -5,9 +6,9 @@ import { getMoveCostColor, Size, Vector } from "@/types"
 import { THICKNESS } from "@/utils/constants"
 import { getImage, renderCoords } from "@/utils/util"
 import { schema } from "aegis-schema"
+import invariant from "tiny-invariant"
 import { EditorBrush, LayersBrush, MoveCostBrush, ZoneBrush } from "./Brushes"
 import Round from "./Round"
-import invariant from "tiny-invariant"
 
 /**
  * Represents a world in aegis.
@@ -19,6 +20,7 @@ import invariant from "tiny-invariant"
  */
 export default class World {
   private layerRemovals: schema.Location[] = []
+  private droneScans: schema.DroneScan[] = []
 
   constructor(
     public readonly width: number,
@@ -30,6 +32,7 @@ export default class World {
 
   public applyRound(round: schema.Round | null): void {
     this.layerRemovals = []
+    this.droneScans = []
 
     if (!round) {
       return
@@ -40,6 +43,8 @@ export default class World {
       cell.layers.shift()
       this.layerRemovals.push(loc)
     }
+
+    this.droneScans = round.droneScans
   }
 
   /**
@@ -316,8 +321,34 @@ export default class World {
     }
   }
 
+  public drawDroneScans(ctx: CanvasRenderingContext2D): void {
+    const droneScanEye = getImage(droneScanEyeSrc)
+    invariant(droneScanEye, "drone scan eye image should be loaded already")
+
+    for (const droneScan of this.droneScans) {
+      const coords = renderCoords(
+        droneScan.location!.x,
+        droneScan.location!.y,
+        this.size
+      )
+
+      ctx.save()
+      ctx.globalAlpha = 0.5
+      ctx.drawImage(droneScanEye, coords.x, coords.y, 1, 1)
+      ctx.restore()
+    }
+  }
+
   public getBrushes(round: Round): EditorBrush[] {
     return [new ZoneBrush(round), new MoveCostBrush(round), new LayersBrush(round)]
+  }
+
+  public getDroneScans(): schema.DroneScan[] {
+    return this.droneScans
+  }
+
+  public applyDroneScanUpdate(droneScanUpdate: schema.DroneScanUpdate): void {
+    this.droneScans = droneScanUpdate.droneScans
   }
 
   public getCellsByType(type: schema.CellType): schema.Cell[] {

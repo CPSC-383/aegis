@@ -143,3 +143,13 @@ def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]] | None:
         List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
 
     """
+
+
+def drone_scan(loc: Location) -> None:
+    """
+    Scan a location with a drone.
+
+    Args:
+        loc: The location to scan.
+
+    """

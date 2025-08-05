@@ -1,9 +1,9 @@
+import { schema } from "aegis-schema"
+import invariant from "tiny-invariant"
 import Agents from "./Agents"
 import Game from "./Game"
-import { schema } from "aegis-schema"
-import World from "./World"
 import RoundStats from "./Stats"
-import invariant from "tiny-invariant"
+import World from "./World"
 
 export default class Round {
   public turn: number = 0
@@ -63,6 +63,10 @@ export default class Round {
 
   get layersRemoved(): schema.Location[] {
     return this.currentRound?.layersRemoved ?? []
+  }
+
+  get droneScans(): schema.DroneScan[] {
+    return this.currentRound?.droneScans ?? []
   }
 
   get stats(): RoundStats {
