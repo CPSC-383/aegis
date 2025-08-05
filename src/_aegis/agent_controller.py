@@ -1,9 +1,10 @@
 # pyright: reportImportCycles = false
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .common import Cell, Location
 from .common.commands.agent_command import AgentCommand
 from .team import Team
+from .types.prediction import SurvivorID
 
 if TYPE_CHECKING:
     from .agent import Agent
@@ -57,10 +58,6 @@ class AgentController:
         command.set_id(self.get_id())
         self._agent.command_manager.send(command)
 
-    def on_map(self, loc: Location) -> bool:
-        self.assert_not_none(loc)
-        return self._game.on_map(loc)
-
     def get_cell_at(self, loc: Location) -> Cell | None:
         self.assert_loc(loc)
         return self._game.get_cell_at(loc)
@@ -68,6 +65,11 @@ class AgentController:
     def spawn_agent(self, loc: Location) -> None:
         self.assert_spawn(loc, self._agent.team)
         self._game.spawn_agent(loc, self._agent.team)
+
+    def read_pending_predictions(
+        self,
+    ) -> list[tuple[SurvivorID, Any, Any]] | None:
+        return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:
         self._agent.log(*args)

@@ -1,6 +1,6 @@
-import { Check, X, Square } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Check, Square, X } from "lucide-react"
 
 interface MultiSelectProps {
   options: string[]
@@ -36,15 +36,15 @@ export function MultiSelect({
     options.length > 0 && options.every((opt) => selected.includes(opt))
 
   return (
-    <div className={`w-full space-y-3 ${className}`}>
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2">
+    <div className={`w-full mt-2 space-y-3 ${className}`}>
+      <div className="flex items-center justify-between flex-wrap gap-1">
+        <div className="flex items-center gap-1">
           <Badge variant="secondary" className="text-xs">
             {selected.length} selected
           </Badge>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {options.length > 0 && (
             <Button
               variant="ghost"

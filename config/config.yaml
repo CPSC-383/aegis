@@ -2,7 +2,7 @@
 
 # General aegis features
 features:
-  ENABLE_PREDICTIONS: false
+  ENABLE_PREDICTIONS: true
   ENABLE_VARIABLE_AGENT_AMOUNT: false
   DEFAULT_AGENT_AMOUNT: 1
 

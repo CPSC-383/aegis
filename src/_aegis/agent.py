@@ -146,7 +146,5 @@ class Agent:
             return
 
         agent_id = self.id
-        print(  # noqa: T201
-            f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ", end=""
-        )
-        print(*args)  # noqa: T201
+        print(f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ", end="")
+        print(*args)

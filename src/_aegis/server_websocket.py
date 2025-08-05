@@ -64,7 +64,7 @@ class WebSocketServer:
         encoded_event = base64.b64encode(event).decode("utf-8")
         self._incoming_events.put(encoded_event)
 
-    def _on_open(self, client: Client, server: WebsocketServer) -> None:
+    def _on_open(self, client: dict[str, object], server: WebsocketServer) -> None:
         self._connected = True
         for event in self._previous_events:
             server.send_message(client, event)  # pyright: ignore[reportUnknownMemberType]

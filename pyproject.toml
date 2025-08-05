@@ -31,6 +31,14 @@ ignore = [
   "COM812", # missing-trailing-comma
   "FIX002", # line-contains-todo
   "ERA001", # Commented code
+  "E501", # TODO needs an author
+  "TD003", # TODO needs an issue link
+  "T201", # print() found
+]
+
+[tool.pyright]
+ignore = [
+    "reportMissingTypeStubs",
 ]
 
 [project.scripts]
@@ -47,4 +55,5 @@ dev = [
     "hatch>=1.14.1",
     "mypy-protobuf>=3.6.0",
     "ruff>=0.12.2",
+    "types-tensorflow>=2.18.0",
 ]

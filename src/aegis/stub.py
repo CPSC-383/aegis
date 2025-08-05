@@ -1,5 +1,10 @@
 """Stub functions for agent interaction with the Aegis environment."""
 # ruff: noqa: F401
+# pyright: reportReturnType=false
+# pyright: reportUnusedImport=false
+# pyright: reportUnusedParameter=false
+
+from typing import Any
 
 from . import (
     AgentCommand,
@@ -10,13 +15,21 @@ from . import (
     Move,
     Observe,
     ObserveResult,
+    Predict,
     Rubble,
     Save,
     SaveResult,
     SendMessage,
     SendMessageResult,
     Survivor,
+    SurvivorID,
 )
+
+# import the predict command if predictions are enabled
+# try:
+#     from . import Predict
+# except ImportError:
+#     pass
 
 
 def get_round_number() -> int:
@@ -98,4 +111,20 @@ def spawn_agent(loc: Location) -> None:
 
 
 def log(*args: object) -> None:
-    """Log a message to the console."""
+    """
+    Log a message.
+
+    Args:
+        *args: The message to log.
+
+    """
+
+
+def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]] | None:
+    """
+    Get prediction information for a survivour saved by an agent's team.
+
+    Returns:
+        List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
+
+    """

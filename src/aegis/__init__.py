@@ -14,6 +14,7 @@ from _aegis.common.commands.agent_commands import (
     SendMessage,
 )
 from _aegis.common.objects import Rubble, Survivor
+from _aegis.types.prediction import SurvivorID
 
 # To generate the list after adding imports,
 # use `uv run scripts/sort.py`
@@ -34,6 +35,7 @@ __all__ = [  # noqa: RUF022
     "SendMessage",
     "SendMessageResult",
     "Survivor",
+    "SurvivorID",
     "main",
 ]
 

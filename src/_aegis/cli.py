@@ -10,6 +10,13 @@ from .play import run
 
 def main() -> None:
     try:
+        if len(sys.argv) == 1:
+            print()
+            print("AEGIS Simulation")
+            print()
+            print("For help, run: aegis --help")
+            sys.exit(0)
+
         run(parse_args())
     except Exception:  # noqa: BLE001
         traceback.print_exc()

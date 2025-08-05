@@ -4,6 +4,7 @@ import { Runner } from "@/core/Runner"
 import { ClientWebSocket, aegisAPI } from "@/services"
 import { useAppStore } from "@/store/useAppStore"
 import { ConsoleLine, Scaffold } from "@/types"
+import RingBuffer from "@/utils/ringBuffer"
 import { useForceUpdate } from "@/utils/util"
 import { useEffect, useRef, useState } from "react"
 import invariant from "tiny-invariant"
@@ -12,7 +13,6 @@ import {
   getConfigValue as getDynamicConfigValue,
   parseClientConfig,
 } from "./config"
-import RingBuffer from "@/utils/ringBuffer"
 
 export function createScaffold(): Scaffold {
   const [aegisPath, setAegisPath] = useState<string | undefined>(undefined)

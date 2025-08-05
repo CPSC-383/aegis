@@ -3,29 +3,31 @@ from typing import TYPE_CHECKING, Any
 
 from .agent import Agent
 from .agent_controller import AgentController
+from .agent_predictions.prediction_handler import PredictionHandler
 from .args_parser import Args
 from .command_processor import CommandProcessor
 from .common import Cell, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.aegis_commands.save_result import SaveResult
-from .common.commands.agent_commands import Dig, Move, Observe, Save, SendMessage
+from .common.commands.agent_commands import (
+    Dig,
+    Move,
+    Observe,
+    Predict,
+    Save,
+    SendMessage,
+)
 from .common.objects import Rubble, Survivor
-from .conditional_imports import get_prediction_handler
-from .constants import Constants
 from .game_pb import GamePb
 from .id_gen import IDGenerator
 from .logger import LOGGER
 from .team import Team
 from .team_info import TeamInfo
+from .types.prediction import SurvivorID
 from .world import World
 
 if TYPE_CHECKING:
-    from .agent_predictions.prediction_handler import (
-        PredictionHandler as PredictionHandlerType,
-    )
     from .common.commands.agent_command import AgentCommand
-else:
-    PredictionHandlerType = object
 
 
 class Game:
@@ -39,12 +41,8 @@ class Game:
         self.team_info: TeamInfo = TeamInfo()
         self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
-        self._agent_commands: list[AgentCommand] = []
 
-        prediction_handler_class = get_prediction_handler()
-        self._prediction_handler: PredictionHandlerType | None = (
-            prediction_handler_class() if prediction_handler_class else None
-        )
+        self._prediction_handler: PredictionHandler | None = PredictionHandler(args)
 
         self._command_processor: CommandProcessor = CommandProcessor(
             self,
@@ -105,19 +103,19 @@ class Game:
 
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
-            print()  # noqa: T201
+            print()
             LOGGER.info(f"Max rounds reached ({self.world.rounds}).")
             return True
 
         if len(self._agents) == 0:
-            print()  # noqa: T201
+            print()
             LOGGER.info("All agents are dead.")
             return True
 
         saved_goobs = self.team_info.get_saved(Team.GOOBS)
         saved_seers = self.team_info.get_saved(Team.VOIDSEERS)
         if saved_goobs + saved_seers == self.world.total_survivors:
-            print()  # noqa: T201
+            print()
             LOGGER.info("All survivors saved.")
             return True
 
@@ -156,7 +154,9 @@ class Game:
             self, agent_id, loc, team, self.world.start_energy, debug=self.args.debug
         )
         ac = AgentController(self, agent)
-        agent.load(self.team_agents[team], self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
+        # Use the agent name directly
+        agent_name = self.team_agents[team]
+        agent.load(agent_name, self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
         self.add_agent(agent, loc)
         self.team_info.add_units(agent.team, 1)
         self.game_pb.add_spawn(agent.id, agent.team, agent.location)
@@ -179,16 +179,10 @@ class Game:
     def get_agent(self, agent_id: int) -> Agent:
         return self._agents[agent_id]
 
-    def remove_layer(self, loc: Location, team: Team) -> None:
+    def remove_layer(self, loc: Location) -> None:
         cell = self.get_cell_at(loc)
-        world_object = cell.remove_top_layer()
+        _ = cell.remove_top_layer()
         self.game_pb.add_removed_layer(loc)
-
-        if isinstance(world_object, Survivor):
-            survivor = world_object
-            is_alive = survivor.get_health() > 0
-            self.team_info.add_saved(team, 1, is_alive=is_alive)
-            self.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
 
     def move_agent(self, agent_id: int, loc: Location) -> None:
         agent = self.get_agent(agent_id)
@@ -225,15 +219,38 @@ class Game:
     def get_charging_cells(self) -> list[Location]:
         return self.world.get_charging_cells()
 
+    def get_prediction_info_for_agent(
+        self, team: Team
+    ) -> list[tuple[SurvivorID, Any, Any]] | None:
+        """
+        Get prediction information for a survivour saved by an agent's team.
+
+        Args:
+            team: The agent's team
+
+        Returns:
+            List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
+
+        """
+        if self._prediction_handler is not None:
+            pending_predictions = self._prediction_handler.read_pending_predictions(
+                team
+            )
+            if pending_predictions:
+                return pending_predictions
+        return None
+
     def create_methods(self, ac: AgentController) -> dict[str, Any]:
-        methods = {
+        return {
             "Dig": Dig,
             "Direction": Direction,
             "Location": Location,
             "Move": Move,
             "Observe": Observe,
+            "Predict": Predict,
             "Rubble": Rubble,
             "Save": Save,
+            "SaveResult": SaveResult,
             "SendMessage": SendMessage,
             "Survivor": Survivor,
             "ObserveResult": ObserveResult,
@@ -250,9 +267,6 @@ class Game:
             "get_charging_cells": self.get_charging_cells,
             "get_spawns": self.get_spawns,
             "get_survs": self.get_survs,
+            "read_pending_predictions": ac.read_pending_predictions,
             "log": ac.log,
         }
-
-        methods["SaveResult"] = SaveResult
-
-        return methods

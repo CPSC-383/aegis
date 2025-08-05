@@ -227,7 +227,10 @@ class ElectronApp {
     const childAegis = child_process.spawn("aegis", [...procArgs], { cwd: aegisPath })
 
     return new Promise((resolve, reject) => {
-      childAegis.on("error", reject)
+      childAegis.on("error", (error) => {
+        console.error("Aegis process error:", error)
+        reject(error)
+      })
       childAegis.on("spawn", () => {
         const pid = childAegis.pid?.toString()
         if (pid) {

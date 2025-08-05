@@ -16,14 +16,13 @@ def make_game_start_string(args: Args, world: str) -> str:
     if args.agent2 and not args.agent:
         return f"VOIDSEERS on {world}"
 
-    # TODO @dante: This will have to show actual team names #noqa: TD003
+    # TODO @dante: This will have to show actual team names
     return f"GOOBS vs VOIDSEERS on {world}"
 
 
 def run(args: Args) -> None:
     ws_server = WebSocketServer(wait_for_client=args.client)
     game_pb = GamePb()
-    game_pb.make_games_header(ws_server)
 
     # Set up logging based on whether file logging is enabled
     setup_console_and_file_logging() if args.log else setup_console_logging()
@@ -33,12 +32,15 @@ def run(args: Args) -> None:
         raise ValueError(error)
 
     ws_server.start()
+    game_pb.make_games_header(ws_server)
 
-    for arg_world in args.world:
-        world_name = f"{arg_world}.world"
-        world = load_world(Path(f"worlds/{world_name}"))
+    for i, arg_world in enumerate(args.world):
+        world_name = f"{arg_world}"
+        # Construct the full path to the world file
+        world_path = Path("worlds") / f"{world_name}.world"
+        world = load_world(world_path)
         if world is None:
-            error = f"Unable to load world {world_name}!"
+            error = f"Unable to load world {world_path}!"
             raise ValueError(error)
 
         world.rounds = args.rounds
@@ -69,6 +71,11 @@ def run(args: Args) -> None:
 
             LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
         LOGGER.info("========== AEGIS END ==========")
-        print()  # noqa: T201
+        print()
+        if i < len(args.world) - 1:
+            print()
+            print("=" * 80)
+            print()
+            print()
     game_pb.make_games_footer()
     ws_server.finish()
