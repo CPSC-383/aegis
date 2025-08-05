@@ -30,3 +30,7 @@ class CellInfo:
             f"MV_COST {self.move_cost} , NUM_AGT {len(self.agents)} , "
             f"ID_LIST {self.agents} , TOP_LAYER ( {self.top_layer} ) )"
         )
+
+    @override
+    def __repr__(self) -> str:
+        return self.__str__()

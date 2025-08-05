@@ -6,7 +6,7 @@ from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
 from .args_parser import Args
 from .command_processor import CommandProcessor
-from .common import Cell, CellInfo, Direction, Location
+from .common import Cell, CellContents, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.aegis_commands.save_result import SaveResult
 from .common.commands.agent_commands import (
@@ -208,6 +208,10 @@ class Game:
             cell.type, cell.location, cell.move_cost, cell.agents, cell.get_top_layer()
         )
 
+    def get_cell_contents_at(self, location: Location) -> CellContents:
+        cell = self.world.get_cell_at(location)
+        return CellContents(cell.layers, cell.agents)
+
     def get_survs(self) -> list[Location]:
         return [
             cell.location for cell in self.world.cells if cell.number_of_survivors() > 0
@@ -264,6 +268,7 @@ class Game:
             "spawn_agent": ac.spawn_agent,
             "on_map": self.on_map,
             "get_cell_info_at": self.get_cell_info_at,
+            "get_cell_contents_at": self.get_cell_contents_at,
             "get_charging_cells": self.get_charging_cells,
             "get_spawns": self.get_spawns,
             "get_survs": self.get_survs,

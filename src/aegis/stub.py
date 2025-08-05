@@ -6,6 +6,8 @@
 
 from typing import Any
 
+from _aegis.common.cell_contents import CellContents
+
 from . import (
     AgentCommand,
     CellInfo,
@@ -84,6 +86,19 @@ def get_cell_info_at(loc: Location) -> CellInfo | None:
 
     Returns:
         The `Cell` at the specified location, or `None` if out of bounds.
+
+    """
+
+
+def get_cell_contents_at(loc: Location) -> CellContents | None:
+    """
+    Return the cell contents at a given location. This includes the layers and agents (both teams) present in the cell.
+
+    Args:
+        loc: The location to query.
+
+    Returns:
+        The `CellContents` at the specified location, or `None` if out of bounds.
 
     """
 

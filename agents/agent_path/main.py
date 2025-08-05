@@ -19,6 +19,8 @@ def think() -> None:
         send(Move(Direction.CENTER))
         return
 
+    cell_contents = get_cell_contents_at(get_location())
+
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and end the turn.
     if isinstance(cell.top_layer, Survivor):

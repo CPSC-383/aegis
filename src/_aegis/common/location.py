@@ -38,6 +38,11 @@ class Location:
         dy = self.y - location.y
         return dx * dx + dy * dy
 
+    def distance_to_chebyshev(self, location: Location) -> int:
+        dx = abs(self.x - location.x)
+        dy = abs(self.y - location.y)
+        return max(dx, dy)
+
     @override
     def __str__(self) -> str:
         return f"( X {self.x} , Y {self.y} )"

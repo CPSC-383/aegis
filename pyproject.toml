@@ -32,6 +32,7 @@ ignore = [
   "FIX002", # line-contains-todo
   "ERA001", # Commented code
   "E501", # TODO needs an author
+  "TD002", # TODO needs an author (again?!)
   "TD003", # TODO needs an issue link
   "T201", # print() found
 ]

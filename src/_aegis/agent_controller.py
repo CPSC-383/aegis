@@ -1,7 +1,7 @@
 # pyright: reportImportCycles = false
 from typing import TYPE_CHECKING, Any
 
-from .common import Cell, Location
+from .common import CellContents, Location
 from .common.commands.agent_command import AgentCommand
 from .team import Team
 from .types.prediction import SurvivorID
@@ -58,9 +58,20 @@ class AgentController:
         command.set_id(self.get_id())
         self._agent.command_manager.send(command)
 
-    def get_cell_at(self, loc: Location) -> Cell | None:
+    # def get_cell_at(self, loc: Location) -> Cell | None:
+    #     self.assert_loc(loc)
+    #     return self._game.get_cell_at(loc)
+
+    def get_cell_contents_at(self, loc: Location) -> CellContents | None:
         self.assert_loc(loc)
-        return self._game.get_cell_at(loc)
+
+        # Only give cell contents if the cell is within 1 tile of the agent, or being drone scanned
+        dist_to_loc = self.get_location().distance_to_chebyshev(loc)
+        if dist_to_loc > 1:
+            # TODO: let drone scans make the cell contents available if being scanned
+            return None
+
+        return self._game.get_cell_contents_at(loc)
 
     def spawn_agent(self, loc: Location) -> None:
         self.assert_spawn(loc, self._agent.team)
