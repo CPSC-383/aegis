@@ -6,19 +6,6 @@ def think() -> None:
     """Do not remove this function, it must always be defined."""
     log("Thinking")
 
-    # On the first round, send a request for surrounding information
-    # by moving to the center (not moving). This will help initiate pathfinding.
-    if get_round_number() == 1:
-        send(Move(Direction.CENTER))
-        return
-
-    # Fetch the cell at the agent's current location. If the location is outside
-    # the world's bounds, return a default move action and end the turn.
-    cell = get_cell_info_at(get_location())
-    if cell is None:
-        send(Move(Direction.CENTER))
-        return
-
     cell_contents = get_cell_contents_at(get_location())
 
     # Get the top layer at the agent's current location.

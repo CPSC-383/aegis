@@ -1,6 +1,8 @@
 # pyright: reportImportCycles = false
 from typing import TYPE_CHECKING, Any
 
+from _aegis.constants import Constants
+
 from .common import CellContents, Location
 from .common.commands.agent_command import AgentCommand
 from .team import Team
@@ -58,6 +60,11 @@ class AgentController:
         command.set_id(self.get_id())
         self._agent.command_manager.send(command)
 
+    def drone_scan(self, loc: Location) -> None:
+        self.assert_loc(loc)
+        self._game.start_drone_scan(loc, self._agent.team)
+        self._agent.add_energy(-Constants.DRONE_SCAN_ENERGY_COST)
+
     # def get_cell_at(self, loc: Location) -> Cell | None:
     #     self.assert_loc(loc)
     #     return self._game.get_cell_at(loc)
@@ -67,11 +74,11 @@ class AgentController:
 
         # Only give cell contents if the cell is within 1 tile of the agent, or being drone scanned
         dist_to_loc = self.get_location().distance_to_chebyshev(loc)
-        if dist_to_loc > 1:
-            # TODO: let drone scans make the cell contents available if being scanned
-            return None
+        is_drone_scanned = self._game.is_loc_drone_scanned(loc, self._agent.team)
+        if dist_to_loc <= 1 or is_drone_scanned:
+            return self._game.get_cell_contents_at(loc)
 
-        return self._game.get_cell_contents_at(loc)
+        return None
 
     def spawn_agent(self, loc: Location) -> None:
         self.assert_spawn(loc, self._agent.team)

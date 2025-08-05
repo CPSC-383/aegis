@@ -23,6 +23,7 @@ class GamePb:
         self.removed_layers: list[PbLocation] = []
         self.dead_ids: list[int] = []
         self.ws_server: WebSocketServer | None = None
+        self.drone_scans: dict[Location, dict[Team, int]] = {}
 
     def make_games_header(self, ws_server: WebSocketServer) -> None:
         self.ws_server = ws_server

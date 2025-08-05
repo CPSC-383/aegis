@@ -18,6 +18,7 @@ from .common.commands.agent_commands import (
     SendMessage,
 )
 from .common.objects import Rubble, Survivor
+from .constants import Constants
 from .game_pb import GamePb
 from .id_gen import IDGenerator
 from .logger import LOGGER
@@ -41,9 +42,9 @@ class Game:
         self.team_info: TeamInfo = TeamInfo()
         self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
-
+        # drone scans: loc -> (team -> duration)
+        self._drone_scans: dict[Location, dict[Team, int]] = {}
         self._prediction_handler: PredictionHandler | None = PredictionHandler(args)
-
         self._command_processor: CommandProcessor = CommandProcessor(
             self,
             self._agents,
@@ -140,6 +141,8 @@ class Game:
         for agent in dead_agents:
             self.remove_agent(agent.id)
 
+        self.tick_drone_scans()
+
     def process_end_of_round(self) -> None:
         if self._is_game_over():
             self.running = False
@@ -191,6 +194,26 @@ class Game:
         curr_cell.agents.remove(agent.id)
         dest_cell.agents.append(agent.id)
         agent.set_location(dest_cell.location)
+
+    def start_drone_scan(self, loc: Location, team: Team) -> None:
+        if loc not in self._drone_scans:
+            self._drone_scans[loc] = {}
+        self._drone_scans[loc][team] = Constants.DRONE_SCAN_DURATION
+        # TODO: @dante add drone scan stuff to game_pb
+        # self.game_pb.start_drone_scan(loc, team)
+
+    def is_loc_drone_scanned(self, loc: Location, team: Team) -> bool:
+        return loc in self._drone_scans and team in self._drone_scans[loc]
+
+    def get_drone_scan_duration(self, loc: Location, team: Team) -> int:
+        return self._drone_scans[loc][team]
+
+    def tick_drone_scans(self) -> None:
+        for loc, teams in self._drone_scans.items():
+            for team, duration in list(teams.items()):
+                teams[team] = duration - 1
+                if teams[team] <= 0:
+                    del self._drone_scans[loc][team]
 
     def on_map(self, location: Location) -> bool:
         return self.world.on_map(location)
@@ -259,6 +282,7 @@ class Game:
             "Survivor": Survivor,
             "ObserveResult": ObserveResult,
             "SendMessageResult": SendMessageResult,
+            "drone_scan": ac.drone_scan,
             "get_round_number": ac.get_round_number,
             "get_id": ac.get_id,
             "get_team": ac.get_team,

@@ -83,8 +83,9 @@ class RendererClass {
   render(): void {
     const actx = this.ctx(CanvasLayers.Agent)
     const lctx = this.ctx(CanvasLayers.Layers)
+    const dctx = this.ctx(CanvasLayers.DroneScan)
     const game = Runner.game
-    if (!actx || !lctx || !game) {
+    if (!actx || !lctx || !dctx || !game) {
       return
     }
 
