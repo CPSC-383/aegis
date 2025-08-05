@@ -49,7 +49,7 @@ def think() -> None:
         log(f"Predicted symbol: {predicted_label} with confidence: {confidence:.4f}")
 
         # Send the prediction using the survivor ID from the save result
-        send(Predict(surv_saved_id, predicted_label))
+        Predict(surv_saved_id, predicted_label)
 
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and make a prediction.

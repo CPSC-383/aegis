@@ -7,11 +7,10 @@ from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
 from .args_parser import Args
 from .common import Cell, CellContents, CellInfo, Direction, Location
-from .common.commands.aegis_commands import ObserveResult, SendMessageResult
+from .common.commands.aegis_commands import ObserveResult
 from .common.commands.agent_commands import (
     Observe,
     Predict,
-    SendMessage,
 )
 from .common.objects import Rubble, Survivor
 from .constants import Constants
@@ -38,12 +37,6 @@ class Game:
         self._pending_drone_scans: dict[Location, dict[Team, int]] = {}
         self._prediction_handler: PredictionHandler = PredictionHandler(args)
         self.agents: dict[int, Agent] = {}
-
-        self._command_processor: CommandProcessor = CommandProcessor(
-            self,
-            self.agents,
-            self._prediction_handler,
-        )
         self.team_agents: dict[Team, str] = {}
         if self.args.agent is not None:
             self.team_agents[Team.GOOBS] = self.args.agent
@@ -311,10 +304,8 @@ class Game:
             "Observe": Observe,
             "Predict": Predict,
             "Rubble": Rubble,
-            "SendMessage": SendMessage,
             "Survivor": Survivor,
             "ObserveResult": ObserveResult,
-            "SendMessageResult": SendMessageResult,
             "drone_scan": ac.drone_scan,
             "get_round_number": ac.get_round_number,
             "get_id": ac.get_id,
@@ -322,7 +313,6 @@ class Game:
             "get_location": ac.get_location,
             "get_cell_info_at": ac.get_cell_info_at,
             "get_energy_level": ac.get_energy_level,
-            "send": ac.send,
             "send_message": ac.send_message,
             "read_messages": ac.read_messages,
             "move": ac.move,

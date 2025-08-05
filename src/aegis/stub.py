@@ -100,16 +100,6 @@ def read_messages(round_num: int = -1) -> list[Message]:
     """
 
 
-def send(command: AgentCommand) -> None:
-    """
-    Send a command to Aegis for execution.
-
-    Args:
-        command: The command the agent wishes to execute.
-
-    """
-
-
 def on_map(loc: Location) -> bool:
     """
     Check whether a location is within the bounds of the world.

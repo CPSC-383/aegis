@@ -150,33 +150,9 @@ class Sandbox:
     def has_think(self) -> bool:
         return callable(self.namespace.get("think"))
 
-    def has_handle_save(self) -> bool:
-        return callable(self.namespace.get("handle_save"))
-
-    def has_handle_messages(self) -> bool:
-        return callable(self.namespace.get("handle_messages"))
-
-    def has_handle_observe(self) -> bool:
-        return callable(self.namespace.get("handle_observe"))
-
     def think(self) -> None:
         func = self.namespace.get("think")
         if callable(func):
             return func()
         error = "Agent has no callable 'think' function."
         raise RuntimeError(error)
-
-    def handle_save(self, *args, **kwargs) -> None:
-        func = self.namespace.get("handle_save")
-        if callable(func):
-            func(*args, **kwargs)
-
-    def handle_messages(self, *args, **kwargs) -> None:
-        func = self.namespace.get("handle_messages")
-        if callable(func):
-            func(*args, **kwargs)
-
-    def handle_observe(self, *args, **kwargs) -> None:
-        func = self.namespace.get("handle_observe")
-        if callable(func):
-            func(*args, **kwargs)

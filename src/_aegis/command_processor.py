@@ -9,13 +9,11 @@ from .common import CellInfo, Direction
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
     ObserveResult,
-    SendMessageResult,
 )
 from .common.commands.agent_command import AgentCommand
 from .common.commands.agent_commands import (
     Observe,
     Predict,
-    SendMessage,
 )
 from .common.location import Location
 from .constants import Constants
@@ -36,32 +34,6 @@ class CommandProcessor:
         self._agents: dict[int, Agent] = agents
         self._game: Game = game
         self._prediction_handler: PredictionHandler | None = prediction_handler
-
-    def process(
-        self, commands: list[AgentCommand], messages: list[SendMessage]
-    ) -> None:
-        self._process(commands)
-        self._route_messages(messages)
-        self._results(commands)
-
-    def _route_messages(self, messages: list[SendMessage]) -> None:
-        for message in messages:
-            sender_id = message.get_id()
-            recipients = message.agents
-
-            if len(recipients) == 0:
-                target_agents = list(self._agents.values())
-            else:
-                target_agents: list[Agent] = []
-                for agent in self._agents.values():
-                    if agent.id in recipients:
-                        target_agents.append(agent)
-
-            target_agents = [agent for agent in target_agents if agent.id != sender_id]
-
-            for recipient in target_agents:
-                res = SendMessageResult(sender_id, recipients, message.message)
-                recipient.handle_aegis_command(res)
 
     def _process(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:
@@ -100,31 +72,6 @@ class CommandProcessor:
             else:
                 self._game.team_info.add_predicted(agent.team, 1, correct=False)
 
-    def _results(self, commands: list[AgentCommand]) -> None:
-        for cmd in commands:
-            agent = self._game.get_agent(cmd.get_id())
-            energy = agent.energy_level
-            location = agent.location
-
-            surround: dict[Direction, CellInfo] = {}
-            for direction in Direction:
-                loc = location.add(direction)
-                if not self._game.on_map(loc):
-                    continue
-                cell = self._game.get_cell_at(loc)
-                surround[direction] = cell.get_cell_info() if cell else CellInfo()
-
-            result_commands = self._handle_command(
-                cmd,
-                agent,
-                energy,
-                location,
-                surround,
-            )
-
-            for result in result_commands:
-                agent.handle_aegis_command(result)
-
     def _handle_command(
         self,
         cmd: AgentCommand,
@@ -144,73 +91,3 @@ class CommandProcessor:
 
             case _:
                 return []
-
-    # def _handle_top_layer(
-    #     self,
-    #     top_layer: WorldObject,
-    #     cell: Cell,
-    #     agents_here: list[AgentID],
-    #     gid_counter: list[int],
-    # ) -> None:
-    #     if isinstance(top_layer, Survivor):
-    #         # self._game.remove_layer(cell.location)
-    #         # alive_count, dead_count = self._calculate_survivor_stats(top_layer)
-    #         # self._assign_points(agents_here, alive_count, dead_count, gid_counter)
-    #
-    #         if (
-    #             is_feature_enabled("ENABLE_PREDICTIONS")
-    #             and self._prediction_handler is not None
-    #         ):
-    #             self._prediction_handler.add_agent_to_no_pred_yet(
-    #                 agents_here[0],
-    #                 top_layer.id,
-    #             )
-    #
-    #     else:
-    #         for aid in agents_here:
-    #             agent = self._world.get_agent(aid)
-    #             if agent is not None:
-    #                 agent.remove_energy(Constants.SAVE_ENERGY_COST)
-    #
-    # def _calculate_survivor_stats(self, survivor: Survivor) -> tuple[int, int]:
-    #     self._world.remove_survivor(survivor)
-    #     return (1, 0) if survivor.is_alive() else (0, 1)
-    #
-    # def _handle_random_tie(
-    #     self,
-    #     alive_count: int,
-    #     dead_count: int,
-    #     gid_counter: list[int],
-    #     max_group_size: int,
-    # ) -> None:
-    #     while True:
-    #         # random_id = Utility.next_int() % len(gid_counter)
-    #         random_id = 0
-    #         if gid_counter[random_id] == max_group_size:
-    #             if alive_count > 0:
-    #                 state = Constants.SAVE_STATE_ALIVE
-    #                 amount = alive_count
-    #             else:
-    #                 state = Constants.SAVE_STATE_DEAD
-    #                 amount = dead_count
-    #             # self._agent_handler.increase_agent_group_saved(
-    # random_id, amount, state)
-    #             break
-    #
-    # def _handle_all_tie(
-    #     self,
-    #     alive_count: int,
-    #     dead_count: int,
-    #     gid_counter: list[int],
-    #     max_group_size: int,
-    # ) -> None:
-    #     for gid, count in enumerate(gid_counter):
-    #         if count == max_group_size:
-    #             if alive_count > 0:
-    #                 state = Constants.SAVE_STATE_ALIVE
-    #                 amount = alive_count
-    #             else:
-    #                 state = Constants.SAVE_STATE_DEAD
-    #                 amount = dead_count
-    #
-    #             # self._agent_handler.increase_agent_group_saved(gid, amount, state)

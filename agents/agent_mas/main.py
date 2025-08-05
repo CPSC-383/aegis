@@ -2,37 +2,6 @@
 from aegis.stub import *
 
 
-def handle_messages(messages: list[SendMessageResult]) -> None:
-    """
-    Handle incoming messages.
-
-    This is called before `think()` and the other `handle_*()` functions
-    if there are messages to process.
-    """
-    for message in messages:
-        log(f"Received Message: {message}")
-
-
-def handle_observe(ovr: ObserveResult) -> None:
-    """
-    Handle observe result.
-
-    This is called after `handle_messages()` and before `think()`
-    if there are results to process.
-    """
-    log(f"OVR: {ovr}")
-
-
-def handle_save(svr: SaveResult) -> None:
-    """
-    Handle survivor result.
-
-    This is called after `handle_messages()` and before `think()`
-    if there are results to process.
-    """
-    log(f"SVR: {svr}")
-
-
 def think() -> None:
     """Do not remove this function, it must always be defined."""
     log("Thinking")
@@ -41,8 +10,12 @@ def think() -> None:
     # by moving to the center (not moving). This will help initiate pathfinding.
     if get_round_number() == 1:
         move(Direction.CENTER)
-        send(SendMessage([], "hello world"))
+        send_message("hello world", [])  # Broadcast to all teammates
         return
+
+    # On subsequent rounds, read and log all received messages.
+    messages = read_messages()
+    log(messages)
 
     # Fetch the cell at the agent's current location.
     # If you want to check a different location, use `on_map(loc)` first

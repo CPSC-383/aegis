@@ -4,12 +4,10 @@ import traceback
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from .command_manager import CommandManager
 from .common import Direction, Location
 from .common.commands.aegis_command import AegisCommand
 from .common.commands.aegis_commands import (
     ObserveResult,
-    SendMessageResult,
 )
 from .constants import Constants
 from .logger import LOGGER
@@ -38,46 +36,24 @@ class Agent:
         self.team: Team = team
         self.location: Location = location
         self.energy_level: int = energy_level
-        self.command_manager: CommandManager = CommandManager()
         self.sandbox: Sandbox | None = None
         self.message_buffer: MessageBuffer = MessageBuffer()
-        self.inbox: list[SendMessageResult] = []
         self.results: list[AegisCommand] = []
         self.steps_taken: int = 0
         self.debug: bool = debug
-
-    def process_start_of_turn(self) -> None:
-        self._send_messages()
-        self._send_results()
 
     def run(self) -> None:
         if self.sandbox is None:
             error = "Sandbox should not be of `None` type."
             raise RuntimeError(error)
 
-        self.process_start_of_turn()
         try:
             self.sandbox.think()
         except Exception:  # noqa: BLE001
             self.log(traceback.format_exc(limit=5))
 
         self.message_buffer.next_round(self.game.round + 1)
-
-    def _send_results(self) -> None:
-        if self.results and self.sandbox:
-            for result in self.results:
-                if (
-                    isinstance(result, ObserveResult)
-                    and self.sandbox.has_handle_observe()
-                ):
-                    self.sandbox.handle_observe(result)  # pyright: ignore[reportUnknownMemberType]
-
-        self.results.clear()
-
-    def _send_messages(self) -> None:
-        if self.inbox and self.sandbox and self.sandbox.has_handle_messages():
-            self.sandbox.handle_messages(self.inbox)  # pyright: ignore[reportUnknownMemberType]
-        self.inbox.clear()
+        self.game.game_pb.end_turn(self)
 
     def load(self, agent: str, methods) -> None:  # pyright: ignore[reportUnknownParameterType, reportMissingParameterType] # noqa: ANN001
         path = Path(f"agents/{agent}/main.py").resolve()
@@ -108,9 +84,7 @@ class Agent:
         self.energy_level = min(Constants.MAX_ENERGY_LEVEL, self.energy_level)
 
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
-        if isinstance(aegis_command, SendMessageResult):
-            self.inbox.append(aegis_command)
-        elif isinstance(aegis_command, ObserveResult):
+        if isinstance(aegis_command, ObserveResult):
             self.results.append(aegis_command)
         else:
             LOGGER.warning(

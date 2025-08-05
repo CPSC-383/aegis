@@ -163,7 +163,7 @@ class AgentController:
         return cell_info
 
     def spawn_agent(self, loc: Location) -> None:
-        # self.assert_spawn(loc, self._agent.team)
+        self.assert_spawn(loc, self._agent.team)
         self._game.spawn_agent(loc, self._agent.team)
 
     def read_pending_predictions(

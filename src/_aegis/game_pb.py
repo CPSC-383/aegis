@@ -128,12 +128,6 @@ class GamePb:
         pb_loc.y = agent.location.y
         pb_turn.loc.CopyFrom(pb_loc)
 
-        action_command = agent.command_manager.get_action_command()
-        directive_commands = agent.command_manager.get_directives()
-        commands = directive_commands
-        if action_command is not None:
-            commands.append(action_command)
-        pb_turn.commands.extend(str(command) for command in commands)
         pb_turn.spawns.extend(self.spawns)
 
         self.turns.append(pb_turn)
