@@ -25,8 +25,10 @@ from .common.commands.agent_commands import (
 )
 from .common.location import Location
 from .common.objects.rubble import Rubble
+from .common.objects.survivor import Survivor
 from .constants import Constants
 from .logger import LOGGER
+from .types.prediction import SurvivorID
 
 if TYPE_CHECKING:
     from .game import Game
@@ -74,34 +76,49 @@ class CommandProcessor:
             agent_id = cmd.get_id()
             agent = self._game.get_agent(agent_id)
 
-            if isinstance(cmd, Predict) and is_feature_enabled("ENABLE_PREDICTIONS"):
-                pass
-            else:
-                match cmd:
-                    case Dig():
-                        self._handle_dig(cmd)
-                    case Save():
-                        self._handle_save(cmd)
-                    case Move():
-                        self._handle_move(cmd)
-                    case Recharge():
-                        self._handle_recharge(cmd)
-                    case Observe():
-                        agent = self._game.get_agent(cmd.get_id())
-                        agent.add_energy(-Constants.OBSERVE_ENERGY_COST)
-                    case Predict():
+            match cmd:
+                case Dig():
+                    self._handle_dig(cmd)
+                case Save():
+                    self._handle_save(cmd)
+                case Move():
+                    self._handle_move(cmd)
+                case Recharge():
+                    self._handle_recharge(cmd)
+                case Observe():
+                    agent = self._game.get_agent(cmd.get_id())
+                    agent.add_energy(-Constants.OBSERVE_ENERGY_COST)
+                case Predict():
+                    if is_feature_enabled("ENABLE_PREDICTIONS"):
                         self._handle_predict(cmd)
-                    case _:
-                        LOGGER.warning("Aegis received an unknown command: %s", cmd)
+                    else:
+                        LOGGER.warning(
+                            "Predict command received but predictions are disabled!!"
+                        )
+                case _:
+                    LOGGER.warning("Aegis received an unknown command: %s", cmd)
 
     def _handle_predict(self, cmd: Predict) -> None:
         agent = self._game.get_agent(cmd.get_id())
-        if agent is None:
-            return
         if self._prediction_handler is not None:
-            self._prediction_handler.set_prediction_result(
-                agent.id, agent.team, cmd.surv_id, prediction_correct=cmd.label
+            prediction_result = self._prediction_handler.check_agent_prediction(
+                agent.id, agent.team, SurvivorID(cmd.surv_id), cmd.label
             )
+
+            LOGGER.info(f"Prediction result: {prediction_result}")
+
+            self._prediction_handler.set_prediction_result(
+                agent.id,
+                agent.team,
+                SurvivorID(cmd.surv_id),
+                prediction_correct=prediction_result,
+            )
+
+            if prediction_result:
+                self._game.team_info.add_score(agent.team, Constants.PRED_CORRECT_SCORE)
+                self._game.team_info.add_predicted(agent.team, 1, correct=True)
+            else:
+                self._game.team_info.add_predicted(agent.team, 1, correct=False)
 
     def _handle_recharge(self, cmd: Recharge) -> None:
         agent = self._game.get_agent(cmd.get_id())
@@ -127,8 +144,8 @@ class CommandProcessor:
                 and a.energy_level >= top_layer.energy_required
                 for aid in agents_here
             ):
-                self._game.remove_layer(cell.location, agent.team)
                 agent.add_energy(-top_layer.energy_required)
+                self._game.remove_layer(cell.location)
         else:
             agent.add_energy(-Constants.DIG_ENERGY_COST)
 
@@ -153,19 +170,27 @@ class CommandProcessor:
         agent = self._game.get_agent(cmd.get_id())
         cell = self._game.get_cell_at(agent.location)
 
-        # agents_here = [aid for aid in cell.agent_id_list if self._world.get_agent(aid)
-        # ]
-        # gid_counter = [0] * 10
-        # for aid in agents_here:
-        #     gid_counter[aid.gid] += 1
-
         top_layer = cell.get_top_layer()
         agent.add_energy(-Constants.SAVE_ENERGY_COST)
         if top_layer is None:
             return
 
-        self._game.remove_layer(cell.location, agent.team)
-        # self._handle_top_layer(top_layer, cell, agents_here, gid_counter)
+        if isinstance(top_layer, Survivor):
+            survivor = top_layer
+            team = agent.team
+            is_alive = survivor.get_health() > 0
+            self._game.team_info.add_saved(team, 1, is_alive=is_alive)
+            self._game.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
+
+            # Add the agent that saved the survivor to the prediction handler
+            if self._prediction_handler is not None:
+                self._prediction_handler.add_agent_to_no_pred_yet(
+                    agent.id,
+                    team,
+                    SurvivorID(survivor.id),
+                )
+
+            self._game.remove_layer(cell.location)
 
     def _results(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:
@@ -223,18 +248,19 @@ class CommandProcessor:
             case _:
                 return []
 
-    def _handle_save_cmd(self, _agent: Agent) -> list[AegisCommand]:
+    def _handle_save_cmd(self, agent: Agent) -> list[AegisCommand]:
         results: list[AegisCommand] = []
-        # if (
-        #     is_feature_enabled("ENABLE_PREDICTIONS")
-        #     and self._prediction_handler is not None
-        #     and SaveResult is not None
-        # ):
-        #     pred_info = self._prediction_handler.get_pred_info_for_agent(
-        #         agent.get_agent_id(),
-        #     )
-        #     if pred_info:
-        #         results.append(SaveResult(pred_info[0], pred_info[1], pred_info[2]))
+
+        # Check if predictions are enabled and we have a prediction handler
+        if self._prediction_handler is not None:
+            # Get prediction info for this agent
+            pred_info = self._prediction_handler.get_pred_info_for_agent(
+                agent.id, agent.team
+            )
+            if pred_info:
+                surv_id, image, unique_labels = pred_info
+                # results.append(SaveResult(surv_id, image, unique_labels)) # TODO(gang slime): decide if we do this approach or the other
+
         return results
 
     # def _handle_top_layer(

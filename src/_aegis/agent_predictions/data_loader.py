@@ -26,9 +26,9 @@ class PredictionDataLoader:
     def load_testing_data(self) -> None:
         """Load the appropriate testing data based on marking mode."""
         if self.testing_for_marking:
-            data_dir = Path("prediction_data/marking")
+            data_dir = Path("prediction_data/testing-marking")
         else:
-            data_dir = Path("prediction_data/student")
+            data_dir = Path("prediction_data/testing")
 
         x_path = data_dir / "x_test_symbols.npy"
         y_path = data_dir / "y_test_symbols.npy"

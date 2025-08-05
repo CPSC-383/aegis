@@ -182,16 +182,10 @@ class Game:
     def get_agent(self, agent_id: int) -> Agent:
         return self._agents[agent_id]
 
-    def remove_layer(self, loc: Location, team: Team) -> None:
+    def remove_layer(self, loc: Location) -> None:
         cell = self.get_cell_at(loc)
-        world_object = cell.remove_top_layer()
+        _ = cell.remove_top_layer()
         self.game_pb.add_removed_layer(loc)
-
-        if isinstance(world_object, Survivor):
-            survivor = world_object
-            is_alive = survivor.get_health() > 0
-            self.team_info.add_saved(team, 1, is_alive=is_alive)
-            self.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
 
     def move_agent(self, agent_id: int, loc: Location) -> None:
         agent = self.get_agent(agent_id)
@@ -228,6 +222,24 @@ class Game:
     def get_charging_cells(self) -> list[Location]:
         return self.world.get_charging_cells()
 
+    def get_prediction_info_for_agent(
+        self, agent_id: int, team: Team
+    ) -> tuple[int, Any, Any] | None:
+        """
+        Get prediction information for an agent.
+
+        Args:
+            agent_id: The agent's ID
+            team: The agent's team
+
+        Returns:
+            Tuple of (survivor_id, image, unique_labels) or None if no prediction needed
+
+        """
+        if self._prediction_handler is not None:
+            return self._prediction_handler.get_pred_info_for_agent(agent_id, team)
+        return None
+
     def create_methods(self, ac: AgentController) -> dict[str, Any]:
         return {
             "Dig": Dig,
@@ -255,5 +267,6 @@ class Game:
             "get_charging_cells": self.get_charging_cells,
             "get_spawns": self.get_spawns,
             "get_survs": self.get_survs,
+            "get_prediction_info_for_agent": ac.get_prediction_info_for_agent,
             "log": ac.log,
         }

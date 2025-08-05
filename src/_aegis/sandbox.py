@@ -13,7 +13,7 @@ from RestrictedPython import (
 class Sandbox:
     def __init__(self, methods) -> None:
         self.byte_code = None
-        self.allowed_modules = {"random", "heapq", "math", "json", "enum", "numpy", "re"}
+        self.allowed_modules = {"os", "pathlib", "random", "heapq", "math", "json", "re", "enum", "numpy", "tensorflow", "tf"}
         self.methods = methods
         self.globals = self._create_globals()
 

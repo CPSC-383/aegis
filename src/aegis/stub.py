@@ -2,6 +2,9 @@
 # ruff: noqa: F401
 # pyright: reportReturnType=false
 # pyright: reportUnusedImport=false
+# pyright: reportUnusedParameter=false
+
+from typing import Any
 
 from . import (
     AgentCommand,
@@ -112,5 +115,19 @@ def log(*args: object) -> None:
 
     Args:
         *args: The message to log.
+
+    """
+
+
+def get_prediction_info_for_agent() -> tuple[int, Any, Any] | None:
+    """
+    Get prediction information for an agent.
+
+    Args:
+        agent_id: The agent's ID
+        team: The agent's team
+
+    Returns:
+        Tuple of (survivor_id, image, unique_labels) or None if no prediction needed
 
     """
