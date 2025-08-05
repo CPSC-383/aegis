@@ -16,7 +16,7 @@ def make_game_start_string(args: Args, world: str) -> str:
     if args.agent2 and not args.agent:
         return f"VOIDSEERS on {world}"
 
-    # TODO @dante: This will have to show actual team names #noqa: TD003
+    # TODO @dante: This will have to show actual team names
     return f"GOOBS vs VOIDSEERS on {world}"
 
 
@@ -71,11 +71,11 @@ def run(args: Args) -> None:
 
             LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
         LOGGER.info("========== AEGIS END ==========")
-        print()  # noqa: T201
+        print()
         if i < len(args.world) - 1:
-            print()  # noqa: T201
-            print("=" * 80)  # noqa: T201
-            print()  # noqa: T201
-            print()  # noqa: T201
+            print()
+            print("=" * 80)
+            print()
+            print()
     game_pb.make_games_footer()
     ws_server.finish()

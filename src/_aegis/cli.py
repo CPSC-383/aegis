@@ -10,23 +10,11 @@ from .play import run
 
 def main() -> None:
     try:
-        # Check if no arguments were provided
         if len(sys.argv) == 1:
-            print("AEGIS Simulation Tool")
-            print("=====================")
             print()
-            print("Usage: aegis [OPTIONS]")
+            print("AEGIS Simulation")
             print()
-            print("Required arguments:")
-            print("  --world WORLD [WORLD ...]  World names (without .world extension)")
-            print("  --agent AGENT              Agent folder name (e.g., 'agent_path')")
-            print()
-            print("Examples:")
-            print("  aegis --world ExampleWorld --agent agent_path --rounds 100")
-            print("  aegis --world ExampleWorld --agent agent_path --agent2 agent_mas")
-            print("  aegis --world ExampleWorld --agent agent_path --client")
-            print()
-            print("For more options, run: aegis --help")
+            print("For help, run: aegis --help")
             sys.exit(0)
 
         run(parse_args())

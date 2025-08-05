@@ -1,5 +1,4 @@
 import random
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from .agent import Agent
@@ -19,7 +18,6 @@ from .common.commands.agent_commands import (
     SendMessage,
 )
 from .common.objects import Rubble, Survivor
-from .constants import Constants
 from .game_pb import GamePb
 from .id_gen import IDGenerator
 from .logger import LOGGER
@@ -44,9 +42,7 @@ class Game:
         self.game_pb: GamePb = game_pb
         self._agents: dict[int, Agent] = {}
 
-        self._prediction_handler: PredictionHandler | None = PredictionHandler(
-            testing_for_marking=args.testing_for_marking
-        )
+        self._prediction_handler: PredictionHandler | None = PredictionHandler(args)
 
         self._command_processor: CommandProcessor = CommandProcessor(
             self,
@@ -107,19 +103,19 @@ class Game:
 
     def _is_game_over(self) -> bool:
         if self.round == self.world.rounds:
-            print()  # noqa: T201
+            print()
             LOGGER.info(f"Max rounds reached ({self.world.rounds}).")
             return True
 
         if len(self._agents) == 0:
-            print()  # noqa: T201
+            print()
             LOGGER.info("All agents are dead.")
             return True
 
         saved_goobs = self.team_info.get_saved(Team.GOOBS)
         saved_seers = self.team_info.get_saved(Team.VOIDSEERS)
         if saved_goobs + saved_seers == self.world.total_survivors:
-            print()  # noqa: T201
+            print()
             LOGGER.info("All survivors saved.")
             return True
 

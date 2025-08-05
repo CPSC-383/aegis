@@ -1,6 +1,7 @@
 import random
-from typing import Any, cast
+from typing import Any
 
+from _aegis.args_parser import Args
 from _aegis.logger import LOGGER
 from _aegis.team import Team
 from _aegis.types.prediction import (
@@ -17,7 +18,7 @@ CompletedPredictions = dict[tuple[Team, SurvivorID], CompletedPrediction]
 
 
 class PredictionHandler:
-    def __init__(self, testing_for_marking: bool = False) -> None:
+    def __init__(self, args: Args) -> None:
         # Prediction handler always works now
 
         # Track pending predictions (team, surv_id) -> PendingPrediction
@@ -27,9 +28,7 @@ class PredictionHandler:
         self._completed_predictions: CompletedPredictions = {}
 
         # Initialize data loader
-        self._data_loader: PredictionDataLoader = PredictionDataLoader(
-            testing_for_marking=testing_for_marking
-        )
+        self._data_loader: PredictionDataLoader = PredictionDataLoader(args)
 
     def get_image_from_index(self, index: int) -> Any:  # noqa: ANN401
         return self._data_loader.x_test[index]

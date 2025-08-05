@@ -20,21 +20,7 @@ class Args:
 
 def parse_args() -> Args:
     parser = argparse.ArgumentParser(
-        description="AEGIS Simulation Configuration",
-        epilog="""
-Examples:
-  # Run a single agent simulation
-  aegis --world ExampleWorld --agent agent_path --rounds 100
-
-  # Run a two-team simulation
-  aegis --world ExampleWorld --agent agent_path --agent2 agent_mas --rounds 200
-
-  # Run with debug output
-  aegis --world ExampleWorld --agent agent_path --debug
-
-  # Run multiple worlds
-  aegis --world ExampleWorld test --agent agent_path
-        """,
+        description="AEGIS Simulation",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 

@@ -9,7 +9,7 @@ prediction_data/
 ├── training/          # Training data (provided by course website/comp website)
 │   ├── x_train_symbols.npy
 │   └── y_train_symbols.npy
-├── testing/           # Student testing data (provided by course website/comp website)
+├── testing/           # Testing data (provided by course website/comp website)
 │   ├── x_test_symbols.npy
 │   └── y_test_symbols.npy
 └── testing-marking/   # Marking testing data (not given publicly)
@@ -19,11 +19,11 @@ prediction_data/
 
 ## Usage
 
-### Default Mode (Student Development)
+### Default Mode (Student/Competitor Development)
 
 By default, AEGIS uses the `testing/` directory for prediction data. This is suitable for:
 
-- Student development and testing
+- Student/Competitor development and testing
 - Training model evaluation
 - General simulation runs
 
@@ -35,7 +35,7 @@ For marking scenarios, use the `--testing-for-marking` flag:
 aegis --world worlds/ExampleWorld.world --agent agents/marking_agent/main.py --testing-for-marking
 ```
 
-This will load prediction data from the `testing/` directory instead of `student/`.
+This will load prediction data from the `testing-marking/` directory instead of `testing/`.
 
 ## Data Format
 
@@ -46,7 +46,7 @@ Each directory contains:
 
 ## Setup Instructions
 
-1. **For Students/Developers**: Place the provided testing data in the `student/` directory
+1. **For Students/Developers**: Place the provided testing data in the `testing/` directory
 2. **For Instructors/Tournament Organizers**:
    - Place marking data in the `testing-marking/` directory
    - Use the `--testing-for-marking` flag when running simulations
