@@ -6,7 +6,6 @@ from _aegis.common.commands.aegis_commands import ObserveResult, SendMessageResu
 from _aegis.common.commands.aegis_commands.save_result import SaveResult
 from _aegis.common.commands.agent_command import AgentCommand
 from _aegis.common.commands.agent_commands import (
-    Dig,
     Observe,
     Recharge,
     SendMessage,
@@ -17,7 +16,6 @@ from _aegis.types.prediction import SurvivorID
 __all__ = [
     "AgentCommand",
     "CellInfo",
-    "Dig",
     "Direction",
     "Location",
     "Observe",

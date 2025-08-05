@@ -159,7 +159,7 @@ class Sandbox:
     def has_handle_observe(self) -> bool:
         return callable(self.namespace.get("handle_observe"))
 
-    def think(self):
+    def think(self) -> None:
         func = self.namespace.get("think")
         if callable(func):
             return func()

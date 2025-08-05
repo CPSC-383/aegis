@@ -11,18 +11,15 @@ from .common.commands.aegis_commands import (
     ObserveResult,
     RechargeResult,
     SendMessageResult,
-    WorldUpdate,
 )
 from .common.commands.agent_command import AgentCommand
 from .common.commands.agent_commands import (
-    Dig,
     Observe,
     Predict,
     Recharge,
     SendMessage,
 )
 from .common.location import Location
-from .common.objects.rubble import Rubble
 from .constants import Constants
 from .logger import LOGGER
 from .types.prediction import SurvivorID
@@ -74,8 +71,6 @@ class CommandProcessor:
             agent = self._game.get_agent(agent_id)
 
             match cmd:
-                case Dig():
-                    self._handle_dig(cmd)
                 case Recharge():
                     self._handle_recharge(cmd)
                 case Observe():
@@ -122,23 +117,6 @@ class CommandProcessor:
             else:
                 agent.add_energy(Constants.NORMAL_CHARGE)
 
-    def _handle_dig(self, cmd: Dig) -> None:
-        agent = self._game.get_agent(cmd.get_id())
-        cell = self._game.get_cell_at(agent.location)
-        agents_here = [aid for aid in cell.agents if self._game.get_agent(aid)]
-        top_layer = cell.get_top_layer()
-
-        if isinstance(top_layer, Rubble):
-            if top_layer.agents_required <= len(agents_here) and all(
-                (a := self._game.get_agent(aid))
-                and a.energy_level >= top_layer.energy_required
-                for aid in agents_here
-            ):
-                agent.add_energy(-top_layer.energy_required)
-                self._game.remove_layer(cell.location)
-        else:
-            agent.add_energy(-Constants.DIG_ENERGY_COST)
-
     def _results(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:
             agent = self._game.get_agent(cmd.get_id())
@@ -170,12 +148,9 @@ class CommandProcessor:
         _agent: Agent,
         energy: int,
         location: Location,
-        surround: dict[Direction, CellInfo],
+        _surround: dict[Direction, CellInfo],
     ) -> list[AegisCommand]:
         match cmd:
-            case Dig():
-                results: list[AegisCommand] = [WorldUpdate(energy, surround)]
-                return results
             case Recharge():
                 agent_cell = self._game.get_cell_at(location)
                 success = agent_cell.is_charging_cell()

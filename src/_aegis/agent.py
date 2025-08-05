@@ -13,7 +13,6 @@ from .common.commands.aegis_commands import (
     ObserveResult,
     RechargeResult,
     SendMessageResult,
-    WorldUpdate,
 )
 from .common.commands.aegis_commands.save_result import SaveResult
 from .constants import Constants
@@ -113,11 +112,6 @@ class Agent:
     def handle_aegis_command(self, aegis_command: AegisCommand) -> None:
         if isinstance(aegis_command, SendMessageResult):
             self.inbox.append(aegis_command)
-        elif isinstance(aegis_command, WorldUpdate):
-            pass
-            # world_update = aegis_command
-            # curr_info = world_update.surround[Direction.CENTER]
-            # self.set_energy_level(world_update.energy_level)
         elif isinstance(aegis_command, SaveResult):
             self.results.append(aegis_command)
         elif isinstance(aegis_command, RechargeResult):

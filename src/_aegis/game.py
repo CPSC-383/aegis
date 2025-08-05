@@ -10,7 +10,6 @@ from .common import Cell, CellContents, CellInfo, Direction, Location
 from .common.commands.aegis_commands import ObserveResult, SendMessageResult
 from .common.commands.aegis_commands.save_result import SaveResult
 from .common.commands.agent_commands import (
-    Dig,
     Observe,
     Predict,
     SendMessage,
@@ -237,6 +236,22 @@ class Game:
 
         self.remove_layer(agent.location)
 
+    def dig(self, rubble: Rubble, agent: Agent) -> None:
+        cell = self.get_cell_at(agent.location)
+        agents = [self.get_agent(aid) for aid in cell.agents]
+        enough_agents = len(agents) >= rubble.agents_required
+        all_enough_energy = all(
+            agent.energy_level >= rubble.energy_required for agent in agents
+        )
+
+        if not (enough_agents and all_enough_energy):
+            return
+
+        # Add back the dig energy if it was a valid dig
+        energy = -rubble.energy_required + Constants.DIG_ENERGY_COST
+        agent.add_energy(energy)
+        self.remove_layer(cell.location)
+
     def on_map(self, loc: Location) -> bool:
         return 0 <= loc.x < self.world.width and 0 <= loc.y < self.world.height
 
@@ -286,7 +301,6 @@ class Game:
 
     def create_methods(self, ac: AgentController) -> dict[str, Any]:
         return {
-            "Dig": Dig,
             "Direction": Direction,
             "Location": Location,
             "Observe": Observe,

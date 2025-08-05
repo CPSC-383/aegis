@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any
 from .aegis_config import is_feature_enabled
 from .common import CellContents, CellInfo, Direction, Location
 from .common.commands.agent_command import AgentCommand
+from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
 from .constants import Constants
 from .team import Team
@@ -83,7 +84,14 @@ class AgentController:
         self._game.save(top_layer, self._agent)
 
     def dig(self) -> None:
-        pass
+        # TODO @dante: add assert for unit type once thats added
+        cell = self._game.get_cell_at(self._agent.location)
+        top_layer = cell.get_top_layer()
+        self._agent.add_energy(-Constants.DIG_ENERGY_COST)
+        if top_layer is None or not isinstance(top_layer, Rubble):
+            return
+
+        self._game.dig(top_layer, self._agent)
 
     def send(self, command: AgentCommand) -> None:
         command.set_id(self.get_id())

@@ -11,7 +11,6 @@ from _aegis.common.cell_contents import CellContents
 from . import (
     AgentCommand,
     CellInfo,
-    Dig,
     Direction,
     Location,
     Observe,
