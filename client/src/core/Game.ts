@@ -1,10 +1,10 @@
-import World from "./World"
 import { schema } from "aegis-schema"
-import Round from "./Round"
 import Agents from "./Agents"
 import Games from "./Games"
-import RoundStats from "./Stats"
 import { ListenerKey, notify } from "./Listeners"
+import Round from "./Round"
+import RoundStats from "./Stats"
+import World from "./World"
 
 const SNAPSHOT_INTERVAL = 25
 

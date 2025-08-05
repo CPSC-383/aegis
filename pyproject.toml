@@ -18,6 +18,12 @@ dynamic = ["version"]
 [tool.hatch.version]
 path = "src/aegis/__init__.py"
 
+[tool.hatch.build.targets.wheel]
+packages = [
+    "src/aegis",
+    "src/_aegis",
+]
+
 [tool.ruff]
 line-length = 88
 exclude = ["src/_aegis/sandbox.py", "src/_aegis/schemas/**"]
@@ -32,6 +38,7 @@ ignore = [
   "FIX002", # line-contains-todo
   "ERA001", # Commented code
   "E501", # TODO needs an author
+  "TD002", # TODO needs an author (again?!)
   "TD003", # TODO needs an issue link
   "T201", # print() found
 ]
@@ -55,5 +62,4 @@ dev = [
     "hatch>=1.14.1",
     "mypy-protobuf>=3.6.0",
     "ruff>=0.12.2",
-    "types-tensorflow>=2.18.0",
 ]

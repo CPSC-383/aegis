@@ -6,21 +6,16 @@
 
 from typing import Any
 
+from _aegis.common.cell_contents import CellContents
+
 from . import (
     AgentCommand,
     CellInfo,
-    Dig,
     Direction,
     Location,
-    Move,
+    Message,
     Observe,
-    ObserveResult,
-    Predict,
     Rubble,
-    Save,
-    SaveResult,
-    SendMessage,
-    SendMessageResult,
     Survivor,
     SurvivorID,
 )
@@ -52,12 +47,64 @@ def get_energy_level() -> int:
     """Return the current energy level of the agent."""
 
 
-def send(command: AgentCommand) -> None:
+def move(direction: Direction) -> None:
     """
-    Send a command to Aegis for execution.
+    Move the agent in the specified direction.
 
     Args:
-        command: The command the agent wishes to execute.
+        direction (Direction): The direction in which the agent should move.
+
+    """
+
+
+def save() -> None:
+    """Save a survivor."""
+
+
+def dig() -> None:
+    """Dig rubble."""
+
+
+def recharge() -> None:
+    """
+    Recharge the agent's energy.
+
+    This function only works if the agent is currently on a charging cell.
+    """
+
+
+def predict(surv_id: int, label: int) -> None:
+    """
+    Submit a prediction.
+
+    Args:
+        surv_id (int): The unique ID of the survivor.
+        label (int): The predicted label/classification for the survivor.
+
+    """
+
+
+def send_message(message: str, dest_ids: list[int]) -> None:
+    """
+    Send a message to specified destination agents on the same team, excluding self.
+
+    Args:
+        message (str): The content of the message to send.
+        dest_ids (list[int]): List of agent IDs to send the message to. If empty, message is broadcast to team excluding self.
+
+    """
+
+
+def read_messages(round_num: int = -1) -> list[Message]:
+    """
+    Retrieve messages from the message buffer.
+
+    Args:
+        round_num (int, optional): The round number to retrieve messages from.
+            Defaults to -1, which returns messages from all rounds.
+
+    Returns:
+        list[Message]: List of messages.
 
     """
 
@@ -75,7 +122,7 @@ def on_map(loc: Location) -> bool:
     """
 
 
-def get_cell_info_at(loc: Location) -> CellInfo | None:
+def get_cell_info_at(loc: Location) -> CellInfo:
     """
     Return the cell info at a given location.
 
@@ -83,7 +130,20 @@ def get_cell_info_at(loc: Location) -> CellInfo | None:
         loc: The location to query.
 
     Returns:
-        The `Cell` at the specified location, or `None` if out of bounds.
+        The `CellInfo` at the specified location.
+
+    """
+
+
+def get_cell_contents_at(loc: Location) -> CellContents | None:
+    """
+    Return the cell contents at a given location. This includes the layers and agents (both teams) present in the cell.
+
+    Args:
+        loc: The location to query.
+
+    Returns:
+        The `CellContents` at the specified location, or `None` if out of bounds.
 
     """
 
@@ -120,11 +180,22 @@ def log(*args: object) -> None:
     """
 
 
-def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]] | None:
+def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]]:
     """
-    Get prediction information for a survivour saved by an agent's team.
+    Retrieve the list of pending predictions stored by the agent's team.
 
     Returns:
-        List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
+        list[tuple[SurvivorID, Any, Any]]: A list of tuples representing pending survivor predictions.
+            Returns an empty list if no pending predictions are available.
+
+    """
+
+
+def drone_scan(loc: Location) -> None:
+    """
+    Scan a location with a drone.
+
+    Args:
+        loc: The location to scan.
 
     """

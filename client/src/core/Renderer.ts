@@ -1,14 +1,15 @@
 import { CanvasLayers, Size, Vector } from "@/types"
 import { TILE_SIZE } from "@/utils/constants"
 import { loadImage, renderCoords } from "@/utils/util"
-import { Runner } from "./Runner"
 import { ListenerKey, notify } from "./Listeners"
+import { Runner } from "./Runner"
 
 import goobA from "@/assets/goob-team-a.png"
 import goobB from "@/assets/goob-team-b.png"
 import rubble from "@/assets/rubble.png"
 import darkSurvivor from "@/assets/survivor-dark.png"
 import lightSurvivor from "@/assets/survivor-light.png"
+import droneScanEye from "@/assets/drone-scan-eye.png"
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as Record<
@@ -50,6 +51,7 @@ class RendererClass {
     loadImage(lightSurvivor)
     loadImage(darkSurvivor)
     loadImage(rubble)
+    loadImage(droneScanEye)
   }
 
   renderToContainer(container: HTMLDivElement | null): void {
@@ -83,8 +85,9 @@ class RendererClass {
   render(): void {
     const actx = this.ctx(CanvasLayers.Agent)
     const lctx = this.ctx(CanvasLayers.Layers)
+    const dctx = this.ctx(CanvasLayers.DroneScan)
     const game = Runner.game
-    if (!actx || !lctx || !game) {
+    if (!actx || !lctx || !dctx || !game) {
       return
     }
 
@@ -95,6 +98,7 @@ class RendererClass {
     const full = this.fullRedraw
     this.fullRedraw = false
     round.world.drawLayers(lctx, full)
+    round.world.drawDroneScans(lctx)
   }
 
   onGameChange(): void {

@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DroneScanUpdate } from "./game";
 import { GamesFooter } from "./game";
 import { GameFooter } from "./game";
 import { Round } from "./game";
@@ -53,6 +54,12 @@ export interface Event {
          */
         gamesFooter: GamesFooter;
     } | {
+        oneofKind: "droneScanUpdate";
+        /**
+         * @generated from protobuf field: aegis.DroneScanUpdate drone_scan_update = 6
+         */
+        droneScanUpdate: DroneScanUpdate;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -64,7 +71,8 @@ class Event$Type extends MessageType<Event> {
             { no: 2, name: "game_header", kind: "message", oneof: "event", T: () => GameHeader },
             { no: 3, name: "round", kind: "message", oneof: "event", T: () => Round },
             { no: 4, name: "game_footer", kind: "message", oneof: "event", T: () => GameFooter },
-            { no: 5, name: "games_footer", kind: "message", oneof: "event", T: () => GamesFooter }
+            { no: 5, name: "games_footer", kind: "message", oneof: "event", T: () => GamesFooter },
+            { no: 6, name: "drone_scan_update", kind: "message", oneof: "event", T: () => DroneScanUpdate }
         ]);
     }
     create(value?: PartialMessage<Event>): Event {
@@ -109,6 +117,12 @@ class Event$Type extends MessageType<Event> {
                         gamesFooter: GamesFooter.internalBinaryRead(reader, reader.uint32(), options, (message.event as any).gamesFooter)
                     };
                     break;
+                case /* aegis.DroneScanUpdate drone_scan_update */ 6:
+                    message.event = {
+                        oneofKind: "droneScanUpdate",
+                        droneScanUpdate: DroneScanUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.event as any).droneScanUpdate)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -136,6 +150,9 @@ class Event$Type extends MessageType<Event> {
         /* aegis.GamesFooter games_footer = 5; */
         if (message.event.oneofKind === "gamesFooter")
             GamesFooter.internalBinaryWrite(message.event.gamesFooter, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* aegis.DroneScanUpdate drone_scan_update = 6; */
+        if (message.event.oneofKind === "droneScanUpdate")
+            DroneScanUpdate.internalBinaryWrite(message.event.droneScanUpdate, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

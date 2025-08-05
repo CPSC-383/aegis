@@ -38,6 +38,11 @@ class Location:
         dy = self.y - location.y
         return dx * dx + dy * dy
 
+    def is_adjacent_to(self, location: Location) -> bool:
+        dx = self.x - location.x
+        dy = self.y - location.y
+        return -1 <= dx <= 1 and -1 <= dy <= 1
+
     @override
     def __str__(self) -> str:
         return f"( X {self.x} , Y {self.y} )"

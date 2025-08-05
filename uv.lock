@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.13'",
@@ -36,7 +36,6 @@ dev = [
     { name = "hatch" },
     { name = "mypy-protobuf" },
     { name = "ruff" },
-    { name = "types-tensorflow" },
 ]
 
 [package.metadata]
@@ -55,7 +54,6 @@ dev = [
     { name = "hatch", specifier = ">=1.14.1" },
     { name = "mypy-protobuf", specifier = ">=3.6.0" },
     { name = "ruff", specifier = ">=0.12.2" },
-    { name = "types-tensorflow", specifier = ">=2.18.0" },
 ]
 
 [[package]]
@@ -1055,32 +1053,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/dc/54/d63ce1eee8e93c4d710bbe2c663ec68e3672cf4f2fca26eecd20981c0c5d/types_protobuf-6.30.2.20250703.tar.gz", hash = "sha256:609a974754bbb71fa178fc641f51050395e8e1849f49d0420a6281ed8d1ddf46", size = 62300, upload-time = "2025-07-03T03:14:05.74Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7e/2b/5d0377c3d6e0f49d4847ad2c40629593fee4a5c9ec56eba26a15c708fbc0/types_protobuf-6.30.2.20250703-py3-none-any.whl", hash = "sha256:fa5aff9036e9ef432d703abbdd801b436a249b6802e4df5ef74513e272434e57", size = 76489, upload-time = "2025-07-03T03:14:04.453Z" },
-]
-
-[[package]]
-name = "types-requests"
-version = "2.32.4.20250611"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "urllib3" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6d/7f/73b3a04a53b0fd2a911d4ec517940ecd6600630b559e4505cc7b68beb5a0/types_requests-2.32.4.20250611.tar.gz", hash = "sha256:741c8777ed6425830bf51e54d6abe245f79b4dcb9019f1622b773463946bf826", size = 23118, upload-time = "2025-06-11T03:11:41.272Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3d/ea/0be9258c5a4fa1ba2300111aa5a0767ee6d18eb3fd20e91616c12082284d/types_requests-2.32.4.20250611-py3-none-any.whl", hash = "sha256:ad2fe5d3b0cb3c2c902c8815a70e7fb2302c4b8c1f77bdcd738192cdb3878072", size = 20643, upload-time = "2025-06-11T03:11:40.186Z" },
-]
-
-[[package]]
-name = "types-tensorflow"
-version = "2.18.0.20250728"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy" },
-    { name = "types-protobuf" },
-    { name = "types-requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/df/8e/7216b7ddcf6789453f9f80d9176259a7b2b109d491ff4457aff249e25e9b/types_tensorflow-2.18.0.20250728.tar.gz", hash = "sha256:9d8c7792871dbbb3bceca27993db0ba785b9183912f9fde5cd5c818251776cbb", size = 257420, upload-time = "2025-07-28T03:29:37.112Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/22/37/ad00b65214a892da4b578e42c7488a36267463eeccdf85b76daf39751454/types_tensorflow-2.18.0.20250728-py3-none-any.whl", hash = "sha256:b277511028ef66d7fca3dfe426f82188249d52bcb2dbbefb800d13ac920544bb", size = 328993, upload-time = "2025-07-28T03:29:36.048Z" },
 ]
 
 [[package]]

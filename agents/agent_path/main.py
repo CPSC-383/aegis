@@ -1,4 +1,4 @@
-# ruff: noqa: F403 F405, INP001, D100
+# ruff: noqa: RUF100 F403 F405, INP001, D100, D101, D102 PLW0603
 from aegis.stub import *
 
 
@@ -9,21 +9,19 @@ def think() -> None:
     # On the first round, send a request for surrounding information
     # by moving to the center (not moving). This will help initiate pathfinding.
     if get_round_number() == 1:
-        send(Move(Direction.CENTER))
+        move(Direction.CENTER)
         return
 
-    # Fetch the cell at the agent's current location. If the location is outside
-    # the world's bounds, return a default move action and end the turn.
+    # Fetch the cell at the agent's current location.
+    # If you want to check a different location, use `on_map(loc)` first
+    # to ensure it's within the world bounds. The agent's own location is always valid.
     cell = get_cell_info_at(get_location())
-    if cell is None:
-        send(Move(Direction.CENTER))
-        return
 
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and end the turn.
     if isinstance(cell.top_layer, Survivor):
-        send(Save())
+        save()
         return
 
     # Default action: Move the agent north if no other specific conditions are met.
-    send(Move(Direction.NORTH))
+    move(Direction.NORTH)

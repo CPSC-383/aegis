@@ -4,6 +4,7 @@ export enum CanvasLayers {
   Background,
   Layers,
   Agent,
+  DroneScan,
 }
 
 export type Size = {
