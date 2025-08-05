@@ -19,12 +19,10 @@ from .common.commands.agent_commands import (
     Observe,
     Predict,
     Recharge,
-    Save,
     SendMessage,
 )
 from .common.location import Location
 from .common.objects.rubble import Rubble
-from .common.objects.survivor import Survivor
 from .constants import Constants
 from .logger import LOGGER
 from .types.prediction import SurvivorID
@@ -78,8 +76,6 @@ class CommandProcessor:
             match cmd:
                 case Dig():
                     self._handle_dig(cmd)
-                case Save():
-                    self._handle_save(cmd)
                 case Recharge():
                     self._handle_recharge(cmd)
                 case Observe():
@@ -143,31 +139,6 @@ class CommandProcessor:
         else:
             agent.add_energy(-Constants.DIG_ENERGY_COST)
 
-    def _handle_save(self, cmd: Save) -> None:
-        agent = self._game.get_agent(cmd.get_id())
-        cell = self._game.get_cell_at(agent.location)
-
-        top_layer = cell.get_top_layer()
-        agent.add_energy(-Constants.SAVE_ENERGY_COST)
-        if top_layer is None:
-            return
-
-        if isinstance(top_layer, Survivor):
-            survivor = top_layer
-            team = agent.team
-            is_alive = survivor.get_health() > 0
-            self._game.team_info.add_saved(team, 1, is_alive=is_alive)
-            self._game.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
-
-            # Create a pending prediction for this survivor
-            if self._prediction_handler is not None:
-                self._prediction_handler.create_pending_prediction(
-                    team,
-                    SurvivorID(survivor.id),
-                )
-
-            self._game.remove_layer(cell.location)
-
     def _results(self, commands: list[AgentCommand]) -> None:
         for cmd in commands:
             agent = self._game.get_agent(cmd.get_id())
@@ -196,18 +167,15 @@ class CommandProcessor:
     def _handle_command(
         self,
         cmd: AgentCommand,
-        agent: Agent,
+        _agent: Agent,
         energy: int,
         location: Location,
         surround: dict[Direction, CellInfo],
     ) -> list[AegisCommand]:
         match cmd:
-            case Dig() | Save():
+            case Dig():
                 results: list[AegisCommand] = [WorldUpdate(energy, surround)]
-                if isinstance(cmd, Save):
-                    results.extend(self._handle_save_cmd(agent))
                 return results
-
             case Recharge():
                 agent_cell = self._game.get_cell_at(location)
                 success = agent_cell.is_charging_cell()
@@ -223,10 +191,6 @@ class CommandProcessor:
 
             case _:
                 return []
-
-    def _handle_save_cmd(self, _: Agent) -> list[AegisCommand]:
-        # Not returning pred info in surv result anymore, so don't need this i think
-        return []
 
     # def _handle_top_layer(
     #     self,

@@ -55,7 +55,7 @@ def think() -> None:
     # If a survivor is present, save it and make a prediction.
     if isinstance(cell.top_layer, Survivor):
         # Save the survivor
-        send(Save())
+        save()
 
         # After saving, we'll get a SaveResult with the image to predict
         # The prediction will be handled in the handle_save function

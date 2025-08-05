@@ -18,7 +18,6 @@ from . import (
     ObserveResult,
     Predict,
     Rubble,
-    Save,
     SaveResult,
     SendMessage,
     SendMessageResult,
@@ -61,6 +60,10 @@ def move(direction: Direction) -> None:
         direction (Direction): The direction in which the agent should move.
 
     """
+
+
+def save() -> None:
+    """Save a survivor."""
 
 
 def send(command: AgentCommand) -> None:

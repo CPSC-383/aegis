@@ -53,7 +53,7 @@ def think() -> None:
     # If a survivor is present, save it and end the turn.
     top_layer = cell.top_layer
     if isinstance(top_layer, Survivor):
-        send(Save())
+        save()
         return
 
     # Default action: Move the agent north if no other specific conditions are met.

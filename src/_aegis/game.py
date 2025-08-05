@@ -13,7 +13,6 @@ from .common.commands.agent_commands import (
     Dig,
     Observe,
     Predict,
-    Save,
     SendMessage,
 )
 from .common.objects import Rubble, Survivor
@@ -220,6 +219,24 @@ class Game:
             for team, duration in teams.items():
                 self.game_pb.add_drone_scan(loc, team, duration)
 
+    def save(self, survivor: Survivor, agent: Agent) -> None:
+        is_alive = survivor.get_health() > 0
+        points = (
+            Constants.SURVIVOR_SAVE_ALIVE_SCORE
+            if is_alive
+            else Constants.SURVIVOR_SAVE_DEAD_SCORE
+        )
+        self.team_info.add_saved(agent.team, 1, is_alive=is_alive)
+        self.team_info.add_score(agent.team, points)
+
+        if self._prediction_handler is not None:
+            self._prediction_handler.create_pending_prediction(
+                agent.team,
+                SurvivorID(survivor.id),
+            )
+
+        self.remove_layer(agent.location)
+
     def on_map(self, loc: Location) -> bool:
         return 0 <= loc.x < self.world.width and 0 <= loc.y < self.world.height
 
@@ -275,7 +292,6 @@ class Game:
             "Observe": Observe,
             "Predict": Predict,
             "Rubble": Rubble,
-            "Save": Save,
             "SaveResult": SaveResult,
             "SendMessage": SendMessage,
             "Survivor": Survivor,
@@ -290,6 +306,7 @@ class Game:
             "get_energy_level": ac.get_energy_level,
             "send": ac.send,
             "move": ac.move,
+            "save": ac.save,
             "spawn_agent": ac.spawn_agent,
             "get_cell_contents_at": ac.get_cell_contents_at,
             "on_map": self.on_map,
