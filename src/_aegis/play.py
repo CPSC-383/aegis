@@ -12,6 +12,30 @@ from .team import Team
 from .world_pb import load_world
 
 
+def log_game_end(game: Game, args: Args, i: int) -> None:
+    LOGGER.info("========== AEGIS END ==========")
+    LOGGER.info(f"Finished on round {game.round}")
+    LOGGER.info(f"Reason: {getattr(game.reason, 'value', 'Unknown')}")
+    LOGGER.info("")
+    LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
+    LOGGER.info("-" * 46)
+
+    for team in Team:
+        if team == Team.VOIDSEERS and args.agent2 is None:
+            continue
+
+        score = game.team_info.get_score(team)
+        saved = game.team_info.get_saved(team)
+        predictions = game.team_info.get_predicted_right(team)
+
+        LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
+
+    LOGGER.info("=" * 46)
+
+    if i < len(args.world) - 1:
+        print("\n" + "=" * 80 + "\n\n")
+
+
 def make_game_start_string(args: Args, world: str) -> str:
     if args.agent and not args.agent2:
         return f"GOOBS on {world}"
@@ -28,6 +52,8 @@ def run(args: Args) -> None:
         error = "At least one agent must be provided"
         raise ValueError(error)
 
+    setup_console_and_file_logging() if args.log else setup_console_logging()
+
     sandbox_goobs = (
         Sandbox.from_directory(Path("agents") / args.agent)
         if args.agent is not None
@@ -40,8 +66,6 @@ def run(args: Args) -> None:
     )
     ws_server = WebSocketServer(wait_for_client=args.client)
     game_pb = GamePb()
-
-    setup_console_and_file_logging() if args.log else setup_console_logging()
 
     ws_server.start()
     game_pb.make_games_header(ws_server)
@@ -72,23 +96,6 @@ def run(args: Args) -> None:
                 game.running = False
 
         game_pb.make_game_footer()
-        LOGGER.info(f"Finished on round {game.round}")
-        LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
-        LOGGER.info("-" * 58)
-        for team in Team:
-            if team == Team.VOIDSEERS and args.agent2 is None:
-                continue
-            score = game.team_info.get_score(team)
-            saved = game.team_info.get_saved(team)
-            predictions = game.team_info.get_predicted_right(team)
-
-            LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
-        LOGGER.info("========== AEGIS END ==========")
-        print()
-        if i < len(args.world) - 1:
-            print()
-            print("=" * 80)
-            print()
-            print()
+        log_game_end(game, args, i)
     game_pb.make_games_footer()
     ws_server.finish()

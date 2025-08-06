@@ -21,5 +21,11 @@ class CellType(Enum):
         return self.__str__()
 
 
+class GameOverReason(Enum):
+    ALL_AGENTS_DEAD = "All team agents are dead"
+    ALL_SURVIVORS_SAVED = "All survivors have been rescued"
+    MAX_ROUNDS_REACHED = "Maximum number of rounds reached"
+
+
 # `create_methods` return type
 MethodDict = dict[str, type | Callable[..., Any]]  # pyright: ignore[reportExplicitAny]

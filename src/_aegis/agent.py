@@ -51,6 +51,9 @@ class Agent:
         self.log_errors()
         self.process_end_of_turn()
 
+    def kill(self) -> None:
+        self.core.kill()  # pyright: ignore[reportOptionalMemberAccess]
+
     def launch(
         self, code: Sandbox | None, methods: MethodDict, *, debug: bool = False
     ) -> None:
