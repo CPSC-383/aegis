@@ -314,7 +314,7 @@ class Game:
         return self._prediction_handler.read_pending_predictions(team)
 
     def create_methods(self, ac: AgentController) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
-        methods: dict[str, Any] = { # pyright: ignore[reportExplicitAny]
+        methods: dict[str, Any] = {  # pyright: ignore[reportExplicitAny]
             "Direction": Direction,
             "Location": Location,
             "Rubble": Rubble,
