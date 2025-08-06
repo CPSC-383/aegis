@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import override
 
-from _aegis.types.cell import CellType
+from _aegis.types import CellType
 
 from .cell_info import CellInfo
 from .location import Location

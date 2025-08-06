@@ -1,29 +1,27 @@
 # pyright: reportImportCycles = false
 
-import traceback
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .common import Direction, Location
 from .constants import Constants
 from .message_buffer import MessageBuffer
-from .sandbox import Sandbox
+from .sandbox.core import LumenCore
+from .sandbox.sandbox import Sandbox
 from .team import Team
+from .types import MethodDict
 
 if TYPE_CHECKING:
     from .game import Game
 
 
 class Agent:
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         game: "Game",
         agent_id: int,
         location: Location,
         team: Team,
         energy_level: int,
-        *,
-        debug: bool,
     ) -> None:
         self.game: Game = game
         self.has_visited: list[bool] = [False] * (game.world.height * game.world.width)
@@ -31,39 +29,37 @@ class Agent:
         self.team: Team = team
         self.location: Location = location
         self.energy_level: int = energy_level
-        self.sandbox: Sandbox | None = None
+        self.core: LumenCore | None = None
         self.message_buffer: MessageBuffer = MessageBuffer()
         self.steps_taken: int = 0
-        self.debug: bool = debug
+        self.debug: bool = False
+        self.logs: list[str] = []
 
     def run(self) -> None:
-        if self.sandbox is None:
-            error = "Sandbox should not be of `None` type."
+        if self.core is None:
+            error = "Trying to run an agent that hasn't laucnhed"
             raise RuntimeError(error)
 
-        try:
-            self.sandbox.think()
-        except Exception:  # noqa: BLE001
-            self.log(traceback.format_exc(limit=5))
+        self.core.think()
+
+        for log in self.logs:
+            self.log(log)
+
+        self.logs.clear()
 
         self.message_buffer.next_round(self.game.round + 1)
         self.game.game_pb.end_turn(self)
 
-    def load(self, agent: str, methods) -> None:  # pyright: ignore[reportUnknownParameterType, reportMissingParameterType] # noqa: ANN001
-        path = Path(f"agents/{agent}/main.py").resolve()
-        if not path.exists():
-            error = "Agent not found"
-            raise FileNotFoundError(error)
+    def launch(
+        self, code: Sandbox | None, methods: MethodDict, *, debug: bool = False
+    ) -> None:
+        if code is None:
+            error = "No code provided to launch."
+            raise ValueError(error)
 
-        sandbox = Sandbox(methods)  # pyright: ignore[reportUnknownArgumentType]
-        sandbox.load_and_compile(path)
-        sandbox.init()
-
-        if not sandbox.has_think():
-            error = f"{path} does not define a `think()` function."
-            raise AttributeError(error)
-
-        self.sandbox = sandbox
+        self.core = LumenCore(code, methods, self.error)
+        self.core.init()
+        self.debug = debug
 
     def apply_movement_cost(self, direction: Direction) -> None:
         if direction == Direction.CENTER:
@@ -76,6 +72,9 @@ class Agent:
     def add_energy(self, energy: int) -> None:
         self.energy_level += energy
         self.energy_level = min(Constants.MAX_ENERGY_LEVEL, self.energy_level)
+
+    def error(self, msg: str) -> None:
+        self.logs.append(msg)
 
     def log(self, *args: object) -> None:
         if not self.debug:

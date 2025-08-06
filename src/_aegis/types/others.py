@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from enum import Enum
-from typing import override
+from typing import Any, override
 
 
 class CellType(Enum):
@@ -18,3 +19,7 @@ class CellType(Enum):
     @override
     def __repr__(self) -> str:
         return self.__str__()
+
+
+# `create_methods` return type
+MethodDict = dict[str, type | Callable[..., Any]]  # pyright: ignore[reportExplicitAny]

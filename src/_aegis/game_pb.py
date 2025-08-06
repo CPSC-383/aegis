@@ -19,7 +19,7 @@ from .server_websocket import WebSocketServer
 from .team import Team
 from .team_info import TeamInfo
 from .world import World
-from .world_proto import serialize_world
+from .world_pb import serialize_world
 
 
 class GamePb:

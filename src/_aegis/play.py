@@ -1,12 +1,15 @@
 from pathlib import Path
 
+from google.protobuf.message import DecodeError
+
 from .args_parser import Args
 from .game import Game
 from .game_pb import GamePb
 from .logger import LOGGER, setup_console_and_file_logging, setup_console_logging
+from .sandbox.sandbox import Sandbox
 from .server_websocket import WebSocketServer
 from .team import Team
-from .world_parser import load_world
+from .world_pb import load_world
 
 
 def make_game_start_string(args: Args, world: str) -> str:
@@ -21,31 +24,41 @@ def make_game_start_string(args: Args, world: str) -> str:
 
 
 def run(args: Args) -> None:
-    ws_server = WebSocketServer(wait_for_client=args.client)
-    game_pb = GamePb()
-
-    # Set up logging based on whether file logging is enabled
-    setup_console_and_file_logging() if args.log else setup_console_logging()
-
     if args.agent is None and args.agent2 is None:
         error = "At least one agent must be provided"
         raise ValueError(error)
+
+    sandbox_goobs = (
+        Sandbox.from_directory(Path("agents") / args.agent)
+        if args.agent is not None
+        else None
+    )
+    sandbox_seers = (
+        Sandbox.from_directory(Path("agents") / args.agent2)
+        if args.agent2 is not None
+        else None
+    )
+    ws_server = WebSocketServer(wait_for_client=args.client)
+    game_pb = GamePb()
+
+    setup_console_and_file_logging() if args.log else setup_console_logging()
 
     ws_server.start()
     game_pb.make_games_header(ws_server)
 
     for i, arg_world in enumerate(args.world):
         world_name = f"{arg_world}"
-        # Construct the full path to the world file
         world_path = Path("worlds") / f"{world_name}.world"
-        world = load_world(world_path)
-        if world is None:
+
+        try:
+            world = load_world(world_path)
+        except (FileNotFoundError, DecodeError) as e:
             error = f"Unable to load world {world_path}!"
-            raise ValueError(error)
+            raise ValueError(error) from e
 
         world.rounds = args.rounds
 
-        game = Game(args, world, game_pb)
+        game = Game([sandbox_goobs, sandbox_seers], args, world, game_pb)
 
         LOGGER.info("========== AEGIS START ==========")
         LOGGER.info(make_game_start_string(args, world_name))

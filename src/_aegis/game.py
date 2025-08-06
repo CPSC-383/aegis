@@ -15,14 +15,20 @@ from .constants import Constants
 from .game_pb import GamePb
 from .id_gen import IDGenerator
 from .logger import LOGGER
+from .sandbox.sandbox import Sandbox
 from .team import Team
 from .team_info import TeamInfo
+from .types import MethodDict
+from .types.prediction import PredictionLabel, SurvivorID
 from .world import World
 
 
 class Game:
-    def __init__(self, args: Args, world: World, game_pb: GamePb) -> None:
+    def __init__(
+        self, code: list[Sandbox | None], args: Args, world: World, game_pb: GamePb
+    ) -> None:
         random.seed(world.seed)
+        self.code: list[Sandbox | None] = code
         self.args: Args = args
         self.running: bool = True
         self.world: World = world
@@ -113,15 +119,10 @@ class Game:
     def spawn_agent(
         self, loc: Location, team: Team, agent_id: int | None = None
     ) -> None:
-        if agent_id is None:
-            agent_id = self.id_gen.next_id()
-        agent = Agent(
-            self, agent_id, loc, team, self.world.start_energy, debug=self.args.debug
-        )
+        agent_id = self.id_gen.next_id() if agent_id is None else agent_id
+        agent = Agent(self, agent_id, loc, team, self.world.start_energy)
         ac = AgentController(self, agent)
-        # Use the agent name directly
-        agent_name = self.team_agents[team]
-        agent.load(agent_name, self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
+        agent.launch(self.code[team.value], self.methods(ac), debug=self.args.debug)
         self.add_agent(agent, loc)
         self.team_info.add_units(agent.team, 1)
         self.game_pb.add_spawn(agent.id, agent.team, agent.location)
@@ -313,8 +314,8 @@ class Game:
         """
         return self._prediction_handler.read_pending_predictions(team)
 
-    def create_methods(self, ac: AgentController) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
-        methods: dict[str, Any] = {  # pyright: ignore[reportExplicitAny]
+    def methods(self, ac: AgentController) -> MethodDict:
+        return {
             "Direction": Direction,
             "Location": Location,
             "Rubble": Rubble,
@@ -341,8 +342,3 @@ class Game:
             "get_survs": self.get_survs,
             "log": ac.log,
         }
-
-        # if is_feature_enabled("ENABLE_PREDICTIONS"):
-        #     # methods["read_pending_predictions"] = ac.read_pending_predictions
-
-        return methods
