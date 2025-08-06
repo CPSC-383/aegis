@@ -1,11 +1,15 @@
 # ruff: noqa: F403 F405, INP001, D100
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import tensorflow as tf
 
 from aegis.stub import *
+
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
 
 
 def think() -> None:
@@ -21,10 +25,12 @@ def think() -> None:
     # Fetch the cell at the agent's current location.
     # If you want to check a different location, use `on_map(loc)` first
     # to ensure it's within the world bounds. The agent's own location is always valid.
-    cell = get_cell_info_at(get_location())
+    cell: CellInfo = get_cell_info_at(get_location())
 
     # If there is a pending prediction from a save survivour for our team, predict!
-    prediction_info = read_pending_predictions()
+    prediction_info: list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]] = (
+        read_pending_predictions()
+    )
     if prediction_info:
         # grab just the first pending prediction
         surv_saved_id, image_to_predict, _ = prediction_info[0]

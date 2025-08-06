@@ -1,5 +1,8 @@
 import random
-from typing import Any
+from typing import cast
+
+import numpy as np
+from numpy.typing import NDArray
 
 from _aegis.args_parser import Args
 from _aegis.logger import LOGGER
@@ -7,14 +10,12 @@ from _aegis.team import Team
 from _aegis.types.prediction import (
     CompletedPrediction,
     PendingPrediction,
-    PredictionLabel,
-    SurvivorID,
 )
 
 from .data_loader import PredictionDataLoader
 
-PendingPredictions = dict[tuple[Team, SurvivorID], PendingPrediction]
-CompletedPredictions = dict[tuple[Team, SurvivorID], CompletedPrediction]
+PendingPredictions = dict[tuple[Team, int], PendingPrediction]
+CompletedPredictions = dict[tuple[Team, int], CompletedPrediction]
 
 
 class PredictionHandler:
@@ -23,36 +24,38 @@ class PredictionHandler:
         self._completed_predictions: CompletedPredictions = {}
         self._data_loader: PredictionDataLoader = PredictionDataLoader(args)
 
-    def get_image_from_index(self, index: int) -> Any:  # noqa: ANN401
-        return self._data_loader.x_test[index]
+    def get_image_from_index(self, index: int) -> NDArray[np.uint8]:
+        return cast("NDArray[np.uint8]", self._data_loader.x_test[index])
 
-    def get_label_from_index(self, index: int) -> PredictionLabel:
-        return self._data_loader.y_test[index]
+    def get_label_from_index(self, index: int) -> NDArray[np.int32]:
+        return cast("NDArray[np.int32]", self._data_loader.y_test[index])
 
-    def create_pending_prediction(self, team: Team, surv_id: SurvivorID) -> None:
+    def create_pending_prediction(self, team: Team, surv_id: int) -> None:
         """
         Create a pending prediction for a team-survivor combination.
 
         If one already exists, this method does nothing.
         """
-        key: tuple[Team, SurvivorID] = (team, surv_id)
+        key: tuple[Team, int] = (team, surv_id)
 
         # Only create if no pending prediction exists
         if key not in self._pending_predictions:
-            random_index = random.randint(0, self._data_loader.num_testing_images - 1)
+            random_index = random.randint(0, len(self._data_loader.x_test) - 1)
             pending_prediction: PendingPrediction = {
                 "image_to_predict": self.get_image_from_index(random_index),
                 "correct_label": self.get_label_from_index(random_index),
             }
             self._pending_predictions[key] = pending_prediction
 
-    def read_pending_predictions(self, team: Team) -> list[tuple[SurvivorID, Any, Any]]:
+    def read_pending_predictions(
+        self, team: Team
+    ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
         """
         Agents call this to get all pending predictions for their team. Gives them the data of the pending prediction, without the correct label.
 
         Returns list of tuples: (surv_id, image_to_predict, all_unique_labels)
         """
-        pending_list = []
+        pending_list: list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]] = []
         for (
             team_key,
             surv_id,
@@ -67,9 +70,7 @@ class PredictionHandler:
                 )
         return pending_list
 
-    def predict(
-        self, team: Team, surv_id: SurvivorID, prediction: PredictionLabel
-    ) -> bool | None:
+    def predict(self, team: Team, surv_id: int, prediction: int) -> bool | None:
         """
         Process a prediction for a specific team-survivor combination.
 
@@ -78,7 +79,7 @@ class PredictionHandler:
             - None: If no valid pending prediction exists (already predicted or never created)
 
         """
-        key: tuple[Team, SurvivorID] = (team, surv_id)
+        key: tuple[Team, int] = (team, surv_id)
 
         # Check if there's a valid pending prediction
         if key not in self._pending_predictions:
@@ -89,7 +90,7 @@ class PredictionHandler:
 
         # Get the pending prediction and check if correct
         pending_prediction = self._pending_predictions[key]
-        is_correct = pending_prediction["correct_label"] == prediction
+        is_correct: bool = bool(pending_prediction["correct_label"]) == prediction
 
         # Create completed prediction
         completed_prediction: CompletedPrediction = {

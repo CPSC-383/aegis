@@ -4,20 +4,18 @@
 # pyright: reportUnusedImport=false
 # pyright: reportUnusedParameter=false
 
-from typing import Any
+import numpy as np
+from numpy.typing import NDArray
 
 from _aegis.common.cell_contents import CellContents
 
 from . import (
-    AgentCommand,
     CellInfo,
     Direction,
     Location,
     Message,
-    Observe,
     Rubble,
     Survivor,
-    SurvivorID,
 )
 
 # import the predict command if predictions are enabled
@@ -180,12 +178,14 @@ def log(*args: object) -> None:
     """
 
 
-def read_pending_predictions() -> list[tuple[SurvivorID, Any, Any]]:
+def read_pending_predictions() -> list[
+    tuple[int, NDArray[np.uint8], NDArray[np.int32]]
+]:
     """
     Retrieve the list of pending predictions stored by the agent's team.
 
     Returns:
-        list[tuple[SurvivorID, Any, Any]]: A list of tuples representing pending survivor predictions.
+        list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]: A list of tuples representing pending survivor predictions.
             Returns an empty list if no pending predictions are available.
 
     """

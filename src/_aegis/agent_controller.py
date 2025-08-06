@@ -8,7 +8,6 @@ from .common.objects.survivor import Survivor
 from .constants import Constants
 from .message import Message
 from .team import Team
-from .types.prediction import SurvivorID
 
 if TYPE_CHECKING:
     from .agent import Agent
@@ -168,7 +167,7 @@ class AgentController:
 
     def read_pending_predictions(
         self,
-    ) -> list[tuple[SurvivorID, Any, Any]]:
+    ) -> list[tuple[int, Any, Any]]:
         return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:

@@ -1,19 +1,19 @@
-from typing import Any, NewType, TypedDict
+from typing import TypedDict
+
+import numpy as np
+from numpy.typing import NDArray
 
 from _aegis.team import Team
-
-SurvivorID = NewType("SurvivorID", int)
-PredictionLabel = NewType("PredictionLabel", int)
 
 
 # Type for pending predictions
 class PendingPrediction(TypedDict):
-    image_to_predict: Any
-    correct_label: PredictionLabel
+    image_to_predict: NDArray[np.uint8]
+    correct_label: NDArray[np.int32]
 
 
 # Type for completed predictions
 class CompletedPrediction(TypedDict):
     team: Team
-    surv_id: SurvivorID
+    surv_id: int
     is_correct: bool

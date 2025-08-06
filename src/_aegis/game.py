@@ -1,6 +1,9 @@
 import random
 from typing import Any
 
+import numpy as np
+from numpy.typing import NDArray
+
 from .aegis_config import is_feature_enabled
 from .agent import Agent
 from .agent_controller import AgentController
@@ -14,7 +17,6 @@ from .id_gen import IDGenerator
 from .logger import LOGGER
 from .team import Team
 from .team_info import TeamInfo
-from .types.prediction import PredictionLabel, SurvivorID
 from .world import World
 
 
@@ -224,7 +226,7 @@ class Game:
         if is_feature_enabled("ENABLE_PREDICTIONS"):
             self._prediction_handler.create_pending_prediction(
                 agent.team,
-                SurvivorID(survivor.id),
+                int(survivor.id),
             )
 
         self.remove_layer(agent.location)
@@ -250,7 +252,7 @@ class Game:
             return
 
         is_correct = self._prediction_handler.predict(
-            agent.team, SurvivorID(surv_id), PredictionLabel(label)
+            agent.team, surv_id, label
         )
 
         if is_correct is None:
@@ -294,9 +296,7 @@ class Game:
     def get_charging_cells(self) -> list[Location]:
         return [cell.location for cell in self.world.cells if cell.is_charging_cell()]
 
-    def get_prediction_info_for_agent(
-        self, team: Team
-    ) -> list[tuple[SurvivorID, Any, Any]]:
+    def get_prediction_info_for_agent(self, team: Team) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
         """
         Get prediction information for a survivour saved by an agent's team.
 
