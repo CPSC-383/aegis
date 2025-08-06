@@ -56,6 +56,15 @@ export default function Console({ output }: Props): JSX.Element {
             const matches =
               searchTerm &&
               line.content.toLowerCase().includes(searchTerm.toLowerCase())
+
+            if (
+              line.content.toLowerCase().includes("tensorflow") &&
+              (line.content.toLowerCase().includes("warning") ||
+                line.content.toLowerCase().includes("onednn"))
+            ) {
+              line.has_error = false
+            }
+
             return (
               <div
                 key={i}
