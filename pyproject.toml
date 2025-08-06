@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "aegis"
+name = "aegis-game"
 description = "Survivor Simulation for CPSC383"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -17,11 +17,11 @@ dependencies = [
 dynamic = ["version"]
 
 [tool.hatch.version]
-path = "src/aegis/__init__.py"
+path = "src/aegis-game/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = [
-    "src/aegis",
+    "src/aegis-game",
     "src/_aegis",
 ]
 
