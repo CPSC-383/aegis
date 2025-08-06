@@ -59,7 +59,7 @@ class NodeTransformer(RestrictingNodeTransformer):
 class Sandbox:
     def __init__(self, methods) -> None:
         self.byte_code = None
-        self.allowed_modules = {"os", "pathlib", "random", "heapq", "math", "json", "re", "enum", "numpy", "tensorflow", "tf"}
+        self.allowed_modules = {"os", "typing", "pathlib", "random", "heapq", "math", "json", "re", "enum", "numpy", "tensorflow", "tf"}
 
         builtins = {}
         namespace = {}

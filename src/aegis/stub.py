@@ -18,12 +18,6 @@ from . import (
     Survivor,
 )
 
-# import the predict command if predictions are enabled
-# try:
-#     from . import Predict
-# except ImportError:
-#     pass
-
 
 def get_round_number() -> int:
     """Return the current round number."""
@@ -71,7 +65,7 @@ def recharge() -> None:
     """
 
 
-def predict(surv_id: int, label: int) -> None:
+def predict(surv_id: int, label: np.int32) -> None:
     """
     Submit a prediction.
 
@@ -185,7 +179,7 @@ def read_pending_predictions() -> list[
     Retrieve the list of pending predictions stored by the agent's team.
 
     Returns:
-        list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]: A list of tuples representing pending survivor predictions.
+        list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]: A list of tuples representing pending survivor predictions (surv_id, image_to_predict, all_unique_labels).
             Returns an empty list if no pending predictions are available.
 
     """

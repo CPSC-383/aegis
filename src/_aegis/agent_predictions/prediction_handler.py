@@ -23,12 +23,13 @@ class PredictionHandler:
         self._pending_predictions: PendingPredictions = {}
         self._completed_predictions: CompletedPredictions = {}
         self._data_loader: PredictionDataLoader = PredictionDataLoader(args)
+        self._args: Args = args
 
     def get_image_from_index(self, index: int) -> NDArray[np.uint8]:
         return cast("NDArray[np.uint8]", self._data_loader.x_test[index])
 
-    def get_label_from_index(self, index: int) -> NDArray[np.int32]:
-        return cast("NDArray[np.int32]", self._data_loader.y_test[index])
+    def get_label_from_index(self, index: int) -> np.int32:
+        return cast("np.int32", self._data_loader.y_test[index])
 
     def create_pending_prediction(self, team: Team, surv_id: int) -> None:
         """
@@ -46,6 +47,9 @@ class PredictionHandler:
                 "correct_label": self.get_label_from_index(random_index),
             }
             self._pending_predictions[key] = pending_prediction
+            LOGGER.info(
+                f"Created pending prediction for team {team} and surv_id {surv_id}"
+            )
 
     def read_pending_predictions(
         self, team: Team
@@ -55,6 +59,7 @@ class PredictionHandler:
 
         Returns list of tuples: (surv_id, image_to_predict, all_unique_labels)
         """
+        LOGGER.info(f"Reading pending predictions for team {team}")
         pending_list: list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]] = []
         for (
             team_key,
@@ -68,9 +73,10 @@ class PredictionHandler:
                         self._data_loader.unique_labels,
                     )
                 )
+        LOGGER.info(f"Found {len(pending_list)} pending predictions for team {team}")
         return pending_list
 
-    def predict(self, team: Team, surv_id: int, prediction: int) -> bool | None:
+    def predict(self, team: Team, surv_id: int, prediction: np.int32) -> bool | None:
         """
         Process a prediction for a specific team-survivor combination.
 
@@ -88,18 +94,19 @@ class PredictionHandler:
             )
             return None
 
-        # Get the pending prediction and check if correct
         pending_prediction = self._pending_predictions[key]
-        is_correct: bool = bool(pending_prediction["correct_label"]) == prediction
+        is_correct: bool = pending_prediction["correct_label"] == prediction
 
-        # Create completed prediction
+        LOGGER.info(
+            f"Predicting surv_id {surv_id} for team {team} with prediction {prediction} and correct label {pending_prediction['correct_label']}"
+        )
+
         completed_prediction: CompletedPrediction = {
             "team": team,
             "surv_id": surv_id,
             "is_correct": is_correct,
         }
 
-        # Move from pending to completed
         self._completed_predictions[key] = completed_prediction
         del self._pending_predictions[key]
 

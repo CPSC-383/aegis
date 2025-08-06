@@ -1,7 +1,7 @@
 # ruff: noqa: F403 F405, INP001, D100
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
 import tensorflow as tf
@@ -28,9 +28,7 @@ def think() -> None:
     cell: CellInfo = get_cell_info_at(get_location())
 
     # If there is a pending prediction from a save survivour for our team, predict!
-    prediction_info: list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]] = (
-        read_pending_predictions()
-    )
+    prediction_info = read_pending_predictions()
     if prediction_info:
         # grab just the first pending prediction
         surv_saved_id, image_to_predict, _ = prediction_info[0]
@@ -49,13 +47,15 @@ def think() -> None:
 
         # Make prediction
         predictions = model(image)
-        predicted_label = int(np.argmax(predictions[0]))
+        predicted_label = cast(np.int32, np.argmax(predictions[0]))
         confidence = float(np.max(predictions[0]))
 
         log(f"Predicted symbol: {predicted_label} with confidence: {confidence:.4f}")
 
         # Send the prediction using the survivor ID from the save result
         predict(surv_saved_id, predicted_label)
+    else:
+        log("No pending predictions")
 
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and make a prediction.

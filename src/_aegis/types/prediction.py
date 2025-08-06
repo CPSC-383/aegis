@@ -9,7 +9,7 @@ from _aegis.team import Team
 # Type for pending predictions
 class PendingPrediction(TypedDict):
     image_to_predict: NDArray[np.uint8]
-    correct_label: NDArray[np.int32]
+    correct_label: np.int32
 
 
 # Type for completed predictions

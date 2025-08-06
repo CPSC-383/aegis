@@ -223,10 +223,14 @@ class Game:
         self.team_info.add_saved(agent.team, 1, is_alive=is_alive)
         self.team_info.add_score(agent.team, points)
 
+        LOGGER.info(f"Saving survivor {survivor.id} for team {agent.team}")
         if is_feature_enabled("ENABLE_PREDICTIONS"):
+            LOGGER.info(
+                f"Creating pending prediction for team {agent.team} and surv_id {survivor.id}"
+            )
             self._prediction_handler.create_pending_prediction(
                 agent.team,
-                int(survivor.id),
+                survivor.id,
             )
 
         self.remove_layer(agent.location)
@@ -247,7 +251,7 @@ class Game:
         agent.add_energy(energy)
         self.remove_layer(cell.location)
 
-    def predict(self, surv_id: int, label: int, agent: Agent) -> None:
+    def predict(self, surv_id: int, label: np.int32, agent: Agent) -> None:
         if not is_feature_enabled("ENABLE_PREDICTIONS"):
             return
 
@@ -309,8 +313,8 @@ class Game:
         """
         return self._prediction_handler.read_pending_predictions(team)
 
-    def create_methods(self, ac: AgentController) -> dict[str, Any]:
-        return {
+    def create_methods(self, ac: AgentController) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
+        methods: dict[str, Any] = { # pyright: ignore[reportExplicitAny]
             "Direction": Direction,
             "Location": Location,
             "Rubble": Rubble,
@@ -332,8 +336,13 @@ class Game:
             "get_cell_contents_at": ac.get_cell_contents_at,
             "on_map": self.on_map,
             "get_charging_cells": self.get_charging_cells,
+            "read_pending_predictions": ac.read_pending_predictions,
             "get_spawns": self.get_spawns,
             "get_survs": self.get_survs,
-            "read_pending_predictions": ac.read_pending_predictions,
             "log": ac.log,
         }
+
+        # if is_feature_enabled("ENABLE_PREDICTIONS"):
+        #     # methods["read_pending_predictions"] = ac.read_pending_predictions
+
+        return methods
