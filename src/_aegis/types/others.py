@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from enum import Enum
-from typing import override
+from typing import Any, override
 
 
 class CellType(Enum):
@@ -18,3 +19,13 @@ class CellType(Enum):
     @override
     def __repr__(self) -> str:
         return self.__str__()
+
+
+class GameOverReason(Enum):
+    ALL_AGENTS_DEAD = "All team agents are dead"
+    ALL_SURVIVORS_SAVED = "All survivors have been rescued"
+    MAX_ROUNDS_REACHED = "Maximum number of rounds reached"
+
+
+# `create_methods` return type
+MethodDict = dict[str, type | Callable[..., Any]]  # pyright: ignore[reportExplicitAny]

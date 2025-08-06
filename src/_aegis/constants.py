@@ -12,6 +12,7 @@ class Constants:
     # Game constants
     DEFAULT_MAX_ROUNDS: int = 1000
     MESSAGE_HISTORY_LIMIT: int = 5
+    MAX_TURN_TIME_LIMIT: float = 1.0
 
     # Points constants
     SURVIVOR_SAVE_ALIVE_SCORE: int = 100

@@ -1,5 +1,6 @@
 import random
-from typing import Any
+import time
+from collections.abc import Callable
 
 import numpy as np
 from numpy.typing import NDArray
@@ -15,16 +16,22 @@ from .constants import Constants
 from .game_pb import GamePb
 from .id_gen import IDGenerator
 from .logger import LOGGER
+from .sandbox.sandbox import Sandbox
 from .team import Team
 from .team_info import TeamInfo
+from .types import GameOverReason, MethodDict
 from .world import World
 
 
 class Game:
-    def __init__(self, args: Args, world: World, game_pb: GamePb) -> None:
+    def __init__(
+        self, code: list[Sandbox | None], args: Args, world: World, game_pb: GamePb
+    ) -> None:
         random.seed(world.seed)
+        self.code: list[Sandbox | None] = code
         self.args: Args = args
         self.running: bool = True
+        self.reason: GameOverReason | None = None
         self.world: World = world
         self.round: int = 0
         self.id_gen: IDGenerator = IDGenerator()
@@ -52,39 +59,44 @@ class Game:
             for team in Team:
                 self.spawn_agent(loc, team)
 
+    def _run_turn(self, agent: Agent) -> None:
+        start = time.perf_counter()
+        agent.turn()
+        end = time.perf_counter()
+        duration = end - start
+        if duration >= Constants.MAX_TURN_TIME_LIMIT:
+            LOGGER.warning(
+                f"{agent.id}'s turn took {duration:.2f}s (over {Constants.MAX_TURN_TIME_LIMIT}s limit)"
+            )
+            self.kill_agent(agent.id)
+
     def run_round(self) -> None:
         self.tick_drone_scans()
         self.round += 1
         self.game_pb.start_round(self.round)
-        for agent in self.agents.values():
-            agent.run()
+        self.for_each_agent(self._run_turn)
         self.activate_pending_drone_scans()
         self.game_pb.send_drone_scan_update(self._drone_scans)
         self.serialize_team_info()
         self.grim_reaper()
         self.serialize_drone_scans()
         self.game_pb.end_round()
-        self.process_end_of_round()
+        self.check_game_over()
 
-    def _is_game_over(self) -> bool:
-        if self.round == self.world.rounds:
-            print()
-            LOGGER.info(f"Max rounds reached ({self.world.rounds}).")
-            return True
-
-        if len(self.agents) == 0:
-            print()
-            LOGGER.info("All agents are dead.")
-            return True
+    def check_game_over(self) -> None:
+        if self.round == self.world.rounds and self.reason is None:
+            self.reason = GameOverReason.MAX_ROUNDS_REACHED
 
         saved_goobs = self.team_info.get_saved(Team.GOOBS)
         saved_seers = self.team_info.get_saved(Team.VOIDSEERS)
-        if saved_goobs + saved_seers == self.world.total_survivors:
-            print()
-            LOGGER.info("All survivors saved.")
-            return True
+        if (
+            saved_goobs + saved_seers == self.world.total_survivors
+            and self.reason is None
+        ):
+            self.reason = GameOverReason.ALL_SURVIVORS_SAVED
 
-        return False
+        if self.reason is not None:
+            self.stop()
 
     def grim_reaper(self) -> None:
         dead_agents: list[Agent] = []
@@ -103,25 +115,41 @@ class Game:
                 dead_agents.append(agent)
 
         for agent in dead_agents:
-            self.remove_agent(agent.id)
+            self.kill_agent(agent.id)
 
-    def process_end_of_round(self) -> None:
-        if self._is_game_over():
-            self.running = False
+    def stop(self) -> None:
+        self.running = False
+        self.for_each_agent(lambda agent: self.kill_agent(agent.id))
+
+    def end_if_no_units(self, _team: Team) -> None:
+        if self.reason is not None:
             return
+
+        if len(self.agents) != 0:
+            return
+
+        # units = self.team_info.get_units(team)
+        # if units != 0:
+        #     return
+
+        self.reason = GameOverReason.ALL_AGENTS_DEAD
+
+    def kill_agent(self, agent_id: int) -> None:
+        agent = self.agents[agent_id]
+        del self.agents[agent_id]
+        self.remove_agent_from_loc(agent_id, agent.location)
+        agent.kill()
+        self.game_pb.add_dead(agent_id)
+        # self.team_info.add_units(agent.team, -1)
+        self.end_if_no_units(agent.team)
 
     def spawn_agent(
         self, loc: Location, team: Team, agent_id: int | None = None
     ) -> None:
-        if agent_id is None:
-            agent_id = self.id_gen.next_id()
-        agent = Agent(
-            self, agent_id, loc, team, self.world.start_energy, debug=self.args.debug
-        )
+        agent_id = self.id_gen.next_id() if agent_id is None else agent_id
+        agent = Agent(self, agent_id, loc, team, self.world.start_energy)
         ac = AgentController(self, agent)
-        # Use the agent name directly
-        agent_name = self.team_agents[team]
-        agent.load(agent_name, self.create_methods(ac))  # pyright: ignore[reportUnknownMemberType]
+        agent.launch(self.code[team.value], self.methods(ac), debug=self.args.debug)
         self.add_agent(agent, loc)
         self.team_info.add_units(agent.team, 1)
         self.game_pb.add_spawn(agent.id, agent.team, agent.location)
@@ -134,15 +162,12 @@ class Game:
             cell.agents.append(agent.id)
             LOGGER.info("Added agent %s", agent.id)
 
-    def remove_agent(self, agent_id: int) -> None:
-        agent = self.agents[agent_id]
-        del self.agents[agent_id]
-        cell = self.get_cell_at(agent.location)
-        cell.agents.remove(agent_id)
-        self.game_pb.add_dead(agent_id)
-
     def get_agent(self, agent_id: int) -> Agent:
         return self.agents[agent_id]
+
+    def for_each_agent(self, fn: Callable[[Agent], None]) -> None:
+        for agent in list(self.agents.values()):
+            fn(agent)
 
     def remove_layer(self, loc: Location) -> None:
         cell = self.get_cell_at(loc)
@@ -223,7 +248,9 @@ class Game:
         self.team_info.add_saved(agent.team, 1, is_alive=is_alive)
         self.team_info.add_score(agent.team, points)
 
-        LOGGER.info(f"Saving survivor {survivor.id} for team {agent.team}")
+        LOGGER.info(
+            f"Saving survivor {survivor.id} at {agent.location} for team {agent.team}"
+        )
         if is_feature_enabled("ENABLE_PREDICTIONS"):
             LOGGER.info(
                 f"Creating pending prediction for team {agent.team} and surv_id {survivor.id}"
@@ -313,8 +340,8 @@ class Game:
         """
         return self._prediction_handler.read_pending_predictions(team)
 
-    def create_methods(self, ac: AgentController) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
-        methods: dict[str, Any] = {  # pyright: ignore[reportExplicitAny]
+    def methods(self, ac: AgentController) -> MethodDict:
+        return {
             "Direction": Direction,
             "Location": Location,
             "Rubble": Rubble,
@@ -341,8 +368,3 @@ class Game:
             "get_survs": self.get_survs,
             "log": ac.log,
         }
-
-        # if is_feature_enabled("ENABLE_PREDICTIONS"):
-        #     # methods["read_pending_predictions"] = ac.read_pending_predictions
-
-        return methods

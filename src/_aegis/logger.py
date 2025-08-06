@@ -15,20 +15,34 @@ class MaxLevelFilter(logging.Filter):
         return record.levelno <= self.max_level
 
 
+class LevelBasedFormatter(logging.Formatter):
+    @override
+    def format(self, record: logging.LogRecord) -> str:
+        if record.name == "aegis":
+            if record.levelno >= logging.WARNING:
+                self._style._fmt = "[aegis:%(levelname)s] %(message)s"  # noqa: SLF001
+            else:
+                self._style._fmt = "[aegis] %(message)s"  # noqa: SLF001
+        return super().format(record)
+
+
 def setup_console_logging() -> None:
     """Set up basic console logging without file output."""
+    formatter: logging.Formatter = LevelBasedFormatter()
+
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
     stdout_handler.setLevel(logging.DEBUG)
     stdout_handler.addFilter(MaxLevelFilter(logging.INFO))
+    stdout_handler.setFormatter(formatter)
 
     stderr_handler = logging.StreamHandler(stream=sys.stderr)
     stderr_handler.setLevel(logging.WARNING)
+    stderr_handler.setFormatter(formatter)
 
-    handlers = [stdout_handler, stderr_handler]
+    handlers: list[logging.Handler] = [stdout_handler, stderr_handler]
 
     logging.basicConfig(
         level=logging.INFO,
-        format="[%(levelname)s][%(name)s] - %(message)s",
         handlers=handlers,
         force=True,
     )
@@ -36,37 +50,39 @@ def setup_console_logging() -> None:
 
 def setup_console_and_file_logging() -> None:
     """Set up AEGIS logging with both console and file output."""
+    formatter: logging.Formatter = LevelBasedFormatter()
+
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
     stdout_handler.setLevel(logging.DEBUG)
     stdout_handler.addFilter(MaxLevelFilter(logging.INFO))
+    stdout_handler.setFormatter(formatter)
 
     stderr_handler = logging.StreamHandler(stream=sys.stderr)
     stderr_handler.setLevel(logging.WARNING)
+    stderr_handler.setFormatter(formatter)
 
-    # Create logs directory if it doesn't exist
-    logs_dir = Path("logs")
+    logs_dir: Path = Path("logs")
     logs_dir.mkdir(exist_ok=True)
 
-    # Generate unique filename with datetime
-    timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-    log_filename = f"aegis_simulation_{timestamp}.log"
-    log_file_path = logs_dir / log_filename
+    timestamp: str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
+    log_filename: str = f"aegis_simulation_{timestamp}.log"
+    log_file_path: Path = logs_dir / log_filename
 
-    file_handler = logging.FileHandler(log_file_path, mode="w", encoding="utf-8")
+    file_handler: logging.FileHandler = logging.FileHandler(
+        log_file_path, mode="w", encoding="utf-8"
+    )
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(
-        logging.Formatter("[%(levelname)s][%(name)s] - %(message)s")
+        logging.Formatter("[%(asctime)s][%(levelname)s][%(name)s] - %(message)s")
     )
 
-    handlers = [stdout_handler, stderr_handler, file_handler]
+    handlers: list[logging.Handler] = [stdout_handler, stderr_handler, file_handler]
 
     logging.basicConfig(
         level=logging.INFO,
-        format="[%(levelname)s][%(name)s] - %(message)s",
         handlers=handlers,
         force=True,
     )
 
 
-# AEGIS logger - used for both simulation events and agent logging
-LOGGER = logging.getLogger("aegis")
+LOGGER: logging.Logger = logging.getLogger("aegis")

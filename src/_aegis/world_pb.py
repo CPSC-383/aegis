@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from google.protobuf.message import DecodeError
 
 from .common import Cell
@@ -106,3 +108,8 @@ def deserialize_world(data: bytes) -> World:
         proto_world.start_energy,
         cells,
     )
+
+
+def load_world(filename: Path) -> World:
+    with filename.open("rb") as file:
+        return deserialize_world(file.read())

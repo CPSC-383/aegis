@@ -5,7 +5,7 @@ import threading
 import time
 from typing import NamedTuple
 
-from websocket_server import WebsocketServer  # pyright: ignore[reportMissingTypeStubs]
+from websocket_server import WebsocketServer
 
 from .logger import LOGGER
 
