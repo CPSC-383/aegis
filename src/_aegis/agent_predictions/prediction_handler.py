@@ -47,9 +47,6 @@ class PredictionHandler:
                 "correct_label": self.get_label_from_index(random_index),
             }
             self._pending_predictions[key] = pending_prediction
-            LOGGER.info(
-                f"Created pending prediction for team {team} and surv_id {surv_id}"
-            )
 
     def read_pending_predictions(
         self, team: Team
@@ -59,7 +56,6 @@ class PredictionHandler:
 
         Returns list of tuples: (surv_id, image_to_predict, all_unique_labels)
         """
-        LOGGER.info(f"Reading pending predictions for team {team}")
         pending_list: list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]] = []
         for (
             team_key,
@@ -73,7 +69,6 @@ class PredictionHandler:
                         self._data_loader.unique_labels,
                     )
                 )
-        LOGGER.info(f"Found {len(pending_list)} pending predictions for team {team}")
         return pending_list
 
     def predict(self, team: Team, surv_id: int, prediction: np.int32) -> bool | None:
@@ -96,10 +91,6 @@ class PredictionHandler:
 
         pending_prediction = self._pending_predictions[key]
         is_correct: bool = pending_prediction["correct_label"] == prediction
-
-        LOGGER.info(
-            f"Predicting surv_id {surv_id} for team {team} with prediction {prediction} and correct label {pending_prediction['correct_label']}"
-        )
 
         completed_prediction: CompletedPrediction = {
             "team": team,

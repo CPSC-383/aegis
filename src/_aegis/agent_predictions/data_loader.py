@@ -43,7 +43,6 @@ class PredictionDataLoader:
         self.x_test = cast("NDArray[np.uint8]", np.load(x_path))
         self.y_test = cast("NDArray[np.int32]", np.load(y_path))
         self.unique_labels = np.unique(self.y_test)
-        print(f"Loaded {len(self.x_test)} test images and {len(self.y_test)} labels")
 
     @property
     def num_testing_images(self) -> int:
