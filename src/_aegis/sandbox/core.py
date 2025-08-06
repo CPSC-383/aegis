@@ -42,6 +42,7 @@ class LumenCore:
 
         self.allowed_modules: set[str] = {
             "os",
+            "typing",
             "pathlib",
             "random",
             "heapq",

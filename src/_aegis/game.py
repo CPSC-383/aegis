@@ -37,6 +37,7 @@ class Game:
         self.id_gen: IDGenerator = IDGenerator()
         self.team_info: TeamInfo = TeamInfo()
         self.game_pb: GamePb = game_pb
+        self._queued_layers_to_remove: set[Location] = set()
         self._drone_scans: dict[Location, dict[Team, int]] = {}
         self._pending_drone_scans: dict[Location, dict[Team, int]] = {}
         self._prediction_handler: PredictionHandler = PredictionHandler(args)
@@ -117,6 +118,8 @@ class Game:
         for agent in dead_agents:
             self.kill_agent(agent.id)
 
+        self.process_layers_queued_to_be_removed()
+
     def stop(self) -> None:
         self.running = False
         self.for_each_agent(lambda agent: self.kill_agent(agent.id))
@@ -168,6 +171,14 @@ class Game:
     def for_each_agent(self, fn: Callable[[Agent], None]) -> None:
         for agent in list(self.agents.values()):
             fn(agent)
+
+    def queue_layer_to_remove(self, loc: Location) -> None:
+        self._queued_layers_to_remove.add(loc)
+
+    def process_layers_queued_to_be_removed(self) -> None:
+        for loc in self._queued_layers_to_remove:
+            self.remove_layer(loc)
+        self._queued_layers_to_remove.clear()
 
     def remove_layer(self, loc: Location) -> None:
         cell = self.get_cell_at(loc)
@@ -260,7 +271,7 @@ class Game:
                 survivor.id,
             )
 
-        self.remove_layer(agent.location)
+        self.queue_layer_to_remove(agent.location)
 
     def dig(self, rubble: Rubble, agent: Agent) -> None:
         cell = self.get_cell_at(agent.location)
@@ -276,7 +287,7 @@ class Game:
         # Add back the dig energy if it was a valid dig
         energy = -rubble.energy_required + Constants.DIG_ENERGY_COST
         agent.add_energy(energy)
-        self.remove_layer(cell.location)
+        self.queue_layer_to_remove(cell.location)
 
     def predict(self, surv_id: int, label: np.int32, agent: Agent) -> None:
         if not is_feature_enabled("ENABLE_PREDICTIONS"):

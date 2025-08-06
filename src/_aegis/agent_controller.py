@@ -171,6 +171,10 @@ class AgentController:
     def read_pending_predictions(
         self,
     ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
+        if not is_feature_enabled("ENABLE_PREDICTION"):
+            msg = "Predictions are not enabled, therefore this method is not available."
+            raise AgentError(msg)
+
         return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:
