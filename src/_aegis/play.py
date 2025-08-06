@@ -2,6 +2,8 @@ from pathlib import Path
 
 from google.protobuf.message import DecodeError
 
+from _aegis.aegis_config import is_feature_enabled
+
 from .args_parser import Args
 from .game import Game
 from .game_pb import GamePb
@@ -17,8 +19,12 @@ def log_game_end(game: Game, args: Args, i: int) -> None:
     LOGGER.info(f"Finished on round {game.round}")
     LOGGER.info(f"Reason: {getattr(game.reason, 'value', 'Unknown')}")
     LOGGER.info("")
-    LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
-    LOGGER.info("-" * 46)
+    LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8}")
+    if is_feature_enabled("ENABLE_PREDICTIONS"):
+        LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
+        LOGGER.info("-" * 46)
+    else:
+        LOGGER.info("-" * 31)
 
     for team in Team:
         if team == Team.VOIDSEERS and args.agent2 is None:
@@ -28,9 +34,15 @@ def log_game_end(game: Game, args: Args, i: int) -> None:
         saved = game.team_info.get_saved(team)
         predictions = game.team_info.get_predicted_right(team)
 
-        LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
+        if is_feature_enabled("ENABLE_PREDICTIONS"):
+            LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
+        else:
+            LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8}")
 
-    LOGGER.info("=" * 46)
+    if is_feature_enabled("ENABLE_PREDICTIONS"):
+        LOGGER.info("=" * 46)
+    else:
+        LOGGER.info("=" * 31)
 
     if i < len(args.world) - 1:
         print("\n" + "=" * 80 + "\n\n")
