@@ -33,22 +33,23 @@ class Agent:
         self.message_buffer: MessageBuffer = MessageBuffer()
         self.steps_taken: int = 0
         self.debug: bool = False
-        self.logs: list[str] = []
+        self.errors: list[str] = []
 
-    def run(self) -> None:
+    def process_beginning_of_turn(self) -> None:
         if self.core is None:
-            error = "Trying to run an agent that hasn't laucnhed"
+            error = "Trying to run an agent that hasn't launched"
             raise RuntimeError(error)
 
-        self.core.think()
-
-        for log in self.logs:
-            self.log(log)
-
-        self.logs.clear()
-
+    def process_end_of_turn(self) -> None:
         self.message_buffer.next_round(self.game.round + 1)
         self.game.game_pb.end_turn(self)
+
+    def turn(self) -> None:
+        self.process_beginning_of_turn()
+        self.errors.clear()
+        self.core.run()  # pyright: ignore[reportOptionalMemberAccess]
+        self.log_errors()
+        self.process_end_of_turn()
 
     def launch(
         self, code: Sandbox | None, methods: MethodDict, *, debug: bool = False
@@ -58,7 +59,6 @@ class Agent:
             raise ValueError(error)
 
         self.core = LumenCore(code, methods, self.error)
-        self.core.init()
         self.debug = debug
 
     def apply_movement_cost(self, direction: Direction) -> None:
@@ -74,7 +74,11 @@ class Agent:
         self.energy_level = min(Constants.MAX_ENERGY_LEVEL, self.energy_level)
 
     def error(self, msg: str) -> None:
-        self.logs.append(msg)
+        self.errors.append(msg)
+
+    def log_errors(self) -> None:
+        for error in self.errors:
+            self.log(error)
 
     def log(self, *args: object) -> None:
         if not self.debug:

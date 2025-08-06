@@ -63,7 +63,7 @@ class Game:
         self.round += 1
         self.game_pb.start_round(self.round)
         for agent in self.agents.values():
-            agent.run()
+            agent.turn()
         self.activate_pending_drone_scans()
         self.game_pb.send_drone_scan_update(self._drone_scans)
         self.serialize_team_info()

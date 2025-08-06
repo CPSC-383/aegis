@@ -4,7 +4,8 @@ import builtins as py_builtins
 import traceback
 import types
 from collections.abc import Callable, Mapping, Sequence
-from typing import Any
+from threading import Event, Thread
+from typing import Any, override
 
 from RestrictedPython import (
     Guards,
@@ -21,8 +22,13 @@ class LumenCore:
     def __init__(
         self, code: Sandbox, methods: MethodDict, error: Callable[..., None]
     ) -> None:
-        self.error: Callable[..., None] = error
         self.code: Sandbox = code
+        self.methods: MethodDict = methods
+        self.error: Callable[..., None] = error
+        self.initialized: bool = False
+        self.thread: LumenThread = LumenThread(self)
+        self.thread.start()
+
         self.allowed_modules: set[str] = {
             "os",
             "pathlib",
@@ -37,40 +43,46 @@ class LumenCore:
             "tf",
         }
 
-        builtins: MethodDict = {}
-        namespace = {}
-        builtins.update({**safe_builtins, **limited_builtins, **methods})  # pyright: ignore[reportUnknownArgumentType]
-        for name in [
-            "all",
-            "any",
-            "list",
-            "dict",
-            "set",
-            "tuple",
-            "enumerate",
-            "reversed",
-            "max",
-            "min",
-            "sum",
-        ]:
-            builtins[name] = getattr(py_builtins, name)
+        self.namespace: dict[str, object] = self._build_namespace()
+
+    def _build_namespace(self) -> dict[str, object]:
+        builtins: MethodDict = {
+            **safe_builtins,
+            **limited_builtins,
+            **self.methods,
+            **{
+                name: getattr(py_builtins, name)
+                for name in [
+                    "all",
+                    "any",
+                    "list",
+                    "dict",
+                    "set",
+                    "tuple",
+                    "enumerate",
+                    "reversed",
+                    "max",
+                    "min",
+                    "sum",
+                ]
+            },
+        }
+
         builtins["__import__"] = self.custom_import
-        namespace.update(
-            {
-                "_getattr_": self.deny_private_attr,
-                "_getitem_": self.deny_private_items,
-                "_getiter_": self.default_guarded_iter,
-                "_write_": self.default_guarded_write,
-                "__metaclass__": type,
-                "_unpack_sequence_": Guards.guarded_unpack_sequence,
-                "_iter_unpack_sequence_": Guards.guarded_iter_unpack_sequence,
-            }
-        )
 
-        namespace["__builtins__"] = builtins
-        namespace["__name__"] = "__main__"
+        namespace: dict[str, object] = {
+            "__builtins__": builtins,
+            "__name__": "__main__",
+            "_getattr_": self.deny_private_attr,
+            "_getitem_": self.deny_private_items,
+            "_getiter_": self.default_guarded_iter,
+            "_write_": self.default_guarded_write,
+            "__metaclass__": type,
+            "_unpack_sequence_": Guards.guarded_unpack_sequence,
+            "_iter_unpack_sequence_": Guards.guarded_iter_unpack_sequence,
+        }
 
-        self.namespace: dict[str, object] = namespace
+        return namespace
 
     def default_guarded_iter(self, ob: object) -> object:
         return ob
@@ -86,7 +98,7 @@ class LumenCore:
         fromlist: Sequence[str] = (),
         level: int = 0,
     ) -> types.ModuleType:
-        if not (isinstance(fromlist, tuple)):
+        if not isinstance(fromlist, tuple):
             error = "Invalid import name"
             raise TypeError(error)
         if level != 0:
@@ -106,24 +118,78 @@ class LumenCore:
 
     @staticmethod
     def deny_private_items(obj: Mapping[Any, Any], item: object) -> object:  # pyright: ignore[reportExplicitAny]
-        if isinstance(item, str) and len(item) > 0 and item[0] == "_":
+        if isinstance(item, str) and item.startswith("_"):
             error = f"Access to private key '{item}' is denied."
             raise KeyError(error)
-
         return obj[item]  # pyright: ignore[reportAny]
 
     def init(self) -> None:
         try:
             exec(self.code["main"], self.namespace)  # noqa: S102
+            self.initialized = True
         except Exception:  # noqa: BLE001
             self.error(traceback.format_exc(limit=5))
 
     def think(self) -> None:
-        if "think" not in self.namespace or not callable(self.namespace.get("think")):
+        fn = self.namespace.get("think")
+        if not callable(fn):
             self.error("Think doesn't exist")
             return
-
         try:
-            self.namespace["think"]()  # pyright: ignore[reportCallIssue]
+            _ = fn()
         except Exception:  # noqa: BLE001
             self.error(traceback.format_exc(limit=5))
+
+    def run(self) -> None:
+        self.thread.trigger_turn()
+        self.thread.wait_for_turn()
+
+    def kill(self) -> None:
+        self.thread.kill()
+        self.thread.join()
+
+
+class LumenThread(Thread):
+    def __init__(self, runner: LumenCore) -> None:
+        super().__init__()
+        self.runner: LumenCore = runner
+        self.running: bool = True
+        self.paused: bool = False
+
+        self.run_event: Event = Event()
+        self.pause_event: Event = Event()
+        self.turn_done_event: Event = Event()
+
+    @override
+    def run(self) -> None:
+        while self.running:
+            _ = self.run_event.wait()
+            if not self.running:
+                break
+
+            if not self.runner.initialized:
+                self.runner.init()
+
+            self.runner.think()
+            self.run_event.clear()
+            self.turn_done_event.set()
+
+    def trigger_turn(self) -> None:
+        if self.paused:
+            self.pause_event.set()
+        else:
+            self.run_event.set()
+
+    def wait_for_turn(self) -> None:
+        _ = self.turn_done_event.wait()
+        _ = self.turn_done_event.clear()
+
+    def wait_for_resume(self) -> None:
+        self.turn_done_event.set()
+        _ = self.pause_event.wait()
+        self.pause_event.clear()
+
+    def kill(self) -> None:
+        self.running = False
+        self.run_event.set()
+        self.pause_event.set()
