@@ -1,5 +1,5 @@
 # ruff: noqa: F403 F405, INP001, D100
-from aegis.stub import *
+from .stub import *
 
 
 def think() -> None:
