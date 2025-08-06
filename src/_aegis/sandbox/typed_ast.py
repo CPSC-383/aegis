@@ -19,6 +19,8 @@ from RestrictedPython import RestrictingNodeTransformer
 
 
 class NodeTransformer(RestrictingNodeTransformer):
+    """Allow type annoation in RestrictedPython."""
+
     def doc_str(self, node: stmt) -> str | None:
         if (
             isinstance(node, Expr)

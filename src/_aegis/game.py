@@ -1,4 +1,5 @@
 import random
+import time
 from collections.abc import Callable
 
 import numpy as np
@@ -59,8 +60,15 @@ class Game:
                 self.spawn_agent(loc, team)
 
     def _run_turn(self, agent: Agent) -> None:
-        # TODO @dante: Add 1s timeout here
+        start = time.perf_counter()
         agent.turn()
+        end = time.perf_counter()
+        duration = end - start
+        if duration >= Constants.MAX_TURN_TIME_LIMIT:
+            LOGGER.warning(
+                f"{agent.id}'s turn took {duration:.2f}s (over {Constants.MAX_TURN_TIME_LIMIT}s limit)"
+            )
+            self.kill_agent(agent.id)
 
     def run_round(self) -> None:
         self.tick_drone_scans()

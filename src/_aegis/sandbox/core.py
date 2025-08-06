@@ -19,9 +19,20 @@ from .sandbox import Sandbox
 
 
 class LumenCore:
+    """Core executor for running agent code in a restricted, sandboxed environment."""
+
     def __init__(
         self, code: Sandbox, methods: MethodDict, error: Callable[..., None]
     ) -> None:
+        """
+        Initialize the LumenCore executor.
+
+        Args:
+            code: A sandboxed script containing the agent logic.
+            methods: A dictionary of allowed API methods for the agent.
+            error: A callback to report errors during execution.
+
+        """
         self.code: Sandbox = code
         self.methods: MethodDict = methods
         self.error: Callable[..., None] = error
@@ -46,6 +57,13 @@ class LumenCore:
         self.namespace: dict[str, object] = self._build_namespace()
 
     def _build_namespace(self) -> dict[str, object]:
+        """
+        Construct the restricted execution namespace for the agent.
+
+        Returns:
+            A dictionary representing the sandboxed execution environment.
+
+        """
         builtins: MethodDict = {
             **safe_builtins,
             **limited_builtins,
@@ -85,9 +103,11 @@ class LumenCore:
         return namespace
 
     def default_guarded_iter(self, ob: object) -> object:
+        """Bypass iteration restrictions (safe override for RestrictedPython)."""
         return ob
 
     def default_guarded_write(self, ob: object) -> object:
+        """Bypass write restrictions (safe override for RestrictedPython)."""
         return ob
 
     def custom_import(
@@ -98,12 +118,27 @@ class LumenCore:
         fromlist: Sequence[str] = (),
         level: int = 0,
     ) -> types.ModuleType:
-        if not isinstance(fromlist, tuple):
-            error = "Invalid import name"
-            raise TypeError(error)
+        """
+        Import guard for controlling allowed modules.
+
+        Disallows relative/private imports and validates modules against allowlist.
+        """
+        # Allow "import module" if it's in the allowed list
+        if not fromlist and name not in self.allowed_modules:
+            error = f"Import of module '{name}' is not allowed"
+            raise ImportError(error)
+
+        # Invalid imports
+        if fromlist and not isinstance(fromlist, tuple):
+            error = f"Invalid Import: {name}"
+            raise ImportError(error)
+
+        # Disallow relative imports
         if level != 0:
             error = f"Relative imports not allowed: {name}"
             raise ImportError(error)
+
+        # Disallow private imports
         if name.startswith("_") or name not in self.allowed_modules:
             error = f"Import of module '{name}' is not allowed"
             raise ImportError(error)
@@ -111,6 +146,7 @@ class LumenCore:
 
     @staticmethod
     def deny_private_attr(obj: object, attr: str) -> object:
+        """Deny access to private attributes."""
         if attr.startswith("_"):
             error = f"Access to private attribute '{attr}' is denied."
             raise AttributeError(error)
@@ -118,12 +154,14 @@ class LumenCore:
 
     @staticmethod
     def deny_private_items(obj: Mapping[Any, Any], item: object) -> object:  # pyright: ignore[reportExplicitAny]
+        """Deny access to private keys."""
         if isinstance(item, str) and item.startswith("_"):
             error = f"Access to private key '{item}' is denied."
             raise KeyError(error)
         return obj[item]  # pyright: ignore[reportAny]
 
     def init(self) -> None:
+        """Initialize the agent's main code."""
         try:
             exec(self.code["main"], self.namespace)  # noqa: S102
             self.initialized = True
@@ -131,6 +169,7 @@ class LumenCore:
             self.error(traceback.format_exc(limit=5))
 
     def think(self) -> None:
+        """Call the agent's `think()` function. Reports errors if not defined or fails."""
         fn = self.namespace.get("think")
         if not callable(fn):
             self.error("Think doesn't exist")
@@ -141,16 +180,27 @@ class LumenCore:
             self.error(traceback.format_exc(limit=5))
 
     def run(self) -> None:
+        """Triggers a turn execution in the LumenThread and waits for completion."""
         self.thread.trigger_turn()
         self.thread.wait_for_turn()
 
     def kill(self) -> None:
+        """Terminates the thread execution and waits for cleanup."""
         self.thread.kill()
         self.thread.join()
 
 
 class LumenThread(Thread):
+    """Manages a background thread for executing agent logic turn-by-turn."""
+
     def __init__(self, runner: LumenCore) -> None:
+        """
+        Initialize a turn-based thread runner.
+
+        Args:
+            runner: The LumenCore instance this thread manages.
+
+        """
         super().__init__()
         self.runner: LumenCore = runner
         self.running: bool = True
@@ -162,6 +212,7 @@ class LumenThread(Thread):
 
     @override
     def run(self) -> None:
+        """Thread loop. Waits for turn triggers and runs agent logic."""
         while self.running:
             _ = self.run_event.wait()
             if not self.running:
@@ -175,21 +226,25 @@ class LumenThread(Thread):
             self.turn_done_event.set()
 
     def trigger_turn(self) -> None:
+        """Signals the thread to start or resume a turn."""
         if self.paused:
             self.pause_event.set()
         else:
             self.run_event.set()
 
     def wait_for_turn(self) -> None:
+        """Wait for the current turn to finish."""
         _ = self.turn_done_event.wait()
         _ = self.turn_done_event.clear()
 
     def wait_for_resume(self) -> None:
+        """Wait for the thread to resume if paused."""
         self.turn_done_event.set()
         _ = self.pause_event.wait()
         self.pause_event.clear()
 
     def kill(self) -> None:
+        """Gracefully shuts down the thread."""
         self.running = False
         self.run_event.set()
         self.pause_event.set()
