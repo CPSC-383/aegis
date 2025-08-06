@@ -7,8 +7,8 @@ import { useRef, useState } from "react"
 
 import { createScaffold } from "@/services"
 import Console from "../Console"
-import InfoPanel from "../info-panel/Info-panel"
 import Editor from "../editor/Editor"
+import InfoPanel from "../info-panel/Info-panel"
 import Aegis from "./Aegis"
 import Game from "./Game"
 import Settings from "./Settings"
@@ -74,12 +74,22 @@ export default function Sidebar(): JSX.Element {
                   </TabsList>
                 </div>
 
-                <div className="overflow-auto scrollbar p-1">
+                <div className="flex-1 overflow-auto scrollbar p-1">
                   <TabsContent value={TabNames.Aegis}>
-                    <Aegis scaffold={scaffold} />
+                    <div className="flex flex-col gap-6 p-1">
+                      <Aegis scaffold={scaffold} />
+                      <div className="min-h-[200px]">
+                        <Console output={output} />
+                      </div>
+                    </div>
                   </TabsContent>
-                  <TabsContent value={TabNames.Game}>
-                    <Game />
+                  <TabsContent value={TabNames.Game} className="h-full">
+                    <div className="flex flex-col justify-between gap-6 p-1 h-full">
+                      <Game />
+                      <div className="min-h-[200px]">
+                        <Console output={output} />
+                      </div>
+                    </div>
                   </TabsContent>
                   <TabsContent value={TabNames.Editor}>
                     <Editor isOpen={selectedTab === TabNames.Editor} />
@@ -94,10 +104,6 @@ export default function Sidebar(): JSX.Element {
                 <div className="mt-4 rounded-md border border-red-300 bg-red-100 p-3 text-sm text-red-800">
                   <strong>Error:</strong> {spawnError}
                 </div>
-              )}
-
-              {(selectedTab === TabNames.Aegis || selectedTab === TabNames.Game) && (
-                <Console output={output} />
               )}
             </>
           )}

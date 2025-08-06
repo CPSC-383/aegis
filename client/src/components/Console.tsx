@@ -48,7 +48,7 @@ export default function Console({ output }: Props): JSX.Element {
 
   const renderOutput = (): JSX.Element => {
     return (
-      <div className="h-full p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
+      <div className="h-full min-h-[200px] p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
         {output
           .getItems()
           .filter((line) => line.gameIdx === Runner.games?.games.indexOf(game!))
@@ -75,7 +75,7 @@ export default function Console({ output }: Props): JSX.Element {
 
   return (
     <>
-      <div className="w-full h-full mt-8 flex flex-col overflow-auto">
+      <div className="w-full h-full min-h-[200px] flex flex-col overflow-auto">
         <div className="flex justify-between items-center mb-2">
           <h2 className="font-bold">Console</h2>
           <Button variant="ghost" size="icon" onClick={() => setIsPopupOpen(true)}>

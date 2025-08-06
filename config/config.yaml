@@ -3,8 +3,8 @@
 # General aegis features
 features:
   ENABLE_PREDICTIONS: false
-  ENABLE_VARIABLE_AGENT_AMOUNT: false
-  DEFAULT_AGENT_AMOUNT: 1
+  ENABLE_VARIABLE_AGENT_AMOUNT: true
+  DEFAULT_AGENT_AMOUNT: 4
 
 # Settings more specific to assignments, usually only assignments will decide to enable these
 assignment_specific:
