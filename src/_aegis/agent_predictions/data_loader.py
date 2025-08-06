@@ -1,11 +1,12 @@
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, cast
+
+import numpy as np
 
 from _aegis.args_parser import Args
-from _aegis.conditional_imports import get_numpy
 
-# Get numpy conditionally
-np = get_numpy()
+if TYPE_CHECKING:
+    from numpy.typing import NDArray
 
 
 class PredictionDataLoader:
@@ -20,9 +21,10 @@ class PredictionDataLoader:
 
         """
         self.args: Args = args
-        self._x_test: Any = None
-        self._y_test: Any = None
-        self._unique_labels: Any = None
+        self.x_test: NDArray[np.uint8] = np.array([])
+        self.y_test: NDArray[np.int32] = np.array([])
+        self.unique_labels: NDArray[np.int32] = np.array([])
+        self.load_testing_data()
 
     def load_testing_data(self) -> None:
         """Load testing data from the testing directory."""
@@ -38,47 +40,10 @@ class PredictionDataLoader:
             )
             raise FileNotFoundError(msg)
 
-        self._x_test = np.load(x_path)
-        self._y_test = np.load(y_path)
-        self._unique_labels = np.unique(self._y_test)
-
-    def load_training_data(self) -> tuple[Any, Any]:
-        """Load training data from the training directory."""
-        data_dir = Path("prediction_data/training")
-        x_path = data_dir / "x_train_symbols.npy"
-        y_path = data_dir / "y_train_symbols.npy"
-
-        if not x_path.exists() or not y_path.exists():
-            msg = (
-                f"Training data not found in {data_dir}. "
-                f"Expected files: x_train_symbols.npy, y_train_symbols.npy"
-            )
-            raise FileNotFoundError(msg)
-
-        x_train = np.load(x_path)
-        y_train = np.load(y_path)
-        return x_train, y_train
-
-    @property
-    def x_test(self) -> Any:  # noqa: ANN401
-        """Get the testing images."""
-        if self._x_test is None:
-            self.load_testing_data()
-        return self._x_test
-
-    @property
-    def y_test(self) -> Any:  # noqa: ANN401
-        """Get the testing labels."""
-        if self._y_test is None:
-            self.load_testing_data()
-        return self._y_test
-
-    @property
-    def unique_labels(self) -> Any:  # noqa: ANN401
-        """Get the unique labels."""
-        if self._unique_labels is None:
-            self.load_testing_data()
-        return self._unique_labels
+        self.x_test = cast("NDArray[np.uint8]", np.load(x_path))
+        self.y_test = cast("NDArray[np.int32]", np.load(y_path))
+        self.unique_labels = np.unique(self.y_test)
+        print(f"Loaded {len(self.x_test)} test images and {len(self.y_test)} labels")
 
     @property
     def num_testing_images(self) -> int:

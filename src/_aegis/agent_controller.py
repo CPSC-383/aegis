@@ -1,5 +1,8 @@
 # pyright: reportImportCycles = false
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
+
+import numpy as np
+from numpy.typing import NDArray
 
 from .aegis_config import is_feature_enabled
 from .common import CellContents, CellInfo, Direction, Location
@@ -8,7 +11,6 @@ from .common.objects.survivor import Survivor
 from .constants import Constants
 from .message import Message
 from .team import Team
-from .types.prediction import SurvivorID
 
 if TYPE_CHECKING:
     from .agent import Agent
@@ -106,7 +108,7 @@ class AgentController:
 
         self._game.dig(top_layer, self._agent)
 
-    def predict(self, surv_id: int, label: int) -> None:
+    def predict(self, surv_id: int, label: np.int32) -> None:
         # TODO @dante: assert predict
         self._game.predict(surv_id, label, self._agent)
 
@@ -168,7 +170,7 @@ class AgentController:
 
     def read_pending_predictions(
         self,
-    ) -> list[tuple[SurvivorID, Any, Any]]:
+    ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
         return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:

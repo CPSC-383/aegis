@@ -4,7 +4,6 @@ from _aegis.cli import main
 from _aegis.common import CellInfo, Direction, Location
 from _aegis.common.objects import Rubble, Survivor
 from _aegis.message import Message
-from _aegis.types.prediction import SurvivorID
 
 __all__ = [
     "CellInfo",
@@ -13,7 +12,6 @@ __all__ = [
     "Message",
     "Rubble",
     "Survivor",
-    "SurvivorID",
     "main",
 ]
 
