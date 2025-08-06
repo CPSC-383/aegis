@@ -251,9 +251,7 @@ class Game:
         if not is_feature_enabled("ENABLE_PREDICTIONS"):
             return
 
-        is_correct = self._prediction_handler.predict(
-            agent.team, surv_id, label
-        )
+        is_correct = self._prediction_handler.predict(agent.team, surv_id, label)
 
         if is_correct is None:
             LOGGER.warning(
@@ -296,7 +294,9 @@ class Game:
     def get_charging_cells(self) -> list[Location]:
         return [cell.location for cell in self.world.cells if cell.is_charging_cell()]
 
-    def get_prediction_info_for_agent(self, team: Team) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
+    def get_prediction_info_for_agent(
+        self, team: Team
+    ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
         """
         Get prediction information for a survivour saved by an agent's team.
 
