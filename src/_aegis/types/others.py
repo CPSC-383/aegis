@@ -1,6 +1,6 @@
 from collections.abc import Callable
 from enum import Enum
-from typing import Any, override
+from typing import Any, Literal, TypedDict, override
 
 
 class CellType(Enum):
@@ -25,6 +25,45 @@ class GameOverReason(Enum):
     ALL_AGENTS_DEAD = "All team agents are dead"
     ALL_SURVIVORS_SAVED = "All survivors have been rescued"
     MAX_ROUNDS_REACHED = "Maximum number of rounds reached"
+
+
+FeatureKey = Literal[
+    "ALLOW_AGENT_PREDICTIONS",
+    "ALLOW_DYNAMIC_SPAWNING",
+    "ALLOW_AGENT_MESSAGES",
+    "ALLOW_AGENT_ABILITIES",
+    "ALLOW_DYNAMIC_MOVE_COST",
+    "ALLOW_CUSTOM_AGENT_COUNT",
+    "DEFAULT_AGENT_AMOUNT",
+]
+
+CompetitionSettingKey = Literal["VERSUS_MODE",]
+
+ConfigType = Literal["assignment", "competition"]
+
+
+class FeaturesConfig(TypedDict):
+    ALLOW_AGENT_PREDICTIONS: bool
+    ALLOW_DYNAMIC_SPAWNING: bool
+    ALLOW_AGENT_MESSAGES: bool
+    ALLOW_AGENT_ABILITIES: bool
+    ALLOW_DYNAMIC_MOVE_COST: bool
+    ALLOW_CUSTOM_AGENT_COUNT: bool
+    DEFAULT_AGENT_AMOUNT: int
+
+
+class CompetitionConfig(TypedDict):
+    VERSUS_MODE: bool
+
+
+class ClientConfig(TypedDict):
+    CONFIG_TYPE: ConfigType
+
+
+class AegisConfig(TypedDict):
+    features: FeaturesConfig
+    competition_specific: CompetitionConfig
+    client: ClientConfig
 
 
 # `create_methods` return type

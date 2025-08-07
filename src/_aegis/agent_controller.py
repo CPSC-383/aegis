@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from numpy.typing import NDArray
 
-from .aegis_config import is_feature_enabled
+from .aegis_config import has_feature
 from .common import CellContents, CellInfo, Direction, Location
 from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
@@ -106,11 +106,11 @@ class AgentController:
         if top_layer is None or not isinstance(top_layer, Rubble):
             return
 
-        self._game.dig(top_layer, self._agent)
+        self._game.dig(self._agent)
 
     def predict(self, surv_id: int, label: np.int32) -> None:
         # TODO @dante: assert predict
-        if not is_feature_enabled("ENABLE_PREDICTION"):
+        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
             msg = "Predictions are not enabled, therefore this method is not available."
             raise AgentError(msg)
 
@@ -162,7 +162,7 @@ class AgentController:
         cell_info = self._game.get_cell_info_at(loc)
         cell_info.agents = []
         if (
-            not is_feature_enabled("ENABLE_MOVE_COST")
+            has_feature("ALLOW_DYNAMIC_MOVE_COST")
             and not self._agent.has_visited[loc.x + loc.y * self._game.world.width]
         ):
             cell_info.move_cost = 1
@@ -175,7 +175,7 @@ class AgentController:
     def read_pending_predictions(
         self,
     ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
-        if not is_feature_enabled("ENABLE_PREDICTION"):
+        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
             msg = "Predictions are not enabled, therefore this method is not available."
             raise AgentError(msg)
 

@@ -46,6 +46,7 @@ class Args:
 def parse_args() -> Args:
     parser = argparse.ArgumentParser(description="AEGIS Simulation")
     subparsers = parser.add_subparsers(dest="command", required=True)
+    default_agent_amount = get_feature_value("DEFAULT_AGENT_AMOUNT")
 
     run_parser = subparsers.add_parser("run", help="Run a game")
     _ = run_parser.add_argument(
@@ -58,7 +59,7 @@ def parse_args() -> Args:
     _ = run_parser.add_argument(
         "--amount",
         type=int,
-        default=get_feature_value("DEFAULT_AGENT_AMOUNT", 1),
+        default=default_agent_amount if default_agent_amount is not None else 1,
         help="Number of agents to run (default = 1)",
     )
     _ = run_parser.add_argument(

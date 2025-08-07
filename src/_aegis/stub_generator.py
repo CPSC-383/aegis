@@ -8,19 +8,39 @@ import ast
 from importlib import resources
 from pathlib import Path
 
-from _aegis.aegis_config import is_feature_enabled
+from .aegis_config import has_feature
 
-IS_PREDICTIONS_ENABLED = is_feature_enabled("ENABLE_PREDICTIONS")
+IS_PREDICTIONS_ENABLED = has_feature("ALLOW_AGENT_PREDICTIONS")
+IS_MESSAGES_ENABLED = has_feature("ALLOW_AGENT_MESSAGES")
+IS_DYNAMIC_SPAWNING_ENABLED = has_feature("ALLOW_DYNAMIC_SPAWNING")
+IS_ABILITIES_ENABLED = has_feature("ALLOW_AGENT_ABILITIES")
 
 PREDICT_FUNCTIONS = {"predict", "read_pending_predictions"}
-A3_FUNCTIONS = {
-    "read_messages",
-    "send_messages",
-    "drone_scan",
-    "get_spawns",
-    "spawn_agent",
-    "get_cell_contents_at",
-}
+MESSAGE_FUNCTINS = {"read_messages", "send_message"}
+SPAWN_FUNCTIONS = {"get_spawns", "spawn_agent"}
+ABILITIES = {"drone_scan"}
+
+
+def should_include_function(name: str) -> bool:
+    """
+    Determine whether a function should be included in the stub output.
+
+    Filters based on the feature flags and which group the function belongs to.
+
+    Args:
+        name (str): The name of the function.
+
+    Returns:
+        bool: True if the function should be included, False otherwise.
+
+    """
+    if name in PREDICT_FUNCTIONS and not IS_PREDICTIONS_ENABLED:
+        return False
+    if name in MESSAGE_FUNCTINS and not IS_MESSAGES_ENABLED:
+        return False
+    if name in SPAWN_FUNCTIONS and not IS_DYNAMIC_SPAWNING_ENABLED:
+        return False
+    return not (name in ABILITIES and not IS_ABILITIES_ENABLED)
 
 
 def build_header() -> str:
@@ -98,8 +118,7 @@ def extract_stub_code(tree: ast.Module) -> str:
     function_nodes = [
         node
         for node in tree.body
-        if isinstance(node, ast.FunctionDef)
-        and (IS_PREDICTIONS_ENABLED or node.name not in PREDICT_FUNCTIONS)
+        if isinstance(node, ast.FunctionDef) and should_include_function(node.name)
     ]
 
     for i, node in enumerate(function_nodes):

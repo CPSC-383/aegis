@@ -2,7 +2,7 @@ from pathlib import Path
 
 from google.protobuf.message import DecodeError
 
-from .aegis_config import is_feature_enabled
+from .aegis_config import has_feature
 from .args_parser import RunArgs
 from .game import Game
 from .game_pb import GamePb
@@ -19,7 +19,7 @@ def log_game_end(game: Game, args: RunArgs, i: int) -> None:
     LOGGER.info(f"Reason: {getattr(game.reason, 'value', 'Unknown')}")
     LOGGER.info("")
     LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8}")
-    if is_feature_enabled("ENABLE_PREDICTIONS"):
+    if has_feature("ALLOW_AGENT_PREDICTIONS"):
         LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
         LOGGER.info("-" * 46)
     else:
@@ -33,12 +33,12 @@ def log_game_end(game: Game, args: RunArgs, i: int) -> None:
         saved = game.team_info.get_saved(team)
         predictions = game.team_info.get_predicted_right(team)
 
-        if is_feature_enabled("ENABLE_PREDICTIONS"):
+        if has_feature("ALLOW_AGENT_PREDICTIONS"):
             LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
         else:
             LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8}")
 
-    if is_feature_enabled("ENABLE_PREDICTIONS"):
+    if has_feature("ALLOW_AGENT_PREDICTIONS"):
         LOGGER.info("=" * 46)
     else:
         LOGGER.info("=" * 31)

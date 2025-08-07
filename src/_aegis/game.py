@@ -6,7 +6,7 @@ from typing import cast
 import numpy as np
 from numpy.typing import NDArray
 
-from .aegis_config import is_feature_enabled
+from .aegis_config import has_feature
 from .agent import Agent
 from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
@@ -236,7 +236,7 @@ class Game:
     def add_agent_to_loc(self, agent_id: int, loc: Location) -> None:
         self.get_cell_at(loc).agents.append(agent_id)
         agent = self.get_agent(agent_id)
-        if not is_feature_enabled("ENABLE_MOVE_COST"):
+        if has_feature("ALLOW_DYNAMIC_MOVE_COST"):
             self.mark_surrounding_cells_visited(agent, loc)
 
     def remove_agent_from_loc(self, agent_id: int, loc: Location) -> None:
@@ -316,7 +316,7 @@ class Game:
         # try to save the surv (layer gets removed if enough team agents save it)
         self.queue_layer_to_remove(agent.location, agent.team)
 
-        if is_feature_enabled("ENABLE_PREDICTIONS"):
+        if has_feature("ALLOW_AGENT_PREDICTIONS"):
             self._prediction_handler.create_pending_prediction(
                 agent.team,
                 survivor.id,
@@ -344,7 +344,7 @@ class Game:
         self.queue_layer_to_remove(agent.location, agent.team)
 
     def predict(self, surv_id: int, label: np.int32, agent: Agent) -> None:
-        if not is_feature_enabled("ENABLE_PREDICTIONS"):
+        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
             return
 
         is_correct = self._prediction_handler.predict(agent.team, surv_id, label)
