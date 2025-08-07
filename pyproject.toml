@@ -27,7 +27,7 @@ packages = [
 
 [tool.ruff]
 line-length = 88
-exclude = ["src/_aegis/sandbox.py", "src/_aegis/schemas/**"]
+exclude = ["src/_aegis/sandbox.py", "src/_aegis/schemas/**", "src/_aegis/full_stub.py"]
 
 [tool.ruff.lint]
 select = ["ALL"]
