@@ -340,7 +340,7 @@ class Game:
         self, team: Team
     ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
         """
-        Get prediction information for a survivour saved by an agent's team.
+        Get prediction information for a survivor saved by an agent's team.
 
         Args:
             team: The agent's team

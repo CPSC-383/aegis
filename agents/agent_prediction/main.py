@@ -27,7 +27,7 @@ def think() -> None:
     # to ensure it's within the world bounds. The agent's own location is always valid.
     cell: CellInfo = get_cell_info_at(get_location())
 
-    # If there is a pending prediction from a save survivour for our team, predict!
+    # If there is a pending prediction from a save survivor for our team, predict!
     prediction_info = read_pending_predictions()
     if prediction_info:
         # grab just the first pending prediction
