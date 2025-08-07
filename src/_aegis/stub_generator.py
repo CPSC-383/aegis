@@ -1,7 +1,13 @@
 """
 Generate `aegis/stub.py` from `_aegis/full_stub.py`.
 
-Extracts only necessary function stubs with docstrings. Meant to be run manually.
+This script extracts only the necessary function stubs with their docstrings
+from the full implementation file `_aegis/full_stub.py`. It filters functions
+based on enabled feature flags and writes the resulting stubs into
+`aegis/stub.py`.
+
+Designed to be run manually when updating the public-facing stub interface
+based on feature flags or function changes.
 """
 
 import ast
@@ -10,11 +16,13 @@ from pathlib import Path
 
 from .aegis_config import has_feature
 
+# Feature flags to control which functions get included in the stub
 IS_PREDICTIONS_ENABLED = has_feature("ALLOW_AGENT_PREDICTIONS")
 IS_MESSAGES_ENABLED = has_feature("ALLOW_AGENT_MESSAGES")
 IS_DYNAMIC_SPAWNING_ENABLED = has_feature("ALLOW_DYNAMIC_SPAWNING")
 IS_ABILITIES_ENABLED = has_feature("ALLOW_AGENT_ABILITIES")
 
+# Grouped function names by feature flag
 PREDICT_FUNCTIONS = {"predict", "read_pending_predictions"}
 MESSAGE_FUNCTINS = {"read_messages", "send_message"}
 SPAWN_FUNCTIONS = {"get_spawns", "spawn_agent"}
@@ -44,6 +52,13 @@ def should_include_function(name: str) -> bool:
 
 
 def build_header() -> str:
+    """
+    Generate the import/header section for the stub file.
+
+    Returns:
+        str: The header string to be prepended to the stub.
+
+    """
     imports: list[str] = []
     if IS_PREDICTIONS_ENABLED:
         imports.append("import numpy as np")
@@ -76,12 +91,32 @@ Do not modify manually.
 
 
 def format_return(returns: ast.expr | None) -> str:
+    """
+    Format the return type annotation of a function.
+
+    Args:
+        returns (ast.expr | None): The return type node from the AST.
+
+    Returns:
+        str: The return type as a string, or empty if not specified.
+
+    """
     if returns is None:
         return ""
     return ast.unparse(returns)
 
 
 def format_args(args: ast.arguments) -> str:
+    """
+    Format the argument list of a function into a string.
+
+    Args:
+        args (ast.arguments): The argument list node from the AST.
+
+    Returns:
+        str: A string representation of the function arguments.
+
+    """
     res: list[str] = []
 
     total_args = args.args
@@ -112,6 +147,16 @@ def format_args(args: ast.arguments) -> str:
 
 
 def extract_stub_code(tree: ast.Module) -> str:
+    """
+    Extract function stubs with docstrings from a parsed AST.
+
+    Args:
+        tree (ast.Module): The AST of the full stub source.
+
+    Returns:
+        str: The body of the stub file with function definitions and docstrings.
+
+    """
     lines: list[str] = []
 
     function_nodes = [
@@ -144,6 +189,14 @@ def extract_stub_code(tree: ast.Module) -> str:
 
 
 def main() -> None:
+    """
+    Entry point for the stub generation script.
+
+    Reads `_aegis/full_stub.py`, filters and formats functions based on feature flags,
+    and writes the result to `aegis/stub.py`.
+
+    Reports errors in case the source file cannot be read or the output file cannot be written.
+    """
     try:
         stub_source = resources.read_text("_aegis", "full_stub.py")
     except FileNotFoundError:
