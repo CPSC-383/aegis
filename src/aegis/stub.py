@@ -116,11 +116,18 @@ def get_cell_info_at(loc: Location) -> CellInfo:
     """
     Return the cell info at a given location.
 
+    If the location is adjacent (1 tile away) to the agent,
+    or has been scanned by a drone, all layers and visible agents.
+
+    If the location is not adjacent or hasn't been scanned, only the top layer is returned,
+    and agent presence is hidden.
+
     Args:
         loc: The location to query.
 
     Returns:
-        The `CellInfo` at the specified location.
+        The `CellInfo` at the specified location, potentially with limited information
+        depending on visibility rules.
 
     """
 
