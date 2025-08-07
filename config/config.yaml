@@ -2,13 +2,13 @@
 
 # General aegis features
 features:
-  ENABLE_PREDICTIONS: false
-  ENABLE_VARIABLE_AGENT_AMOUNT: true
+  ALLOW_AGENT_PREDICTIONS: false
+  ALLOW_DYNAMIC_SPAWNING: true
+  ALLOW_AGENT_MESSAGES: true
+  ALLOW_AGENT_ABILITIES: true
+  ALLOW_DYNAMIC_MOVE_COST: false
+  ALLOW_CUSTOM_AGENT_COUNT: true
   DEFAULT_AGENT_AMOUNT: 4
-
-# Settings more specific to assignments, usually only assignments will decide to enable these
-assignment_specific:
-  ENABLE_MOVE_COST: false
 
 # Settings more specific to competitions, usually only competitions will decide to enable these
 competition_specific:
