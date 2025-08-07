@@ -17,11 +17,11 @@ dependencies = [
 dynamic = ["version"]
 
 [tool.hatch.version]
-path = "src/aegis-game/__init__.py"
+path = "src/aegis/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = [
-    "src/aegis-game",
+    "src/aegis",
     "src/_aegis",
 ]
 
