@@ -1,11 +1,12 @@
 """Public Aegis export stuff."""
 
 from _aegis.cli import main
-from _aegis.common import CellInfo, Direction, Location
+from _aegis.common import CellContents, CellInfo, Direction, Location
 from _aegis.common.objects import Rubble, Survivor
 from _aegis.message import Message
 
 __all__ = [
+    "CellContents",
     "CellInfo",
     "Direction",
     "Location",

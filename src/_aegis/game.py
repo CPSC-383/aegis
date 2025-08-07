@@ -10,7 +10,7 @@ from .aegis_config import is_feature_enabled
 from .agent import Agent
 from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
-from .args_parser import Args
+from .args_parser import RunArgs
 from .common import Cell, CellContents, CellInfo, Direction, Location
 from .common.objects import Rubble, Survivor
 from .constants import Constants
@@ -26,11 +26,11 @@ from .world import World
 
 class Game:
     def __init__(
-        self, code: list[Sandbox | None], args: Args, world: World, game_pb: GamePb
+        self, code: list[Sandbox | None], args: RunArgs, world: World, game_pb: GamePb
     ) -> None:
         random.seed(world.seed)
         self.code: list[Sandbox | None] = code
-        self.args: Args = args
+        self.args: RunArgs = args
         self.running: bool = True
         self.reason: GameOverReason | None = None
         self.world: World = world

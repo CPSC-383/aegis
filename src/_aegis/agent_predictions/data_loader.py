@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, cast
 
 import numpy as np
 
-from _aegis.args_parser import Args
+from _aegis.args_parser import RunArgs
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class PredictionDataLoader:
     """Handles loading prediction data from external directories."""
 
-    def __init__(self, args: Args) -> None:
+    def __init__(self, args: RunArgs) -> None:
         """
         Initialize the data loader.
 
@@ -20,7 +20,7 @@ class PredictionDataLoader:
             args: The arguments object
 
         """
-        self.args: Args = args
+        self.args: RunArgs = args
         self.x_test: NDArray[np.uint8] = np.array([])
         self.y_test: NDArray[np.int32] = np.array([])
         self.unique_labels: NDArray[np.int32] = np.array([])

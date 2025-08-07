@@ -2,9 +2,8 @@ from pathlib import Path
 
 from google.protobuf.message import DecodeError
 
-from _aegis.aegis_config import is_feature_enabled
-
-from .args_parser import Args
+from .aegis_config import is_feature_enabled
+from .args_parser import RunArgs
 from .game import Game
 from .game_pb import GamePb
 from .logger import LOGGER, setup_console_and_file_logging, setup_console_logging
@@ -14,7 +13,7 @@ from .team import Team
 from .world_pb import load_world
 
 
-def log_game_end(game: Game, args: Args, i: int) -> None:
+def log_game_end(game: Game, args: RunArgs, i: int) -> None:
     LOGGER.info("========== AEGIS END ==========")
     LOGGER.info(f"Finished on round {game.round}")
     LOGGER.info(f"Reason: {getattr(game.reason, 'value', 'Unknown')}")
@@ -48,7 +47,7 @@ def log_game_end(game: Game, args: Args, i: int) -> None:
         print("\n" + "=" * 80 + "\n\n")
 
 
-def make_game_start_string(args: Args, world: str) -> str:
+def make_game_start_string(args: RunArgs, world: str) -> str:
     if args.agent and not args.agent2:
         return f"GOOBS on {world}"
 
@@ -59,7 +58,7 @@ def make_game_start_string(args: Args, world: str) -> str:
     return f"GOOBS vs VOIDSEERS on {world}"
 
 
-def run(args: Args) -> None:
+def run(args: RunArgs) -> None:
     if args.agent is None and args.agent2 is None:
         error = "At least one agent must be provided"
         raise ValueError(error)

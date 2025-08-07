@@ -6,7 +6,8 @@ from .constants import Constants
 
 
 @dataclass
-class Args:
+class TypedNamespace:
+    command: str
     amount: int
     world: list[str]
     rounds: int
@@ -17,32 +18,56 @@ class Args:
     log: bool
 
 
-def parse_args() -> Args:
-    parser = argparse.ArgumentParser(
-        description="AEGIS Simulation",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+@dataclass
+class RunArgs:
+    amount: int
+    world: list[str]
+    rounds: int
+    agent: str | None
+    agent2: str | None
+    client: bool
+    debug: bool
+    log: bool
 
-    _ = parser.add_argument(
+
+@dataclass
+class ForgeArgs:
+    # If we ever need args
+    pass
+
+
+@dataclass
+class Args:
+    command: str
+    run_args: RunArgs | None = None
+    forge_args: ForgeArgs | None = None
+
+
+def parse_args() -> Args:
+    parser = argparse.ArgumentParser(description="AEGIS Simulation")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    run_parser = subparsers.add_parser("run", help="Run a game")
+    _ = run_parser.add_argument(
         "--world",
         type=str,
         nargs="+",
         required=True,
         help="One or more world names (without .world extension), separated by spaces.",
     )
-    _ = parser.add_argument(
+    _ = run_parser.add_argument(
         "--amount",
         type=int,
         default=get_feature_value("DEFAULT_AGENT_AMOUNT", 1),
         help="Number of agents to run (default = 1)",
     )
-    _ = parser.add_argument(
+    _ = run_parser.add_argument(
         "--rounds",
         type=int,
         default=Constants.DEFAULT_MAX_ROUNDS,
         help=f"Number of simulation rounds (default = {Constants.DEFAULT_MAX_ROUNDS})",
     )
-    _ = parser.add_argument(
+    _ = run_parser.add_argument(
         "--agent",
         type=str,
         required=False,
@@ -51,7 +76,7 @@ def parse_args() -> Args:
             "for team Goobs (e.g., 'agent_path', 'agent_mas')"
         ),
     )
-    _ = parser.add_argument(
+    _ = run_parser.add_argument(
         "--agent2",
         type=str,
         required=False,
@@ -60,22 +85,42 @@ def parse_args() -> Args:
             "for team Voidseers (e.g., 'agent_path', 'agent_mas')"
         ),
     )
-    _ = parser.add_argument(
+    _ = run_parser.add_argument(
         "--client",
         action="store_true",
         help="Used by the client, tells the server to wait for the client to connect",
     )
-    _ = parser.add_argument(
+    _ = run_parser.add_argument(
         "--debug",
         action="store_true",
         help="Enable agent debug logging output",
     )
-    _ = parser.add_argument(
+    _ = run_parser.add_argument(
         "--log",
         action="store_true",
         help="Enable AEGIS console output logging to a file",
     )
 
-    args: Args = parser.parse_args()  # pyright: ignore[reportAssignmentType]
+    _ = subparsers.add_parser("forge", help="Make stub.py file after config changes")
 
-    return args
+    args = parser.parse_args(namespace=TypedNamespace)
+
+    if args.command == "run":
+        return Args(
+            command="run",
+            run_args=RunArgs(
+                amount=args.amount,
+                world=args.world,
+                rounds=args.rounds,
+                agent=args.agent,
+                agent2=args.agent2,
+                client=args.client,
+                debug=args.debug,
+                log=args.log,
+            ),
+        )
+    if args.command == "forge":
+        return Args(command="forge", forge_args=ForgeArgs())
+
+    error = f"Unknown command: {args.command}"
+    raise ValueError(error)

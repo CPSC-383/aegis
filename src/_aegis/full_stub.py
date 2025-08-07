@@ -1,4 +1,11 @@
-"""Stub functions for agent interaction with the Aegis environment."""
+"""
+DO NOT IMPORT THIS FILE.
+
+This file contains all possible agent stub functions and is used by the stub generator
+to produce the public-facing `aegis/stub.py`.
+
+It is NOT part of the runtime API.
+"""
 # ruff: noqa: F401
 # pyright: reportReturnType=false
 # pyright: reportUnusedImport=false
