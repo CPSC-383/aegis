@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, cast
 import numpy as np
 import tensorflow as tf
 
-from .stub import *
+from aegis.stub import *
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
