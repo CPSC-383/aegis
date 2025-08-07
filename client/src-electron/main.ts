@@ -224,7 +224,9 @@ class ElectronApp {
       "--client",
       ...(debug ? ["--debug"] : []),
     ]
-    const childAegis = child_process.spawn("aegis run", [...procArgs], { cwd: aegisPath })
+    const childAegis = child_process.spawn("aegis run", [...procArgs], {
+      cwd: aegisPath,
+    })
 
     return new Promise((resolve, reject) => {
       childAegis.on("error", (error) => {
