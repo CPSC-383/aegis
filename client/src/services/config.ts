@@ -26,7 +26,7 @@ export function parseClientConfig(configData: any): ClientConfig {
 
     const variableAgentAmount = getNestedValue(
       configData,
-      "features.ENABLE_VARIABLE_AGENT_AMOUNT"
+      "features.ALLOW_CUSTOM_AGENT_COUNT"
     )
     if (typeof variableAgentAmount === "boolean") {
       defaults.variableAgentAmount = variableAgentAmount

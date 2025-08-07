@@ -160,7 +160,7 @@ class ElectronApp {
       return {
         features: {
           ENABLE_PREDICTIONS: false,
-          ENABLE_VARIABLE_AGENT_AMOUNT: false,
+          ALLOW_CUSTOM_AGENT_COUNT: false,
           DEFAULT_AGENT_AMOUNT: 1,
         },
         assignment_specific: {
@@ -213,6 +213,7 @@ class ElectronApp {
     debug: boolean
   ): Promise<string> {
     const procArgs = [
+      "run",
       "--amount",
       amount,
       "--agent",
@@ -224,7 +225,8 @@ class ElectronApp {
       "--client",
       ...(debug ? ["--debug"] : []),
     ]
-    const childAegis = child_process.spawn("aegis run", [...procArgs], {
+
+    const childAegis = child_process.spawn("aegis", procArgs, {
       cwd: aegisPath,
     })
 
