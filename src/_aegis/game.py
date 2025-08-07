@@ -208,9 +208,8 @@ class Game:
         self._queued_layers_to_remove.clear()
 
     def reward_layer_removal(self, loc: Location, team: Team) -> None:
-        top_layer: Rubble | Survivor = cast(
-            "Rubble | Survivor", self.get_cell_info_at(loc).top_layer
-        )
+        top_layer = self.get_cell_info_at(loc).top_layer
+
         if isinstance(top_layer, Survivor):
             self.team_info.add_saved(team, 1, is_alive=top_layer.get_health() > 0)
             self.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
@@ -331,8 +330,15 @@ class Game:
             agent (Agent): The agent digging the rubble
 
         """
+        rubble_energy_required = cast(
+            "Rubble", self.get_cell_info_at(agent.location).top_layer
+        ).energy_required
+        # only let agent try to dig this rubble if they can cough up the required energy
+        if agent.energy_level < rubble_energy_required:
+            return
+
         # remove energy for every dig regardless of success or failure
-        agent.add_energy(-Constants.DIG_ENERGY_COST)
+        agent.add_energy(-rubble_energy_required)
 
         # try to dig the rubble (layer gets removed if enough team agents dig it)
         self.queue_layer_to_remove(agent.location, agent.team)
