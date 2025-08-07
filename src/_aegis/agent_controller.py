@@ -76,10 +76,10 @@ class AgentController:
         self._agent.location = new_loc
 
     def save(self) -> None:
+        """Determine if there is a valid surv to save at this location, if so, (try to) save it."""
         # TODO @dante: add assert for unit type once thats added
         cell = self._game.get_cell_at(self._agent.location)
         top_layer = cell.get_top_layer()
-        self._agent.add_energy(-Constants.SAVE_ENERGY_COST)
         if top_layer is None or not isinstance(top_layer, Survivor):
             return
 
@@ -99,10 +99,10 @@ class AgentController:
         self._agent.add_energy(energy)
 
     def dig(self) -> None:
+        """Determine if there is a valid rubble to dig at this location, if so, (try to) dig it."""
         # TODO @dante: add assert for unit type once thats added
         cell = self._game.get_cell_at(self._agent.location)
         top_layer = cell.get_top_layer()
-        self._agent.add_energy(-Constants.DIG_ENERGY_COST)
         if top_layer is None or not isinstance(top_layer, Rubble):
             return
 
@@ -110,6 +110,10 @@ class AgentController:
 
     def predict(self, surv_id: int, label: np.int32) -> None:
         # TODO @dante: assert predict
+        if not is_feature_enabled("ENABLE_PREDICTION"):
+            msg = "Predictions are not enabled, therefore this method is not available."
+            raise AgentError(msg)
+
         self._game.predict(surv_id, label, self._agent)
 
     def send_message(self, message: str, dest_ids: list[int]) -> None:
@@ -171,6 +175,10 @@ class AgentController:
     def read_pending_predictions(
         self,
     ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
+        if not is_feature_enabled("ENABLE_PREDICTION"):
+            msg = "Predictions are not enabled, therefore this method is not available."
+            raise AgentError(msg)
+
         return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:

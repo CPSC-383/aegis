@@ -23,7 +23,6 @@ class Constants:
     OBSERVE_ENERGY_COST: int = 1
     SAVE_ENERGY_COST: int = 1
     PREDICTION_ENERGY_COST: int = 1
-    DIG_ENERGY_COST: int = 1
     MOVE_ENERGY_COST: int = 1
     DRONE_SCAN_ENERGY_COST: int = 2
 
