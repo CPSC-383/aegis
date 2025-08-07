@@ -158,7 +158,8 @@ class AgentController:
 
         if not is_adjacent or not is_scanned:
             cell_info.agents = []
-            cell_info.layers = [cell_info.layers[0]]
+            top = cell_info.top_layer
+            cell_info.layers = [top] if top is not None else []
 
         if has_feature("ALLOW_DYNAMIC_MOVE_COST") and not self._agent.has_visited[idx]:
             cell_info.move_cost = 1

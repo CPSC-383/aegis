@@ -22,8 +22,8 @@ class CellInfo:
         self.layers: list[WorldObject] = layers
 
     @property
-    def top_layer(self) -> WorldObject:
-        return self.layers[0]
+    def top_layer(self) -> WorldObject | None:
+        return self.layers[0] if self.layers else None
 
     def is_killer_cell(self) -> bool:
         return self.type == CellType.KILLER_CELL
