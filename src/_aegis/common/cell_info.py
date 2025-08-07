@@ -9,19 +9,21 @@ from .objects import WorldObject
 class CellInfo:
     def __init__(
         self,
+        layers: list[WorldObject],
         cell_type: CellType = CellType.NORMAL_CELL,
         location: Location | None = None,
         move_cost: int = 0,
         agents: list[int] | None = None,
-        top_layer: WorldObject | None = None,
     ) -> None:
         self.type: CellType = cell_type
         self.location: Location = location if location is not None else Location(-1, -1)
         self.move_cost: int = move_cost
         self.agents: list[int] = agents if agents is not None else []
-        self.top_layer: WorldObject | None = (
-            top_layer if top_layer is not None else None
-        )
+        self.layers: list[WorldObject] = layers
+
+    @property
+    def top_layer(self) -> WorldObject:
+        return self.layers[0]
 
     def is_killer_cell(self) -> bool:
         return self.type == CellType.KILLER_CELL

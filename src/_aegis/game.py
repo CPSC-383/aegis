@@ -11,7 +11,7 @@ from .agent import Agent
 from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
 from .args_parser import RunArgs
-from .common import Cell, CellContents, CellInfo, Direction, Location
+from .common import Cell, CellInfo, Direction, Location
 from .common.objects import Rubble, Survivor
 from .constants import Constants
 from .game_pb import GamePb
@@ -368,16 +368,12 @@ class Game:
     def get_cell_info_at(self, location: Location) -> CellInfo:
         cell = self.get_cell_at(location)
         return CellInfo(
-            cell.type, cell.location, cell.move_cost, cell.agents, cell.get_top_layer()
+            cell.layers, cell.type, cell.location, cell.move_cost, cell.agents
         )
 
     def serialize_team_info(self) -> None:
         self.game_pb.add_team_info(Team.GOOBS, self.team_info)
         self.game_pb.add_team_info(Team.VOIDSEERS, self.team_info)
-
-    def get_cell_contents_at(self, location: Location) -> CellContents:
-        cell = self.get_cell_at(location)
-        return CellContents(cell.layers, cell.agents)
 
     def get_survs(self) -> list[Location]:
         return [
@@ -425,7 +421,6 @@ class Game:
             "recharge": ac.recharge,
             "predict": ac.predict,
             "spawn_agent": ac.spawn_agent,
-            "get_cell_contents_at": ac.get_cell_contents_at,
             "on_map": self.on_map,
             "get_charging_cells": self.get_charging_cells,
             "read_pending_predictions": ac.read_pending_predictions,

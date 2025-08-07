@@ -4,7 +4,6 @@ from typing import override
 
 from _aegis.types import CellType
 
-from .cell_info import CellInfo
 from .location import Location
 from .objects import Survivor, WorldObject
 
@@ -79,23 +78,6 @@ class Cell:
         if top_layer is None:
             return
         self.layers.append(top_layer)
-
-    def get_cell_info(self) -> CellInfo:
-        cell_type = CellType.NORMAL_CELL
-
-        if self.is_killer_cell():
-            cell_type = CellType.KILLER_CELL
-        elif self.is_charging_cell():
-            cell_type = CellType.CHARGING_CELL
-
-        loc = Location(self.location.x, self.location.y)
-        return CellInfo(
-            cell_type,
-            loc,
-            self.move_cost,
-            self.agents[:],
-            self.get_top_layer(),
-        )
 
     def number_of_survivors(self) -> int:
         count = 0

@@ -51,7 +51,6 @@ def build_header() -> str:
 
     static_imports = """
 from . import (
-    CellContents,
     CellInfo,
     Direction,
     Location,

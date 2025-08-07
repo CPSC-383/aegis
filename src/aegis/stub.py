@@ -8,7 +8,6 @@ import numpy as np
 from numpy.typing import NDArray
 
 from . import (
-    CellContents,
     CellInfo,
     Direction,
     Location,
@@ -122,19 +121,6 @@ def get_cell_info_at(loc: Location) -> CellInfo:
 
     Returns:
         The `CellInfo` at the specified location.
-
-    """
-
-
-def get_cell_contents_at(loc: Location) -> CellContents | None:
-    """
-    Return the cell contents at a given location. This includes the layers and agents (both teams) present in the cell.
-
-    Args:
-        loc: The location to query.
-
-    Returns:
-        The `CellContents` at the specified location, or `None` if out of bounds.
 
     """
 

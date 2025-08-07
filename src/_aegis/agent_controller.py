@@ -5,7 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from .aegis_config import has_feature
-from .common import CellContents, CellInfo, Direction, Location
+from .common import CellInfo, Direction, Location
 from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
 from .constants import Constants
@@ -147,25 +147,22 @@ class AgentController:
         self._game.start_drone_scan(loc, self._agent.team)
         self._agent.add_energy(-Constants.DRONE_SCAN_ENERGY_COST)
 
-    def get_cell_contents_at(self, loc: Location) -> CellContents | None:
-        self.assert_loc(loc)
-
-        is_adjacent = self._agent.location.is_adjacent_to(loc)
-        is_drone_scanned = self._game.is_loc_drone_scanned(loc, self._agent.team)
-        if is_adjacent or is_drone_scanned:
-            return self._game.get_cell_contents_at(loc)
-
-        return None
-
     def get_cell_info_at(self, loc: Location) -> CellInfo:
         self.assert_loc(loc)
+
+        idx = loc.x + loc.y * self._game.world.width
         cell_info = self._game.get_cell_info_at(loc)
-        cell_info.agents = []
-        if (
-            has_feature("ALLOW_DYNAMIC_MOVE_COST")
-            and not self._agent.has_visited[loc.x + loc.y * self._game.world.width]
-        ):
+
+        is_adjacent = self._agent.location.is_adjacent_to(loc)
+        is_scanned = self._game.is_loc_drone_scanned(loc, self._agent.team)
+
+        if not is_adjacent or not is_scanned:
+            cell_info.agents = []
+            cell_info.layers = [cell_info.layers[0]]
+
+        if has_feature("ALLOW_DYNAMIC_MOVE_COST") and not self._agent.has_visited[idx]:
             cell_info.move_cost = 1
+
         return cell_info
 
     def spawn_agent(self, loc: Location) -> None:
