@@ -1,6 +1,7 @@
 import random
 import time
 from collections.abc import Callable
+from typing import cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -37,7 +38,8 @@ class Game:
         self.id_gen: IDGenerator = IDGenerator()
         self.team_info: TeamInfo = TeamInfo()
         self.game_pb: GamePb = game_pb
-        self._queued_layers_to_remove: set[Location] = set()
+        # key is location, value is team -> num of agents queuing to remove the layer this round
+        self._queued_layers_to_remove: dict[Location, dict[Team, int]] = {}
         self._drone_scans: dict[Location, dict[Team, int]] = {}
         self._pending_drone_scans: dict[Location, dict[Team, int]] = {}
         self._prediction_handler: PredictionHandler = PredictionHandler(args)
@@ -172,13 +174,48 @@ class Game:
         for agent in list(self.agents.values()):
             fn(agent)
 
-    def queue_layer_to_remove(self, loc: Location) -> None:
-        self._queued_layers_to_remove.add(loc)
+    def queue_layer_to_remove(self, loc: Location, team: Team) -> None:
+        # init the Location, so it will have its layer removed this round
+        if loc not in self._queued_layers_to_remove:
+            self._queued_layers_to_remove[loc] = {}
+
+        # add this team to list of teams wanting to remove the layer this round
+        if team not in self._queued_layers_to_remove[loc]:
+            self._queued_layers_to_remove[loc][team] = 1
+        else:
+            self._queued_layers_to_remove[loc][team] += 1
 
     def process_layers_queued_to_be_removed(self) -> None:
-        for loc in self._queued_layers_to_remove:
-            self.remove_layer(loc)
+        # check if each loc should actually have its top layer removed this round
+        for loc, teams_data in self._queued_layers_to_remove.items():
+            # set true if at least one team meets threshold to remove the layer
+            will_remove = False
+            agents_needed_to_remove = cast(
+                "Rubble | Survivor", self.get_cell_info_at(loc).top_layer
+            ).agents_required
+
+            # see if each team met threshold to acc remove the layer
+            for team, num_agents_queued in teams_data.items():
+                if num_agents_queued >= agents_needed_to_remove:
+                    will_remove = True
+                    # award team properly for whatever layer they just removed
+                    self.reward_layer_removal(loc, team)
+
+            if will_remove:
+                # ensures we only call remove_layer ONCE per loc per round
+                self.remove_layer(loc)
+
         self._queued_layers_to_remove.clear()
+
+    def reward_layer_removal(self, loc: Location, team: Team) -> None:
+        top_layer: Rubble | Survivor = cast(
+            "Rubble | Survivor", self.get_cell_info_at(loc).top_layer
+        )
+        if isinstance(top_layer, Survivor):
+            self.team_info.add_saved(team, 1, is_alive=top_layer.get_health() > 0)
+            self.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
+        # elif isinstance(top_layer, Rubble):
+        #     pass
 
     def remove_layer(self, loc: Location) -> None:
         cell = self.get_cell_at(loc)
@@ -250,44 +287,55 @@ class Game:
                 self.game_pb.add_drone_scan(loc, team, duration)
 
     def save(self, survivor: Survivor, agent: Agent) -> None:
-        is_alive = survivor.get_health() > 0
-        points = (
-            Constants.SURVIVOR_SAVE_ALIVE_SCORE
-            if is_alive
-            else Constants.SURVIVOR_SAVE_DEAD_SCORE
-        )
-        self.team_info.add_saved(agent.team, 1, is_alive=is_alive)
-        self.team_info.add_score(agent.team, points)
+        """
+        Process saving the surv at this loc. If enough agents save it, the layer will be removed, and points awarded to team.
 
-        LOGGER.info(
-            f"Saving survivor {survivor.id} at {agent.location} for team {agent.team}"
-        )
+        Args:
+            survivor (Survivor): The survivor to save
+            agent (Agent): The agent saving the survivor
+
+        """
+        # if (agent.location, agent.team) in self._queued_layers_to_remove:
+        #     LOGGER.info(
+        #         f"Skipping saving survivor {survivor.id} at {agent.location} for team {agent.team} because someone else on that team saved this surv already"
+        #     )
+        #     return
+
+        # is_alive = survivor.get_health() > 0
+        # points = (
+        #     Constants.SURVIVOR_SAVE_ALIVE_SCORE
+        #     if is_alive
+        #     else Constants.SURVIVOR_SAVE_DEAD_SCORE
+        # )
+
+        # self.team_info.add_saved(agent.team, 1, is_alive=is_alive)
+        # self.team_info.add_score(agent.team, points)
+
+        # remove energy for every save regardless of success or failure
+        agent.add_energy(-Constants.SAVE_ENERGY_COST)
+
+        # try to save the surv (layer gets removed if enough team agents save it)
+        self.queue_layer_to_remove(agent.location, agent.team)
+
         if is_feature_enabled("ENABLE_PREDICTIONS"):
-            LOGGER.info(
-                f"Creating pending prediction for team {agent.team} and surv_id {survivor.id}"
-            )
             self._prediction_handler.create_pending_prediction(
                 agent.team,
                 survivor.id,
             )
 
-        self.queue_layer_to_remove(agent.location)
+    def dig(self, agent: Agent) -> None:
+        """
+        Process digging rubble at this location. If enough agents dig it, the layer will be removed, and points awarded to team.
 
-    def dig(self, rubble: Rubble, agent: Agent) -> None:
-        cell = self.get_cell_at(agent.location)
-        agents = [self.get_agent(aid) for aid in cell.agents]
-        enough_agents = len(agents) >= rubble.agents_required
-        all_enough_energy = all(
-            agent.energy_level >= rubble.energy_required for agent in agents
-        )
+        Args:
+            agent (Agent): The agent digging the rubble
 
-        if not (enough_agents and all_enough_energy):
-            return
+        """
+        # remove energy for every dig regardless of success or failure
+        agent.add_energy(-Constants.DIG_ENERGY_COST)
 
-        # Add back the dig energy if it was a valid dig
-        energy = -rubble.energy_required + Constants.DIG_ENERGY_COST
-        agent.add_energy(energy)
-        self.queue_layer_to_remove(cell.location)
+        # try to dig the rubble (layer gets removed if enough team agents dig it)
+        self.queue_layer_to_remove(agent.location, agent.team)
 
     def predict(self, surv_id: int, label: np.int32, agent: Agent) -> None:
         if not is_feature_enabled("ENABLE_PREDICTIONS"):

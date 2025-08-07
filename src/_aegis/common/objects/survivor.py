@@ -14,6 +14,7 @@ class Survivor(WorldObject):
         super().__init__()
         self._state: Survivor.State = self.State.ALIVE
         self.id: int = survivor_id
+        self.agents_required: int = 1
         self.set_health(health)
 
     def get_health(self) -> int:
