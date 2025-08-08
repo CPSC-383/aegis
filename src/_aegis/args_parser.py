@@ -19,7 +19,7 @@ class TypedNamespace:
 
 
 @dataclass
-class RunArgs:
+class LaunchArgs:
     amount: int
     world: list[str]
     rounds: int
@@ -39,7 +39,7 @@ class ForgeArgs:
 @dataclass
 class Args:
     command: str
-    run_args: RunArgs | None = None
+    launch_args: LaunchArgs | None = None
     forge_args: ForgeArgs | None = None
 
 
@@ -48,7 +48,7 @@ def parse_args() -> Args:
     subparsers = parser.add_subparsers(dest="command", required=True)
     default_agent_amount = get_feature_value("DEFAULT_AGENT_AMOUNT")
 
-    run_parser = subparsers.add_parser("run", help="Run a game")
+    run_parser = subparsers.add_parser("launch", help="Run a game")
     _ = run_parser.add_argument(
         "--world",
         type=str,
@@ -106,10 +106,10 @@ def parse_args() -> Args:
 
     args = parser.parse_args(namespace=TypedNamespace)
 
-    if args.command == "run":
+    if args.command == "launch":
         return Args(
             command="run",
-            run_args=RunArgs(
+            launch_args=LaunchArgs(
                 amount=args.amount,
                 world=args.world,
                 rounds=args.rounds,

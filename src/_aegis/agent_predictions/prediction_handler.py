@@ -4,7 +4,7 @@ from typing import cast
 import numpy as np
 from numpy.typing import NDArray
 
-from _aegis.args_parser import RunArgs
+from _aegis.args_parser import LaunchArgs
 from _aegis.logger import LOGGER
 from _aegis.team import Team
 from _aegis.types.prediction import (
@@ -19,11 +19,11 @@ CompletedPredictions = dict[tuple[Team, int], CompletedPrediction]
 
 
 class PredictionHandler:
-    def __init__(self, args: RunArgs) -> None:
+    def __init__(self, args: LaunchArgs) -> None:
         self._pending_predictions: PendingPredictions = {}
         self._completed_predictions: CompletedPredictions = {}
         self._data_loader: PredictionDataLoader = PredictionDataLoader(args)
-        self._args: RunArgs = args
+        self._args: LaunchArgs = args
 
     def get_image_from_index(self, index: int) -> NDArray[np.uint8]:
         return cast("NDArray[np.uint8]", self._data_loader.x_test[index])

@@ -213,7 +213,7 @@ class ElectronApp {
     debug: boolean
   ): Promise<string> {
     const procArgs = [
-      "run",
+      "launch",
       "--amount",
       amount,
       "--agent",

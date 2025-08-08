@@ -14,9 +14,9 @@ def main() -> None:
 
     if args.command == "run":
         try:
-            if args.run_args is None:
+            if args.launch_args is None:
                 sys.exit(1)
-            run(args.run_args)
+            run(args.launch_args)
         except Exception:  # noqa: BLE001
             traceback.print_exc()
             sys.exit(1)
