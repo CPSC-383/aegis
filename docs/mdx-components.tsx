@@ -119,7 +119,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
       <code
         className={cn(
-          "relative bg-muted px-1.5 py-0.5 font-mono text-sm text-cyan-300",
+          "relative bg-muted py-0.5 font-mono text-sm text-cyan-300",
           "break-all whitespace-pre max-w-full overflow-auto",
           "[&:not(pre_&)]:font-semibold",
           className,

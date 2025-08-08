@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getMDXComponents } from '@/mdx-components';
-import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
+import { InlineTOC } from '@/components/inline-toc';
 import { guides } from '@/lib/source';
 import { NebulaBackground, NebulaPresets } from '@/components/nebula';
 import {
@@ -107,22 +107,12 @@ export default async function Page(props: {
       </div>
 
       <article className="relative z-10 container mx-auto px-4 pb-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="lg:w-64 flex-shrink-0">
-            <div className="sticky top-8 bg-slate-900/70 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-1 bg-cyan-500/20 rounded">
-                  <Navigation className="w-4 h-4 text-cyan-400" />
-                </div>
-                <h3 className="font-semibold text-cyan-300 text-sm font-mono uppercase tracking-wider">
-                  Protocol Index
-                </h3>
-              </div>
-              <div className="prose-sm">
-                <InlineTOC
-                  items={page.data.toc}
-                />
-              </div>
+        <div className="flex flex-col gap-8">
+          <div className="flex-shrink-0">
+            <div className="prose-sm">
+              <InlineTOC
+                items={page.data.toc}
+              />
             </div>
           </div>
 
