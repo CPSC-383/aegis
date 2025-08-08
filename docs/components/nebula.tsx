@@ -42,7 +42,7 @@ export const NebulaBackground = ({
   );
 
   return (
-    <div className={`absolute inset-0 overflow-hidden pointer-events-none z-0 ${gradient} ${className}`}>
+    <div className={`fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-0 ${gradient} ${className}`}>
       {lumenParticles.map((particle) => (
         <div
           key={particle.id}
