@@ -34,10 +34,53 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ),
     img: (props) => <ImageZoom {...(props as any)} />,
     h2: ({ children, ...props }) => (
-      <h2 className="flex items-center gap-2 text-xl font-semibold text-cyan-300 font-mono uppercase tracking-wide border-b border-cyan-500/20 pb-2 mb-4 mt-8" {...props}>
+      <h2
+        className="flex items-center gap-2 text-xl font-semibold text-cyan-300 font-mono uppercase tracking-wide border-b border-cyan-500/20 pb-2 mb-4 mt-8"
+        {...props}
+      >
         <div className="w-1 h-6 bg-cyan-500 rounded-full" />
         {children}
       </h2>
+    ),
+
+    h3: ({ children, ...props }) => (
+      <h3
+        className="flex items-center gap-2 text-lg font-semibold text-cyan-300 font-mono uppercase tracking-wide border-b border-cyan-500/10 pb-1 mb-3 mt-6"
+        {...props}
+      >
+        <div className="w-1 h-5 bg-cyan-400 rounded-full" />
+        {children}
+      </h3>
+    ),
+
+    h4: ({ children, ...props }) => (
+      <h4
+        className="flex items-center gap-2 text-base font-semibold text-cyan-300 font-mono uppercase tracking-wide border-b border-cyan-500/10 pb-1 mb-2 mt-5"
+        {...props}
+      >
+        <div className="w-1 h-4 bg-cyan-400 rounded-full" />
+        {children}
+      </h4>
+    ),
+
+    h5: ({ children, ...props }) => (
+      <h5
+        className="flex items-center gap-2 text-sm font-semibold text-cyan-300 font-mono uppercase tracking-wide border-b border-cyan-500/20 pb-1 mb-2 mt-4"
+        {...props}
+      >
+        <div className="w-1 h-3 bg-cyan-500 rounded-full" />
+        {children}
+      </h5>
+    ),
+
+    h6: ({ children, ...props }) => (
+      <h6
+        className="flex items-center gap-2 text-xs font-semibold text-cyan-300 font-mono uppercase tracking-wide border-b border-cyan-500/20 pb-1 mb-2 mt-3"
+        {...props}
+      >
+        <div className="w-1 h-2 bg-cyan-500 rounded-full" />
+        {children}
+      </h6>
     ),
     p: ({ className, ...props }) => (
       <p className={cn("leading-7 not-first:mt-6", className)} {...props} />

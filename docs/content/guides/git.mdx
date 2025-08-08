@@ -222,3 +222,67 @@ git push -u origin main
 ```
 
 </Steps>
+
+## Cloning the Repository
+
+After being added to the repository, the group members should clone the repository to their local machines.
+
+
+<Tabs items={['Github', 'Gitlab']}>
+
+<Tab value="Github">
+
+```bash
+git clone https://github.com/ownerusername/your-repo.git
+```
+
+</Tab>
+
+<Tab value="Gitlab">
+
+```bash
+git clone https://csgit.ucalgary.ca/ownerusername/your-repo.git
+```
+
+</Tab>
+
+</Tabs>
+
+## Essential Git Workflow Commands
+
+<Callout title="Collaboration best practices">
+
+Minimize merge conflicts and maintain smooth team collaboration by following these key Git workflow principles:
+
+- Always pull changes before starting work to ensure you have the latest project state.
+- Communicate with your team about who is working on specific files or features.
+- Pull changes from the remote repository immediately before pushing your commits.
+- Break your work into small commits that allow you to easily revert changes if something breaks. 
+This provides a clear rollback path and reduces the risk of losing significant work.
+
+</Callout>
+
+### Pull Latest Changes
+
+```bash
+git pull
+```
+
+### Pushing Your Changes
+
+```bash
+git add .
+git commit -m "Descriptive commit message"
+git push
+```
+
+### Checking Repository Status
+
+```bash
+git status
+```
+
+## Additional Resources
+
+- [Git Official Documentation](https://git-scm.com/doc)
+- [GitHub Desktop](https://desktop.github.com/) (alternative to command line)
