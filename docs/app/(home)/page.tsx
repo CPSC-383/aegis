@@ -10,6 +10,7 @@ import {
   Eye,
   Sparkle,
 } from 'lucide-react';
+import { NebulaBackground, NebulaPresets } from '@/components/nebula';
 
 const cards = [
   {
@@ -42,40 +43,10 @@ const cards = [
   },
 ];
 
-const lumenParticles = Array.from({ length: 30 }, (_, i) => ({
-  id: i,
-  left: Math.random() * 100,
-  top: Math.random() * 100,
-  delay: Math.random() * 4,
-  duration: 3 + Math.random() * 2,
-  size: 2 + Math.random() * 2,
-}));
-
 export default function HomePage() {
   return (
-    <main className="relative flex h-full flex-col items-center justify-center px-4 py-12 
-      bg-gradient-to-br 
-      from-indigo-950 via-slate-900 to-purple-950
-      text-white overflow-hidden
-    ">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {lumenParticles.map((particle) => (
-          <div
-            key={particle.id}
-            className="absolute rounded-full opacity-60 animate-pulse bg-gradient-to-r from-cyan-400 to-blue-300"
-            style={{
-              left: `${particle.left}%`,
-              top: `${particle.top}%`,
-              width: `${particle.size}px`,
-              height: `${particle.size}px`,
-              animationDelay: `${particle.delay}s`,
-              animationDuration: `${particle.duration}s`,
-              boxShadow: '0 0 8px rgba(34, 211, 238, 0.6)',
-            }}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-radial from-purple-500/10 via-transparent to-transparent opacity-40" />
-      </div>
+    <main className="relative flex h-full flex-col items-center justify-center px-4 py-12 text-white overflow-hidden">
+      <NebulaBackground {...NebulaPresets.home} />
 
       <div className="hidden sm:absolute top-4 left-4 right-4 z-20 sm:flex justify-between items-center text-xs font-mono">
         <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur px-3 py-1 rounded border border-cyan-500/30">
