@@ -79,7 +79,6 @@ export const NebulaPresets = {
   home: {
     particleCount: 30,
     particleSize: { min: 2, max: 4 },
-    colors: { from: 'cyan-400', to: 'blue-300' },
     nebulaColor: 'purple-500/10',
     gradient: 'bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950',
   },
@@ -88,7 +87,6 @@ export const NebulaPresets = {
   docs: {
     particleCount: 15,
     particleSize: { min: 1, max: 2 },
-    colors: { from: 'cyan-400', to: 'slate-300' },
     nebulaColor: 'slate-500/5',
     gradient: 'bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800',
   },
@@ -97,7 +95,6 @@ export const NebulaPresets = {
   guides: {
     particleCount: 20,
     particleSize: { min: 1, max: 3 },
-    colors: { from: 'cyan-400', to: 'blue-300' },
     nebulaColor: 'indigo-500/8',
     gradient: 'bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950',
   },
@@ -106,16 +103,14 @@ export const NebulaPresets = {
   alert: {
     particleCount: 25,
     particleSize: { min: 2, max: 3 },
-    colors: { from: 'red-400', to: 'orange-300' },
     nebulaColor: 'red-500/10',
-    gradient: 'bg-gradient-to-br from-red-950 via-slate-900 to-orange-950',
+    gradient: 'bg-gradient-to-br from-slate-950 via-slate-900 to-rose-950',
   },
 
   // Clean/minimal - for content pages
   minimal: {
     particleCount: 10,
     particleSize: { min: 1, max: 2 },
-    colors: { from: 'slate-400', to: 'slate-300' },
     nebulaColor: 'slate-500/3',
     gradient: 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900',
   },
