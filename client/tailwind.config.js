@@ -6,6 +6,9 @@ module.exports = {
       sans: ["Krub", "sans-serif"],
     },
     extend: {
+      animation: {
+        "spin-slow": "spin 0.5s linear infinite"
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
