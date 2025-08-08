@@ -13,11 +13,6 @@ interface NebulaBackgroundProps {
     min: number;
     max: number;
   };
-  /** Particle colors */
-  colors?: {
-    from: string;
-    to: string;
-  };
   /** Nebula core color */
   nebulaColor?: string;
   /** Background gradient */
@@ -30,7 +25,6 @@ export const NebulaBackground = ({
   particleCount = 30,
   particleSize = { min: 2, max: 4 },
   animationDuration = { min: 3, max: 5 },
-  colors = { from: 'cyan-400', to: 'blue-300' },
   nebulaColor = 'purple-500/10',
   gradient = 'bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950',
   className = '',
@@ -52,7 +46,7 @@ export const NebulaBackground = ({
       {lumenParticles.map((particle) => (
         <div
           key={particle.id}
-          className={`absolute rounded-full opacity-60 animate-pulse bg-gradient-to-r from-${colors.from} to-${colors.to}`}
+          className={`absolute rounded-full opacity-60 animate-pulse bg-gradient-to-r from-cyan-400 to-blue-300`}
           style={{
             left: `${particle.left}%`,
             top: `${particle.top}%`,
