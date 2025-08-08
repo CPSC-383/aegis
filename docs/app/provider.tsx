@@ -11,6 +11,6 @@ export function Provider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </RootProvider>
+    </ RootProvider>
   );
 }

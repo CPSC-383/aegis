@@ -181,14 +181,6 @@ export default function HomePage() {
           </p>
         </div>
       </div>
-
-      <div className="hidden md:absolute md:block bottom-4 right-4 z-20 bg-red-900/80 backdrop-blur border border-red-500/50 rounded px-3 py-2 text-xs font-mono text-red-300 max-w-xs">
-        <div className="flex items-center gap-2 mb-1">
-          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-          <span className="text-red-400 font-semibold">SECURITY ALERT</span>
-        </div>
-        <p>Voidseer activity detected in outer sectors. Maintain operational security.</p>
-      </div>
     </main>
   );
 }
