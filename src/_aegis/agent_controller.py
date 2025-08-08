@@ -161,7 +161,7 @@ class AgentController:
             top = cell_info.top_layer
             cell_info.layers = [top] if top is not None else []
 
-        if has_feature("ALLOW_DYNAMIC_MOVE_COST") and not self._agent.has_visited[idx]:
+        if has_feature("HIDDEN_MOVE_COSTS") and not self._agent.has_visited[idx]:
             cell_info.move_cost = 1
 
         return cell_info

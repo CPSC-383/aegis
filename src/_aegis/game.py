@@ -240,7 +240,7 @@ class Game:
     def add_agent_to_loc(self, agent_id: int, loc: Location) -> None:
         self.get_cell_at(loc).agents.append(agent_id)
         agent = self.get_agent(agent_id)
-        if has_feature("ALLOW_DYNAMIC_MOVE_COST"):
+        if has_feature("HIDDEN_MOVE_COSTS"):
             self.mark_surrounding_cells_visited(agent, loc)
 
     def remove_agent_from_loc(self, agent_id: int, loc: Location) -> None:
