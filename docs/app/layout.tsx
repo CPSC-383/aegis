@@ -16,7 +16,7 @@ const mono = Geist_Mono({
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${lexend.variable} ${mono.variable}`} suppressHydrationWarning>
-      <body className="flex flex-col h-screen overflow-hidden">
+      <body className="flex flex-col h-screen">
         <Provider>{children}</Provider>
       </body>
     </html>
