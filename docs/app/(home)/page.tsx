@@ -16,13 +16,13 @@ const cards = [
     icon: Rocket,
   },
   {
-    title: 'Command Manual',
+    title: 'Command Manual (API)',
     description: 'System reference and protocol definitions.',
     href: '/docs/api',
     icon: BookText,
   },
   {
-    title: 'Navigation Charts',
+    title: 'Navigation Charts (Guides)',
     description: 'Strategic playbooks and integrations.',
     href: '/guides',
     icon: Compass,
