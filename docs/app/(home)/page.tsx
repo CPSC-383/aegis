@@ -75,6 +75,7 @@ export default function HomePage() {
             <Satellite className="w-20 h-20 text-cyan-400 motion-safe:animate-[spin_10s_linear_infinite]" />
             <div className="absolute inset-0 w-24 h-24 -translate-x-2 -translate-y-2 border border-cyan-500/30 rounded-full animate-[spin_8s_linear_infinite_reverse]" />
             <div className="absolute inset-0 w-28 h-28 -translate-x-4 -translate-y-4 border border-purple-500/20 rounded-full animate-[spin_12s_linear_infinite]" />
+            <div className="absolute inset-0 w-32 h-32 -translate-x-6 -translate-y-6 border border-cyan-400/10 rounded-full animate-ping" />
           </div>
         </div>
 
