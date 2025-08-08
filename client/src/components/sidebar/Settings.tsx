@@ -21,8 +21,8 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
       if (configType) {
         return {
           "client.CONFIG_TYPE": scaffold.getConfigValue("client.CONFIG_TYPE"),
-          "features.ENABLE_VARIABLE_AGENT_AMOUNT": scaffold.getConfigValue(
-            "features.ENABLE_VARIABLE_AGENT_AMOUNT"
+          "features.ALLOW_CUSTOM_AGENT_COUNT": scaffold.getConfigValue(
+            "features.ALLOW_CUSTOM_AGENT_COUNT"
           ),
           "features.DEFAULT_AGENT_AMOUNT": scaffold.getConfigValue(
             "features.DEFAULT_AGENT_AMOUNT"
@@ -110,7 +110,7 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
                       Variable Agent Amount
                     </span>
                     {renderConfigValue(
-                      rawConfigData["features.ENABLE_VARIABLE_AGENT_AMOUNT"]
+                      rawConfigData["features.ALLOW_CUSTOM_AGENT_COUNT"]
                     )}
                   </div>
                   <div className="flex items-center justify-between">

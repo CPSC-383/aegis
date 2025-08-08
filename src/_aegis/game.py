@@ -6,12 +6,12 @@ from typing import cast
 import numpy as np
 from numpy.typing import NDArray
 
-from .aegis_config import is_feature_enabled
+from .aegis_config import has_feature
 from .agent import Agent
 from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
-from .args_parser import Args
-from .common import Cell, CellContents, CellInfo, Direction, Location
+from .args_parser import LaunchArgs
+from .common import Cell, CellInfo, Direction, Location
 from .common.objects import Rubble, Survivor
 from .constants import Constants
 from .game_pb import GamePb
@@ -26,11 +26,15 @@ from .world import World
 
 class Game:
     def __init__(
-        self, code: list[Sandbox | None], args: Args, world: World, game_pb: GamePb
+        self,
+        code: list[Sandbox | None],
+        args: LaunchArgs,
+        world: World,
+        game_pb: GamePb,
     ) -> None:
         random.seed(world.seed)
         self.code: list[Sandbox | None] = code
-        self.args: Args = args
+        self.args: LaunchArgs = args
         self.running: bool = True
         self.reason: GameOverReason | None = None
         self.world: World = world
@@ -236,7 +240,7 @@ class Game:
     def add_agent_to_loc(self, agent_id: int, loc: Location) -> None:
         self.get_cell_at(loc).agents.append(agent_id)
         agent = self.get_agent(agent_id)
-        if not is_feature_enabled("ENABLE_MOVE_COST"):
+        if has_feature("HIDDEN_MOVE_COSTS"):
             self.mark_surrounding_cells_visited(agent, loc)
 
     def remove_agent_from_loc(self, agent_id: int, loc: Location) -> None:
@@ -316,7 +320,7 @@ class Game:
         # try to save the surv (layer gets removed if enough team agents save it)
         self.queue_layer_to_remove(agent.location, agent.team)
 
-        if is_feature_enabled("ENABLE_PREDICTIONS"):
+        if has_feature("ALLOW_AGENT_PREDICTIONS"):
             self._prediction_handler.create_pending_prediction(
                 agent.team,
                 survivor.id,
@@ -344,7 +348,7 @@ class Game:
         self.queue_layer_to_remove(agent.location, agent.team)
 
     def predict(self, surv_id: int, label: np.int32, agent: Agent) -> None:
-        if not is_feature_enabled("ENABLE_PREDICTIONS"):
+        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
             return
 
         is_correct = self._prediction_handler.predict(agent.team, surv_id, label)
@@ -368,16 +372,12 @@ class Game:
     def get_cell_info_at(self, location: Location) -> CellInfo:
         cell = self.get_cell_at(location)
         return CellInfo(
-            cell.type, cell.location, cell.move_cost, cell.agents, cell.get_top_layer()
+            cell.layers, cell.type, cell.location, cell.move_cost, cell.agents
         )
 
     def serialize_team_info(self) -> None:
         self.game_pb.add_team_info(Team.GOOBS, self.team_info)
         self.game_pb.add_team_info(Team.VOIDSEERS, self.team_info)
-
-    def get_cell_contents_at(self, location: Location) -> CellContents:
-        cell = self.get_cell_at(location)
-        return CellContents(cell.layers, cell.agents)
 
     def get_survs(self) -> list[Location]:
         return [
@@ -425,7 +425,6 @@ class Game:
             "recharge": ac.recharge,
             "predict": ac.predict,
             "spawn_agent": ac.spawn_agent,
-            "get_cell_contents_at": ac.get_cell_contents_at,
             "on_map": self.on_map,
             "get_charging_cells": self.get_charging_cells,
             "read_pending_predictions": ac.read_pending_predictions,

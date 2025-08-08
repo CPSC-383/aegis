@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING
 import numpy as np
 from numpy.typing import NDArray
 
-from .aegis_config import is_feature_enabled
-from .common import CellContents, CellInfo, Direction, Location
+from .aegis_config import has_feature
+from .common import CellInfo, Direction, Location
 from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
 from .constants import Constants
@@ -106,11 +106,11 @@ class AgentController:
         if top_layer is None or not isinstance(top_layer, Rubble):
             return
 
-        self._game.dig(top_layer, self._agent)
+        self._game.dig(self._agent)
 
     def predict(self, surv_id: int, label: np.int32) -> None:
         # TODO @dante: assert predict
-        if not is_feature_enabled("ENABLE_PREDICTION"):
+        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
             msg = "Predictions are not enabled, therefore this method is not available."
             raise AgentError(msg)
 
@@ -147,25 +147,23 @@ class AgentController:
         self._game.start_drone_scan(loc, self._agent.team)
         self._agent.add_energy(-Constants.DRONE_SCAN_ENERGY_COST)
 
-    def get_cell_contents_at(self, loc: Location) -> CellContents | None:
-        self.assert_loc(loc)
-
-        is_adjacent = self._agent.location.is_adjacent_to(loc)
-        is_drone_scanned = self._game.is_loc_drone_scanned(loc, self._agent.team)
-        if is_adjacent or is_drone_scanned:
-            return self._game.get_cell_contents_at(loc)
-
-        return None
-
     def get_cell_info_at(self, loc: Location) -> CellInfo:
         self.assert_loc(loc)
+
+        idx = loc.x + loc.y * self._game.world.width
         cell_info = self._game.get_cell_info_at(loc)
-        cell_info.agents = []
-        if (
-            not is_feature_enabled("ENABLE_MOVE_COST")
-            and not self._agent.has_visited[loc.x + loc.y * self._game.world.width]
-        ):
+
+        is_adjacent = self._agent.location.is_adjacent_to(loc)
+        is_scanned = self._game.is_loc_drone_scanned(loc, self._agent.team)
+
+        if not is_adjacent or not is_scanned:
+            cell_info.agents = []
+            top = cell_info.top_layer
+            cell_info.layers = [top] if top is not None else []
+
+        if has_feature("HIDDEN_MOVE_COSTS") and not self._agent.has_visited[idx]:
             cell_info.move_cost = 1
+
         return cell_info
 
     def spawn_agent(self, loc: Location) -> None:
@@ -175,7 +173,7 @@ class AgentController:
     def read_pending_predictions(
         self,
     ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
-        if not is_feature_enabled("ENABLE_PREDICTION"):
+        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
             msg = "Predictions are not enabled, therefore this method is not available."
             raise AgentError(msg)
 

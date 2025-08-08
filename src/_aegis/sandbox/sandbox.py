@@ -5,7 +5,7 @@ import logging
 import re
 from typing import TYPE_CHECKING, cast
 
-from RestrictedPython import (
+from RestrictedPython.compile import (
     compile_restricted,  # pyright: ignore[reportUnknownVariableType]
 )
 

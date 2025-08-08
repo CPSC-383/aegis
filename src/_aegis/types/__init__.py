@@ -1,3 +1,3 @@
-__all__ = ["CellType", "GameOverReason", "MethodDict"]
+__all__ = ["AegisConfig", "CellType", "FeatureKey", "GameOverReason", "MethodDict"]
 
-from .others import CellType, GameOverReason, MethodDict
+from .others import AegisConfig, CellType, FeatureKey, GameOverReason, MethodDict

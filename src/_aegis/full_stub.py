@@ -1,20 +1,11 @@
-"""Stub functions for agent interaction with the Aegis environment."""
-# ruff: noqa: F401
-# pyright: reportReturnType=false
-# pyright: reportUnusedImport=false
-# pyright: reportUnusedParameter=false
+"""
+DO NOT IMPORT THIS FILE.
 
-import numpy as np
-from numpy.typing import NDArray
+This file contains all possible agent stub functions and is used by the stub generator
+to produce the public-facing `aegis/stub.py`.
 
-from . import (
-    CellInfo,
-    Direction,
-    Location,
-    Message,
-    Rubble,
-    Survivor,
-)
+It is NOT part of the runtime API.
+"""
 
 
 def get_round_number() -> int:

@@ -2,9 +2,8 @@ from pathlib import Path
 
 from google.protobuf.message import DecodeError
 
-from _aegis.aegis_config import is_feature_enabled
-
-from .args_parser import Args
+from .aegis_config import has_feature
+from .args_parser import LaunchArgs
 from .game import Game
 from .game_pb import GamePb
 from .logger import LOGGER, setup_console_and_file_logging, setup_console_logging
@@ -14,13 +13,13 @@ from .team import Team
 from .world_pb import load_world
 
 
-def log_game_end(game: Game, args: Args, i: int) -> None:
+def log_game_end(game: Game, args: LaunchArgs, i: int) -> None:
     LOGGER.info("========== AEGIS END ==========")
     LOGGER.info(f"Finished on round {game.round}")
     LOGGER.info(f"Reason: {getattr(game.reason, 'value', 'Unknown')}")
     LOGGER.info("")
     LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8}")
-    if is_feature_enabled("ENABLE_PREDICTIONS"):
+    if has_feature("ALLOW_AGENT_PREDICTIONS"):
         LOGGER.info(f"{'Team':<12} {'Score':>8} {'Saved':>8} {'Predictions':>14}")
         LOGGER.info("-" * 46)
     else:
@@ -34,12 +33,12 @@ def log_game_end(game: Game, args: Args, i: int) -> None:
         saved = game.team_info.get_saved(team)
         predictions = game.team_info.get_predicted_right(team)
 
-        if is_feature_enabled("ENABLE_PREDICTIONS"):
+        if has_feature("ALLOW_AGENT_PREDICTIONS"):
             LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8} {predictions:>14}")
         else:
             LOGGER.info(f"{team.name:<12} {score:>8} {saved:>8}")
 
-    if is_feature_enabled("ENABLE_PREDICTIONS"):
+    if has_feature("ALLOW_AGENT_PREDICTIONS"):
         LOGGER.info("=" * 46)
     else:
         LOGGER.info("=" * 31)
@@ -48,7 +47,7 @@ def log_game_end(game: Game, args: Args, i: int) -> None:
         print("\n" + "=" * 80 + "\n\n")
 
 
-def make_game_start_string(args: Args, world: str) -> str:
+def make_game_start_string(args: LaunchArgs, world: str) -> str:
     if args.agent and not args.agent2:
         return f"GOOBS on {world}"
 
@@ -59,7 +58,7 @@ def make_game_start_string(args: Args, world: str) -> str:
     return f"GOOBS vs VOIDSEERS on {world}"
 
 
-def run(args: Args) -> None:
+def run(args: LaunchArgs) -> None:
     if args.agent is None and args.agent2 is None:
         error = "At least one agent must be provided"
         raise ValueError(error)
