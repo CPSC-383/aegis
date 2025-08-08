@@ -1,5 +1,5 @@
 'use client';
-import { Check, Copy, Terminal, Code, Database } from 'lucide-react';
+import { Check, Copy, Terminal, Code } from 'lucide-react';
 import {
   type ComponentProps,
   createContext,
@@ -257,22 +257,6 @@ export function CodeBlockTabsList(props: ComponentProps<typeof TabsList>) {
 
   return (
     <div className="bg-slate-800/80 backdrop-blur-sm border-b border-cyan-500/30 px-4 py-2">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-400/80" />
-          <div className="w-3 h-3 rounded-full bg-yellow-400/80" />
-          <div className="w-3 h-3 rounded-full bg-green-400/80" />
-        </div>
-        <div className="w-px h-6 bg-cyan-500/30 mx-1" />
-        <Database className="w-4 h-4 text-cyan-400" />
-        <span className="text-cyan-300 text-sm font-mono">AEGIS Code Repository</span>
-
-        <div className="ml-auto flex items-center gap-2 text-xs">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span className="text-green-400 font-mono">SYNCHRONIZED</span>
-        </div>
-      </div>
-
       <TabsList
         {...props}
         className={cn(

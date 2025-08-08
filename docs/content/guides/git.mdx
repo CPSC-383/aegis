@@ -106,25 +106,13 @@ git init
 
 Link your aegis repository to the newly created remote repository.
 
-<Tabs items={['Github', 'Gitlab']}>
-
-<Tab value="Github">
-
-```bash
+```bash tab="Github"
 git remote add origin https://github.com/yourusername/your-repo.git
 ```
 
-</Tab>
-
-<Tab value="Gitlab">
-
-```bash
+```bash tab="Gitlab"
 git remote add origin https://csgit.ucalgary.ca/yourusename/your-repo.git
 ```
-
-</Tab>
-
-</Tabs>
 
 </Steps>
 
@@ -142,33 +130,17 @@ A `.gitignore` file tells git which files to ignore.
 
 ### Create the .gitignore file
 
-<Tabs items={['Mac/Linux', 'Windows']}>
-
-<Tab value="Mac/Linux">
-
 Creating a file in the command line:
 
-```bash
+```bash tab="Mac/Linux"
 touch .gitignore
 ```
 
-or you can use the file explorer.
-
-</Tab>
-
-<Tab value="Windows">
-
-Creating a file in the command line:
-
-```bash
+```bash tab="Windows"
 echo "" > .gitignore
 ```
 
 or you can use the file explorer.
-
-</Tab>
-
-</Tabs>
 
 ### Add the Following Content
 
@@ -227,26 +199,13 @@ git push -u origin main
 
 After being added to the repository, the group members should clone the repository to their local machines.
 
-
-<Tabs items={['Github', 'Gitlab']}>
-
-<Tab value="Github">
-
-```bash
+```bash tab="Github"
 git clone https://github.com/ownerusername/your-repo.git
 ```
 
-</Tab>
-
-<Tab value="Gitlab">
-
-```bash
+```bash tab="Gitlab"
 git clone https://csgit.ucalgary.ca/ownerusername/your-repo.git
 ```
-
-</Tab>
-
-</Tabs>
 
 ## Essential Git Workflow Commands
 
