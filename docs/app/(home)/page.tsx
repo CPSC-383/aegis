@@ -14,9 +14,9 @@ import { NebulaBackground, NebulaPresets } from '@/components/nebula';
 
 const cards = [
   {
-    title: 'Mission Control',
+    title: 'Mission Control (Docs)',
     description: 'Initialize station systems and begin rescue operations.',
-    href: '/docs/getting-started/installation/',
+    href: '/docs',
     icon: Rocket,
     status: 'OPERATIONAL',
   },
