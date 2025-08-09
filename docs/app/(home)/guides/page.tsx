@@ -184,7 +184,7 @@ export default function GuidesPage() {
 
         <div className="text-center max-w-md">
           <p className="text-slate-500 text-xs italic">
-            "Charted paths save lives, every guide a light through the void."
+            &quot;Charted paths save lives, every guide a light through the void.&quot;
           </p>
           <p className="text-slate-600 text-xs mt-1">
             Logged from Orbital Relay Node • Cerulean Grid 7.429.1
