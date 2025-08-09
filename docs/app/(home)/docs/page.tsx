@@ -7,6 +7,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { NebulaBackground, NebulaPresets } from '@/components/nebula';
+import getConfig from 'next/config';
 
 const docCategories = [
   {
@@ -33,6 +34,13 @@ const docCategories = [
 ];
 
 export default function DocsIndexPage() {
+  const { publicRuntimeConfig } = getConfig()
+
+  const verstionToStardate = (version: string) => {
+    const parts = version.split(".").map(Number)
+    return (parts[0] * 1000 + parts[1] * 100 + parts[2]).toFixed(1)
+  }
+
   return (
     <main className="relative flex h-full flex-col px-4 py-12 text-white overflow-hidden">
       <NebulaBackground {...NebulaPresets.docs} />
@@ -75,7 +83,7 @@ export default function DocsIndexPage() {
           </p>
 
           <div className="text-xs font-mono text-blue-400 bg-slate-900/50 rounded px-4 py-2 border border-blue-500/30 inline-block">
-            DOCUMENTATION VERSION 4.2.1 • LAST UPDATED: STARDATE 2847.3
+            DOCUMENTATION VERSION {publicRuntimeConfig?.VERSION} • LAST UPDATED: STARDATE {verstionToStardate(publicRuntimeConfig.VERSION || "0.0.0")}
           </div>
         </div>
 
