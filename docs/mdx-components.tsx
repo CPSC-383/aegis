@@ -1,16 +1,10 @@
-import * as TabsComponents from "./components/tabs"
+import defaultMdxComponents from 'fumadocs-ui/mdx';
+import * as TabsComponents from 'fumadocs-ui/components/tabs';
 import * as TreeComponents from "./components/file-tree"
 import * as PythonComponents from "./components/python"
 import { ImageZoom } from "fumadocs-ui/components/image-zoom"
 import type { MDXComponents } from "mdx/types"
 import { Callout } from "./components/callout"
-import {
-  CodeBlock,
-  CodeBlockTab,
-  CodeBlockTabs,
-  CodeBlockTabsList,
-  CodeBlockTabsTrigger,
-} from "./components/codeblock"
 import { cn } from "./lib/cn"
 
 // use this function to get MDX components, you will need it for rendering MDX
@@ -19,71 +13,75 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ...TreeComponents,
     ...PythonComponents,
     ...TabsComponents,
+    ...defaultMdxComponents,
     ...components,
     Callout,
-    CodeBlockTab,
-    CodeBlockTabs,
-    CodeBlockTabsList,
-    CodeBlockTabsTrigger,
-    Step: ({ className, ...props }) => (
+    Step: ({ className, ...props }: React.ComponentProps<"h3">) => (
       <h3
         className={cn(
           "mt-8 scroll-m-20 text-xl font-semibold tracking-tight",
-          className
+          className,
         )}
         {...props}
       />
     ),
     Steps: ({ ...props }) => (
       <div
-        className="relative [&>h3]:step steps mb-12 ml-4 border-l border-solid border-cyan-600/40 dark:border-cyan-400/30 pl-8 [counter-reset:step]"
+        className="relative [&>h3]:step steps mb-12 ml-4 border-l border-solid border-zinc-300 dark:border-zinc-700 pl-8 [counter-reset:step]"
         {...props}
       />
     ),
     img: (props) => <ImageZoom {...(props as any)} />,
-    h2: ({ children, ...props }) => (
+    h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+      <h1
+        className={cn("mt-2 scroll-m-20 text-4xl font-bold", className)}
+        {...props}
+      />
+    ),
+    h2: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <h2
-        className="flex items-center gap-2 text-xl font-semibold text-fd-foreground"
+        className={cn(
+          "mt-12 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0",
+          className,
+        )}
         {...props}
-      >
-        {children}
-      </h2>
+      />
     ),
-
-    h3: ({ children, ...props }) => (
+    h3: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <h3
-        className="flex items-center gap-2 text-lg font-semibold text-fd-foreground"
+        className={cn(
+          "mt-8 scroll-m-20 text-xl font-semibold tracking-tight",
+          className,
+        )}
         {...props}
-      >
-        {children}
-      </h3>
+      />
     ),
-
-    h4: ({ children, ...props }) => (
+    h4: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <h4
-        className="flex items-center gap-2 text-base font-semibold text-fd-foreground"
+        className={cn(
+          "font-heading mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
+          className,
+        )}
         {...props}
-      >
-        {children}
-      </h4>
+      />
     ),
-
-    h5: ({ children, ...props }) => (
+    h5: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <h5
-        className="flex items-center gap-2 text-sm font-semibold text-fd-foreground"
+        className={cn(
+          "mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
+          className,
+        )}
         {...props}
-      >
-        {children}
-      </h5>
+      />
     ),
-
-    h6: ({ children, ...props }) => (
+    h6: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <h6
-        className="flex items-center gap-2 text-xs font-semibold text-fd-foreground"
+        className={cn(
+          "mt-8 scroll-m-20 text-base font-semibold tracking-tight",
+          className,
+        )}
         {...props}
-      >
-        {children}
-      </h6>
+      />
     ),
     p: ({ className, ...props }) => (
       <p className={cn("leading-7 not-first:mt-6", className)} {...props} />
@@ -121,11 +119,10 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
         {children}
       </blockquote>
     ),
-    pre: CodeBlock,
     code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
       <code
         className={cn(
-          "relative bg-muted py-0.5 font-mono text-sm text-cyan-300",
+          "relative bg-fd-muted rounded-md px-1.5 py-0.5 font-mono text-sm text-fd-foreground",
           "break-all whitespace-pre max-w-full overflow-auto",
           "[&:not(pre_&)]:font-semibold",
           className

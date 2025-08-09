@@ -14,26 +14,16 @@
   counter-increment: step;
 
   &:before {
-    @apply absolute inline-flex h-9 w-9 rounded-2xl items-center justify-center border-4 text-center -indent-px font-mono text-base font-medium;
-
+    @apply absolute inline-flex h-9 w-9 rounded-full items-center justify-center border-2 border-black bg-fd-muted text-center -indent-px font-mono text-base font-medium;
     @apply ml-[-50px] mt-[-4px];
-
-    background-color: #0f172a;
-    border-color: #22d3ee;
-    color: #67e8f9;
-
-    box-shadow:
-      0 0 6px #22d3eeaa,
-      0 0 10px #22d3ee55;
-
     content: counter(step);
   }
 }
 
-.steps:first-child > h3:first-child {
+.steps:first-child>h3:first-child {
   @apply mt-0;
 }
 
-.steps > h3 {
+.steps>h3 {
   @apply mt-8 mb-4 text-base font-semibold;
 }
