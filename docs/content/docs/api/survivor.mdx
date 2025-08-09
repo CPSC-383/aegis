@@ -1,6 +1,6 @@
 ---
 title: Survivor
-description: Could not generate description
+description: Represents a survivor in the world.
 ---
 
 
@@ -10,47 +10,20 @@ description: Could not generate description
 
 ### id
 
-<PyAttribute type="int" value="" docString="" />
+<PyAttribute type="int" value="" docString="Unique identifier for the survivor." />
 
-### agents_required
+### health
 
-<PyAttribute type="int" value="1" docString="" />
+<PyAttribute type="int" value="" docString="Current health of the survivor." />
 
 
 ## Methods
 
-### get_health
-
-<PyFunctionSignature signature="def get_health() -> int" />
-
-<PyFunction docString="None" />
-### set_health
-
-<PyFunctionSignature signature="def set_health(health: int) -> None" />
-
-<PyFunction docString="None" />
-### remove_health
-
-<PyFunctionSignature signature="def remove_health(remove_energy: int) -> None" />
-
-<PyFunction docString="None" />
 ### is_alive
 
 <PyFunctionSignature signature="def is_alive() -> bool" />
 
-<PyFunction docString="None" />
-### is_dead
+<PyFunction docString="Check if the survivor is alive.
 
-<PyFunctionSignature signature="def is_dead() -> bool" />
-
-<PyFunction docString="None" />
-### set_alive
-
-<PyFunctionSignature signature="def set_alive() -> None" />
-
-<PyFunction docString="None" />
-### set_dead
-
-<PyFunctionSignature signature="def set_dead() -> None" />
-
-<PyFunction docString="None" />
+Returns:
+    bool: True if the survivor is ALIVE, False otherwise." />
