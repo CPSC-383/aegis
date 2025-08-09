@@ -56,13 +56,6 @@ class CellInfo:
 
     @override
     def __str__(self) -> str:
-        """
-        Return a readable string representation of the CellInfo object.
-
-        Returns:
-            str: Formatted multi-line string describing the cell info.
-
-        """
         return (
             f"{self.type.name} (\n"
             f"  X: {self.location.x},\n"
@@ -76,11 +69,4 @@ class CellInfo:
 
     @override
     def __repr__(self) -> str:
-        """
-        Return the official string representation of the CellInfo object.
-
-        Returns:
-            str: Same as __str__ output.
-
-        """
         return self.__str__()

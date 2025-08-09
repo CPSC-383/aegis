@@ -363,41 +363,18 @@ def render_function(name: str, func: FuncInfo) -> str:
         func (FuncInfo): A dictionary with function info.
 
     Returns:
-        str: An MDX string representing the function header, parameters,
-             and return type using custom PyFunction components.
+        str: An MDX string representing the PyFunction component for this function.
 
     """
     params_mdx = "\n".join(render_param(p) for p in func["params"])
     doc = func.get("docstring", "")
-    ret_type = func.get("return_", "None")
-    ret_doc = ""
 
-    return (
-        f"## {name}\n\n"
-        f'<PyFunction docString="{doc}">\n'
-        f"{params_mdx}\n"
-        f'<PyFunctionReturn type="{ret_type}">\n{ret_doc}\n</PyFunctionReturn>\n'
-        f"</PyFunction>"
-    )
-
-
-def render_stub_functions(functions: dict[str, FuncInfo]) -> str:
-    """
-    Render multiple stub functions into a concatenated MDX string.
-
-    Args:
-        functions (dict[str, FuncInfo]): Dictionary mapping function names to their info.
-
-    Returns:
-        str: Concatenated MDX string representing all functions.
-
-    """
-    return "\n".join(render_function(name, f) for name, f in functions.items())
+    return f'## {name}\n\n<PyFunction docString="{doc}">\n{params_mdx}\n</PyFunction>'
 
 
 def render_agent_api_docs(stub_functions: dict[str, FuncInfo]) -> str:
     """
-    Generate a complete MDX document string for the Agent API docs.
+    Generate a complete MDX document string for the Agent docs.
 
     Includes frontmatter and renders all stub functions.
 
@@ -409,13 +386,13 @@ def render_agent_api_docs(stub_functions: dict[str, FuncInfo]) -> str:
 
     """
     mdx = """---
-title: Agent API
+title: Agent
 description: Agent functions to interact with the world.
 ---\n\n
 """
 
     if stub_functions:
-        mdx += render_stub_functions(stub_functions)
+        mdx += "\n".join(render_function(name, f) for name, f in stub_functions.items())
         mdx += "\n"
 
     return mdx
@@ -436,7 +413,11 @@ def render_attribute(attr: AttrInfo) -> str:
     default_str = str(default) if default is not None else ""
     type_str = attr.get("annotation") or ""
     doc = attr.get("docstring") or ""
-    return f'<PyAttribute name="{attr["name"]}" type="{type_str}" default="{default_str}" docString="{doc}" />\n'
+
+    return (
+        f"### {attr['name']}\n\n"
+        f'<PyAttribute type="{type_str}" default="{default_str}" docString="{doc}" />\n'
+    )
 
 
 def render_class_docs(name: str, class_info: ClassInfo) -> str:

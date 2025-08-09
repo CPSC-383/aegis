@@ -6,17 +6,29 @@ description: Agent functions to interact with the world.
 
 ## Attributes
 
-<PyAttribute name="type" type="CellType" default="cell_type" docString="The type of the cell." />
+### type
 
-<PyAttribute name="location" type="Location" default="location if location is not None else Location(-1, -1)" docString="The coordinates of the cell." />
+<PyAttribute type="CellType" default="cell_type" docString="The type of the cell." />
 
-<PyAttribute name="move_cost" type="int" default="move_cost" docString="The movement cost to traverse this cell." />
+### location
 
-<PyAttribute name="agents" type="list[int]" default="agents if agents is not None else []" docString="List of agent IDs currently in this cell." />
+<PyAttribute type="Location" default="location if location is not None else Location(-1, -1)" docString="The coordinates of the cell." />
 
-<PyAttribute name="layers" type="list[WorldObject]" default="layers" docString="Stack of world objects present in the cell, ordered by layer." />
+### move_cost
 
-<PyAttribute name="top_layer" type="WorldObject | None" default="" docString="Get the top-most layer object of the cell.
+<PyAttribute type="int" default="move_cost" docString="The movement cost to traverse this cell." />
+
+### agents
+
+<PyAttribute type="list[int]" default="agents if agents is not None else []" docString="List of agent IDs currently in this cell." />
+
+### layers
+
+<PyAttribute type="list[WorldObject]" default="layers" docString="Stack of world objects present in the cell, ordered by layer." />
+
+### top_layer
+
+<PyAttribute type="WorldObject | None" default="" docString="Get the top-most layer object of the cell.
 
 Returns:
     WorldObject | None: The top layer object if layers exist, else None." />
@@ -29,7 +41,4 @@ Returns:
 Returns:
     bool: True if the cell type is KILLER_CELL, else False.">
 
-<PyFunctionReturn type="bool">
-
-</PyFunctionReturn>
 </PyFunction>

@@ -1,5 +1,5 @@
 ---
-title: Agent API
+title: Agent
 description: Agent functions to interact with the world.
 ---
 
@@ -8,41 +8,26 @@ description: Agent functions to interact with the world.
 
 <PyFunction docString="Return the current round number.">
 
-<PyFunctionReturn type="int">
-
-</PyFunctionReturn>
 </PyFunction>
 ## get_id
 
 <PyFunction docString="Return the id of the current agent.">
 
-<PyFunctionReturn type="int">
-
-</PyFunctionReturn>
 </PyFunction>
 ## get_team
 
 <PyFunction docString="Return the current team of the agent.">
 
-<PyFunctionReturn type="Team">
-
-</PyFunctionReturn>
 </PyFunction>
 ## get_location
 
 <PyFunction docString="Return the current location of the agent.">
 
-<PyFunctionReturn type="Location">
-
-</PyFunctionReturn>
 </PyFunction>
 ## get_energy_level
 
 <PyFunction docString="Return the current energy level of the agent.">
 
-<PyFunctionReturn type="int">
-
-</PyFunctionReturn>
 </PyFunction>
 ## move
 
@@ -53,25 +38,16 @@ Args:
 <PyParameter name="direction" type="Direction">
   
 </PyParameter>
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>
 ## save
 
 <PyFunction docString="Save a survivor.">
 
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>
 ## dig
 
 <PyFunction docString="Dig rubble.">
 
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>
 ## recharge
 
@@ -79,9 +55,6 @@ Args:
 
 This function only works if the agent is currently on a charging cell.">
 
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>
 ## predict
 
@@ -96,9 +69,6 @@ Args:
 <PyParameter name="label" type="np.int32">
   
 </PyParameter>
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>
 ## send_message
 
@@ -113,9 +83,6 @@ Args:
 <PyParameter name="dest_ids" type="list[int]">
   
 </PyParameter>
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>
 ## read_messages
 
@@ -130,9 +97,6 @@ Returns:
 <PyParameter name="round_num" type="int" value="-1">
   
 </PyParameter>
-<PyFunctionReturn type="list[Message]">
-
-</PyFunctionReturn>
 </PyFunction>
 ## on_map
 
@@ -146,9 +110,6 @@ Returns:
 <PyParameter name="loc" type="Location">
   
 </PyParameter>
-<PyFunctionReturn type="bool">
-
-</PyFunctionReturn>
 </PyFunction>
 ## get_cell_info_at
 
@@ -169,33 +130,21 @@ Returns:
 <PyParameter name="loc" type="Location">
   
 </PyParameter>
-<PyFunctionReturn type="CellInfo">
-
-</PyFunctionReturn>
 </PyFunction>
 ## get_survs
 
 <PyFunction docString="Return a list of locations where survivors are present.">
 
-<PyFunctionReturn type="list[Location]">
-
-</PyFunctionReturn>
 </PyFunction>
 ## get_charging_cells
 
 <PyFunction docString="Return a list of locations where charging cells are present.">
 
-<PyFunctionReturn type="list[Location]">
-
-</PyFunctionReturn>
 </PyFunction>
 ## get_spawns
 
 <PyFunction docString="Return a list of spawn locations.">
 
-<PyFunctionReturn type="list[Location]">
-
-</PyFunctionReturn>
 </PyFunction>
 ## spawn_agent
 
@@ -206,9 +155,6 @@ Args:
 <PyParameter name="loc" type="Location">
   
 </PyParameter>
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>
 ## log
 
@@ -219,9 +165,6 @@ Args:
 <PyParameter name="args" type="object" value="()">
   
 </PyParameter>
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>
 ## read_pending_predictions
 
@@ -231,9 +174,6 @@ Returns:
     list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]: A list of tuples representing pending survivor predictions (surv_id, image_to_predict, all_unique_labels).
         Returns an empty list if no pending predictions are available.">
 
-<PyFunctionReturn type="list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]">
-
-</PyFunctionReturn>
 </PyFunction>
 ## drone_scan
 
@@ -244,7 +184,4 @@ Args:
 <PyParameter name="loc" type="Location">
   
 </PyParameter>
-<PyFunctionReturn type="None">
-
-</PyFunctionReturn>
 </PyFunction>

@@ -1,13 +1,6 @@
-import type { ComponentProps, ReactNode } from 'react';
+import { type ComponentProps, type ReactNode } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from 'fumadocs-ui/utils/cn';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from 'fumadocs-ui/components/ui/collapsible';
-import { buttonVariants } from 'fumadocs-ui/components/ui/button';
-import { ChevronRight, Code2 } from 'lucide-react';
 import { highlight } from 'fumadocs-core/highlight';
 
 const badgeVariants = cva(
@@ -25,18 +18,58 @@ const badgeVariants = cva(
 );
 
 function parseDocstring(docstring: string) {
-  const [description, argsSection] = docstring.split('Args:');
-  const args = argsSection
-    ? argsSection.trim().split('\n').map(line => line.trim()).filter(line => line.length > 0)
-    : [];
-  return { description: description.trim(), args };
+  const sections = {
+    description: '',
+    parameters: [] as string[],
+    returns: '',
+    throws: '',
+  };
+
+  const lines = docstring.split('\n').map(line => line.trim());
+
+  let currentSection: keyof typeof sections = 'description';
+  for (const line of lines) {
+    if (/^(Arguments?|Args?):$/i.test(line)) {
+      currentSection = 'parameters';
+      continue;
+    }
+    if (/^Returns?:$/i.test(line)) {
+      currentSection = 'returns';
+      continue;
+    }
+    if (/^Throws?:$/i.test(line)) {
+      currentSection = 'throws';
+      continue;
+    }
+
+    if (currentSection === 'parameters') {
+      if (line) sections.parameters.push(line);
+    } else if (currentSection === 'description') {
+      if (sections.description) {
+        sections.description += ' ' + line;
+      } else {
+        sections.description = line;
+      }
+    } else if (currentSection === 'returns') {
+      if (sections.returns) {
+        sections.returns += ' ' + line;
+      } else {
+        sections.returns = line;
+      }
+    } else if (currentSection === 'throws') {
+      if (sections.throws) {
+        sections.throws += ' ' + line;
+      } else {
+        sections.throws = line;
+      }
+    }
+  }
+
+  return sections;
 }
 
 
-export function PyFunction({ docString, children }: {
-  docString?: string;
-  children?: ReactNode;
-}) {
+export function PyFunction({ docString, children }: { docString?: string; children?: ReactNode }) {
   const doc = typeof docString === 'string' ? parseDocstring(docString) : null;
 
   return (
@@ -45,14 +78,28 @@ export function PyFunction({ docString, children }: {
         <>
           <p className="mb-4">{doc.description}</p>
 
-          {doc.args.length > 0 && (
+          {doc.parameters.length > 0 && (
             <section className="mb-6">
-              <h4 className="font-mono font-semibold text-fd-foreground mb-2">Arguments</h4>
+              <h4 className="font-mono font-semibold text-fd-foreground mb-2">Parameters</h4>
               <ul className="list-disc list-inside font-mono text-sm space-y-1">
-                {doc.args.map((arg, i) => (
-                  <li key={i} className="whitespace-pre-line">{arg}</li>
+                {doc.parameters.map((param, i) => (
+                  <li key={i} className="whitespace-pre-line">{param}</li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {doc.returns && (
+            <section className="mb-6">
+              <h4 className="font-mono font-semibold text-fd-foreground mb-2">Returns</h4>
+              <p className="font-mono text-sm whitespace-pre-line">{doc.returns}</p>
+            </section>
+          )}
+
+          {doc.throws && (
+            <section className="mb-6">
+              <h4 className="font-mono font-semibold text-fd-foreground mb-2">Throws</h4>
+              <p className="font-mono text-sm whitespace-pre-line">{doc.throws}</p>
             </section>
           )}
         </>
@@ -65,40 +112,47 @@ export function PyFunction({ docString, children }: {
   );
 }
 
-export function PyAttribute(props: {
+export function PyFunctionSignature({
+  returnType,
+  name,
+  parameters = [],
+  throws,
+  className,
+}: {
+  returnType?: string;
   name: string;
+  parameters?: string[];
+  throws?: string;
+  className?: string;
+}) {
+  const paramsStr = parameters.join(', ');
+  const throwsStr = throws ? ` throws ${throws}` : '';
+  const signature = `${returnType ?? ''} ${name}(${paramsStr})${throwsStr}`.trim();
+
+  return (
+    <InlineCode lang="python" code={signature} className={className} />
+  );
+}
+
+export function PyAttribute(props: {
   type?: string;
   value?: string;
   docString?: string;
 }) {
   return (
     <section className="text-fd-muted-foreground leading-relaxed prose prose-slate dark:prose-invert max-w-none my-6">
-      <header className="flex gap-3 items-center flex-wrap font-mono mb-4">
-        <span className={cn(badgeVariants({ color: "attribute" }))}>attribute</span>
-        <span className="font-semibold text-lg text-fd-foreground">{props.name}</span>
-        {props.type && (
-          <InlineCode
-            lang="python"
-            className="not-prose text-fd-muted-foreground text-sm bg-fd-muted/20 rounded px-2 py-1"
-            code={props.type}
-          />
-        )}
-      </header>
-
-      {props.value && (
-        <div className="mb-6 bg-fd-muted/10 rounded-md p-3 border-l-2 border-fd-muted/30">
-          <InlineCode
-            lang="python"
-            className="not-prose text-sm font-mono"
-            code={`${props.name} = ${props.value}`}
-          />
-        </div>
+      {(props.type || props.value !== undefined) && (
+        <InlineCode
+          lang="python"
+          className="not-prose text-sm font-mono mb-4 block"
+          code={`${props.type ?? ""}${props.value !== undefined ? ` = ${props.value}` : ""}`}
+        />
       )}
 
       {props.docString ? (
         <p className="whitespace-pre-line">{props.docString}</p>
       ) : (
-        <p className="italic text-fd-muted-foreground mb-6">No description available.</p>
+        <p className="italic text-fd-muted-foreground">No description available.</p>
       )}
     </section>
   );
@@ -153,65 +207,6 @@ export function PyParameter({ name, type, value, children }: {
   );
 }
 
-export function PySourceCode({ children }: { children: ReactNode }) {
-  return (
-    <Collapsible className="my-8">
-      <CollapsibleTrigger
-        className={cn(
-          buttonVariants({
-            color: "secondary",
-            size: "sm",
-          }),
-          "group w-full justify-between font-mono transition-all hover:bg-fd-muted/20 border border-fd-border/50 hover:border-fd-border"
-        )}
-      >
-        <span className="flex items-center gap-2">
-          <Code2 className="w-4 h-4" />
-          View Source Code
-        </span>
-        <ChevronRight
-          className="size-4 text-fd-muted-foreground transition-transform group-data-[state=open]:rotate-90"
-        />
-      </CollapsibleTrigger>
-      <CollapsibleContent className="prose-no-margin mt-4">
-        <div className="rounded-lg overflow-hidden border border-fd-border/50 bg-fd-muted/10">
-          <div className="bg-fd-muted/20 px-4 py-2 border-b border-fd-border/50">
-            <span className="text-xs font-medium text-fd-muted-foreground uppercase tracking-wide">
-              Source Code
-            </span>
-          </div>
-          <div className="p-4">
-            {children}
-          </div>
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
-  );
-}
-
-export function PyFunctionReturn({ type, children }: {
-  type: string;
-  children?: ReactNode;
-}) {
-  return (
-    <div className="mt-4 pt-3 border-t border-fd-border/40">
-      <div className="flex items-center gap-2 mb-1">
-        <span className="text-sm font-semibold text-fd-muted-foreground">Returns</span>
-        <InlineCode
-          lang="python"
-          className="text-sm font-mono rounded px-2 py-0.5"
-          code={type}
-        />
-      </div>
-      {children && (
-        <p className="text-sm text-fd-muted-foreground leading-relaxed m-0">
-          {children}
-        </p>
-      )}
-    </div>
-  );
-}
-
 async function InlineCode({
   lang,
   code,
@@ -227,7 +222,7 @@ async function InlineCode({
         <span
           {...props}
           {...rest}
-          className={cn(rest.className, props.className)}
+          className={cn(rest.className, props.className, "[--padding-left:0!important]")}
         />
       ),
     },
