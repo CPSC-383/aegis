@@ -143,7 +143,7 @@ export default function DocsIndexPage() {
           </div>
 
           <p className="text-slate-500 text-xs italic mb-2">
-            "Information is the currency of survival in the void."
+            &quot;Information is the currency of survival in the void.&quot;
           </p>
 
           <div className="text-slate-600 text-xs space-y-1">

@@ -152,7 +152,7 @@ export default async function Page(props: {
               <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent w-20"></div>
             </div>
             <p className="text-slate-500 text-xs italic">
-              "Knowledge shared saves lives, every protocol a beacon through uncertainty."
+              &quot;Knowledge shared saves lives, every protocol a beacon through uncertainty.&quot;
             </p>
             <p className="text-slate-600 text-xs">
               AEGIS Navigation Division • Sector 7-Alpha • Galactic Standard Time

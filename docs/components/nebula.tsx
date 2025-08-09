@@ -25,7 +25,6 @@ export const NebulaBackground = ({
   particleCount = 50,
   particleSize = { min: 5, max: 8 },
   animationDuration = { min: 3, max: 5 },
-  nebulaColor = 'purple-500/10',
   gradient = 'bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950',
   className = '',
 }: NebulaBackgroundProps) => {

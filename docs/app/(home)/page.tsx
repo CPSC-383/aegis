@@ -92,7 +92,7 @@ export default function HomePage() {
         </div>
 
         <p className="text-sm sm:text-base max-w-2xl mx-auto text-slate-300 leading-relaxed mb-4">
-          The galaxy's last beacon of coordinated rescue operations. Deploy agents, manage Lumen reserves, and coordinate life-saving missions across hostile regions of space.
+          The galaxy&apos;s last beacon of coordinated rescue operations. Deploy agents, manage Lumen reserves, and coordinate life-saving missions across hostile regions of space.
         </p>
 
         <div className="text-xs font-mono text-green-400 bg-slate-900/50 rounded px-3 py-1 border border-green-500/30">
@@ -146,7 +146,7 @@ export default function HomePage() {
 
         <div className="text-center max-w-md">
           <p className="text-slate-500 text-xs italic">
-            "Every life saved, every path taken, paid for in Lumens."
+            &quot;Every life saved, every path taken, paid for in Lumens.&quot;
           </p>
           <p className="text-slate-600 text-xs mt-1">
             Stationed within the Cerulean Nebula • Galactic Coordinate 7.429.1

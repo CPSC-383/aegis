@@ -201,7 +201,7 @@ export default function ErrorsPage() {
 
         <div className="text-center max-w-md">
           <p className="text-red-500 text-xs italic">
-            "In the void between stars, every system failure could mean the difference between salvation and oblivion."
+            &quot;In the void between stars, every system failure could mean the difference between salvation and oblivion.&quot;
           </p>
           <p className="text-slate-600 text-xs mt-1">
             Emergency Diagnostics • Sector Alert Level: CRITICAL
