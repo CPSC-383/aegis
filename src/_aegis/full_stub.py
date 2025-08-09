@@ -91,8 +91,7 @@ def read_messages(round_num: int = -1) -> list[Message]:
     Retrieve messages from the message buffer.
 
     Args:
-        round_num (int, optional): The round number to retrieve messages from.
-            Defaults to -1, which returns messages from all rounds.
+        round_num (int, optional): The round number to retrieve messages from. Defaults to -1, which returns messages from all rounds.
 
     Returns:
         list[Message]: List of messages.

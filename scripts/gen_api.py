@@ -196,9 +196,9 @@ def parse_enum_members(cls: griffe.Class) -> list[AttrInfo]:
         members.append(
             {
                 "name": attr.name,
-                "annotation": str(attr.annotation) if attr.annotation else "",
+                "annotation": "",
                 "docstring": attr.docstring.value if attr.docstring else None,
-                "default": attr.value,
+                "default": "",
             }
         )
     return members
@@ -234,7 +234,7 @@ def parse_attributes(
             continue
 
         attr_doc = attr.docstring.value if attr.docstring else None
-        default_value = attr.value if str(attr.value) != attr.name else ""
+        default_value = attr.value if attr.name not in str(attr.value) else ""
         results.append(
             {
                 "name": attr.name,
@@ -495,7 +495,7 @@ description: Agent functions to interact with the world.
     return mdx
 
 
-def render_attribute(attr: AttrInfo) -> str:
+def render_attribute(attr: AttrInfo, *, is_enum: bool = False) -> str:
     """
     Render a single class attribute as an MDX PyAttribute component.
 
@@ -542,7 +542,8 @@ description: {class_info["docstring"].partition("\n")[0] if class_info["docstrin
     if class_info:
         if class_info["enum_members"]:
             enums = "\n".join(
-                render_attribute(a) for a in class_info.get("enum_members", [])
+                render_attribute(a, is_enum=True)
+                for a in class_info.get("enum_members", [])
             )
             mdx += f"## Enum Constants\n\n{enums}"
 

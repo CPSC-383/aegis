@@ -106,11 +106,13 @@ export function PyAttribute(props: {
 }) {
   return (
     <section className="text-fd-muted-foreground leading-relaxed prose prose-slate dark:prose-invert max-w-none my-6">
-      <InlineCode
-        lang="python"
-        className="not-prose text-sm font-mono mb-4 block"
-        code={`${props.type}${props.value ? ` = ${props.value}` : ""}`}
-      />
+      {props.value || props.type && (
+        <InlineCode
+          lang="python"
+          className="not-prose text-sm font-mono mb-4 block"
+          code={`${props.type}${props.value ? ` = ${props.value}` : ""}`}
+        />
+      )}
 
       {props.docString ? (
         <p className="whitespace-pre-line">{props.docString}</p>
