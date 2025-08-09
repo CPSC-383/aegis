@@ -251,7 +251,7 @@ export function Header({
       </Navbar>
 
       {pathname === "/" &&
-        <div className="bg-red-950/50 backdrop-blur-sm border-b border-red-500/30 text-xs font-mono">
+        <div className="z-20 bg-red-950/50 backdrop-blur-sm border-b border-red-500/30 text-xs font-mono">
           <div className="max-w-7xl mx-auto px-4 py-1.5">
             <div className="flex items-center justify-center gap-2">
               <AlertTriangle className="w-3 h-3 text-red-400" />

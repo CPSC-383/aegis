@@ -53,7 +53,7 @@ export default function ErrorsPage() {
     <main className="relative flex flex-col h-full items-center px-4 py-12 text-white overflow-hidden">
       <NebulaBackground {...NebulaPresets.alert} />
 
-      <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center text-xs font-mono">
+      <div className="hidden sm:absolute top-4 left-4 right-4 z-20 sm:flex justify-between items-center text-xs font-mono">
         <div className="flex items-center gap-2 bg-red-900/80 backdrop-blur px-3 py-1 rounded border border-red-500/50">
           <AlertTriangle className="w-3 h-3 text-red-400 animate-pulse" />
           <span className="text-red-400">DIAGNOSTIC MODE ACTIVE</span>
@@ -80,7 +80,7 @@ export default function ErrorsPage() {
           </div>
         </div>
 
-        <h1 className="text-5xl font-extrabold uppercase tracking-widest text-red-400 drop-shadow-md mb-2">
+        <h1 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-widest text-red-400 drop-shadow-md mb-2">
           System Diagnostics
         </h1>
 
@@ -194,7 +194,7 @@ export default function ErrorsPage() {
           <div className="h-px bg-gradient-to-r from-transparent via-red-400/50 to-transparent w-20"></div>
           <div className="flex items-center gap-2 font-mono tracking-wider uppercase">
             <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-            <span className="text-red-400">Emergency Protocols Active</span>
+            <span className="text-red-400 text-nowrap">Emergency Protocols Active</span>
           </div>
           <div className="h-px bg-gradient-to-r from-transparent via-red-400/50 to-transparent w-20"></div>
         </div>

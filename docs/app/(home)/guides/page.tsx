@@ -34,7 +34,7 @@ export default function GuidesPage() {
     <main className="relative flex flex-col h-full items-center px-4 py-12 text-white overflow-hidden">
       <NebulaBackground {...NebulaPresets.guides} />
 
-      <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-center text-xs font-mono">
+      <div className="hidden sm:absolute top-4 left-4 right-4 z-20 sm:flex justify-between items-center text-xs font-mono">
         <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur px-3 py-1 rounded border border-cyan-500/30">
           <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
           <span className="text-blue-400">NAVIGATION CHARTS ACTIVE</span>

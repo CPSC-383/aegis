@@ -22,8 +22,8 @@ interface NebulaBackgroundProps {
 }
 
 export const NebulaBackground = ({
-  particleCount = 30,
-  particleSize = { min: 2, max: 4 },
+  particleCount = 50,
+  particleSize = { min: 5, max: 8 },
   animationDuration = { min: 3, max: 5 },
   nebulaColor = 'purple-500/10',
   gradient = 'bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950',
@@ -58,8 +58,6 @@ export const NebulaBackground = ({
           }}
         />
       ))}
-
-      <div className={`absolute inset-0 bg-gradient-radial from-${nebulaColor} via-transparent to-transparent opacity-40`} />
 
       <div className="absolute inset-0 bg-gradient-to-t from-transparent via-slate-900/5 to-transparent opacity-30" />
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-900/5 to-transparent opacity-20" />
