@@ -47,9 +47,7 @@ class Game:
         self._drone_scans: dict[Location, dict[Team, int]] = {}
         self._pending_drone_scans: dict[Location, dict[Team, int]] = {}
         self._prediction_handler: PredictionHandler | None = (
-            PredictionHandler(args)
-            if has_feature("ENABLE_PREDICTIONS")
-            else None
+            PredictionHandler(args) if has_feature("ALLOW_AGENT_PREDICTIONS") else None
         )
         self.agents: dict[int, Agent] = {}
         self.team_agents: dict[Team, str] = {}
@@ -322,7 +320,7 @@ class Game:
             f"Saving survivor {survivor.id} at {agent.location} for team {agent.team}"
         )
         if (
-            is_feature_enabled("ENABLE_PREDICTIONS")
+            has_feature("ALLOW_AGENT_PREDICTIONS")
             and self._prediction_handler is not None
         ):
             LOGGER.info(
@@ -356,7 +354,7 @@ class Game:
 
     def predict(self, surv_id: int, label: np.int32, agent: Agent) -> None:
         if (
-            not is_feature_enabled("ENABLE_PREDICTIONS")
+            not has_feature("ALLOW_AGENT_PREDICTIONS")
             or self._prediction_handler is None
         ):
             return
@@ -414,7 +412,7 @@ class Game:
 
         """
         if (
-            not is_feature_enabled("ENABLE_PREDICTIONS")
+            not has_feature("ALLOW_AGENT_PREDICTIONS")
             or self._prediction_handler is None
         ):
             return []
