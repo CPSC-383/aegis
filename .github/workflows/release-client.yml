@@ -129,7 +129,7 @@ jobs:
           file: release/*.zip
           file_glob: true
           tag: ${{ steps.resolve.outputs.tag }}
-          release_name: "Client ${{ steps.resolve.outputs.tag }}"
+          release_name: "Client Release ${{ steps.resolve.outputs.tag }}"
           overwrite: true
           make_latest: true
           prerelease: ${{ steps.pre.outputs.prerelease }}

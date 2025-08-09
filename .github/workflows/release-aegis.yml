@@ -83,7 +83,7 @@ jobs:
           file: dist/*
           file_glob: true
           tag: ${{ steps.resolve.outputs.tag }}
-          release_name: "Aegis ${{ steps.resolve.outputs.tag }}"
+          release_name: "Aegis Release ${{ steps.resolve.outputs.tag }}"
           overwrite: true
           make_latest: true
           prerelease: ${{ steps.pre.outputs.prerelease }}
