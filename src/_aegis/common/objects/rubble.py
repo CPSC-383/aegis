@@ -28,13 +28,3 @@ class Rubble(WorldObject):
     @override
     def __repr__(self) -> str:
         return self.__str__()
-
-    @override
-    def json(self) -> Layer:
-        return {
-            "type": "rb",
-            "attributes": {
-                "energy_required": self.energy_required,
-                "agents_required": self.agents_required,
-            },
-        }

@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from .world_object import WorldObject
-
-if TYPE_CHECKING:
-    from _aegis.types.world import Layer
 
 
 class Survivor(WorldObject):
@@ -53,15 +50,6 @@ class Survivor(WorldObject):
     @override
     def __repr__(self) -> str:
         return self.__str__()
-
-    @override
-    def json(self) -> Layer:
-        return {
-            "type": "sv",
-            "attributes": {
-                "health": self._health,
-            },
-        }
 
     class State(Enum):
         ALIVE = 0
