@@ -37,22 +37,22 @@ source .venv/bin/activate
 
 To build and deploy the documentation, check the docs folder [readme](./docs/README.md)
 
-#### Aegis Release 
+#### Releases
 
-1. Create a release tag with assignment suffix:
-
-```bash
-git tag -a v<major>.<minor>.<patch>-<assignment> -m "<release message>"
-# Example: git tag -a v2.1.3-a1 -m "Fix bug in map editor"
-```
-
-3. Push the tag.
+- Client release tag:
 
 ```bash
-git push origin <tag name>
+git tag -a client-v<major>.<minor>.<patch> -m "Release client <version>"
+git push origin client-v<major>.<minor>.<patch>
 ```
 
-> [!NOTE]
-> Tags must end with -a1 or -a3 to trigger the release workflow. For example: v1.0.0-a1 or v2.1.3-a3
+- Aegis release tag:
 
-The client will be automatically built and available in the "Releases" section.
+```bash
+git tag -a aegis-v<major>.<minor>.<patch> -m "Release Aegis <version>"
+git push origin aegis-v<major>.<minor>.<patch>
+```
+
+Alternatively, use the Actions tab to run "Release Client" or "Release Aegis" and provide the tag as input.
+
+Each tag creates its own entry in GitHub Releases with the corresponding artifacts. For prereleases use suffixes like `-rc1`, e.g. `client-v1.2.3-rc1` or `aegis-v1.2.3-rc1`.
