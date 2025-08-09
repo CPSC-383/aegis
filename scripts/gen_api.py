@@ -334,24 +334,33 @@ def parse_imported_classes(imported_names: list[str]) -> dict[str, ClassInfo]:
 ##########################################
 
 
-def render_param(param: ParamInfo) -> str:
+def render_function_signature(name: str, func: FuncInfo) -> str:
     """
-    Render a single function parameter as an MDX PyParameter component.
+    Render only the function signature as an MDX inline code block or component.
 
     Args:
-        param (ParamInfo): A dictionary containing parameter info.
+        name (str): The function name.
+        func (FuncInfo): The function info dictionary.
 
     Returns:
-        str: An MDX string representing the PyParameter component for this parameter.
+        str: An MDX string with the function signature in a code block or inline component.
 
     """
-    default = f' value="{param["default"]}"' if param.get("default") is not None else ""
-    type_str = param.get("annotation") or ""
-    return (
-        f'<PyParameter name="{param["name"]}" type="{type_str}"{default}>\n'
-        f"  {param.get('docstring', '')}\n"
-        f"</PyParameter>"
-    )
+    params: list[str] = []
+    for p in func["params"]:
+        param_str = p["name"]
+        if p.get("annotation"):
+            param_str += f": {p['annotation']}"
+        if p.get("default") is not None:
+            param_str += f" = {p['default']}"
+        params.append(param_str)
+
+    params_str = ", ".join(params)
+    return_type = func.get("return_", "None")
+
+    signature = f"def {name}({params_str}) -> {return_type}"
+
+    return f'<PyFunctionSignature signature="{signature}" />'
 
 
 def render_function(name: str, func: FuncInfo) -> str:
@@ -366,10 +375,10 @@ def render_function(name: str, func: FuncInfo) -> str:
         str: An MDX string representing the PyFunction component for this function.
 
     """
-    params_mdx = "\n".join(render_param(p) for p in func["params"])
+    signature_mdx = render_function_signature(name, func)
     doc = func.get("docstring", "")
 
-    return f'## {name}\n\n<PyFunction docString="{doc}">\n{params_mdx}\n</PyFunction>'
+    return f'## {name}\n\n{signature_mdx}\n\n<PyFunction docString="{doc}" />'
 
 
 def render_agent_api_docs(stub_functions: dict[str, FuncInfo]) -> str:

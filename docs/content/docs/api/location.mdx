@@ -17,18 +17,18 @@ description: Agent functions to interact with the world.
 
 ## add
 
+<PyFunctionSignature signature="def add(direction: Direction) -> Location" />
+
 <PyFunction docString="Return a new Location by moving this Location in the specified direction.
 
 Arguments:
     direction (Direction): The direction to move.
 
 Returns:
-    Location: A new Location moved by direction.dx and direction.dy.">
-<PyParameter name="direction" type="Direction">
-  
-</PyParameter>
-</PyFunction>
+    Location: A new Location in the given direction." />
 ## direction_to
+
+<PyFunctionSignature signature="def direction_to(location: Location) -> Direction" />
 
 <PyFunction docString="Determine the cardinal Direction from this Location to another Location.
 
@@ -36,12 +36,10 @@ Arguments:
     location (Location): The target location.
 
 Returns:
-    Direction: The cardinal direction pointing towards the target location.">
-<PyParameter name="location" type="Location">
-  
-</PyParameter>
-</PyFunction>
+    Direction: The cardinal direction pointing towards the target location." />
 ## distance_to
+
+<PyFunctionSignature signature="def distance_to(location: Location) -> int" />
 
 <PyFunction docString="Calculate the squared Euclidean distance from this Location to another.
 
@@ -49,12 +47,10 @@ Arguments:
     location (Location): The target location.
 
 Returns:
-    int: The squared distance between the two locations.">
-<PyParameter name="location" type="Location">
-  
-</PyParameter>
-</PyFunction>
+    int: The squared distance between the two locations." />
 ## is_adjacent_to
+
+<PyFunctionSignature signature="def is_adjacent_to(location: Location) -> bool" />
 
 <PyFunction docString="Check if this Location is adjacent to another Location.
 
@@ -62,8 +58,4 @@ Arguments:
     location (Location): The target location.
 
 Returns:
-    bool: True if the other location is adjacent, else False.">
-<PyParameter name="location" type="Location">
-  
-</PyParameter>
-</PyFunction>
+    bool: True if the other location is adjacent, else False." />
