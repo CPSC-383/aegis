@@ -39,5 +39,3 @@ dist-ssr
 packed-client
 .prettierrc
 replay.txt
-
-api_docs.*

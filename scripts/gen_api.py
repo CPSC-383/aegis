@@ -1,12 +1,11 @@
 """
 Script to auto generate api docs for the documentation website.
 
-It parses the `full_stub.py` file and the other hardocoded class in this file.
+It parses the `full_stub.py` file and gets all the informatiom from the classes and functions.
 """
 # pyright: reportExplicitAny = false
 # pyright: reportAny = false
 
-import json
 import re
 from pathlib import Path
 from typing import Any, TypedDict
@@ -15,6 +14,7 @@ import griffe
 
 PACKAGE = griffe.load("_aegis")
 STUB: griffe.Module = PACKAGE["full_stub"]
+AGENT_API_OUTPUT_PATH = Path("./docs/content/docs/api/agent.mdx")
 
 
 ##########################################
@@ -48,7 +48,7 @@ class FuncInfo(TypedDict):
     docstring: str | None
 
 
-class ClassDetails(TypedDict):
+class ClassInfo(TypedDict):
     """Represents a class' signature information."""
 
     functions: dict[str, FuncInfo]
@@ -58,54 +58,6 @@ class ClassDetails(TypedDict):
 ##########################################
 #           Util functions               #
 ##########################################
-
-
-def sanitize_for_json(obj: object) -> ...:
-    """
-    Recursively convert a Python object into JSON-serializable types.
-
-    Args:
-        obj (object): The input object to sanitize for JSON serialization.
-
-    Returns:
-        Any: A JSON-serializable representation of the input object.
-            Basic types (str, int, float, bool, None) are returned as is.
-            dict, list, and tuple are recursively sanitized.
-            Other types are converted to their string representation.
-
-    """
-    if isinstance(obj, (str, int, float, bool)) or obj is None:
-        return obj
-    if isinstance(obj, dict):
-        return {k: sanitize_for_json(v) for k, v in obj.items()}  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
-    if isinstance(obj, (list, tuple)):
-        return [sanitize_for_json(i) for i in obj]  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
-    return str(obj)
-
-
-def save_api_docs_json(output_path: Path) -> None:
-    """
-    Save the parsed API documentation data to a JSON file.
-
-    Args:
-        output_path (Path): The path to the JSON file to write.
-
-    This includes stub functions, imported classes' functions, and attributes.
-
-    """
-    stub_functions = parse_functions(STUB.functions)
-    imported_names = find_imported_names()
-    mod_sigs = parse_imported_classes(imported_names)
-
-    full_data = {
-        "stub_functions": stub_functions,
-        "modules": mod_sigs,
-    }
-
-    sanitized = sanitize_for_json(full_data)
-
-    with output_path.open("w", encoding="utf-8") as f:
-        json.dump(sanitized, f, indent=2)
 
 
 def print_attributes(attributes: list[AttrInfo]) -> None:
@@ -261,7 +213,7 @@ def find_imported_names() -> list[str]:
     ]
 
 
-def parse_imported_classes(imported_names: list[str]) -> dict[str, ClassDetails]:
+def parse_imported_classes(imported_names: list[str]) -> dict[str, ClassInfo]:
     """
     Parse functions from source files corresponding to imported class names.
 
@@ -278,7 +230,7 @@ def parse_imported_classes(imported_names: list[str]) -> dict[str, ClassDetails]
             function names to their parsed signature details.
 
     """
-    classes: dict[str, ClassDetails] = {}
+    classes: dict[str, ClassInfo] = {}
     root_dir = Path(str(STUB.filepath)).parent
     common_dir = root_dir / "common"
     candidate_dirs = [root_dir, common_dir]
@@ -319,6 +271,98 @@ def parse_imported_classes(imported_names: list[str]) -> dict[str, ClassDetails]
     return classes
 
 
+##########################################
+#           Render functions             #
+##########################################
+
+
+def render_param(param: ParamInfo) -> str:
+    """
+    Render a single function parameter as an MDX PyParameter component.
+
+    Args:
+        param (ParamInfo): A dictionary containing parameter info.
+
+    Returns:
+        str: An MDX string representing the PyParameter component for this parameter.
+
+    """
+    default = f' value="{param["default"]}"' if param.get("default") is not None else ""
+    type_str = param.get("annotation") or ""
+    return (
+        f'<PyParameter name="{param["name"]}" type="{type_str}"{default}>\n'
+        f"  {param.get('docstring', '')}\n"
+        f"</PyParameter>"
+    )
+
+
+def render_function(name: str, func: FuncInfo) -> str:
+    """
+    Render a function and its parameters as an MDX PyFunction component with header.
+
+    Args:
+        name (str): The function name.
+        func (FuncInfo): A dictionary with function info.
+
+    Returns:
+        str: An MDX string representing the function header, parameters,
+             and return type using custom PyFunction components.
+
+    """
+    params_mdx = "\n".join(render_param(p) for p in func["params"])
+    doc = func.get("docstring", "")
+    ret_type = func.get("return_", "None")
+    ret_doc = ""
+
+    return (
+        f"## {name}\n\n"
+        f'<PyFunction docString="{doc}">\n'
+        f"{params_mdx}\n"
+        f'<PyFunctionReturn type="{ret_type}">\n{ret_doc}\n</PyFunctionReturn>\n'
+        f"</PyFunction>"
+    )
+
+
+def render_stub_functions(functions: dict[str, FuncInfo]) -> str:
+    """
+    Render multiple stub functions into a concatenated MDX string.
+
+    Args:
+        functions (dict[str, FuncInfo]): Dictionary mapping function names to their info.
+
+    Returns:
+        str: Concatenated MDX string representing all functions.
+
+    """
+    return "\n".join(render_function(name, f) for name, f in functions.items())
+
+
+def render_agent_api_docs(stub_functions: dict[str, FuncInfo]) -> str:
+    """
+    Generate a complete MDX document string for the Agent API docs.
+
+    Includes frontmatter and renders all stub functions.
+
+    Args:
+        stub_functions (dict[str, FuncInfo]): Dictionary of stub functions info.
+
+    Returns:
+        str: Complete MDX document as a string.
+
+    """
+    mdx = """---
+title: Agent API
+description: Agent functions to interact with the world.
+---\n\n
+"""
+
+    if stub_functions:
+        mdx += render_stub_functions(stub_functions)
+        mdx += "\n"
+
+    return mdx
+
+
 def main() -> None:
     """
     Entry point for analyzing the stub file and its imported classes.
@@ -341,8 +385,10 @@ def main() -> None:
         print("--- Attributes ---")
         print_attributes(attrs)
 
-    save_api_docs_json(Path("api_docs.json"))
-    print("\nAPI docs saved to api_docs.json")
+    agent_api_mdx = render_agent_api_docs(stub_functions)
+
+    _ = AGENT_API_OUTPUT_PATH.write_text(agent_api_mdx, encoding="utf-8")
+    print("\nMDX Files Generated!")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 import * as TabsComponents from "./components/tabs"
 import * as TreeComponents from "./components/file-tree"
+import * as PythonComponents from "./components/python"
 import { ImageZoom } from "fumadocs-ui/components/image-zoom"
 import type { MDXComponents } from "mdx/types"
 import { Callout } from "./components/callout"
@@ -17,6 +18,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...TabsComponents,
     ...TreeComponents,
+    ...PythonComponents,
     ...components,
     Callout,
     CodeBlockTab,
