@@ -7,6 +7,16 @@ to produce the public-facing `aegis/stub.py`.
 It is NOT part of the runtime API.
 """
 
+from . import (
+    CellInfo,
+    Direction,
+    Location,
+    Message,
+    Rubble,
+    Survivor,
+    Team,
+)
+
 
 def get_round_number() -> int:
     """Return the current round number."""
@@ -16,7 +26,7 @@ def get_id() -> int:
     """Return the id of the current agent."""
 
 
-def get_team() -> int:
+def get_team() -> Team:
     """Return the current team of the agent."""
 
 

@@ -5,6 +5,12 @@ from typing import override
 
 
 class Direction(Enum):
+    """
+    Represents the eight principal compass directions plus the center (no movement).
+
+    Each direction has a tuple value representing its (dx, dy) movement on a grid.
+    """
+
     NORTH = (0, 1)
     NORTHEAST = (1, 1)
     EAST = (1, 0)
@@ -17,25 +23,66 @@ class Direction(Enum):
 
     @property
     def dx(self) -> int:
+        """
+        Get the horizontal component (delta x) of the direction.
+
+        Returns:
+            int: The x offset for this direction.
+
+        """
         return self.value[0]
 
     @property
     def dy(self) -> int:
+        """
+        Get the vertical component (delta y) of the direction.
+
+        Returns:
+            int: The y offset for this direction.
+
+        """
         return self.value[1]
 
     def rotate_left(self) -> Direction:
+        """
+        Rotate the direction 45 degrees counter-clockwise (left).
+
+        The center direction returns itself unchanged.
+
+        Returns:
+            Direction: The direction rotated left.
+
+        """
         if self == Direction.CENTER:
             return self
         new_index = (dir_to_index[self] - 1) % 8
         return dir_order[new_index]
 
     def rotate_right(self) -> Direction:
+        """
+        Rotate the direction 45 degrees clockwise (right).
+
+        The center direction returns itself unchanged.
+
+        Returns:
+            Direction: The direction rotated right.
+
+        """
         if self == Direction.CENTER:
             return self
         new_index = (dir_to_index[self] + 1) % 8
         return dir_order[new_index]
 
     def get_opposite(self) -> Direction:
+        """
+        Get the opposite direction (180 degrees rotation).
+
+        The center direction returns itself unchanged.
+
+        Returns:
+            Direction: The opposite direction.
+
+        """
         if self == Direction.CENTER:
             return self
         new_index = (dir_to_index[self] + 4) % 8
@@ -43,10 +90,24 @@ class Direction(Enum):
 
     @override
     def __str__(self) -> str:
+        """
+        Return the string representation of the direction (its name).
+
+        Returns:
+            str: The name of the direction.
+
+        """
         return self.name
 
     @override
     def __repr__(self) -> str:
+        """
+        Return the repr string of the direction (same as str).
+
+        Returns:
+            str: The name of the direction.
+
+        """
         return self.__str__()
 
 
