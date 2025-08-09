@@ -12,31 +12,31 @@ class Direction(Enum):
     """
 
     NORTH = (0, 1)
-    """North - moves upward along the y-axis."""
+    """Direction that points north (up)."""
 
     NORTHEAST = (1, 1)
-    """Northeast - moves diagonally up and right."""
+    """Direction that points northeast (up and right)."""
 
     EAST = (1, 0)
-    """East - moves right along the x-axis."""
+    """Direction that points east (right)."""
 
     SOUTHEAST = (1, -1)
-    """Southeast - moves diagonally down and right."""
+    """Direction that points southeast (down and right)."""
 
     SOUTH = (0, -1)
-    """South - moves downward along the y-axis."""
+    """Direction that points south (down)."""
 
     SOUTHWEST = (-1, -1)
-    """Southwest - moves diagonally down and left."""
+    """Direction that points southwest (down and left)."""
 
     WEST = (-1, 0)
-    """West - moves left along the x-axis."""
+    """Direction that points west (left)."""
 
     NORTHWEST = (-1, 1)
-    """Northwest - moves diagonally up and left."""
+    """Direction that points northwest (up and left)."""
 
     CENTER = (0, 0)
-    """Center - no movement."""
+    """Direction that points center (not moving)."""
 
     @property
     def dx(self) -> int:
