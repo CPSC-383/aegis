@@ -3,7 +3,7 @@ from typing import Any
 
 import yaml
 
-CONFIG_PATH = Path("config/config.yaml")
+CONFIG_PATH = Path.cwd() / "config" / "config.yaml"
 
 
 def load_config() -> dict[str, Any]:

@@ -55,12 +55,12 @@ def run(args: Args) -> None:
     setup_console_and_file_logging() if args.log else setup_console_logging()
 
     sandbox_goobs = (
-        Sandbox.from_directory(Path("agents") / args.agent)
+        Sandbox.from_directory(Path.cwd() / "agents" / args.agent)
         if args.agent is not None
         else None
     )
     sandbox_seers = (
-        Sandbox.from_directory(Path("agents") / args.agent2)
+        Sandbox.from_directory(Path.cwd() / "agents" / args.agent2)
         if args.agent2 is not None
         else None
     )
@@ -72,7 +72,7 @@ def run(args: Args) -> None:
 
     for i, arg_world in enumerate(args.world):
         world_name = f"{arg_world}"
-        world_path = Path("worlds") / f"{world_name}.world"
+        world_path = Path.cwd() / "worlds" / f"{world_name}.world"
 
         try:
             world = load_world(world_path)
