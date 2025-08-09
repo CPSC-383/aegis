@@ -12,35 +12,40 @@ class Direction(Enum):
     """
 
     NORTH = (0, 1)
+    """North - moves upward along the y-axis."""
+
     NORTHEAST = (1, 1)
+    """Northeast - moves diagonally up and right."""
+
     EAST = (1, 0)
+    """East - moves right along the x-axis."""
+
     SOUTHEAST = (1, -1)
+    """Southeast - moves diagonally down and right."""
+
     SOUTH = (0, -1)
+    """South - moves downward along the y-axis."""
+
     SOUTHWEST = (-1, -1)
+    """Southwest - moves diagonally down and left."""
+
     WEST = (-1, 0)
+    """West - moves left along the x-axis."""
+
     NORTHWEST = (-1, 1)
+    """Northwest - moves diagonally up and left."""
+
     CENTER = (0, 0)
+    """Center - no movement."""
 
     @property
     def dx(self) -> int:
-        """
-        Get the horizontal component (delta x) of the direction.
-
-        Returns:
-            int: The x offset for this direction.
-
-        """
+        """Get the change in the x direction."""
         return self.value[0]
 
     @property
     def dy(self) -> int:
-        """
-        Get the vertical component (delta y) of the direction.
-
-        Returns:
-            int: The y offset for this direction.
-
-        """
+        """Get the change in the y direction."""
         return self.value[1]
 
     def rotate_left(self) -> Direction:

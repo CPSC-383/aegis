@@ -35,13 +35,7 @@ class CellInfo:
 
     @property
     def top_layer(self) -> WorldObject | None:
-        """
-        Get the top-most layer object of the cell.
-
-        Returns:
-            WorldObject | None: The top layer object if layers exist, else None.
-
-        """
+        """Get the top-most layer object of the cell."""
         return self.layers[0] if self.layers else None
 
     def is_killer_cell(self) -> bool:
