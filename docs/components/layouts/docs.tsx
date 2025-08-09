@@ -118,7 +118,7 @@ export function DocsLayout({
 
     const mobile = (
       <SidebarContentMobile {...rest}>
-        <HideIfEmpty as={SidebarHeader}>
+        <HideIfEmpty>
           <div>
             <div className="flex text-fd-muted-foreground items-center justify-end empty:hidden">
               {iconLinks.map((item, i) => (
@@ -203,7 +203,7 @@ export function DocsLayout({
           {banner}
         </SidebarHeader>
         {viewport}
-        <HideIfEmpty as={SidebarFooter}>
+        <HideIfEmpty>
           <div>
             <div className="flex text-fd-muted-foreground items-center justify-end empty:hidden">
               {iconLinks.map((item, i) => (
