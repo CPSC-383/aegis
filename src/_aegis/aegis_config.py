@@ -6,7 +6,7 @@ import yaml
 
 from .types import AegisConfig, FeatureKey
 
-CONFIG_PATH = Path("config/config.yaml")
+CONFIG_PATH = Path.cwd() / "config" / "config.yaml"
 
 
 @lru_cache

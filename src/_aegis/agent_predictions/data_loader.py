@@ -28,7 +28,7 @@ class PredictionDataLoader:
 
     def load_testing_data(self) -> None:
         """Load testing data from the testing directory."""
-        data_dir = Path("prediction_data/testing")
+        data_dir = Path.cwd() / "prediction_data" / "testing"
 
         x_path = data_dir / "x_test_symbols.npy"
         y_path = data_dir / "y_test_symbols.npy"
