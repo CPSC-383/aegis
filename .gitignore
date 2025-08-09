@@ -40,4 +40,4 @@ packed-client
 .prettierrc
 replay.txt
 
-api_docs.json
+api_docs.*
