@@ -4,8 +4,8 @@ import {
   defineDocs,
   frontmatterSchema,
   metaSchema,
-} from 'fumadocs-mdx/config';
-import { z } from 'zod';
+} from "fumadocs-mdx/config"
+import { z } from "zod"
 
 export const docs = defineDocs({
   docs: {
@@ -14,31 +14,31 @@ export const docs = defineDocs({
   meta: {
     schema: metaSchema,
   },
-});
+})
 
 export const guidePosts = defineCollections({
-  type: 'doc',
-  dir: 'content/guides',
+  type: "doc",
+  dir: "content/guides",
   schema: frontmatterSchema.extend({
     author: z.string(),
   }),
-});
+})
 
 export const errorPosts = defineCollections({
-  type: 'doc',
-  dir: 'content/errors',
+  type: "doc",
+  dir: "content/errors",
   schema: frontmatterSchema.extend({
     author: z.string(),
   }),
-});
+})
 
 export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
       themes: {
         light: "catppuccin-latte",
-        dark: "catppuccin-mocha"
+        dark: "catppuccin-mocha",
       },
-    }
+    },
   },
-});
+})
