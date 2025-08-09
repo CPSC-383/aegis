@@ -192,8 +192,7 @@ def parse_enum_members(cls: griffe.Class) -> list[AttrInfo]:
         # Enum values are usually class attributes
         if "class-attribute" not in attr.labels:
             continue
-        print(attr.as_json())
-        print(f"value: {attr.value}")
+
         members.append(
             {
                 "name": attr.name,
@@ -235,12 +234,13 @@ def parse_attributes(
             continue
 
         attr_doc = attr.docstring.value if attr.docstring else None
+        default_value = attr.value if str(attr.value) != attr.name else ""
         results.append(
             {
                 "name": attr.name,
                 "annotation": str(attr.annotation) if attr.annotation else "",
                 "docstring": attr_descriptions.get(attr.name) or attr_doc,
-                "default": attr.value,
+                "default": default_value,
             }
         )
     return results
@@ -262,7 +262,11 @@ def parse_functions(funcs: dict[str, griffe.Function]) -> dict[str, FuncInfo]:
 
     for func in funcs.values():
         # Skip dunder methods
-        if func.name.startswith("__") and func.name.endswith("__"):
+        if (
+            func.name.startswith("__")
+            and func.name.endswith("__")
+            and func.name != "__init__"
+        ):
             continue
 
         func_info: FuncInfo = {
@@ -393,16 +397,41 @@ def parse_classes(imported_names: list[str]) -> dict[str, ClassInfo]:
 ##########################################
 
 
+def render_constructor(name: str, attributes: list[AttrInfo]) -> str:
+    """
+    Generate a Python constructor signature from class attributes.
+
+    Args:
+        name (str): The class name.
+        attributes (list[AttrInfo]): The list of attributes for the class.
+
+    Returns:
+        str: An MDX string with the class init in a code block.
+
+    """
+    params: list[str] = []
+    for attr in attributes:
+        param_str = attr["name"]
+        if attr.get("annotation"):
+            param_str += f": {attr['annotation']}"
+        if attr.get("default"):
+            param_str += f" = {attr['default']}"
+        params.append(param_str)
+
+    init = f"{name}({', '.join(params)})"
+    return f'<PyFunctionSignature signature="{init}" />'
+
+
 def render_function_signature(name: str, func: FuncInfo) -> str:
     """
-    Render only the function signature as an MDX inline code block or component.
+    Render only the function signature as an MDX inline code block.
 
     Args:
         name (str): The function name.
         func (FuncInfo): The function info dictionary.
 
     Returns:
-        str: An MDX string with the function signature in a code block or inline component.
+        str: An MDX string with the function signature in a code block.
 
     """
     params: list[str] = []
@@ -505,6 +534,11 @@ title: {name}
 description: {class_info["docstring"].partition("\n")[0] if class_info["docstring"] else "Could not generate description"}
 ---\n\n
 """
+    # Only render constructor if __init__ has a docstring
+    init_func = class_info["functions"].get("__init__")
+    if init_func and init_func.get("docstring"):
+        mdx += f"## Constructor\n\n{render_constructor(name, class_info['attributes'])}"
+
     if class_info:
         if class_info["enum_members"]:
             enums = "\n".join(
@@ -516,9 +550,13 @@ description: {class_info["docstring"].partition("\n")[0] if class_info["docstrin
         funcs = "\n".join(
             render_function(fname, finfo)
             for fname, finfo in class_info.get("functions", {}).items()
+            if fname != "__init__"
         )
-        mdx += f"## Attributes\n\n{attrs}"
-        mdx += f"\n\n## Methods\n\n{funcs}"
+        if attrs:
+            mdx += f"\n\n## Attributes\n\n{attrs}"
+
+        if funcs:
+            mdx += f"\n\n## Methods\n\n{funcs}"
 
     return mdx
 
