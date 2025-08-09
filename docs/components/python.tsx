@@ -1,61 +1,60 @@
-import { type ComponentProps } from 'react';
-import { cn } from 'fumadocs-ui/utils/cn';
-import { highlight } from 'fumadocs-core/highlight';
+import { type ComponentProps } from "react"
+import { cn } from "fumadocs-ui/utils/cn"
+import { highlight } from "fumadocs-core/highlight"
 
 function parseDocstring(docstring: string) {
   const sections = {
-    description: '',
+    description: "",
     arguments: [] as string[],
-    returns: '',
-    throws: '',
-  };
+    returns: "",
+    throws: "",
+  }
 
-  const lines = docstring.split('\n').map(line => line.trim());
+  const lines = docstring.split("\n").map((line) => line.trim())
 
-  let currentSection: keyof typeof sections = 'description';
+  let currentSection: keyof typeof sections = "description"
   for (const line of lines) {
     if (/^(Arguments?|Args?):$/i.test(line)) {
-      currentSection = 'arguments';
-      continue;
+      currentSection = "arguments"
+      continue
     }
     if (/^Returns?:$/i.test(line)) {
-      currentSection = 'returns';
-      continue;
+      currentSection = "returns"
+      continue
     }
     if (/^Throws?:$/i.test(line)) {
-      currentSection = 'throws';
-      continue;
+      currentSection = "throws"
+      continue
     }
 
-    if (currentSection === 'arguments') {
-      if (line) sections.arguments.push(line);
-    } else if (currentSection === 'description') {
+    if (currentSection === "arguments") {
+      if (line) sections.arguments.push(line)
+    } else if (currentSection === "description") {
       if (sections.description) {
-        sections.description += ' ' + line;
+        sections.description += " " + line
       } else {
-        sections.description = line;
+        sections.description = line
       }
-    } else if (currentSection === 'returns') {
+    } else if (currentSection === "returns") {
       if (sections.returns) {
-        sections.returns += ' ' + line;
+        sections.returns += " " + line
       } else {
-        sections.returns = line;
+        sections.returns = line
       }
-    } else if (currentSection === 'throws') {
+    } else if (currentSection === "throws") {
       if (sections.throws) {
-        sections.throws += ' ' + line;
+        sections.throws += " " + line
       } else {
-        sections.throws = line;
+        sections.throws = line
       }
     }
   }
 
-  return sections;
+  return sections
 }
 
-
 export function PyFunction({ docString }: { docString: string }) {
-  const doc = docString ? parseDocstring(docString) : null;
+  const doc = docString ? parseDocstring(docString) : null
 
   return (
     <section className="mt-2 text-fd-muted-foreground leading-relaxed prose prose-slate dark:prose-invert max-w-none">
@@ -65,10 +64,14 @@ export function PyFunction({ docString }: { docString: string }) {
 
           {doc.arguments.length > 0 && (
             <section className="mb-6">
-              <h4 className="font-mono font-semibold text-fd-foreground mb-2">Arguments</h4>
+              <h4 className="font-mono font-semibold text-fd-foreground mb-2">
+                Arguments
+              </h4>
               <ul className="list-disc list-inside font-mono text-sm space-y-1">
                 {doc.arguments.map((arg, i) => (
-                  <li key={i} className="whitespace-pre-line">{arg}</li>
+                  <li key={i} className="whitespace-pre-line">
+                    {arg}
+                  </li>
                 ))}
               </ul>
             </section>
@@ -76,37 +79,39 @@ export function PyFunction({ docString }: { docString: string }) {
 
           {doc.returns && (
             <section className="mb-6">
-              <h4 className="font-mono font-semibold text-fd-foreground mb-2">Returns</h4>
+              <h4 className="font-mono font-semibold text-fd-foreground mb-2">
+                Returns
+              </h4>
               <p className="font-mono text-sm whitespace-pre-line">{doc.returns}</p>
             </section>
           )}
 
           {doc.throws && (
             <section className="mb-6">
-              <h4 className="font-mono font-semibold text-fd-foreground mb-2">Throws</h4>
+              <h4 className="font-mono font-semibold text-fd-foreground mb-2">
+                Throws
+              </h4>
               <p className="font-mono text-sm whitespace-pre-line">{doc.throws}</p>
             </section>
           )}
         </>
       ) : (
-        <p className="italic text-fd-muted-foreground mb-6">No documentation available.</p>
+        <p className="italic text-fd-muted-foreground mb-6">
+          No documentation available.
+        </p>
       )}
     </section>
-  );
+  )
 }
 
 export function PyFunctionSignature({ signature }: { signature: string }) {
-  return <InlineCode lang="python" code={signature} />;
+  return <InlineCode lang="python" code={signature} />
 }
 
-export function PyAttribute(props: {
-  type: string;
-  value: string;
-  docString: string;
-}) {
+export function PyAttribute(props: { type: string; value: string; docString: string }) {
   return (
     <section className="text-fd-muted-foreground leading-relaxed prose prose-slate dark:prose-invert max-w-none my-6">
-      {props.value || props.type && (
+      {(props.value || props.type) && (
         <InlineCode
           lang="python"
           className="not-prose text-sm font-mono mb-4 block"
@@ -120,16 +125,16 @@ export function PyAttribute(props: {
         <p className="italic text-fd-muted-foreground">No description available.</p>
       )}
     </section>
-  );
+  )
 }
 
 async function InlineCode({
   lang,
   code,
   ...rest
-}: ComponentProps<'span'> & {
-  lang: string;
-  code: string;
+}: ComponentProps<"span"> & {
+  lang: string
+  code: string
 }) {
   return highlight(code, {
     lang,
@@ -138,7 +143,11 @@ async function InlineCode({
         <span
           {...props}
           {...rest}
-          className={cn(rest.className, props.className, "[--padding-left:0!important]")}
+          className={cn(
+            rest.className,
+            props.className,
+            "[--padding-left:0!important]"
+          )}
         />
       ),
       code: (props) => (
@@ -153,7 +162,7 @@ async function InlineCode({
         />
       ),
     },
-  });
+  })
 }
 
-export { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+export { Tab, Tabs } from "fumadocs-ui/components/tabs"

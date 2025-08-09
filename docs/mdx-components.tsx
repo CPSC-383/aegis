@@ -1,5 +1,5 @@
-import defaultMdxComponents from 'fumadocs-ui/mdx';
-import * as TabsComponents from 'fumadocs-ui/components/tabs';
+import defaultMdxComponents from "fumadocs-ui/mdx"
+import * as TabsComponents from "fumadocs-ui/components/tabs"
 import * as TreeComponents from "./components/file-tree"
 import * as PythonComponents from "./components/python"
 import { ImageZoom } from "fumadocs-ui/components/image-zoom"
@@ -20,7 +20,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <h3
         className={cn(
           "mt-8 scroll-m-20 text-xl font-semibold tracking-tight",
-          className,
+          className
         )}
         {...props}
       />
@@ -33,16 +33,13 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ),
     img: (props) => <ImageZoom {...(props as any)} />,
     h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <h1
-        className={cn("mt-2 scroll-m-20 text-4xl font-bold", className)}
-        {...props}
-      />
+      <h1 className={cn("mt-2 scroll-m-20 text-4xl font-bold", className)} {...props} />
     ),
     h2: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <h2
         className={cn(
           "mt-12 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0",
-          className,
+          className
         )}
         {...props}
       />
@@ -51,7 +48,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <h3
         className={cn(
           "mt-8 scroll-m-20 text-xl font-semibold tracking-tight",
-          className,
+          className
         )}
         {...props}
       />
@@ -60,7 +57,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <h4
         className={cn(
           "font-heading mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
-          className,
+          className
         )}
         {...props}
       />
@@ -69,7 +66,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <h5
         className={cn(
           "mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
-          className,
+          className
         )}
         {...props}
       />
@@ -78,7 +75,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <h6
         className={cn(
           "mt-8 scroll-m-20 text-base font-semibold tracking-tight",
-          className,
+          className
         )}
         {...props}
       />
