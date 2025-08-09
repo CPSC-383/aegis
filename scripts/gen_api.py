@@ -14,7 +14,8 @@ import griffe
 
 PACKAGE = griffe.load("_aegis")
 STUB: griffe.Module = PACKAGE["full_stub"]
-AGENT_API_OUTPUT_PATH = Path("./docs/content/docs/api/agent.mdx")
+API_PATH = Path("./docs/content/docs/api")
+AGENT_API_OUTPUT_PATH = API_PATH / "agent.mdx"
 
 
 ##########################################
@@ -58,6 +59,45 @@ class ClassInfo(TypedDict):
 ##########################################
 #           Util functions               #
 ##########################################
+
+
+def parse_attr_descriptions(class_docstring: str) -> dict[str, str]:
+    """
+    Parse attribute descriptions from a class docstring.
+
+    Args:
+        class_docstring (str): The full docstring of the class.
+
+    Returns:
+        dict[str, str]: Mapping from attribute name to its description.
+
+    """
+    if not class_docstring:
+        return {}
+
+    # Regex to match the Attributes section, then parse each attribute line:
+    attr_section_match = re.search(
+        r"Attributes:\s*(.+?)(?:\n\n|$)",
+        class_docstring,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    if not attr_section_match:
+        return {}
+
+    attr_text = attr_section_match.group(1)
+    # Split lines by newline and parse "name (type): description"
+    attr_lines = attr_text.strip().split("\n")
+
+    descriptions: dict[str, str] = {}
+    attr_line_pattern = re.compile(r"^\s*(\w+)\s*\(.*?\):\s*(.+)$")
+
+    for line in attr_lines:
+        match = attr_line_pattern.match(line)
+        if match:
+            attr_name, description = match.groups()
+            descriptions[attr_name] = description.strip()
+
+    return descriptions
 
 
 def print_attributes(attributes: list[AttrInfo]) -> None:
@@ -120,28 +160,37 @@ def pascal_to_snake(name: str) -> str:
 ##########################################
 
 
-def parse_attributes(attrs: dict[str, griffe.Attribute]) -> list[AttrInfo]:
+def parse_attributes(
+    attrs: dict[str, griffe.Attribute], class_docstring: str | None = None
+) -> list[AttrInfo]:
     """
     Parse class attributes.
 
     Args:
-        attrs: Dictionary of attribute names to Griffe Attribute objects.
+        attrs (dict[str, griffe.Attribute]): Mapping of attribute names to Griffe
+            Attribute objects representing the attributes of the class.
+        class_docstring (str | None): The full docstring of the class
+            from which attribute descriptions may be extracted. Defaults to None.
 
     Returns:
         A list of attribute info dictionaries.
 
     """
     results: list[AttrInfo] = []
+    attr_descriptions = (
+        parse_attr_descriptions(class_docstring) if class_docstring else {}
+    )
     for attr in attrs.values():
         # Skip private ones
         if attr.name.startswith("_"):
             continue
 
+        attr_doc = attr.docstring.value if attr.docstring else None
         results.append(
             {
                 "name": attr.name,
                 "annotation": str(attr.annotation) if attr.annotation else "",
-                "docstring": attr.docstring.value if attr.docstring else None,
+                "docstring": attr_descriptions.get(attr.name) or attr_doc,
                 "default": attr.value,
             }
         )
@@ -163,6 +212,10 @@ def parse_functions(funcs: dict[str, griffe.Function]) -> dict[str, FuncInfo]:
     functions: dict[str, FuncInfo] = {}
 
     for func in funcs.values():
+        # Skip dunder methods
+        if func.name.startswith("__") and func.name.endswith("__"):
+            continue
+
         func_info: FuncInfo = {
             "name": func.name,
             "params": [],
@@ -264,8 +317,9 @@ def parse_imported_classes(imported_names: list[str]) -> dict[str, ClassInfo]:
             print(f"Warning: Class '{name}' not found in {import_path}")
             continue
 
+        doc_string = cls.docstring.value if cls.docstring else None
         funcs = parse_functions(cls.functions)
-        attrs = parse_attributes(cls.attributes)
+        attrs = parse_attributes(cls.attributes, doc_string)
         classes[name] = {"functions": funcs, "attributes": attrs}
 
     return classes
@@ -347,7 +401,7 @@ def render_agent_api_docs(stub_functions: dict[str, FuncInfo]) -> str:
         stub_functions (dict[str, FuncInfo]): Dictionary of stub functions info.
 
     Returns:
-        str: Complete MDX document as a string.
+        str: A complete MDX string for the agent documentation.
 
     """
     mdx = """---
@@ -359,6 +413,53 @@ description: Agent functions to interact with the world.
     if stub_functions:
         mdx += render_stub_functions(stub_functions)
         mdx += "\n"
+
+    return mdx
+
+
+def render_attribute(attr: AttrInfo) -> str:
+    """
+    Render a single class attribute as an MDX PyAttribute component.
+
+    Args:
+        attr (AttrInfo): A dictionary containing attribute information.
+
+    Returns:
+        str: An MDX string representing a PyAttribute component.
+
+    """
+    default = attr.get("default")
+    default_str = str(default) if default is not None else ""
+    type_str = attr.get("annotation") or ""
+    doc = attr.get("docstring") or ""
+    return f'<PyAttribute name="{attr["name"]}" type="{type_str}" default="{default_str}" docString="{doc}" />\n'
+
+
+def render_class_docs(name: str, class_info: ClassInfo) -> str:
+    """
+    Render the complete MDX documentation for a class including its attributes and functions.
+
+    Args:
+        name (str): The name of the class.
+        class_info (ClassInfo): A dictionary containing the class information.
+
+    Returns:
+        str: A complete MDX string for the class documentation.
+
+    """
+    mdx = f"""---
+title: {name}
+description: Agent functions to interact with the world.
+---\n\n
+"""
+    if class_info:
+        attrs = "\n".join(render_attribute(a) for a in class_info.get("attributes", []))
+        funcs = "\n".join(
+            render_function(fname, finfo)
+            for fname, finfo in class_info.get("functions", {}).items()
+        )
+        mdx += f"## Attributes\n\n{attrs}"
+        mdx += f"\n\n{funcs}"
 
     return mdx
 
@@ -388,6 +489,13 @@ def main() -> None:
     agent_api_mdx = render_agent_api_docs(stub_functions)
 
     _ = AGENT_API_OUTPUT_PATH.write_text(agent_api_mdx, encoding="utf-8")
+
+    for name, class_info in mod_sigs.items():
+        class_api_mdx = render_class_docs(name, class_info)
+        _ = Path(API_PATH / f"{name.lower()}.mdx").write_text(
+            class_api_mdx, encoding="utf-8"
+        )
+
     print("\nMDX Files Generated!")
 
 

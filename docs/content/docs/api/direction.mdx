@@ -1,0 +1,82 @@
+---
+title: Direction
+description: Agent functions to interact with the world.
+---
+
+
+## Attributes
+
+<PyAttribute name="NORTH" type="" default="(0, 1)" docString="" />
+
+<PyAttribute name="NORTHEAST" type="" default="(1, 1)" docString="" />
+
+<PyAttribute name="EAST" type="" default="(1, 0)" docString="" />
+
+<PyAttribute name="SOUTHEAST" type="" default="(1, -1)" docString="" />
+
+<PyAttribute name="SOUTH" type="" default="(0, -1)" docString="" />
+
+<PyAttribute name="SOUTHWEST" type="" default="(-1, -1)" docString="" />
+
+<PyAttribute name="WEST" type="" default="(-1, 0)" docString="" />
+
+<PyAttribute name="NORTHWEST" type="" default="(-1, 1)" docString="" />
+
+<PyAttribute name="CENTER" type="" default="(0, 0)" docString="" />
+
+<PyAttribute name="dx" type="int" default="" docString="Get the horizontal component (delta x) of the direction.
+
+Returns:
+    int: The x offset for this direction." />
+
+<PyAttribute name="dy" type="int" default="" docString="Get the vertical component (delta y) of the direction.
+
+Returns:
+    int: The y offset for this direction." />
+
+
+## rotate_left
+
+<PyFunction docString="Rotate the direction 45 degrees counter-clockwise (left).
+
+The center direction returns itself unchanged.
+
+Returns:
+    Direction: The direction rotated left.">
+<PyParameter name="self" type="None">
+  
+</PyParameter>
+<PyFunctionReturn type="Direction">
+
+</PyFunctionReturn>
+</PyFunction>
+## rotate_right
+
+<PyFunction docString="Rotate the direction 45 degrees clockwise (right).
+
+The center direction returns itself unchanged.
+
+Returns:
+    Direction: The direction rotated right.">
+<PyParameter name="self" type="None">
+  
+</PyParameter>
+<PyFunctionReturn type="Direction">
+
+</PyFunctionReturn>
+</PyFunction>
+## get_opposite
+
+<PyFunction docString="Get the opposite direction (180 degrees rotation).
+
+The center direction returns itself unchanged.
+
+Returns:
+    Direction: The opposite direction.">
+<PyParameter name="self" type="None">
+  
+</PyParameter>
+<PyFunctionReturn type="Direction">
+
+</PyFunctionReturn>
+</PyFunction>

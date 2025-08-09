@@ -69,14 +69,12 @@ export function PyAttribute(props: {
   name: string;
   type?: string;
   value?: string;
-  children?: ReactNode;
+  docString?: string;
 }) {
   return (
-    <div className="my-6 border-l-4 border-purple-200 dark:border-purple-800/50 pl-4 py-2">
-      <div className="flex gap-3 items-center flex-wrap font-mono mb-3">
-        <span className={cn(badgeVariants({ color: 'attribute' }))}>
-          attribute
-        </span>
+    <section className="text-fd-muted-foreground leading-relaxed prose prose-slate dark:prose-invert max-w-none my-6">
+      <header className="flex gap-3 items-center flex-wrap font-mono mb-4">
+        <span className={cn(badgeVariants({ color: "attribute" }))}>attribute</span>
         <span className="font-semibold text-lg text-fd-foreground">{props.name}</span>
         {props.type && (
           <InlineCode
@@ -85,24 +83,24 @@ export function PyAttribute(props: {
             code={props.type}
           />
         )}
-      </div>
-      <div className="text-fd-muted-foreground prose-no-margin space-y-2">
-        {props.value && (
-          <div className="bg-fd-muted/10 rounded-md p-3 border-l-2 border-fd-muted/30">
-            <InlineCode
-              lang="python"
-              className="not-prose text-sm font-mono"
-              code={`${props.name} = ${props.value}`}
-            />
-          </div>
-        )}
-        {props.children && (
-          <div className="mt-3">
-            {props.children}
-          </div>
-        )}
-      </div>
-    </div>
+      </header>
+
+      {props.value && (
+        <div className="mb-6 bg-fd-muted/10 rounded-md p-3 border-l-2 border-fd-muted/30">
+          <InlineCode
+            lang="python"
+            className="not-prose text-sm font-mono"
+            code={`${props.name} = ${props.value}`}
+          />
+        </div>
+      )}
+
+      {props.docString ? (
+        <p className="whitespace-pre-line">{props.docString}</p>
+      ) : (
+        <p className="italic text-fd-muted-foreground mb-6">No description available.</p>
+      )}
+    </section>
   );
 }
 
