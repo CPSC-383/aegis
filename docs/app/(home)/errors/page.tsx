@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { errors } from '@/lib/source';
-import { NebulaBackground, NebulaPresets } from '@/components/nebula';
+import Link from "next/link"
+import { errors } from "@/lib/source"
+import { NebulaBackground, NebulaPresets } from "@/components/nebula"
 import {
   AlertTriangle,
   Zap,
@@ -9,45 +9,58 @@ import {
   Bug,
   Activity,
   Wifi,
-  Eye
-} from 'lucide-react';
+  Eye,
+} from "lucide-react"
 
 export default function ErrorsPage() {
-  const posts = errors.getPages();
-  const postsByCategory = posts.reduce((acc, post) => {
-    const slug = post.slugs;
-    const category = slug[0] || 'uncategorized';
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(post);
-    return acc;
-  }, {} as Record<string, typeof posts>);
+  const posts = errors.getPages()
+  const postsByCategory = posts.reduce(
+    (acc, post) => {
+      const slug = post.slugs
+      const category = slug[0] || "uncategorized"
+      if (!acc[category]) acc[category] = []
+      acc[category].push(post)
+      return acc
+    },
+    {} as Record<string, typeof posts>
+  )
 
   const systemStatus = [
-    { system: 'LUMEN CORE', status: 'CRITICAL', level: 23 },
-    { system: 'TELEPORTER ARRAY', status: 'WARNING', level: 67 },
-    { system: 'LIFE SUPPORT', status: 'NOMINAL', level: 94 },
-    { system: 'DEFENSE GRID', status: 'OFFLINE', level: 0 },
-  ];
+    { system: "LUMEN CORE", status: "CRITICAL", level: 23 },
+    { system: "TELEPORTER ARRAY", status: "WARNING", level: 67 },
+    { system: "LIFE SUPPORT", status: "NOMINAL", level: 94 },
+    { system: "DEFENSE GRID", status: "OFFLINE", level: 0 },
+  ]
 
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
-      case 'connection': return Wifi;
-      case 'authentication': return Shield;
-      case 'system': return Bug;
-      case 'critical': return AlertOctagon;
-      default: return AlertTriangle;
+      case "connection":
+        return Wifi
+      case "authentication":
+        return Shield
+      case "system":
+        return Bug
+      case "critical":
+        return AlertOctagon
+      default:
+        return AlertTriangle
     }
-  };
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'CRITICAL': return 'text-red-400 bg-red-500/20';
-      case 'WARNING': return 'text-yellow-400 bg-yellow-500/20';
-      case 'NOMINAL': return 'text-green-400 bg-green-500/20';
-      case 'OFFLINE': return 'text-gray-400 bg-gray-500/20';
-      default: return 'text-red-400 bg-red-500/20';
+      case "CRITICAL":
+        return "text-red-400 bg-red-500/20"
+      case "WARNING":
+        return "text-yellow-400 bg-yellow-500/20"
+      case "NOMINAL":
+        return "text-green-400 bg-green-500/20"
+      case "OFFLINE":
+        return "text-gray-400 bg-gray-500/20"
+      default:
+        return "text-red-400 bg-red-500/20"
     }
-  };
+  }
 
   return (
     <main className="relative flex flex-col h-full items-center px-4 py-12 text-white overflow-hidden">
@@ -61,7 +74,9 @@ export default function ErrorsPage() {
         <div className="flex items-center gap-4 bg-slate-900/80 backdrop-blur px-3 py-1 rounded border border-red-500/30">
           <div className="flex items-center gap-1">
             <Bug className="w-3 h-3 text-red-400" />
-            <span className="text-red-400">ANOMALIES: {Object.keys(postsByCategory).length}</span>
+            <span className="text-red-400">
+              ANOMALIES: {Object.keys(postsByCategory).length}
+            </span>
           </div>
           <div className="flex items-center gap-1">
             <Eye className="w-3 h-3 text-yellow-400" />
@@ -93,7 +108,8 @@ export default function ErrorsPage() {
         </div>
 
         <p className="max-w-xl mx-auto text-red-200 text-sm sm:text-base leading-relaxed mb-6">
-          Troubleshoot frequent issues encountered during missions. Stay alert, resolve anomalies, and maintain station integrity.
+          Troubleshoot frequent issues encountered during missions. Stay alert, resolve
+          anomalies, and maintain station integrity.
         </p>
 
         <div className="text-xs font-mono text-red-400 bg-red-900/50 rounded px-3 py-1 border border-red-500/50 inline-block">
@@ -104,20 +120,30 @@ export default function ErrorsPage() {
       <div className="relative z-10 w-full max-w-4xl mb-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {systemStatus.map((item, index) => (
-            <div key={index} className="bg-slate-900/70 backdrop-blur border border-red-500/30 rounded-lg p-3">
+            <div
+              key={index}
+              className="bg-slate-900/70 backdrop-blur border border-red-500/30 rounded-lg p-3"
+            >
               <div className="flex items-center justify-between mb-2">
                 <Activity className="w-4 h-4 text-red-400" />
-                <span className={`text-xs px-2 py-1 rounded font-mono ${getStatusColor(item.status)}`}>
+                <span
+                  className={`text-xs px-2 py-1 rounded font-mono ${getStatusColor(item.status)}`}
+                >
                   {item.status}
                 </span>
               </div>
               <h3 className="text-xs font-mono text-red-300 mb-1">{item.system}</h3>
               <div className="w-full bg-slate-800 rounded-full h-2">
                 <div
-                  className={`h-2 rounded-full transition-all duration-1000 ${item.level > 80 ? 'bg-green-400' :
-                    item.level > 50 ? 'bg-yellow-400' :
-                      item.level > 0 ? 'bg-red-400' : 'bg-gray-600'
-                    }`}
+                  className={`h-2 rounded-full transition-all duration-1000 ${
+                    item.level > 80
+                      ? "bg-green-400"
+                      : item.level > 50
+                        ? "bg-yellow-400"
+                        : item.level > 0
+                          ? "bg-red-400"
+                          : "bg-gray-600"
+                  }`}
                   style={{ width: `${item.level}%` }}
                 />
               </div>
@@ -129,7 +155,7 @@ export default function ErrorsPage() {
 
       <section className="relative z-10 max-w-6xl w-full">
         {Object.entries(postsByCategory).map(([category, posts]) => {
-          const CategoryIcon = getCategoryIcon(category);
+          const CategoryIcon = getCategoryIcon(category)
           return (
             <section key={category} className="mb-16">
               <div className="flex items-center gap-3 mb-6">
@@ -137,7 +163,7 @@ export default function ErrorsPage() {
                   <CategoryIcon className="w-5 h-5 text-red-400" />
                 </div>
                 <h2 className="text-3xl font-bold uppercase tracking-wide text-red-400">
-                  {category.replace(/-/g, ' ')}
+                  {category.replace(/-/g, " ")}
                 </h2>
                 <div className="flex-1 h-px bg-gradient-to-r from-red-500/50 to-transparent" />
                 <span className="text-xs font-mono text-red-400 bg-red-900/30 px-2 py-1 rounded">
@@ -157,13 +183,13 @@ export default function ErrorsPage() {
                       overflow-hidden
                     "
                     style={{
-                      animationDelay: `${index * 100}ms`
+                      animationDelay: `${index * 100}ms`,
                     }}
                   >
                     <div className="flex items-start justify-between">
                       <AlertTriangle className="w-5 h-5 text-red-400 mt-1 group-hover:animate-pulse" />
                       <div className="text-xs font-mono text-red-500 bg-red-900/30 px-2 py-1 rounded">
-                        ERROR-{String(index + 1).padStart(3, '0')}
+                        ERROR-{String(index + 1).padStart(3, "0")}
                       </div>
                     </div>
 
@@ -177,15 +203,19 @@ export default function ErrorsPage() {
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-red-500/20">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-                        <span className="text-xs font-mono text-red-400">UNRESOLVED</span>
+                        <span className="text-xs font-mono text-red-400">
+                          UNRESOLVED
+                        </span>
                       </div>
-                      <span className="text-xs text-red-500/60 font-mono">PRIORITY: HIGH</span>
+                      <span className="text-xs text-red-500/60 font-mono">
+                        PRIORITY: HIGH
+                      </span>
                     </div>
                   </Link>
                 ))}
               </div>
             </section>
-          );
+          )
         })}
       </section>
 
@@ -201,7 +231,8 @@ export default function ErrorsPage() {
 
         <div className="text-center max-w-md">
           <p className="text-red-500 text-xs italic">
-            &quot;In the void between stars, every system failure could mean the difference between salvation and oblivion.&quot;
+            &quot;In the void between stars, every system failure could mean the
+            difference between salvation and oblivion.&quot;
           </p>
           <p className="text-slate-600 text-xs mt-1">
             Emergency Diagnostics • Sector Alert Level: CRITICAL
@@ -209,5 +240,5 @@ export default function ErrorsPage() {
         </div>
       </div>
     </main>
-  );
+  )
 }

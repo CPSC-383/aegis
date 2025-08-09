@@ -1,16 +1,12 @@
-'use client';
-import { ChevronDown, Navigation, Target } from 'lucide-react';
-import type { TOCItemType } from 'fumadocs-core/server';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from './ui/collapsible';
-import { ComponentProps } from 'react';
-import { cn } from '../lib/cn';
+"use client"
+import { ChevronDown, Navigation, Target } from "lucide-react"
+import type { TOCItemType } from "fumadocs-core/server"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
+import { ComponentProps } from "react"
+import { cn } from "../lib/cn"
 
 export interface InlineTocProps extends ComponentProps<typeof Collapsible> {
-  items: TOCItemType[];
+  items: TOCItemType[]
 }
 
 export function InlineTOC({ items, ...props }: InlineTocProps) {
@@ -18,20 +14,20 @@ export function InlineTOC({ items, ...props }: InlineTocProps) {
     <Collapsible
       {...props}
       className={cn(
-        'not-prose relative overflow-hidden rounded-lg',
-        'border border-cyan-500/20 bg-slate-900/60 backdrop-blur-sm',
-        'hover:bg-slate-800/80 hover:border-cyan-400/50',
-        'transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20',
-        props.className,
+        "not-prose relative overflow-hidden rounded-lg",
+        "border border-cyan-500/20 bg-slate-900/60 backdrop-blur-sm",
+        "hover:bg-slate-800/80 hover:border-cyan-400/50",
+        "transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20",
+        props.className
       )}
     >
       <CollapsibleTrigger
         className={cn(
-          'group relative inline-flex w-full items-center justify-between',
-          'px-5 py-4 font-mono font-semibold tracking-wide text-cyan-300',
-          'border-b border-cyan-500/20 group-data-[state=open]:border-cyan-400/30',
-          'hover:bg-gradient-to-r hover:from-cyan-900/20 hover:via-slate-800/30 hover:to-cyan-900/20',
-          'hover:text-cyan-200 transition-all duration-300',
+          "group relative inline-flex w-full items-center justify-between",
+          "px-5 py-4 font-mono font-semibold tracking-wide text-cyan-300",
+          "border-b border-cyan-500/20 group-data-[state=open]:border-cyan-400/30",
+          "hover:bg-gradient-to-r hover:from-cyan-900/20 hover:via-slate-800/30 hover:to-cyan-900/20",
+          "hover:text-cyan-200 transition-all duration-300"
         )}
       >
         <div className="flex items-center gap-3">
@@ -39,9 +35,9 @@ export function InlineTOC({ items, ...props }: InlineTocProps) {
             <Navigation className="w-4 h-4 text-cyan-300" />
           </div>
           <div className="flex items-center gap-2">
-            <span>{props.children ?? 'Navigation Chart'}</span>
+            <span>{props.children ?? "Navigation Chart"}</span>
             <div className="text-xs bg-cyan-900/30 px-2 py-0.5 rounded text-cyan-500">
-              NAV-{String(items.length).padStart(2, '0')}
+              NAV-{String(items.length).padStart(2, "0")}
             </div>
           </div>
         </div>
@@ -70,23 +66,25 @@ export function InlineTOC({ items, ...props }: InlineTocProps) {
                 key={item.url}
                 href={item.url}
                 className={cn(
-                  'group relative flex items-center gap-3 py-2 px-3 rounded-md font-mono',
-                  'text-slate-400 hover:text-cyan-300 hover:bg-cyan-600/10',
-                  'border border-transparent hover:border-cyan-500/20',
-                  'transition-all duration-200',
-                  item.depth > 2 && 'text-slate-500 hover:text-slate-300'
+                  "group relative flex items-center gap-3 py-2 px-3 rounded-md font-mono",
+                  "text-slate-400 hover:text-cyan-300 hover:bg-cyan-600/10",
+                  "border border-transparent hover:border-cyan-500/20",
+                  "transition-all duration-200",
+                  item.depth > 2 && "text-slate-500 hover:text-slate-300"
                 )}
                 style={{
-                  paddingInlineStart: 12 + (12 * Math.max(item.depth - 1, 0)),
+                  paddingInlineStart: 12 + 12 * Math.max(item.depth - 1, 0),
                 }}
               >
                 <div className="flex items-center gap-2 flex-1">
-                  <div className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-colors",
-                    item.depth === 1 && "bg-cyan-400 group-hover:bg-cyan-300",
-                    item.depth === 2 && "bg-blue-400 group-hover:bg-blue-300",
-                    item.depth >= 3 && "bg-slate-500 group-hover:bg-slate-400"
-                  )} />
+                  <div
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full transition-colors",
+                      item.depth === 1 && "bg-cyan-400 group-hover:bg-cyan-300",
+                      item.depth === 2 && "bg-blue-400 group-hover:bg-blue-300",
+                      item.depth >= 3 && "bg-slate-500 group-hover:bg-slate-400"
+                    )}
+                  />
                   <span className="group-hover:tracking-wide transition-all duration-200">
                     {item.title}
                   </span>
@@ -94,7 +92,7 @@ export function InlineTOC({ items, ...props }: InlineTocProps) {
 
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="text-xs text-cyan-500 bg-cyan-900/30 px-1.5 py-0.5 rounded">
-                    {String(index + 1).padStart(2, '0')}
+                    {String(index + 1).padStart(2, "0")}
                   </div>
                 </div>
               </a>
@@ -116,5 +114,5 @@ export function InlineTOC({ items, ...props }: InlineTocProps) {
         </div>
       </CollapsibleContent>
     </Collapsible>
-  );
+  )
 }

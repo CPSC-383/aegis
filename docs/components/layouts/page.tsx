@@ -1,8 +1,8 @@
-import { type ComponentProps, forwardRef, type ReactNode } from 'react';
-import { cn } from '../../lib/cn';
-import { buttonVariants } from '../ui/button';
-import { Edit } from 'lucide-react';
-import { I18nLabel } from 'fumadocs-ui/contexts/i18n';
+import { type ComponentProps, forwardRef, type ReactNode } from "react"
+import { cn } from "../../lib/cn"
+import { buttonVariants } from "../ui/button"
+import { Edit } from "lucide-react"
+import { I18nLabel } from "fumadocs-ui/contexts/i18n"
 import {
   type BreadcrumbProps,
   type FooterProps,
@@ -18,32 +18,31 @@ import {
   PageTOCPopoverItems,
   PageTOCPopoverTrigger,
   PageTOCTitle,
-} from './docs/page';
-import type { AnchorProviderProps } from 'fumadocs-core/toc';
-import type { TOCItemType } from 'fumadocs-core/server';
-import { NebulaBackground, NebulaPresets } from '../nebula';
+} from "./docs/page"
+import type { AnchorProviderProps } from "fumadocs-core/toc"
+import type { TOCItemType } from "fumadocs-core/server"
+import { NebulaBackground, NebulaPresets } from "../nebula"
 
-interface EditOnGitHubOptions
-  extends Omit<ComponentProps<'a'>, 'href' | 'children'> {
-  owner: string;
-  repo: string;
+interface EditOnGitHubOptions extends Omit<ComponentProps<"a">, "href" | "children"> {
+  owner: string
+  repo: string
 
   /**
    * SHA or ref (branch or tag) name.
    *
    * @defaultValue main
    */
-  sha?: string;
+  sha?: string
 
   /**
    * File path in the repo
    */
-  path: string;
+  path: string
 }
 
 interface BreadcrumbOptions extends BreadcrumbProps {
-  enabled: boolean;
-  component: ReactNode;
+  enabled: boolean
+  component: ReactNode
 
   /**
    * Show the full path to the current page
@@ -51,65 +50,65 @@ interface BreadcrumbOptions extends BreadcrumbProps {
    * @defaultValue false
    * @deprecated use `includePage` instead
    */
-  full?: boolean;
+  full?: boolean
 }
 
 interface FooterOptions extends FooterProps {
-  enabled: boolean;
-  component: ReactNode;
+  enabled: boolean
+  component: ReactNode
 }
 
 export interface DocsPageProps {
-  toc?: TOCItemType[];
-  tableOfContent?: Partial<TableOfContentOptions>;
-  tableOfContentPopover?: Partial<TableOfContentPopoverOptions>;
+  toc?: TOCItemType[]
+  tableOfContent?: Partial<TableOfContentOptions>
+  tableOfContentPopover?: Partial<TableOfContentPopoverOptions>
 
   /**
    * Extend the page to fill all available space
    *
    * @defaultValue false
    */
-  full?: boolean;
+  full?: boolean
 
   /**
    * Replace or disable breadcrumb
    */
-  breadcrumb?: Partial<BreadcrumbOptions>;
+  breadcrumb?: Partial<BreadcrumbOptions>
 
   /**
    * Footer navigation, you can disable it by passing `false`
    */
-  footer?: Partial<FooterOptions>;
+  footer?: Partial<FooterOptions>
 
-  editOnGithub?: EditOnGitHubOptions;
-  lastUpdate?: Date | string | number;
+  editOnGithub?: EditOnGitHubOptions
+  lastUpdate?: Date | string | number
 
-  container?: ComponentProps<'div'>;
-  article?: ComponentProps<'article'>;
-  children?: ReactNode;
+  container?: ComponentProps<"div">
+  article?: ComponentProps<"article">
+  children?: ReactNode
 }
 
-type TableOfContentOptions = Pick<AnchorProviderProps, 'single'> & {
+type TableOfContentOptions = Pick<AnchorProviderProps, "single"> & {
   /**
    * Custom content in TOC container, before the main TOC
    */
-  header?: ReactNode;
+  header?: ReactNode
 
   /**
    * Custom content in TOC container, after the main TOC
    */
-  footer?: ReactNode;
+  footer?: ReactNode
 
-  enabled: boolean;
-  component: ReactNode;
+  enabled: boolean
+  component: ReactNode
 
   /**
    * @defaultValue 'normal'
    */
-  style?: 'normal' | 'clerk';
-};
+  style?: "normal" | "clerk"
+}
 
-type TableOfContentPopoverOptions = Omit<TableOfContentOptions, 'single'>;
+type TableOfContentPopoverOptions = Omit<TableOfContentOptions, "single">
 
 export function DocsPage({
   editOnGithub,
@@ -127,33 +126,27 @@ export function DocsPage({
     component: tocPopover,
     ...tocPopoverOptions
   } = {},
-  tableOfContent: {
-    enabled: tocEnabled,
-    component: tocReplace,
-    ...tocOptions
-  } = {},
+  tableOfContent: { enabled: tocEnabled, component: tocReplace, ...tocOptions } = {},
   toc = [],
   article,
   children,
 }: DocsPageProps) {
   const isTocRequired =
-    toc.length > 0 ||
-    tocOptions.footer !== undefined ||
-    tocOptions.header !== undefined;
+    toc.length > 0 || tocOptions.footer !== undefined || tocOptions.header !== undefined
 
   // disable TOC on full mode, you can still enable it with `enabled` option.
-  tocEnabled ??= !full && isTocRequired;
+  tocEnabled ??= !full && isTocRequired
 
   tocPopoverEnabled ??=
     toc.length > 0 ||
     tocPopoverOptions.header !== undefined ||
-    tocPopoverOptions.footer !== undefined;
+    tocPopoverOptions.footer !== undefined
 
   return (
     <>
       <NebulaBackground {...NebulaPresets.minimal} />
       <PageRoot
-        className='relative'
+        className="relative"
         toc={{
           toc,
           single: tocOptions.single,
@@ -172,14 +165,13 @@ export function DocsPage({
             </PageTOCPopover>
           ))}
         <PageArticle {...article}>
-          {breadcrumbEnabled &&
-            (breadcrumb ?? <PageBreadcrumb {...breadcrumbProps} />)}
+          {breadcrumbEnabled && (breadcrumb ?? <PageBreadcrumb {...breadcrumbProps} />)}
           {children}
           <div role="none" className="flex-1" />
           <div className="flex flex-row flex-wrap items-center justify-between gap-4 empty:hidden">
             {editOnGithub && (
               <EditOnGitHub
-                href={`https://github.com/${editOnGithub.owner}/${editOnGithub.repo}/blob/${editOnGithub.sha}/${editOnGithub.path.startsWith('/') ? editOnGithub.path.slice(1) : editOnGithub.path}`}
+                href={`https://github.com/${editOnGithub.owner}/${editOnGithub.repo}/blob/${editOnGithub.sha}/${editOnGithub.path.startsWith("/") ? editOnGithub.path.slice(1) : editOnGithub.path}`}
               />
             )}
             {lastUpdate && <PageLastUpdate date={new Date(lastUpdate)} />}
@@ -198,10 +190,10 @@ export function DocsPage({
           ))}
       </PageRoot>
     </>
-  );
+  )
 }
 
-export function EditOnGitHub(props: ComponentProps<'a'>) {
+export function EditOnGitHub(props: ComponentProps<"a">) {
   return (
     <a
       target="_blank"
@@ -209,11 +201,11 @@ export function EditOnGitHub(props: ComponentProps<'a'>) {
       {...props}
       className={cn(
         buttonVariants({
-          color: 'secondary',
-          size: 'sm',
-          className: 'gap-1.5 not-prose',
+          color: "secondary",
+          size: "sm",
+          className: "gap-1.5 not-prose",
         }),
-        props.className,
+        props.className
       )}
     >
       {props.children ?? (
@@ -223,65 +215,64 @@ export function EditOnGitHub(props: ComponentProps<'a'>) {
         </>
       )}
     </a>
-  );
+  )
 }
 
 /**
  * Add typography styles
  */
-export const DocsBody = forwardRef<HTMLDivElement, ComponentProps<'div'>>(
+export const DocsBody = forwardRef<HTMLDivElement, ComponentProps<"div">>(
   (props, ref) => (
-    <div ref={ref} {...props} className={cn('prose', props.className)}>
+    <div ref={ref} {...props} className={cn("prose", props.className)}>
       {props.children}
     </div>
-  ),
-);
+  )
+)
 
-DocsBody.displayName = 'DocsBody';
+DocsBody.displayName = "DocsBody"
 
-export const DocsDescription = forwardRef<
-  HTMLParagraphElement,
-  ComponentProps<'p'>
->((props, ref) => {
-  // don't render if no description provided
-  if (props.children === undefined) return null;
+export const DocsDescription = forwardRef<HTMLParagraphElement, ComponentProps<"p">>(
+  (props, ref) => {
+    // don't render if no description provided
+    if (props.children === undefined) return null
 
-  return (
-    <p
-      ref={ref}
-      {...props}
-      className={cn('mb-8 text-lg text-fd-muted-foreground', props.className)}
-    >
-      {props.children}
-    </p>
-  );
-});
+    return (
+      <p
+        ref={ref}
+        {...props}
+        className={cn("mb-8 text-lg text-fd-muted-foreground", props.className)}
+      >
+        {props.children}
+      </p>
+    )
+  }
+)
 
-DocsDescription.displayName = 'DocsDescription';
+DocsDescription.displayName = "DocsDescription"
 
-export const DocsTitle = forwardRef<HTMLHeadingElement, ComponentProps<'h1'>>(
+export const DocsTitle = forwardRef<HTMLHeadingElement, ComponentProps<"h1">>(
   (props, ref) => {
     return (
       <h1
         ref={ref}
         {...props}
-        className={cn('text-3xl font-semibold', props.className)}
+        className={cn("text-3xl font-semibold", props.className)}
       >
         {props.children}
       </h1>
-    );
-  },
-);
+    )
+  }
+)
 
-DocsTitle.displayName = 'DocsTitle';
+DocsTitle.displayName = "DocsTitle"
 
 /**
  * For separate MDX page
  */
-export function withArticle(props: ComponentProps<'main'>): ReactNode {
+export function withArticle(props: ComponentProps<"main">): ReactNode {
   return (
-    <main {...props} className={cn('container py-12', props.className)}>
+    <main {...props} className={cn("container py-12", props.className)}>
       <article className="prose">{props.children}</article>
     </main>
-  );
+  )
 }

@@ -6,7 +6,7 @@ description: Checks if a given location is on the map.
 ## Signature
 
 ```py
-def on_map(location: Location) -> bool 
+def on_map(location: Location) -> bool
 ```
 
 ## Description
@@ -19,15 +19,14 @@ less than the world's width and height, respectively.
 
 ```py
 # world has height and width set to 3 for this example.
- 
+
 # Invalid Location
 is_on_map = on_map(create_location(3,3))
 print(is_on_map)
 # Output: False
- 
+
 # Valid Location
 is_on_map = on_map(create_location(1, 2))
 print(is_on_map)
 # Output: True
 ```
-

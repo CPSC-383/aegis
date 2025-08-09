@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import {
   type ComponentProps,
@@ -8,58 +8,58 @@ import {
   useMemo,
   useRef,
   useState,
-} from 'react';
-import * as Primitive from '@radix-ui/react-tabs';
-import { mergeRefs } from '../lib/merge-refs';
-import { useEffectEvent } from 'fumadocs-core/utils/use-effect-event';
+} from "react"
+import * as Primitive from "@radix-ui/react-tabs"
+import { mergeRefs } from "../lib/merge-refs"
+import { useEffectEvent } from "fumadocs-core/utils/use-effect-event"
 
-type ChangeListener = (v: string) => void;
-const listeners = new Map<string, ChangeListener[]>();
+type ChangeListener = (v: string) => void
+const listeners = new Map<string, ChangeListener[]>()
 
 function addChangeListener(id: string, listener: ChangeListener): void {
-  const list = listeners.get(id) ?? [];
-  list.push(listener);
-  listeners.set(id, list);
+  const list = listeners.get(id) ?? []
+  list.push(listener)
+  listeners.set(id, list)
 }
 
 function removeChangeListener(id: string, listener: ChangeListener): void {
-  const list = listeners.get(id) ?? [];
+  const list = listeners.get(id) ?? []
   listeners.set(
     id,
-    list.filter((item) => item !== listener),
-  );
+    list.filter((item) => item !== listener)
+  )
 }
 
 export interface TabsProps extends ComponentProps<typeof Primitive.Tabs> {
   /**
    * Identifier for Sharing value of tabs
    */
-  groupId?: string;
+  groupId?: string
 
   /**
    * Enable persistent
    */
-  persist?: boolean;
+  persist?: boolean
 
   /**
    * If true, updates the URL hash based on the tab's id
    */
-  updateAnchor?: boolean;
+  updateAnchor?: boolean
 }
 
 const TabsContext = createContext<{
-  valueToIdMap: Map<string, string>;
-} | null>(null);
+  valueToIdMap: Map<string, string>
+} | null>(null)
 
 function useTabContext() {
-  const ctx = useContext(TabsContext);
-  if (!ctx) throw new Error('You must wrap your component in <Tabs>');
-  return ctx;
+  const ctx = useContext(TabsContext)
+  if (!ctx) throw new Error("You must wrap your component in <Tabs>")
+  return ctx
 }
 
-export const TabsList = Primitive.TabsList;
+export const TabsList = Primitive.TabsList
 
-export const TabsTrigger = Primitive.TabsTrigger;
+export const TabsTrigger = Primitive.TabsTrigger
 
 /**
  * @internal You better not use it
@@ -74,41 +74,41 @@ export function Tabs({
   onValueChange: _onValueChange,
   ...props
 }: TabsProps) {
-  const tabsRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null)
   const [value, setValue] =
     _value === undefined
       ? // eslint-disable-next-line react-hooks/rules-of-hooks -- not supposed to change controlled/uncontrolled
         useState(defaultValue)
-      : [_value, _onValueChange ?? (() => undefined)];
+      : [_value, _onValueChange ?? (() => undefined)]
 
-  const onChange = useEffectEvent((v: string) => setValue(v));
-  const valueToIdMap = useMemo(() => new Map<string, string>(), []);
+  const onChange = useEffectEvent((v: string) => setValue(v))
+  const valueToIdMap = useMemo(() => new Map<string, string>(), [])
 
   useLayoutEffect(() => {
-    if (!groupId) return;
+    if (!groupId) return
     const previous = persist
       ? localStorage.getItem(groupId)
-      : sessionStorage.getItem(groupId);
+      : sessionStorage.getItem(groupId)
 
-    if (previous) onChange(previous);
-    addChangeListener(groupId, onChange);
+    if (previous) onChange(previous)
+    addChangeListener(groupId, onChange)
     return () => {
-      removeChangeListener(groupId, onChange);
-    };
-  }, [groupId, onChange, persist]);
+      removeChangeListener(groupId, onChange)
+    }
+  }, [groupId, onChange, persist])
 
   useLayoutEffect(() => {
-    const hash = window.location.hash.slice(1);
-    if (!hash) return;
+    const hash = window.location.hash.slice(1)
+    if (!hash) return
 
     for (const [value, id] of valueToIdMap.entries()) {
       if (id === hash) {
-        onChange(value);
-        tabsRef.current?.scrollIntoView();
-        break;
+        onChange(value)
+        tabsRef.current?.scrollIntoView()
+        break
       }
     }
-  }, [onChange, valueToIdMap]);
+  }, [onChange, valueToIdMap])
 
   return (
     <Primitive.Tabs
@@ -116,48 +116,46 @@ export function Tabs({
       value={value}
       onValueChange={(v: string) => {
         if (updateAnchor) {
-          const id = valueToIdMap.get(v);
+          const id = valueToIdMap.get(v)
 
           if (id) {
-            window.history.replaceState(null, '', `#${id}`);
+            window.history.replaceState(null, "", `#${id}`)
           }
         }
 
         if (groupId) {
           listeners.get(groupId)?.forEach((item) => {
-            item(v);
-          });
+            item(v)
+          })
 
-          if (persist) localStorage.setItem(groupId, v);
-          else sessionStorage.setItem(groupId, v);
+          if (persist) localStorage.setItem(groupId, v)
+          else sessionStorage.setItem(groupId, v)
         } else {
-          setValue(v);
+          setValue(v)
         }
       }}
       {...props}
     >
-      <TabsContext.Provider
-        value={useMemo(() => ({ valueToIdMap }), [valueToIdMap])}
-      >
+      <TabsContext.Provider value={useMemo(() => ({ valueToIdMap }), [valueToIdMap])}>
         {props.children}
       </TabsContext.Provider>
     </Primitive.Tabs>
-  );
+  )
 }
 
 export function TabsContent({
   value,
   ...props
 }: ComponentProps<typeof Primitive.TabsContent>) {
-  const { valueToIdMap } = useTabContext();
+  const { valueToIdMap } = useTabContext()
 
   if (props.id) {
-    valueToIdMap.set(value, props.id);
+    valueToIdMap.set(value, props.id)
   }
 
   return (
     <Primitive.TabsContent value={value} {...props}>
       {props.children}
     </Primitive.TabsContent>
-  );
+  )
 }

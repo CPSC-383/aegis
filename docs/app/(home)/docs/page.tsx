@@ -1,28 +1,22 @@
-import Link from 'next/link';
-import {
-  BookOpen,
-  FileText,
-  Code,
-  Zap,
-  ArrowRight,
-} from 'lucide-react';
-import { NebulaBackground, NebulaPresets } from '@/components/nebula';
-import getConfig from 'next/config';
+import Link from "next/link"
+import { BookOpen, FileText, Code, Zap, ArrowRight } from "lucide-react"
+import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import getConfig from "next/config"
 
 const docCategories = [
   {
-    title: 'Getting Started',
-    description: 'Initial setup protocols and basic system configuration.',
-    href: '/docs/getting-started/installation',
+    title: "Getting Started",
+    description: "Initial setup protocols and basic system configuration.",
+    href: "/docs/getting-started/installation",
     icon: Zap,
-    status: 'ESSENTIAL',
+    status: "ESSENTIAL",
   },
   {
-    title: 'API Reference',
-    description: 'Complete command protocols and system interface documentation.',
-    href: '/docs/api',
+    title: "API Reference",
+    description: "Complete command protocols and system interface documentation.",
+    href: "/docs/api",
     icon: Code,
-    status: 'COMPLETE',
+    status: "COMPLETE",
   },
   // {
   //   title: 'Changelog',
@@ -31,7 +25,7 @@ const docCategories = [
   //   icon: FileText,
   //   status: 'UPDATED',
   // }
-];
+]
 
 export default function DocsIndexPage() {
   const { publicRuntimeConfig } = getConfig()
@@ -58,9 +52,7 @@ export default function DocsIndexPage() {
             <Code className="w-3 h-3 text-cyan-400" />
             <span className="text-cyan-400">API REFS: 89</span>
           </div>
-          <div className="text-slate-400">
-            LAST SYNC: 2 HOURS AGO
-          </div>
+          <div className="text-slate-400">LAST SYNC: 2 HOURS AGO</div>
         </div>
       </div>
 
@@ -78,12 +70,13 @@ export default function DocsIndexPage() {
           </h1>
 
           <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6">
-            Comprehensive operational manuals and technical references for AEGIS station personnel.
-            Access protocols, system documentation, and field procedures.
+            Comprehensive operational manuals and technical references for AEGIS station
+            personnel. Access protocols, system documentation, and field procedures.
           </p>
 
           <div className="text-xs font-mono text-blue-400 bg-slate-900/50 rounded px-4 py-2 border border-blue-500/30 inline-block">
-            DOCUMENTATION VERSION {publicRuntimeConfig?.VERSION} • LAST UPDATED: STARDATE {verstionToStardate(publicRuntimeConfig.VERSION || "0.0.0")}
+            DOCUMENTATION VERSION {publicRuntimeConfig?.VERSION} • LAST UPDATED:
+            STARDATE {verstionToStardate(publicRuntimeConfig.VERSION || "0.0.0")}
           </div>
         </div>
 
@@ -101,11 +94,17 @@ export default function DocsIndexPage() {
                 <div className="p-3 bg-gradient-to-br from-slate-700 to-slate-800 rounded-lg border border-cyan-500/30">
                   <Icon className="w-6 h-6 text-cyan-300" />
                 </div>
-                <span className={`text-xs font-mono px-2 py-1 rounded ${status === 'ESSENTIAL' ? 'bg-green-500/20 text-green-400' :
-                  status === 'COMPLETE' ? 'bg-blue-500/20 text-blue-400' :
-                    status === 'UPDATED' ? 'bg-cyan-500/20 text-cyan-400' :
-                      'bg-yellow-500/20 text-yellow-400'
-                  }`}>
+                <span
+                  className={`text-xs font-mono px-2 py-1 rounded ${
+                    status === "ESSENTIAL"
+                      ? "bg-green-500/20 text-green-400"
+                      : status === "COMPLETE"
+                        ? "bg-blue-500/20 text-blue-400"
+                        : status === "UPDATED"
+                          ? "bg-cyan-500/20 text-cyan-400"
+                          : "bg-yellow-500/20 text-yellow-400"
+                  }`}
+                >
                   {status}
                 </span>
               </div>
@@ -153,5 +152,5 @@ export default function DocsIndexPage() {
         </div>
       </div>
     </main>
-  );
+  )
 }

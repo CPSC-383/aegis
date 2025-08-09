@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link"
 import {
   BookText,
   Rocket,
@@ -9,39 +9,39 @@ import {
   Users,
   Eye,
   Sparkle,
-} from 'lucide-react';
-import { NebulaBackground, NebulaPresets } from '@/components/nebula';
+} from "lucide-react"
+import { NebulaBackground, NebulaPresets } from "@/components/nebula"
 
 const cards = [
   {
-    title: 'Mission Control (Docs)',
-    description: 'Initialize station systems and begin rescue operations.',
-    href: '/docs',
+    title: "Mission Control (Docs)",
+    description: "Initialize station systems and begin rescue operations.",
+    href: "/docs",
     icon: Rocket,
-    status: 'OPERATIONAL',
+    status: "OPERATIONAL",
   },
   {
-    title: 'Command Manual (API)',
-    description: 'Agent protocols and system reference documentation.',
-    href: '/docs/api',
+    title: "Command Manual (API)",
+    description: "Agent protocols and system reference documentation.",
+    href: "/docs/api",
     icon: BookText,
-    status: 'UPDATED',
+    status: "UPDATED",
   },
   {
-    title: 'Navigation Charts (Guides)',
-    description: 'Strategic deployment maps and integration protocols.',
-    href: '/guides',
+    title: "Navigation Charts (Guides)",
+    description: "Strategic deployment maps and integration protocols.",
+    href: "/guides",
     icon: Compass,
-    status: 'CLASSIFIED',
+    status: "CLASSIFIED",
   },
   {
-    title: 'System Diagnostics',
-    description: 'Anomaly detection and operational restoration tools.',
-    href: '/errors',
+    title: "System Diagnostics",
+    description: "Anomaly detection and operational restoration tools.",
+    href: "/errors",
     icon: Bug,
-    status: 'MONITORING',
+    status: "MONITORING",
   },
-];
+]
 
 export default function HomePage() {
   return (
@@ -92,11 +92,14 @@ export default function HomePage() {
         </div>
 
         <p className="text-sm sm:text-base max-w-2xl mx-auto text-slate-300 leading-relaxed mb-4">
-          The galaxy&apos;s last beacon of coordinated rescue operations. Deploy agents, manage Lumen reserves, and coordinate life-saving missions across hostile regions of space.
+          The galaxy&apos;s last beacon of coordinated rescue operations. Deploy agents,
+          manage Lumen reserves, and coordinate life-saving missions across hostile
+          regions of space.
         </p>
 
         <div className="text-xs font-mono text-green-400 bg-slate-900/50 rounded px-3 py-1 border border-green-500/30">
-          CURRENT MISSION: Sector 7-Alpha • 3 Survivors Located • Commander Team Deployed
+          CURRENT MISSION: Sector 7-Alpha • 3 Survivors Located • Commander Team
+          Deployed
         </div>
       </div>
 
@@ -118,11 +121,17 @@ export default function HomePage() {
                 <h2 className="text-base font-semibold text-white group-hover:text-cyan-300 transition-colors">
                   {title}
                 </h2>
-                <span className={`text-xs font-mono px-2 py-0.5 rounded ${status === 'OPERATIONAL' ? 'bg-green-500/20 text-green-400' :
-                  status === 'UPDATED' ? 'bg-blue-500/20 text-blue-400' :
-                    status === 'CLASSIFIED' ? 'bg-red-500/20 text-red-400' :
-                      'bg-yellow-500/20 text-yellow-400'
-                  }`}>
+                <span
+                  className={`text-xs font-mono px-2 py-0.5 rounded ${
+                    status === "OPERATIONAL"
+                      ? "bg-green-500/20 text-green-400"
+                      : status === "UPDATED"
+                        ? "bg-blue-500/20 text-blue-400"
+                        : status === "CLASSIFIED"
+                          ? "bg-red-500/20 text-red-400"
+                          : "bg-yellow-500/20 text-yellow-400"
+                  }`}
+                >
                   {status}
                 </span>
               </div>
@@ -154,5 +163,5 @@ export default function HomePage() {
         </div>
       </div>
     </main>
-  );
+  )
 }

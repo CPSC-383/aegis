@@ -1,8 +1,8 @@
-import { createMDX } from 'fumadocs-mdx/next';
-import { readFileSync } from 'fs';
+import { createMDX } from "fumadocs-mdx/next"
+import { readFileSync } from "fs"
 
-const withMDX = createMDX();
-const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
+const withMDX = createMDX()
+const pkg = JSON.parse(readFileSync("./package.json", "utf-8"))
 
 /** @type {import('next').NextConfig} */
 const config = {
@@ -15,8 +15,8 @@ const config = {
     unoptimized: true,
   },
   publicRuntimeConfig: {
-    VERSION: pkg.version
-  }
-};
+    VERSION: pkg.version,
+  },
+}
 
-export default withMDX(config);
+export default withMDX(config)

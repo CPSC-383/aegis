@@ -11,13 +11,14 @@ SendMessage(agent_id_list: list[AgentID], message: str)
 
 ## Description
 
-Represents a command for the agent to send a message to other agents.  
-- If `agent_id_list` is empty, the message is broadcast to all members of the agent's group.  
+Represents a command for the agent to send a message to other agents.
+
+- If `agent_id_list` is empty, the message is broadcast to all members of the agent's group.
 - Otherwise, the message is sent only to the specified agents identified by their IDs.
 
 <Callout title="Message" type="info">
-Messages are not received immediately; 
-they become available at the start of the next turn.  
+  Messages are not received immediately; they become available at the start of the next
+  turn.
 </Callout>
 
 ## Example
@@ -25,7 +26,7 @@ they become available at the start of the next turn.
 ```py
 # Using an empty list will send the message to all group members.
 agent.send(SendMessage([], "Hello, World!"))
- 
+
 # Send message to Agent with ID 1 and group ID 1.
 agent.send(SendMessage([AgentID(1,1)], "Hello, World!"))
 ```

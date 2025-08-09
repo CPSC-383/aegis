@@ -1,29 +1,29 @@
-'use client';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import { type ComponentProps, type ReactNode, useMemo, useState } from 'react';
-import Link from 'fumadocs-core/link';
-import { usePathname } from 'fumadocs-core/framework';
-import { cn } from '../../lib/cn';
-import { isActive } from '../../lib/is-active';
-import { useSidebar } from 'fumadocs-ui/contexts/sidebar';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+"use client"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { type ComponentProps, type ReactNode, useMemo, useState } from "react"
+import Link from "fumadocs-core/link"
+import { usePathname } from "fumadocs-core/framework"
+import { cn } from "../../lib/cn"
+import { isActive } from "../../lib/is-active"
+import { useSidebar } from "fumadocs-ui/contexts/sidebar"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 
 export interface Option {
   /**
    * Redirect URL of the folder, usually the index page
    */
-  url: string;
+  url: string
 
-  icon?: ReactNode;
-  title: ReactNode;
-  description?: ReactNode;
+  icon?: ReactNode
+  title: ReactNode
+  description?: ReactNode
 
   /**
    * Detect from a list of urls
    */
-  urls?: Set<string>;
+  urls?: Set<string>
 
-  props?: ComponentProps<'a'>;
+  props?: ComponentProps<"a">
 }
 
 export function RootToggle({
@@ -31,27 +31,27 @@ export function RootToggle({
   placeholder,
   ...props
 }: {
-  placeholder?: ReactNode;
-  options: Option[];
-} & ComponentProps<'button'>) {
-  const [open, setOpen] = useState(false);
-  const { closeOnRedirect } = useSidebar();
-  const pathname = usePathname();
+  placeholder?: ReactNode
+  options: Option[]
+} & ComponentProps<"button">) {
+  const [open, setOpen] = useState(false)
+  const { closeOnRedirect } = useSidebar()
+  const pathname = usePathname()
 
   const selected = useMemo(() => {
-    const lookup = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+    const lookup = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname
 
     return options.findLast((item) => {
-      if (item.urls) return item.urls.has(lookup);
+      if (item.urls) return item.urls.has(lookup)
 
-      return isActive(item.url, pathname, true);
-    });
-  }, [options, pathname]);
+      return isActive(item.url, pathname, true)
+    })
+  }, [options, pathname])
 
   const onClick = () => {
-    closeOnRedirect.current = false;
-    setOpen(false);
-  };
+    closeOnRedirect.current = false
+    setOpen(false)
+  }
 
   const item = selected ? (
     <>
@@ -65,7 +65,7 @@ export function RootToggle({
     </>
   ) : (
     placeholder
-  );
+  )
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -73,8 +73,8 @@ export function RootToggle({
         <PopoverTrigger
           {...props}
           className={cn(
-            'flex items-center gap-2 rounded-lg p-2 border bg-fd-secondary/50 text-start text-fd-secondary-foreground transition-colors hover:bg-fd-accent data-[state=open]:bg-fd-accent data-[state=open]:text-fd-accent-foreground',
-            props.className,
+            "flex items-center gap-2 rounded-lg p-2 border bg-fd-secondary/50 text-start text-fd-secondary-foreground transition-colors hover:bg-fd-accent data-[state=open]:bg-fd-accent data-[state=open]:text-fd-accent-foreground",
+            props.className
           )}
         >
           {item}
@@ -83,7 +83,7 @@ export function RootToggle({
       )}
       <PopoverContent className="flex flex-col gap-1 w-(--radix-popover-trigger-width) overflow-hidden p-1">
         {options.map((item) => {
-          const isActive = item === selected;
+          const isActive = item === selected
 
           return (
             <Link
@@ -92,8 +92,8 @@ export function RootToggle({
               onClick={onClick}
               {...item.props}
               className={cn(
-                'flex items-center gap-2 rounded-lg p-1.5 hover:bg-fd-accent hover:text-fd-accent-foreground',
-                item.props?.className,
+                "flex items-center gap-2 rounded-lg p-1.5 hover:bg-fd-accent hover:text-fd-accent-foreground",
+                item.props?.className
               )}
             >
               <div className="shrink-0 size-9 md:mt-1 md:mb-auto md:size-5">
@@ -108,14 +108,14 @@ export function RootToggle({
 
               <Check
                 className={cn(
-                  'shrink-0 ms-auto size-3.5 text-fd-primary',
-                  !isActive && 'invisible',
+                  "shrink-0 ms-auto size-3.5 text-fd-primary",
+                  !isActive && "invisible"
                 )}
               />
             </Link>
-          );
+          )
         })}
       </PopoverContent>
     </Popover>
-  );
+  )
 }

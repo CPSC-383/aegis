@@ -1,8 +1,8 @@
-import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { AlbumIcon, Book, CircleAlert } from 'lucide-react';
-import Image from 'next/image';
-import Logo from "./favicon.ico";
-import LogoDark from "./favicon-dark.ico";
+import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared"
+import { AlbumIcon, Book, CircleAlert } from "lucide-react"
+import Image from "next/image"
+import Logo from "./favicon.ico"
+import LogoDark from "./favicon-dark.ico"
 
 export const baseOptions: BaseLayoutProps = {
   nav: {
@@ -28,22 +28,22 @@ export const baseOptions: BaseLayoutProps = {
   },
   links: [
     {
-      text: 'Docs',
-      url: '/docs',
+      text: "Docs",
+      url: "/docs",
       icon: <Book />,
-      active: 'nested-url',
+      active: "nested-url",
     },
     {
       icon: <AlbumIcon />,
-      text: 'Guides',
-      url: '/guides',
-      active: 'nested-url',
+      text: "Guides",
+      url: "/guides",
+      active: "nested-url",
     },
     {
-      text: 'Common Errors',
-      url: '/errors',
+      text: "Common Errors",
+      url: "/errors",
       icon: <CircleAlert />,
-      active: 'nested-url',
+      active: "nested-url",
     },
   ],
-};
+}

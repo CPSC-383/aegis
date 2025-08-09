@@ -1,16 +1,12 @@
-'use client';
-import { ChevronDown, AlertTriangle, Target } from 'lucide-react';
-import type { TOCItemType } from 'fumadocs-core/server';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from './ui/collapsible';
-import { ComponentProps } from 'react';
-import { cn } from '../lib/cn';
+"use client"
+import { ChevronDown, AlertTriangle, Target } from "lucide-react"
+import type { TOCItemType } from "fumadocs-core/server"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible"
+import { ComponentProps } from "react"
+import { cn } from "../lib/cn"
 
 export interface InlineTocErrorProps extends ComponentProps<typeof Collapsible> {
-  items: TOCItemType[];
+  items: TOCItemType[]
 }
 
 export function InlineTOCError({ items, ...props }: InlineTocErrorProps) {
@@ -18,20 +14,20 @@ export function InlineTOCError({ items, ...props }: InlineTocErrorProps) {
     <Collapsible
       {...props}
       className={cn(
-        'not-prose relative overflow-hidden rounded-lg',
-        'border border-red-500/20 bg-slate-900/60 backdrop-blur-sm',
-        'hover:bg-slate-800/80 hover:border-red-400/50',
-        'transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30',
-        props.className,
+        "not-prose relative overflow-hidden rounded-lg",
+        "border border-red-500/20 bg-slate-900/60 backdrop-blur-sm",
+        "hover:bg-slate-800/80 hover:border-red-400/50",
+        "transition-all duration-300 hover:shadow-lg hover:shadow-red-500/30",
+        props.className
       )}
     >
       <CollapsibleTrigger
         className={cn(
-          'group relative inline-flex w-full items-center justify-between',
-          'px-5 py-4 font-mono font-semibold tracking-wide text-red-400',
-          'border-b border-red-500/20 group-data-[state=open]:border-red-400/30',
-          'hover:bg-gradient-to-r hover:from-red-900/20 hover:via-slate-800/30 hover:to-red-900/20',
-          'hover:text-red-300 transition-all duration-300',
+          "group relative inline-flex w-full items-center justify-between",
+          "px-5 py-4 font-mono font-semibold tracking-wide text-red-400",
+          "border-b border-red-500/20 group-data-[state=open]:border-red-400/30",
+          "hover:bg-gradient-to-r hover:from-red-900/20 hover:via-slate-800/30 hover:to-red-900/20",
+          "hover:text-red-300 transition-all duration-300"
         )}
       >
         <div className="flex items-center gap-3">
@@ -39,9 +35,9 @@ export function InlineTOCError({ items, ...props }: InlineTocErrorProps) {
             <AlertTriangle className="w-4 h-4 text-red-400" />
           </div>
           <div className="flex items-center gap-2">
-            <span>{props.children ?? 'Error Report Contents'}</span>
+            <span>{props.children ?? "Error Report Contents"}</span>
             <div className="text-xs bg-red-900/30 px-2 py-0.5 rounded text-red-500">
-              ERR-{String(items.length).padStart(2, '0')}
+              ERR-{String(items.length).padStart(2, "0")}
             </div>
           </div>
         </div>
@@ -70,23 +66,25 @@ export function InlineTOCError({ items, ...props }: InlineTocErrorProps) {
                 key={item.url}
                 href={item.url}
                 className={cn(
-                  'group relative flex items-center gap-3 py-2 px-3 rounded-md font-mono',
-                  'text-slate-400 hover:text-red-400 hover:bg-red-600/10',
-                  'border border-transparent hover:border-red-500/20',
-                  'transition-all duration-200',
-                  item.depth > 2 && 'text-slate-500 hover:text-slate-300'
+                  "group relative flex items-center gap-3 py-2 px-3 rounded-md font-mono",
+                  "text-slate-400 hover:text-red-400 hover:bg-red-600/10",
+                  "border border-transparent hover:border-red-500/20",
+                  "transition-all duration-200",
+                  item.depth > 2 && "text-slate-500 hover:text-slate-300"
                 )}
                 style={{
-                  paddingInlineStart: 12 + (12 * Math.max(item.depth - 1, 0)),
+                  paddingInlineStart: 12 + 12 * Math.max(item.depth - 1, 0),
                 }}
               >
                 <div className="flex items-center gap-2 flex-1">
-                  <div className={cn(
-                    "w-1.5 h-1.5 rounded-full transition-colors",
-                    item.depth === 1 && "bg-red-400 group-hover:bg-red-300",
-                    item.depth === 2 && "bg-yellow-400 group-hover:bg-yellow-300",
-                    item.depth >= 3 && "bg-slate-500 group-hover:bg-slate-400"
-                  )} />
+                  <div
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full transition-colors",
+                      item.depth === 1 && "bg-red-400 group-hover:bg-red-300",
+                      item.depth === 2 && "bg-yellow-400 group-hover:bg-yellow-300",
+                      item.depth >= 3 && "bg-slate-500 group-hover:bg-slate-400"
+                    )}
+                  />
                   <span className="group-hover:tracking-wide transition-all duration-200">
                     {item.title}
                   </span>
@@ -94,7 +92,7 @@ export function InlineTOCError({ items, ...props }: InlineTocErrorProps) {
 
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="text-xs text-red-500 bg-red-900/30 px-1.5 py-0.5 rounded">
-                    {String(index + 1).padStart(2, '0')}
+                    {String(index + 1).padStart(2, "0")}
                   </div>
                 </div>
               </a>
@@ -116,5 +114,5 @@ export function InlineTOCError({ items, ...props }: InlineTocErrorProps) {
         </div>
       </CollapsibleContent>
     </Collapsible>
-  );
+  )
 }

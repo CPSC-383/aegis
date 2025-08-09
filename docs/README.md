@@ -32,13 +32,14 @@ npm run build
 To deploy:
 
 ```bash
-npm run deploy 
+npm run deploy
 ```
 
 > [!NOTE]
 > The deployment will automatically build before publishing to the docs branch.
 
 ## Project Structure
+
 - `/app` - Contains pages and API routes for Next.js
 - `/components` - Reusable React components
 - `/config` - Contains configuration files

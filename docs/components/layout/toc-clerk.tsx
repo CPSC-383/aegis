@@ -1,80 +1,78 @@
-'use client';
-import type { TOCItemType } from 'fumadocs-core/server';
-import * as Primitive from 'fumadocs-core/toc';
-import { type ComponentProps, useEffect, useRef, useState } from 'react';
-import { cn } from '../../lib/cn';
-import { TocThumb } from './toc-thumb';
-import { useTOCItems } from './toc';
-import { mergeRefs } from '../../lib/merge-refs';
-import { useI18n } from 'fumadocs-ui/contexts/i18n';
+"use client"
+import type { TOCItemType } from "fumadocs-core/server"
+import * as Primitive from "fumadocs-core/toc"
+import { type ComponentProps, useEffect, useRef, useState } from "react"
+import { cn } from "../../lib/cn"
+import { TocThumb } from "./toc-thumb"
+import { useTOCItems } from "./toc"
+import { mergeRefs } from "../../lib/merge-refs"
+import { useI18n } from "fumadocs-ui/contexts/i18n"
 
 export default function ClerkTOCItems({
   ref,
   className,
   ...props
-}: ComponentProps<'div'>) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const items = useTOCItems();
-  const { text } = useI18n();
+}: ComponentProps<"div">) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const items = useTOCItems()
+  const { text } = useI18n()
 
   const [svg, setSvg] = useState<{
-    path: string;
-    width: number;
-    height: number;
-  }>();
+    path: string
+    width: number
+    height: number
+  }>()
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    const container = containerRef.current;
+    if (!containerRef.current) return
+    const container = containerRef.current
 
     function onResize(): void {
-      if (container.clientHeight === 0) return;
+      if (container.clientHeight === 0) return
       let w = 0,
-        h = 0;
-      const d: string[] = [];
+        h = 0
+      const d: string[] = []
       for (let i = 0; i < items.length; i++) {
         const element: HTMLElement | null = container.querySelector(
-          `a[href="#${items[i].url.slice(1)}"]`,
-        );
-        if (!element) continue;
+          `a[href="#${items[i].url.slice(1)}"]`
+        )
+        if (!element) continue
 
-        const styles = getComputedStyle(element);
+        const styles = getComputedStyle(element)
         const offset = getLineOffset(items[i].depth) + 1,
           top = element.offsetTop + parseFloat(styles.paddingTop),
           bottom =
-            element.offsetTop +
-            element.clientHeight -
-            parseFloat(styles.paddingBottom);
+            element.offsetTop + element.clientHeight - parseFloat(styles.paddingBottom)
 
-        w = Math.max(offset, w);
-        h = Math.max(h, bottom);
+        w = Math.max(offset, w)
+        h = Math.max(h, bottom)
 
-        d.push(`${i === 0 ? 'M' : 'L'}${offset} ${top}`);
-        d.push(`L${offset} ${bottom}`);
+        d.push(`${i === 0 ? "M" : "L"}${offset} ${top}`)
+        d.push(`L${offset} ${bottom}`)
       }
 
       setSvg({
-        path: d.join(' '),
+        path: d.join(" "),
         width: w + 1,
         height: h,
-      });
+      })
     }
 
-    const observer = new ResizeObserver(onResize);
-    onResize();
+    const observer = new ResizeObserver(onResize)
+    onResize()
 
-    observer.observe(container);
+    observer.observe(container)
     return () => {
-      observer.disconnect();
-    };
-  }, [items]);
+      observer.disconnect()
+    }
+  }, [items])
 
   if (items.length === 0)
     return (
       <div className="rounded-lg border bg-fd-card p-3 text-xs text-fd-muted-foreground">
         {text.tocNoHeadings}
       </div>
-    );
+    )
 
   return (
     <>
@@ -87,9 +85,9 @@ export default function ClerkTOCItems({
             maskImage: `url("data:image/svg+xml,${
               // Inline SVG
               encodeURIComponent(
-                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svg.width} ${svg.height}"><path d="${svg.path}" stroke="black" stroke-width="1" fill="none" /></svg>`,
+                `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svg.width} ${svg.height}"><path d="${svg.path}" stroke="black" stroke-width="1" fill="none" /></svg>`
               )
-              }")`,
+            }")`,
           }}
         >
           <TocThumb
@@ -100,7 +98,7 @@ export default function ClerkTOCItems({
       ) : null}
       <div
         ref={mergeRefs(containerRef, ref)}
-        className={cn('flex flex-col', className)}
+        className={cn("flex flex-col", className)}
         {...props}
       >
         {items.map((item, i) => (
@@ -113,17 +111,17 @@ export default function ClerkTOCItems({
         ))}
       </div>
     </>
-  );
+  )
 }
 
 function getItemOffset(depth: number): number {
-  if (depth <= 2) return 14;
-  if (depth === 3) return 26;
-  return 36;
+  if (depth <= 2) return 14
+  if (depth === 3) return 26
+  return 36
 }
 
 function getLineOffset(depth: number): number {
-  return depth >= 3 ? 10 : 0;
+  return depth >= 3 ? 10 : 0
 }
 
 function TOCItem({
@@ -131,13 +129,13 @@ function TOCItem({
   upper = item.depth,
   lower = item.depth,
 }: {
-  item: TOCItemType;
-  upper?: number;
-  lower?: number;
+  item: TOCItemType
+  upper?: number
+  lower?: number
 }) {
   const offset = getLineOffset(item.depth),
     upperOffset = getLineOffset(upper),
-    lowerOffset = getLineOffset(lower);
+    lowerOffset = getLineOffset(lower)
 
   return (
     <Primitive.TOCItem
@@ -165,9 +163,9 @@ function TOCItem({
       ) : null}
       <div
         className={cn(
-          'absolute inset-y-0 w-px bg-fd-foreground/10',
-          offset !== upperOffset && 'top-1.5',
-          offset !== lowerOffset && 'bottom-1.5',
+          "absolute inset-y-0 w-px bg-fd-foreground/10",
+          offset !== upperOffset && "top-1.5",
+          offset !== lowerOffset && "bottom-1.5"
         )}
         style={{
           insetInlineStart: offset,
@@ -175,5 +173,5 @@ function TOCItem({
       />
       {item.title}
     </Primitive.TOCItem>
-  );
+  )
 }

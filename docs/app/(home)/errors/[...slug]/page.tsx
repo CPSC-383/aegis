@@ -1,19 +1,17 @@
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { InlineTOCError } from '@/components/inline-toc-error';
-import { errors } from '@/lib/source';
-import { NebulaBackground, NebulaPresets } from '@/components/nebula';
-import { ArrowLeft, AlertTriangle, Cpu, Eye, HardDrive, Shield } from 'lucide-react';
-import { getMDXComponents } from '@/mdx-components';
+import { notFound } from "next/navigation"
+import Link from "next/link"
+import { InlineTOCError } from "@/components/inline-toc-error"
+import { errors } from "@/lib/source"
+import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { ArrowLeft, AlertTriangle, Cpu, Eye, HardDrive, Shield } from "lucide-react"
+import { getMDXComponents } from "@/mdx-components"
 
-export default async function Page(props: {
-  params: Promise<{ slug: string[] }>;
-}) {
-  const params = await props.params;
-  const page = errors.getPage(params.slug);
+export default async function Page(props: { params: Promise<{ slug: string[] }> }) {
+  const params = await props.params
+  const page = errors.getPage(params.slug)
 
-  if (!page) notFound();
-  const Mdx = page.data.body;
+  if (!page) notFound()
+  const Mdx = page.data.body
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
@@ -47,7 +45,9 @@ export default async function Page(props: {
             <span className="text-slate-600">/</span>
             <span className="text-slate-400">SYSTEM-DIAGNOSTICS</span>
             <span className="text-slate-600">/</span>
-            <span className="text-red-400">{params.slug[params.slug.length - 1].toUpperCase()}</span>
+            <span className="text-red-400">
+              {params.slug[params.slug.length - 1].toUpperCase()}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 mb-4">
@@ -72,7 +72,9 @@ export default async function Page(props: {
             <div className="flex items-center gap-2 text-slate-400">
               <Cpu className="w-4 h-4" />
               <span>Subsystem:</span>
-              <span className="text-red-300 font-medium">{params.slug[0].toUpperCase() || 'UNKNOWN'}</span>
+              <span className="text-red-300 font-medium">
+                {params.slug[0].toUpperCase() || "UNKNOWN"}
+              </span>
             </div>
           </div>
 
@@ -104,8 +106,12 @@ export default async function Page(props: {
                     <AlertTriangle className="w-5 h-5 text-red-400" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-red-300 font-mono">SYSTEM ERROR REPORT</h2>
-                    <p className="text-xs text-slate-400">Automated fault analysis & recovery recommendations</p>
+                    <h2 className="text-lg font-semibold text-red-300 font-mono">
+                      SYSTEM ERROR REPORT
+                    </h2>
+                    <p className="text-xs text-slate-400">
+                      Automated fault analysis & recovery recommendations
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-mono">
@@ -132,34 +138,34 @@ export default async function Page(props: {
               <div className="h-px bg-gradient-to-r from-transparent via-red-400/50 to-transparent w-20"></div>
             </div>
             <p className="text-slate-500 text-xs italic">
-              &quot;Every anomaly is a message. Every error a path to understanding.&quot;
+              &quot;Every anomaly is a message. Every error a path to
+              understanding.&quot;
             </p>
             <p className="text-slate-600 text-xs">
-              AEGIS Engineering Division • Fault Monitoring Node • Galactic Standard Time
+              AEGIS Engineering Division • Fault Monitoring Node • Galactic Standard
+              Time
             </p>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export function generateStaticParams(): { slug: string[] }[] {
   return errors.getPages().map((page) => ({
     slug: page.slugs,
-  }));
+  }))
 }
 
-export async function generateMetadata(props: {
-  params: Promise<{ slug: string[] }>;
-}) {
-  const params = await props.params;
-  const page = errors.getPage(params.slug);
+export async function generateMetadata(props: { params: Promise<{ slug: string[] }> }) {
+  const params = await props.params
+  const page = errors.getPage(params.slug)
 
-  if (!page) notFound();
+  if (!page) notFound()
 
   return {
     title: page.data.title,
     description: page.data.description,
-  };
+  }
 }

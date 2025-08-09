@@ -1,6 +1,6 @@
-@import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
 
 :root {
   --color-aegis-info: #3dd5ff;
@@ -30,10 +30,10 @@
   }
 }
 
-.steps:first-child>h3:first-child {
+.steps:first-child > h3:first-child {
   @apply mt-0;
 }
 
-.steps>h3 {
+.steps > h3 {
   @apply mt-8 mb-4 text-base font-semibold;
 }

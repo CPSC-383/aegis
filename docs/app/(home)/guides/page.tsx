@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import { guides } from '@/lib/source';
-import { NebulaBackground, NebulaPresets } from '@/components/nebula';
+import Link from "next/link"
+import { guides } from "@/lib/source"
+import { NebulaBackground, NebulaPresets } from "@/components/nebula"
 import {
   Compass,
   Stars,
@@ -12,23 +12,23 @@ import {
   ChevronRight,
   Shield,
   Zap,
-  Navigation2
-} from 'lucide-react';
+  Navigation2,
+} from "lucide-react"
 
 export default function GuidesPage() {
-  const posts = guides.getPages();
+  const posts = guides.getPages()
 
   const missionStats = [
-    { label: 'ACTIVE PROTOCOLS', value: posts.length, icon: BookOpen },
-    { label: 'DEPLOYMENT ZONES', value: '7', icon: Target },
-    { label: 'SUCCESS RATE', value: '94.2%', icon: Shield },
-    { label: 'LUMEN EFFICIENCY', value: '87%', icon: Zap },
-  ];
+    { label: "ACTIVE PROTOCOLS", value: posts.length, icon: BookOpen },
+    { label: "DEPLOYMENT ZONES", value: "7", icon: Target },
+    { label: "SUCCESS RATE", value: "94.2%", icon: Shield },
+    { label: "LUMEN EFFICIENCY", value: "87%", icon: Zap },
+  ]
 
   const getGuideIcon = (index: number) => {
-    const icons = [Navigation, Map, Compass, Target, BookOpen, Stars];
-    return icons[index % icons.length];
-  };
+    const icons = [Navigation, Map, Compass, Target, BookOpen, Stars]
+    return icons[index % icons.length]
+  }
 
   return (
     <main className="relative flex flex-col h-full items-center px-4 py-12 text-white overflow-hidden">
@@ -80,7 +80,8 @@ export default function GuidesPage() {
         </div>
 
         <p className="text-sm sm:text-base max-w-2xl mx-auto text-slate-300 leading-relaxed mb-6">
-          Field-tested guides to optimize deployment strategies, streamline integrations, and ensure mission success across galactic zones.
+          Field-tested guides to optimize deployment strategies, streamline
+          integrations, and ensure mission success across galactic zones.
         </p>
 
         <div className="text-xs font-mono text-blue-400 bg-slate-900/50 rounded px-3 py-1 border border-blue-500/30 inline-block">
@@ -91,18 +92,23 @@ export default function GuidesPage() {
       <div className="relative z-10 w-full max-w-4xl mb-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {missionStats.map((stat, index) => {
-            const IconComponent = stat.icon;
+            const IconComponent = stat.icon
             return (
-              <div key={index} className="bg-slate-900/70 backdrop-blur border border-cyan-500/30 rounded-lg p-4 text-center">
+              <div
+                key={index}
+                className="bg-slate-900/70 backdrop-blur border border-cyan-500/30 rounded-lg p-4 text-center"
+              >
                 <div className="flex items-center justify-center mb-2">
                   <div className="p-2 bg-cyan-500/20 rounded-lg">
                     <IconComponent className="w-4 h-4 text-cyan-400" />
                   </div>
                 </div>
-                <div className="text-lg font-bold text-cyan-300 font-mono">{stat.value}</div>
+                <div className="text-lg font-bold text-cyan-300 font-mono">
+                  {stat.value}
+                </div>
                 <div className="text-xs text-slate-400 font-mono">{stat.label}</div>
               </div>
-            );
+            )
           })}
         </div>
       </div>
@@ -121,7 +127,7 @@ export default function GuidesPage() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, index) => {
-            const GuideIcon = getGuideIcon(index);
+            const GuideIcon = getGuideIcon(index)
             return (
               <Link
                 key={post.url}
@@ -132,7 +138,7 @@ export default function GuidesPage() {
                 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20
                 overflow-hidden"
                 style={{
-                  animationDelay: `${index * 100}ms`
+                  animationDelay: `${index * 100}ms`,
                 }}
               >
                 <div className="flex items-center justify-between">
@@ -141,7 +147,7 @@ export default function GuidesPage() {
                       <GuideIcon className="w-5 h-5 text-cyan-300" />
                     </div>
                     <div className="text-xs font-mono text-cyan-500 bg-cyan-900/30 px-2 py-1 rounded">
-                      GUIDE-{String(index + 1).padStart(3, '0')}
+                      GUIDE-{String(index + 1).padStart(3, "0")}
                     </div>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 transition-colors" />
@@ -167,7 +173,7 @@ export default function GuidesPage() {
                   </div>
                 </div>
               </Link>
-            );
+            )
           })}
         </div>
       </div>
@@ -192,5 +198,5 @@ export default function GuidesPage() {
         </div>
       </div>
     </main>
-  );
+  )
 }

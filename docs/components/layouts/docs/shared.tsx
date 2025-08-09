@@ -1,4 +1,4 @@
-import type { LinkItemType } from '../links';
+import type { LinkItemType } from "../links"
 import {
   type SidebarComponents,
   SidebarFolder,
@@ -7,43 +7,43 @@ import {
   SidebarFolderTrigger,
   SidebarItem,
   type SidebarProps,
-} from '../../layout/sidebar';
-import type { PageTree } from 'fumadocs-core/server';
-import type { ReactNode } from 'react';
-import type { Option } from '../../layout/root-toggle';
+} from "../../layout/sidebar"
+import type { PageTree } from "fumadocs-core/server"
+import type { ReactNode } from "react"
+import type { Option } from "../../layout/root-toggle"
 import {
   getSidebarTabs,
   type GetSidebarTabsOptions,
-} from 'fumadocs-ui/utils/get-sidebar-tabs';
+} from "fumadocs-ui/utils/get-sidebar-tabs"
 
 export interface SidebarOptions
-  extends Pick<SidebarProps, 'defaultOpenLevel' | 'prefetch'> {
-  components?: Partial<SidebarComponents>;
+  extends Pick<SidebarProps, "defaultOpenLevel" | "prefetch"> {
+  components?: Partial<SidebarComponents>
 
   /**
    * Root Toggle options
    */
-  tabs?: Option[] | GetSidebarTabsOptions | false;
+  tabs?: Option[] | GetSidebarTabsOptions | false
 
-  banner?: ReactNode;
-  footer?: ReactNode;
+  banner?: ReactNode
+  footer?: ReactNode
 
   /**
    * Support collapsing the sidebar on desktop mode
    *
    * @defaultValue true
    */
-  collapsible?: boolean;
+  collapsible?: boolean
 }
 
 export function SidebarLinkItem({
   item,
   ...props
 }: {
-  item: LinkItemType;
-  className?: string;
+  item: LinkItemType
+  className?: string
 }) {
-  if (item.type === 'menu')
+  if (item.type === "menu")
     return (
       <SidebarFolder {...props}>
         {item.url ? (
@@ -63,31 +63,26 @@ export function SidebarLinkItem({
           ))}
         </SidebarFolderContent>
       </SidebarFolder>
-    );
+    )
 
-  if (item.type === 'custom') return <div {...props}>{item.children}</div>;
+  if (item.type === "custom") return <div {...props}>{item.children}</div>
 
   return (
-    <SidebarItem
-      href={item.url}
-      icon={item.icon}
-      external={item.external}
-      {...props}
-    >
+    <SidebarItem href={item.url} icon={item.icon} external={item.external} {...props}>
       {item.text}
     </SidebarItem>
-  );
+  )
 }
 
 export function getSidebarTabsFromOptions(
-  options: SidebarOptions['tabs'],
-  tree: PageTree.Root,
+  options: SidebarOptions["tabs"],
+  tree: PageTree.Root
 ) {
   if (Array.isArray(options)) {
-    return options;
-  } else if (typeof options === 'object') {
-    return getSidebarTabs(tree, options);
+    return options
+  } else if (typeof options === "object") {
+    return getSidebarTabs(tree, options)
   } else if (options !== false) {
-    return getSidebarTabs(tree);
+    return getSidebarTabs(tree)
   }
 }

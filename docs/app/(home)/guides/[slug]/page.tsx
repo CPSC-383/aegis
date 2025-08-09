@@ -1,9 +1,9 @@
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { getMDXComponents } from '@/mdx-components';
-import { InlineTOC } from '@/components/inline-toc';
-import { guides } from '@/lib/source';
-import { NebulaBackground, NebulaPresets } from '@/components/nebula';
+import { notFound } from "next/navigation"
+import Link from "next/link"
+import { getMDXComponents } from "@/mdx-components"
+import { InlineTOC } from "@/components/inline-toc"
+import { guides } from "@/lib/source"
+import { NebulaBackground, NebulaPresets } from "@/components/nebula"
 import {
   ArrowLeft,
   User,
@@ -12,17 +12,15 @@ import {
   BookOpen,
   Navigation,
   Eye,
-  CheckCircle
-} from 'lucide-react';
+  CheckCircle,
+} from "lucide-react"
 
-export default async function Page(props: {
-  params: Promise<{ slug: string }>;
-}) {
-  const params = await props.params;
-  const page = guides.getPage([params.slug]);
+export default async function Page(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
+  const page = guides.getPage([params.slug])
 
-  if (!page) notFound();
-  const Mdx = page.data.body;
+  if (!page) notFound()
+  const Mdx = page.data.body
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
@@ -110,9 +108,7 @@ export default async function Page(props: {
         <div className="flex flex-col gap-8">
           <div className="flex-shrink-0">
             <div className="prose-sm">
-              <InlineTOC
-                items={page.data.toc}
-              />
+              <InlineTOC items={page.data.toc} />
             </div>
           </div>
 
@@ -124,8 +120,12 @@ export default async function Page(props: {
                     <BookOpen className="w-5 h-5 text-cyan-400" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-cyan-300 font-mono">PROTOCOL DOCUMENTATION</h2>
-                    <p className="text-xs text-slate-400">Classified tactical operations manual</p>
+                    <h2 className="text-lg font-semibold text-cyan-300 font-mono">
+                      PROTOCOL DOCUMENTATION
+                    </h2>
+                    <p className="text-xs text-slate-400">
+                      Classified tactical operations manual
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-mono">
@@ -152,7 +152,8 @@ export default async function Page(props: {
               <div className="h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent w-20"></div>
             </div>
             <p className="text-slate-500 text-xs italic">
-              &quot;Knowledge shared saves lives, every protocol a beacon through uncertainty.&quot;
+              &quot;Knowledge shared saves lives, every protocol a beacon through
+              uncertainty.&quot;
             </p>
             <p className="text-slate-600 text-xs">
               AEGIS Navigation Division • Sector 7-Alpha • Galactic Standard Time
@@ -161,23 +162,21 @@ export default async function Page(props: {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export function generateStaticParams(): { slug: string }[] {
   return guides.getPages().map((page) => ({
     slug: page.slugs[0],
-  }));
+  }))
 }
 
-export async function generateMetadata(props: {
-  params: Promise<{ slug: string }>;
-}) {
-  const params = await props.params;
-  const page = guides.getPage([params.slug]);
-  if (!page) notFound();
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
+  const page = guides.getPage([params.slug])
+  if (!page) notFound()
   return {
     title: page.data.title,
     description: page.data.description,
-  };
+  }
 }
