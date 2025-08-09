@@ -150,9 +150,6 @@ Releases are tag-driven and handled via GitHub Actions. Client and engine (Aegis
 ```PowerShell
 cd client
 npm version [patch|minor|major]
-git push --follow-tags
-
-# Or manually:
 git tag -a client-v<major>.<minor>.<patch> -m "Client Release <version>"
 git push origin client-v<major>.<minor>.<patch>
 ```
@@ -162,9 +159,6 @@ git push origin client-v<major>.<minor>.<patch>
 ```PowerShell
 # Bump version in the Python package
 hatch version [release|major|minor|patch|a|b|pre|post|dev]
-git push --follow-tags
-
-# Or manually:
 git tag -a aegis-v<major>.<minor>.<patch> -m "Aegis Release <version>"
 git push origin aegis-v<major>.<minor>.<patch>
 ```
