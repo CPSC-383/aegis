@@ -223,6 +223,10 @@ def parse_functions(funcs: dict[str, griffe.Function]) -> dict[str, FuncInfo]:
             "docstring": func.docstring.value if func.docstring else None,
         }
         for param in func.parameters:
+            # Skip 'self' parameter
+            if param.name == "self":
+                continue
+
             func_info["params"].append(
                 {
                     "name": param.name,
