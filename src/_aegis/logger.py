@@ -61,7 +61,7 @@ def setup_console_and_file_logging() -> None:
     stderr_handler.setLevel(logging.WARNING)
     stderr_handler.setFormatter(formatter)
 
-    logs_dir: Path = Path("logs")
+    logs_dir: Path = Path.cwd() / "logs"
     logs_dir.mkdir(exist_ok=True)
 
     timestamp: str = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
