@@ -54,8 +54,8 @@ function parseDocstring(docstring: string) {
 }
 
 
-export function PyFunction({ docString }: { docString?: string }) {
-  const doc = typeof docString === 'string' ? parseDocstring(docString) : null;
+export function PyFunction({ docString }: { docString: string }) {
+  const doc = docString ? parseDocstring(docString) : null;
 
   return (
     <section className="mt-2 text-fd-muted-foreground leading-relaxed prose prose-slate dark:prose-invert max-w-none">
@@ -100,19 +100,17 @@ export function PyFunctionSignature({ signature }: { signature: string }) {
 }
 
 export function PyAttribute(props: {
-  type?: string;
-  value?: string;
-  docString?: string;
+  type: string;
+  value: string;
+  docString: string;
 }) {
   return (
     <section className="text-fd-muted-foreground leading-relaxed prose prose-slate dark:prose-invert max-w-none my-6">
-      {(props.type || props.value !== undefined) && (
-        <InlineCode
-          lang="python"
-          className="not-prose text-sm font-mono mb-4 block"
-          code={`${props.type ?? ""}${props.value !== undefined ? ` = ${props.value}` : ""}`}
-        />
-      )}
+      <InlineCode
+        lang="python"
+        className="not-prose text-sm font-mono mb-4 block"
+        code={`${props.type}${props.value ? ` = ${props.value}` : ""}`}
+      />
 
       {props.docString ? (
         <p className="whitespace-pre-line">{props.docString}</p>

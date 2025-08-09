@@ -1,6 +1,6 @@
 ---
 title: CellInfo
-description: Agent functions to interact with the world.
+description: Represents information about a cell in the world.
 ---
 
 
@@ -8,30 +8,32 @@ description: Agent functions to interact with the world.
 
 ### type
 
-<PyAttribute type="CellType" default="cell_type" docString="The type of the cell." />
+<PyAttribute type="CellType" value="cell_type" docString="The type of the cell." />
 
 ### location
 
-<PyAttribute type="Location" default="location if location is not None else Location(-1, -1)" docString="The coordinates of the cell." />
+<PyAttribute type="Location" value="location if location is not None else Location(-1, -1)" docString="The coordinates of the cell." />
 
 ### move_cost
 
-<PyAttribute type="int" default="move_cost" docString="The movement cost to traverse this cell." />
+<PyAttribute type="int" value="move_cost" docString="The movement cost to traverse this cell." />
 
 ### agents
 
-<PyAttribute type="list[int]" default="agents if agents is not None else []" docString="List of agent IDs currently in this cell." />
+<PyAttribute type="list[int]" value="agents if agents is not None else []" docString="List of agent IDs currently in this cell." />
 
 ### layers
 
-<PyAttribute type="list[WorldObject]" default="layers" docString="Stack of world objects present in the cell, ordered by layer." />
+<PyAttribute type="list[WorldObject]" value="layers" docString="Stack of world objects present in the cell, ordered by layer." />
 
 ### top_layer
 
-<PyAttribute type="WorldObject | None" default="" docString="Get the top-most layer object of the cell." />
+<PyAttribute type="WorldObject | None" value="" docString="Get the top-most layer object of the cell." />
 
 
-## is_killer_cell
+## Methods
+
+### is_killer_cell
 
 <PyFunctionSignature signature="def is_killer_cell() -> bool" />
 

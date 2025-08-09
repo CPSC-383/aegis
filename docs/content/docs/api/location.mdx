@@ -1,6 +1,6 @@
 ---
 title: Location
-description: Agent functions to interact with the world.
+description: Represents a coordinate location with x and y integer values.
 ---
 
 
@@ -8,14 +8,16 @@ description: Agent functions to interact with the world.
 
 ### x
 
-<PyAttribute type="int" default="x" docString="The x-coordinate." />
+<PyAttribute type="int" value="x" docString="The x-coordinate." />
 
 ### y
 
-<PyAttribute type="int" default="y" docString="The y-coordinate." />
+<PyAttribute type="int" value="y" docString="The y-coordinate." />
 
 
-## add
+## Methods
+
+### add
 
 <PyFunctionSignature signature="def add(direction: Direction) -> Location" />
 
@@ -26,7 +28,7 @@ Arguments:
 
 Returns:
     Location: A new Location in the given direction." />
-## direction_to
+### direction_to
 
 <PyFunctionSignature signature="def direction_to(location: Location) -> Direction" />
 
@@ -37,7 +39,7 @@ Arguments:
 
 Returns:
     Direction: The cardinal direction pointing towards the target location." />
-## distance_to
+### distance_to
 
 <PyFunctionSignature signature="def distance_to(location: Location) -> int" />
 
@@ -48,7 +50,7 @@ Arguments:
 
 Returns:
     int: The squared distance between the two locations." />
-## is_adjacent_to
+### is_adjacent_to
 
 <PyFunctionSignature signature="def is_adjacent_to(location: Location) -> bool" />
 

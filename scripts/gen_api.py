@@ -54,11 +54,24 @@ class ClassInfo(TypedDict):
 
     functions: dict[str, FuncInfo]
     attributes: list[AttrInfo]
+    enum_members: list[AttrInfo]
+    docstring: str | None
 
 
 ##########################################
 #           Util functions               #
 ##########################################
+
+
+def is_enum_class(cls: griffe.Class) -> bool:
+    """
+    Check if a class is an enum.
+
+    Returns:
+        bool: True if enum, otherwise false
+
+    """
+    return any(str(base) == "Enum" for base in cls.bases)
 
 
 def parse_attr_descriptions(class_docstring: str) -> dict[str, str]:
@@ -160,6 +173,38 @@ def pascal_to_snake(name: str) -> str:
 ##########################################
 
 
+def parse_enum_members(cls: griffe.Class) -> list[AttrInfo]:
+    """
+    Extract enum members from an Enum class.
+
+    Args:
+        cls (griffe.Class): The enum class.
+
+    Returns:
+        list[AttrInfo]: List of enum members as attributes (name and value).
+
+    """
+    members: list[AttrInfo] = []
+    for attr in cls.attributes.values():
+        if attr.name.startswith("_"):
+            continue
+
+        # Enum values are usually class attributes
+        if "class-attribute" not in attr.labels:
+            continue
+        print(attr.as_json())
+        print(f"value: {attr.value}")
+        members.append(
+            {
+                "name": attr.name,
+                "annotation": str(attr.annotation) if attr.annotation else "",
+                "docstring": attr.docstring.value if attr.docstring else None,
+                "default": attr.value,
+            }
+        )
+    return members
+
+
 def parse_attributes(
     attrs: dict[str, griffe.Attribute], class_docstring: str | None = None
 ) -> list[AttrInfo]:
@@ -183,6 +228,10 @@ def parse_attributes(
     for attr in attrs.values():
         # Skip private ones
         if attr.name.startswith("_"):
+            continue
+
+        # Ignore these, mostly for enums
+        if "class-attribute" in attr.labels:
             continue
 
         attr_doc = attr.docstring.value if attr.docstring else None
@@ -270,7 +319,7 @@ def find_imported_names() -> list[str]:
     ]
 
 
-def parse_imported_classes(imported_names: list[str]) -> dict[str, ClassInfo]:
+def parse_classes(imported_names: list[str]) -> dict[str, ClassInfo]:
     """
     Parse functions from source files corresponding to imported class names.
 
@@ -324,7 +373,17 @@ def parse_imported_classes(imported_names: list[str]) -> dict[str, ClassInfo]:
         doc_string = cls.docstring.value if cls.docstring else None
         funcs = parse_functions(cls.functions)
         attrs = parse_attributes(cls.attributes, doc_string)
-        classes[name] = {"functions": funcs, "attributes": attrs}
+
+        class_info: ClassInfo = {
+            "functions": funcs,
+            "attributes": attrs,
+            "enum_members": [],
+            "docstring": doc_string,
+        }
+        if is_enum_class(cls):
+            class_info["enum_members"] = parse_enum_members(cls)
+
+        classes[name] = class_info
 
     return classes
 
@@ -378,7 +437,7 @@ def render_function(name: str, func: FuncInfo) -> str:
     signature_mdx = render_function_signature(name, func)
     doc = func.get("docstring", "")
 
-    return f'## {name}\n\n{signature_mdx}\n\n<PyFunction docString="{doc}" />'
+    return f'### {name}\n\n{signature_mdx}\n\n<PyFunction docString="{doc}" />'
 
 
 def render_agent_api_docs(stub_functions: dict[str, FuncInfo]) -> str:
@@ -425,7 +484,7 @@ def render_attribute(attr: AttrInfo) -> str:
 
     return (
         f"### {attr['name']}\n\n"
-        f'<PyAttribute type="{type_str}" default="{default_str}" docString="{doc}" />\n'
+        f'<PyAttribute type="{type_str}" value="{default_str}" docString="{doc}" />\n'
     )
 
 
@@ -443,17 +502,23 @@ def render_class_docs(name: str, class_info: ClassInfo) -> str:
     """
     mdx = f"""---
 title: {name}
-description: Agent functions to interact with the world.
+description: {class_info["docstring"].partition("\n")[0] if class_info["docstring"] else "Could not generate description"}
 ---\n\n
 """
     if class_info:
+        if class_info["enum_members"]:
+            enums = "\n".join(
+                render_attribute(a) for a in class_info.get("enum_members", [])
+            )
+            mdx += f"## Enum Constants\n\n{enums}"
+
         attrs = "\n".join(render_attribute(a) for a in class_info.get("attributes", []))
         funcs = "\n".join(
             render_function(fname, finfo)
             for fname, finfo in class_info.get("functions", {}).items()
         )
         mdx += f"## Attributes\n\n{attrs}"
-        mdx += f"\n\n{funcs}"
+        mdx += f"\n\n## Methods\n\n{funcs}"
 
     return mdx
 
@@ -472,7 +537,7 @@ def main() -> None:
     imported_names = find_imported_names()
     print(f"\nImported names from stub: {imported_names}")
 
-    mod_sigs = parse_imported_classes(imported_names)
+    mod_sigs = parse_classes(imported_names)
     for mod_name, mod_info in mod_sigs.items():
         print(f"Module: {mod_name}")
         print_functions(mod_info["functions"])

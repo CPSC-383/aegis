@@ -1,57 +1,60 @@
 ---
 title: Direction
-description: Agent functions to interact with the world.
+description: Represents the eight principal compass directions plus the center (no movement).
 ---
 
 
-## Attributes
+## Enum Constants
 
 ### NORTH
 
-<PyAttribute type="" default="(0, 1)" docString="Direction that points north (up)." />
+<PyAttribute type="" value="(0, 1)" docString="Direction that points north (up)." />
 
 ### NORTHEAST
 
-<PyAttribute type="" default="(1, 1)" docString="Direction that points northeast (up and right)." />
+<PyAttribute type="" value="(1, 1)" docString="Direction that points northeast (up and right)." />
 
 ### EAST
 
-<PyAttribute type="" default="(1, 0)" docString="Direction that points east (right)." />
+<PyAttribute type="" value="(1, 0)" docString="Direction that points east (right)." />
 
 ### SOUTHEAST
 
-<PyAttribute type="" default="(1, -1)" docString="Direction that points southeast (down and right)." />
+<PyAttribute type="" value="(1, -1)" docString="Direction that points southeast (down and right)." />
 
 ### SOUTH
 
-<PyAttribute type="" default="(0, -1)" docString="Direction that points south (down)." />
+<PyAttribute type="" value="(0, -1)" docString="Direction that points south (down)." />
 
 ### SOUTHWEST
 
-<PyAttribute type="" default="(-1, -1)" docString="Direction that points southwest (down and left)." />
+<PyAttribute type="" value="(-1, -1)" docString="Direction that points southwest (down and left)." />
 
 ### WEST
 
-<PyAttribute type="" default="(-1, 0)" docString="Direction that points west (left)." />
+<PyAttribute type="" value="(-1, 0)" docString="Direction that points west (left)." />
 
 ### NORTHWEST
 
-<PyAttribute type="" default="(-1, 1)" docString="Direction that points northwest (up and left)." />
+<PyAttribute type="" value="(-1, 1)" docString="Direction that points northwest (up and left)." />
 
 ### CENTER
 
-<PyAttribute type="" default="(0, 0)" docString="Direction that points center (not moving)." />
+<PyAttribute type="" value="(0, 0)" docString="Direction that points center (not moving)." />
+## Attributes
 
 ### dx
 
-<PyAttribute type="int" default="" docString="Get the change in the x direction." />
+<PyAttribute type="int" value="" docString="Get the change in the x direction." />
 
 ### dy
 
-<PyAttribute type="int" default="" docString="Get the change in the y direction." />
+<PyAttribute type="int" value="" docString="Get the change in the y direction." />
 
 
-## rotate_left
+## Methods
+
+### rotate_left
 
 <PyFunctionSignature signature="def rotate_left() -> Direction" />
 
@@ -61,7 +64,7 @@ The center direction returns itself unchanged.
 
 Returns:
     Direction: The direction rotated left." />
-## rotate_right
+### rotate_right
 
 <PyFunctionSignature signature="def rotate_right() -> Direction" />
 
@@ -71,7 +74,7 @@ The center direction returns itself unchanged.
 
 Returns:
     Direction: The direction rotated right." />
-## get_opposite
+### get_opposite
 
 <PyFunctionSignature signature="def get_opposite() -> Direction" />
 
