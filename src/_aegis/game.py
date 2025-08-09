@@ -39,7 +39,11 @@ class Game:
         self.game_pb: GamePb = game_pb
         self._drone_scans: dict[Location, dict[Team, int]] = {}
         self._pending_drone_scans: dict[Location, dict[Team, int]] = {}
-        self._prediction_handler: PredictionHandler = PredictionHandler(args)
+        self._prediction_handler: PredictionHandler | None = (
+            PredictionHandler(args)
+            if is_feature_enabled("ENABLE_PREDICTIONS")
+            else None
+        )
         self.agents: dict[int, Agent] = {}
         self.team_agents: dict[Team, str] = {}
         if self.args.agent is not None:
@@ -251,7 +255,10 @@ class Game:
         LOGGER.info(
             f"Saving survivor {survivor.id} at {agent.location} for team {agent.team}"
         )
-        if is_feature_enabled("ENABLE_PREDICTIONS"):
+        if (
+            is_feature_enabled("ENABLE_PREDICTIONS")
+            and self._prediction_handler is not None
+        ):
             LOGGER.info(
                 f"Creating pending prediction for team {agent.team} and surv_id {survivor.id}"
             )
@@ -279,7 +286,10 @@ class Game:
         self.remove_layer(cell.location)
 
     def predict(self, surv_id: int, label: np.int32, agent: Agent) -> None:
-        if not is_feature_enabled("ENABLE_PREDICTIONS"):
+        if (
+            not is_feature_enabled("ENABLE_PREDICTIONS")
+            or self._prediction_handler is None
+        ):
             return
 
         is_correct = self._prediction_handler.predict(agent.team, surv_id, label)
@@ -338,6 +348,11 @@ class Game:
             List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
 
         """
+        if (
+            not is_feature_enabled("ENABLE_PREDICTIONS")
+            or self._prediction_handler is None
+        ):
+            return []
         return self._prediction_handler.read_pending_predictions(team)
 
     def methods(self, ac: AgentController) -> MethodDict:
