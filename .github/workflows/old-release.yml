@@ -1,9 +1,12 @@
-name: Build and Release Aegis Clients
+name: Legacy Combined Release (disabled)
 
 on:
-  push:
-    tags:
-      - "v*.*.*-*"
+  workflow_dispatch:
+    inputs:
+      note:
+        description: "This legacy workflow is disabled; use Release Client or Release PyPI instead."
+        required: false
+        default: ""
 
 jobs:
   build-electron:
