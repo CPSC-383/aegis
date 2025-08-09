@@ -15,4 +15,4 @@ __all__ = [
     "main",
 ]
 
-__version__ = "2.0.0rc0"
+__version__ = "2.0.2"
