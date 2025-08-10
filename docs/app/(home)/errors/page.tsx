@@ -64,7 +64,7 @@ export default function ErrorsPage() {
 
   return (
     <main className="relative flex flex-col h-full items-center px-4 py-12 text-white overflow-hidden">
-      <NebulaBackground {...NebulaPresets.alert} />
+      <NebulaBackground gradient="bg-gradient-to-br from-slate-950 via-slate-900 to-rose-950" />
 
       <div className="hidden sm:absolute top-4 left-4 right-4 z-20 sm:flex justify-between items-center text-xs font-mono">
         <div className="flex items-center gap-2 bg-red-900/80 backdrop-blur px-3 py-1 rounded border border-red-500/50">
