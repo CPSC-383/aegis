@@ -20,7 +20,7 @@ from .aegis_config import has_feature
 IS_PREDICTIONS_ENABLED = has_feature("ALLOW_AGENT_PREDICTIONS")
 IS_MESSAGES_ENABLED = has_feature("ALLOW_AGENT_MESSAGES")
 IS_DYNAMIC_SPAWNING_ENABLED = has_feature("ALLOW_DYNAMIC_SPAWNING")
-IS_ABILITIES_ENABLED = has_feature("ALLOW_AGENT_ABILITIES")
+IS_ABILITIES_ENABLED = has_feature("ALLOW_DRONE_SCAN")
 
 # Grouped function names by feature flag
 PREDICT_FUNCTIONS = {"predict", "read_pending_predictions"}
