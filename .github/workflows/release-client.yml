@@ -56,18 +56,12 @@ jobs:
       - name: Build app
         working-directory: ${{ env.WORKING_DIR }}
         shell: bash
-        run: |
-          case "${{ matrix.platform }}" in
-            mac)
-              npm run build:pack:mac
-              ;;
-            linux)
-              npm run build:pack:linux
-              ;;
-            win)
-              npm run build:pack:win
-              ;;
-          esac
+        run: npm run build:pack
+
+      - name: Prepare zips
+        working-directory: ${{ env.WORKING_DIR }}
+        run: 7z a packed-client/${{ matrix.platform }}-electron.zip ${{ env.ARTIFACT_PATH }}
+
 
       - name: Upload built client as artifact
         uses: actions/upload-artifact@v4
@@ -112,36 +106,11 @@ jobs:
         with:
           path: ./artifacts/
 
-      - name: Prepare zips
-        run: |
-          mkdir -p release
-
-          if compgen -G "artifacts/mac-electron/mac-universal/*.app" > /dev/null; then
-            echo "Found Mac app, creating 7z archive..."
-            7z a -tzip release/mac-client.zip artifacts/mac-electron/mac-universal/*.app
-          else
-            echo "No Mac app found at expected path"
-          fi
-
-          if compgen -G "artifacts/linux-electron/*.AppImage" > /dev/null; then
-            echo "Found Linux AppImage, creating 7z archive..."
-            7z a -tzip release/linux-client.zip artifacts/linux-electron/*.AppImage
-          else
-            echo "No Linux AppImage found at expected path"
-          fi
-
-          if compgen -G "artifacts/win-electron/*.exe" > /dev/null; then
-            echo "Found Windows exe, creating 7z archive..."
-            7z a -tzip release/win-client.zip artifacts/win-electron/*.exe
-          else
-            echo "No Windows exe found at expected path"
-          fi
-
       - name: Upload assets to GitHub Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: release/*.zip
+          file: artifacts/*.zip
           file_glob: true
           tag: ${{ steps.resolve.outputs.tag }}
           release_name: "Client Release ${{ steps.resolve.outputs.tag }}"
