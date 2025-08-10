@@ -319,7 +319,7 @@ class Game:
         self.queue_layer_to_remove(agent.location, agent.team)
 
         LOGGER.info(
-            f"Saving survivor {survivor.id} at {agent.location} for team {agent.team}"
+            f"Saving survivor {survivor.id} at {agent.location} for team {agent.team.name} on round {self.round}"
         )
         if (
             has_feature("ALLOW_AGENT_PREDICTIONS")
