@@ -41,9 +41,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: ${{ env.WORKING_DIR }}/package-lock.json
+          cache-dependency-path: |
+            schema/package-lock.json
+            ${{ env.WORKING_DIR }}/package-lock.json
 
-      - name: Install dependencies
+      - name: Install schema dependencies
+        working-directory: ./schema
+        run: npm ci
+
+      - name: Build schema
+        working-directory: ./schema
+        run: npm run build
+
+      - name: Install client dependencies
         working-directory: ${{ env.WORKING_DIR }}
         run: npm ci
 
