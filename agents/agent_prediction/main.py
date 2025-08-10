@@ -1,5 +1,3 @@
-# ruff: noqa: F403 F405, INP001, D100
-
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 

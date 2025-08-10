@@ -217,8 +217,13 @@ class Game:
         top_layer = self.get_cell_info_at(loc).top_layer
 
         if isinstance(top_layer, Survivor):
+            points = (
+                Constants.SURVIVOR_SAVE_ALIVE_SCORE
+                if top_layer.health > 0
+                else Constants.SURVIVOR_SAVE_DEAD_SCORE
+            )
             self.team_info.add_saved(team, 1, is_alive=top_layer.health > 0)
-            self.team_info.add_score(team, Constants.SURVIVOR_SAVE_ALIVE_SCORE)
+            self.team_info.add_score(team, points)
         # elif isinstance(top_layer, Rubble):
         #     pass
 
@@ -300,21 +305,18 @@ class Game:
             agent (Agent): The agent saving the survivor
 
         """
-        # if (agent.location, agent.team) in self._queued_layers_to_remove:
-        #     LOGGER.info(
-        #         f"Skipping saving survivor {survivor.id} at {agent.location} for team {agent.team} because someone else on that team saved this surv already"
-        #     )
-        #     return
+        # Check if this team has already queued this survivor for removal this round
+        if (
+            agent.location in self._queued_layers_to_remove
+            and agent.team in self._queued_layers_to_remove[agent.location]
+        ):
+            LOGGER.info(
+                f"Skipping saving survivor {survivor.id} at {agent.location} for team {agent.team} because someone else on that team saved this surv already"
+            )
+            return
 
-        # is_alive = survivor.get_health() > 0
-        # points = (
-        #     Constants.SURVIVOR_SAVE_ALIVE_SCORE
-        #     if is_alive
-        #     else Constants.SURVIVOR_SAVE_DEAD_SCORE
-        # )
-
-        # self.team_info.add_saved(agent.team, 1, is_alive=is_alive)
-        # self.team_info.add_score(agent.team, points)
+        # Queue the survivor layer for removal (this is what actually saves the survivor)
+        self.queue_layer_to_remove(agent.location, agent.team)
 
         LOGGER.info(
             f"Saving survivor {survivor.id} at {agent.location} for team {agent.team}"

@@ -16,6 +16,7 @@ class TypedNamespace:
     client: bool
     debug: bool
     log: bool
+    init_type: str
 
 
 @dataclass
@@ -31,6 +32,11 @@ class LaunchArgs:
 
 
 @dataclass
+class InitArgs:
+    init_type: str
+
+
+@dataclass
 class ForgeArgs:
     # If we ever need args
     pass
@@ -41,12 +47,19 @@ class Args:
     command: str
     launch_args: LaunchArgs | None = None
     forge_args: ForgeArgs | None = None
+    init_args: InitArgs | None = None
 
 
 def parse_args() -> Args:
     parser = argparse.ArgumentParser(description="AEGIS Simulation")
     subparsers = parser.add_subparsers(dest="command", required=True)
-    default_agent_amount = get_feature_value("DEFAULT_AGENT_AMOUNT")
+
+    # Do not require a config file for commands other than launch.
+    # If the config is missing, we will fall back to a safe default of 1.
+    try:
+        default_agent_amount = get_feature_value("DEFAULT_AGENT_AMOUNT")
+    except FileNotFoundError:
+        default_agent_amount = None
 
     run_parser = subparsers.add_parser("launch", help="Run a game")
     _ = run_parser.add_argument(
@@ -104,6 +117,18 @@ def parse_args() -> Args:
 
     _ = subparsers.add_parser("forge", help="Make stub.py file after config changes")
 
+    init_parser = subparsers.add_parser(
+        "init",
+        help=("Create required folders/files to run a simulation"),
+    )
+    _ = init_parser.add_argument(
+        "--type",
+        dest="init_type",
+        choices=["path", "mas", "comp"],
+        default="path",
+        help="Initialization type: 'path' (default), 'mas', or 'comp'",
+    )
+
     args = parser.parse_args(namespace=TypedNamespace)
 
     if args.command == "launch":
@@ -122,6 +147,8 @@ def parse_args() -> Args:
         )
     if args.command == "forge":
         return Args(command="forge", forge_args=ForgeArgs())
+    if args.command == "init":
+        return Args(command="init", init_args=InitArgs(init_type=args.init_type))
 
     error = f"Unknown command: {args.command}"
     raise ValueError(error)
