@@ -219,7 +219,7 @@ class Game:
         if isinstance(top_layer, Survivor):
             points = (
                 Constants.SURVIVOR_SAVE_ALIVE_SCORE
-                if is_alive
+                if top_layer.health > 0
                 else Constants.SURVIVOR_SAVE_DEAD_SCORE
             )
             self.team_info.add_saved(team, 1, is_alive=top_layer.health > 0)

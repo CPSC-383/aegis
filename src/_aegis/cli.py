@@ -22,7 +22,8 @@ def main() -> None:
             sys.exit(1)
 
     elif args.command == "forge":
-        from .stub_generator import main as stub_gen
+        from .stub_generator import main as stub_gen  # noqa: PLC0415
+
         try:
             stub_gen()
         except Exception:  # noqa: BLE001

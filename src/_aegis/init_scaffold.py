@@ -33,7 +33,7 @@ def _get_templates_dir(kind: str) -> Path:
 
         # If neither exists, raise a clear error
         msg = f"Template '{kind}' not found. Please ensure templates are populated."
-        raise FileNotFoundError(msg)
+        raise FileNotFoundError(msg) from None
 
 
 def _copy_directory_excluding_cache(src: Path, dest: Path) -> None:
@@ -140,7 +140,8 @@ def init_scaffold(kind: str = "path") -> None:
     try:
         templates_dir = _get_templates_dir(kind)
     except FileNotFoundError as e:
-        raise FileNotFoundError(f"[aegis] init failed: {e}")
+        msg = f"[aegis] init failed: {e}"
+        raise FileNotFoundError(msg) from e
 
     print(f"[aegis] Initializing {kind} template from {templates_dir}")
 
