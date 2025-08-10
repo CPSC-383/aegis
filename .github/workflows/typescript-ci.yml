@@ -3,6 +3,8 @@ name: TypeScript CI Pipeline
 on:
   pull_request:
     branches: [main, dev]
+    paths:
+      - 'client/**' # only run if something in client/ changes
 
 jobs:
   lint:
@@ -19,11 +21,11 @@ jobs:
           cache-dependency-path: client/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./client
+        working-directory: client
         run: npm ci
 
       - name: Run ESLint
-        working-directory: ./client
+        working-directory: client
         run: npx eslint src src-electron
 
   format:
@@ -43,11 +45,11 @@ jobs:
           cache-dependency-path: client/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./client
+        working-directory: client
         run: npm ci
 
       - name: Run Prettier format
-        working-directory: ./client
+        working-directory: client
         run: npm run format 
 
       - name: Commit formatted changes
