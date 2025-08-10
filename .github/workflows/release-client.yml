@@ -115,21 +115,24 @@ jobs:
       - name: Prepare zips
         run: |
           mkdir -p release
+
           if compgen -G "artifacts/mac-electron/mac-universal/*.app" > /dev/null; then
-            echo "Found Mac app, creating zip..."
-            zip -r release/mac-client.zip artifacts/mac-electron/mac-universal/*.app
+            echo "Found Mac app, creating 7z archive..."
+            7z a -tzip release/mac-client.zip artifacts/mac-electron/mac-universal/*.app
           else
             echo "No Mac app found at expected path"
           fi
+
           if compgen -G "artifacts/linux-electron/*.AppImage" > /dev/null; then
-            echo "Found Linux AppImage, creating zip..."
-            zip -j release/linux-client.zip artifacts/linux-electron/*.AppImage
+            echo "Found Linux AppImage, creating 7z archive..."
+            7z a -tzip release/linux-client.zip artifacts/linux-electron/*.AppImage
           else
             echo "No Linux AppImage found at expected path"
           fi
+
           if compgen -G "artifacts/win-electron/*.exe" > /dev/null; then
-            echo "Found Windows exe, creating zip..."
-            zip -j release/win-client.zip artifacts/win-electron/*.exe
+            echo "Found Windows exe, creating 7z archive..."
+            7z a -tzip release/win-client.zip artifacts/win-electron/*.exe
           else
             echo "No Windows exe found at expected path"
           fi
