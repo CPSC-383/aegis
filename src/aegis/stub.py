@@ -8,6 +8,7 @@ Do not modify manually.
 # pyright: reportUnusedImport=false
 # pyright: reportUnusedParameter=false
 
+
 from . import (
     CellInfo,
     Direction,
@@ -26,7 +27,7 @@ def get_id() -> int:
     """Return the id of the current agent."""
 
 
-def get_team() -> int:
+def get_team() -> Team:
     """Return the current team of the agent."""
 
 
@@ -112,5 +113,15 @@ def log(*args: object) -> None:
 
     Args:
         *args: The message to log.
+
+    """
+
+
+def drone_scan(loc: Location) -> None:
+    """
+    Scan a location with a drone.
+
+    Args:
+        loc: The location to scan.
 
     """

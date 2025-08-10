@@ -85,7 +85,7 @@ class PredictionHandler:
         # Check if there's a valid pending prediction
         if key not in self._pending_predictions:
             LOGGER.warning(
-                f"Agent attempted to predict surv_id {surv_id} for team {team}, but no valid pending prediction exists. Did another agent on your team predict this survivor before you?"
+                f"Agent attempted to predict surv_id {surv_id} for team {str(team)[5:]}, but no valid pending prediction exists. Did another agent on your team predict this survivor before you?"
             )
             return None
 
