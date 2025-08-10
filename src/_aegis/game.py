@@ -270,7 +270,7 @@ class Game:
             for team, duration in teams.items():
                 self._drone_scans[loc][team] = duration
                 LOGGER.info(
-                    f"Started drone scan at {loc} for {team} has {duration} duration on round {self.round}"
+                    f"Started drone scan at {loc} for team {team.name} with duration of {duration} rounds"
                 )
         self._pending_drone_scans.clear()
 
@@ -284,9 +284,9 @@ class Game:
         for loc, teams in self._drone_scans.items():
             for team, duration in list(teams.items()):
                 teams[team] = duration - 1
-                LOGGER.info(
-                    f"Drone scan at {loc} for {team} has {teams[team]} duration on round {self.round}"
-                )
+                # LOGGER.info(
+                #     f"Drone scan at {loc} for {team.name} has {teams[team]} duration on round {self.round}"
+                # )
                 if teams[team] <= 0:
                     del self._drone_scans[loc][team]
 

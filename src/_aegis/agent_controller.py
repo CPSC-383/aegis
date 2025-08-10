@@ -143,7 +143,12 @@ class AgentController:
         return self._agent.message_buffer.get_messages(round_num)
 
     def drone_scan(self, loc: Location) -> None:
+        if not has_feature("ALLOW_DRONE_SCAN"):
+            msg = "Drone scan is not enabled, therefore this method is not available."
+            raise AgentError(msg)
+
         self.assert_loc(loc)
+
         self._game.start_drone_scan(loc, self._agent.team)
         self._agent.add_energy(-Constants.DRONE_SCAN_ENERGY_COST)
 

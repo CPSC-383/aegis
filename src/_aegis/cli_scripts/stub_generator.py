@@ -20,7 +20,7 @@ from _aegis.aegis_config import has_feature
 IS_PREDICTIONS_ENABLED = has_feature("ALLOW_AGENT_PREDICTIONS")
 IS_MESSAGES_ENABLED = has_feature("ALLOW_AGENT_MESSAGES")
 IS_DYNAMIC_SPAWNING_ENABLED = has_feature("ALLOW_DYNAMIC_SPAWNING")
-IS_ABILITIES_ENABLED = has_feature("ALLOW_AGENT_ABILITIES")
+IS_DRONE_SCAN_ENABLED = has_feature("ALLOW_DRONE_SCAN")
 
 # Grouped function names by feature flag
 PREDICT_FUNCTIONS = {"predict", "read_pending_predictions"}
@@ -48,7 +48,7 @@ def should_include_function(name: str) -> bool:
         return False
     if name in SPAWN_FUNCTIONS and not IS_DYNAMIC_SPAWNING_ENABLED:
         return False
-    return not (name in ABILITIES and not IS_ABILITIES_ENABLED)
+    return not (name in ABILITIES and not IS_DRONE_SCAN_ENABLED)
 
 
 def build_header() -> str:
