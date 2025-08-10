@@ -1,18 +1,25 @@
-import { MouseEvent } from "react"
+import { Progress } from "@/components/ui/progress"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Progress } from "@/components/ui/progress"
-import { TIMELINE_WIDTH } from "@/utils/constants"
-import useRound from "@/hooks/useRound"
 import { Runner } from "@/core/Runner"
+import useRound from "@/hooks/useRound"
+import { TIMELINE_WIDTH } from "@/utils/constants"
+import { MouseEvent } from "react"
 import invariant from "tiny-invariant"
 
 export default function Timeline(): JSX.Element {
   const round = useRound()
+
+  // Convert internal round number to display round number (completed rounds)
+  const getDisplayRound = (internalRound: number): number =>
+    Math.max(0, internalRound - 1)
+
+  // Convert display round number to internal round number
+  const getInternalRound = (displayRound: number): number => displayRound + 1
 
   const handleSeek = (e: MouseEvent<HTMLDivElement>): void => {
     invariant(round, "Somehow using an undefined round to seek")
@@ -20,7 +27,8 @@ export default function Timeline(): JSX.Element {
     const rect = e.currentTarget.getBoundingClientRect()
     const x = e.clientX - rect.left
     const progress = Math.max(0, Math.min(1, x / TIMELINE_WIDTH))
-    Runner.jumpToRound(Math.floor(progress * (round.game.maxRound - 1) + 1))
+    const targetDisplayRound = Math.floor(progress * (round.game.maxRound - 1))
+    Runner.jumpToRound(getInternalRound(targetDisplayRound))
   }
 
   if (!round) {
@@ -35,7 +43,8 @@ export default function Timeline(): JSX.Element {
   }
 
   const maxRound = round.game.maxRound
-  const progressPercentage = maxRound > 0 ? (round.round / maxRound) * 100 : 0
+  const progressPercentage =
+    maxRound > 0 ? (getDisplayRound(round.round) / Math.max(1, maxRound - 1)) * 100 : 0
 
   return (
     <TooltipProvider>
@@ -43,7 +52,7 @@ export default function Timeline(): JSX.Element {
         <div className="flex justify-center items-center mb-1">
           <span className="text-xs text-gray-600">Round:</span>
           <span className="text-xs ml-1">
-            <b>{round.round}</b> / {maxRound}
+            <b>{getDisplayRound(round.round)}</b> / {Math.max(0, maxRound - 1)}
           </span>
         </div>
         <Tooltip>
