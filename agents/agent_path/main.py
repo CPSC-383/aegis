@@ -16,9 +16,6 @@ def think() -> None:
     # to ensure it's within the world bounds. The agent's own location is always valid.
     cell = get_cell_info_at(get_location())
 
-    # Scan the cell
-    drone_scan(get_location())
-
     # Get the top layer at the agent's current location.
     # If a survivor is present, save it and end the turn.
     if isinstance(cell.top_layer, Survivor):

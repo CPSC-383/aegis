@@ -270,7 +270,7 @@ class Game:
             for team, duration in teams.items():
                 self._drone_scans[loc][team] = duration
                 LOGGER.info(
-                    f"Started drone scan at {loc} for team {str(team)[5:]} with duration of {duration} rounds"
+                    f"Started drone scan at {loc} for team {team.name} with duration of {duration} rounds"
                 )
         self._pending_drone_scans.clear()
 
@@ -285,7 +285,7 @@ class Game:
             for team, duration in list(teams.items()):
                 teams[team] = duration - 1
                 # LOGGER.info(
-                #     f"Drone scan at {loc} for {str(team)[5:]} has {teams[team]} duration on round {self.round}"
+                #     f"Drone scan at {loc} for {team.name} has {teams[team]} duration on round {self.round}"
                 # )
                 if teams[team] <= 0:
                     del self._drone_scans[loc][team]
@@ -319,7 +319,7 @@ class Game:
         self.queue_layer_to_remove(agent.location, agent.team)
 
         LOGGER.info(
-            f"Saving survivor {survivor.id} at {agent.location} for team {str(agent.team)[5:]}"
+            f"Saving survivor {survivor.id} at {agent.location} for team {agent.team.name}"
         )
         if (
             has_feature("ALLOW_AGENT_PREDICTIONS")
