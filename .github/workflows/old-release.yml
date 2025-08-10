@@ -151,6 +151,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: aegis-*.zip
+          file: artifacts/**/*.zip
           tag: ${{ github.ref_name }}
           release_name: "Aegis clients for version ${{ github.ref_name }}"
