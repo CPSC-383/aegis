@@ -60,13 +60,13 @@ jobs:
 
       - name: Prepare zips
         working-directory: ${{ env.WORKING_DIR }}
-        run: 7z a -tzip packed-client/${{ matrix.platform }}-electron.zip ${{ env.ARTIFACT_PATH }}
+        run: 7z a -tzip packed-client/${{ matrix.platform }}-client.zip ${{ env.ARTIFACT_PATH }}
 
 
       - name: Upload built client as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}-electron
+          name: ${{ matrix.platform }}-client
           path: |
             ${{ env.WORKING_DIR }}/packed-client/**
           if-no-files-found: error
