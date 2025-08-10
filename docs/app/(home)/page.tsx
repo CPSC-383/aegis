@@ -138,14 +138,15 @@ export default function HomePage() {
                   {title}
                 </h2>
                 <span
-                  className={`text-xs font-mono px-2 py-0.5 rounded ${status === "OPERATIONAL"
-                    ? "bg-green-500/20 text-green-400"
-                    : status === "UPDATED"
-                      ? "bg-blue-500/20 text-blue-400"
-                      : status === "CLASSIFIED"
-                        ? "bg-red-500/20 text-red-400"
-                        : "bg-yellow-500/20 text-yellow-400"
-                    }`}
+                  className={`text-xs font-mono px-2 py-0.5 rounded ${
+                    status === "OPERATIONAL"
+                      ? "bg-green-500/20 text-green-400"
+                      : status === "UPDATED"
+                        ? "bg-blue-500/20 text-blue-400"
+                        : status === "CLASSIFIED"
+                          ? "bg-red-500/20 text-red-400"
+                          : "bg-yellow-500/20 text-yellow-400"
+                  }`}
                 >
                   {status}
                 </span>

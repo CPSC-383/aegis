@@ -1,6 +1,6 @@
-import React from 'react';
-import { ExternalLink, GitBranch, Sparkle } from 'lucide-react';
-import Link from 'next/link';
+import React from "react"
+import { ExternalLink, GitBranch, Sparkle } from "lucide-react"
+import Link from "next/link"
 
 export default function AegisVersionDisplay({ version }: { version: string }) {
   return (
@@ -32,7 +32,7 @@ export default function AegisVersionDisplay({ version }: { version: string }) {
       </div>
       <Link
         href="https://github.com/CPSC-383/aegis"
-        target='_blank'
+        target="_blank"
         className="group flex items-center gap-3 text-xs font-mono text-slate-400 hover:text-cyan-300 transition-colors"
       >
         <div className="flex items-center gap-1">
@@ -45,7 +45,8 @@ export default function AegisVersionDisplay({ version }: { version: string }) {
         <div className="flex items-center gap-1">
           <span className="text-purple-400">CLASSIFIED ACCESS</span>
           <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-        </div></Link>
+        </div>
+      </Link>
     </div>
-  );
+  )
 }
