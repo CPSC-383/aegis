@@ -72,6 +72,7 @@ from . import (
     Message,
     Rubble,
     Survivor,
+    Team,
 )
 """
     optional_imports = "\n".join(imports)
