@@ -119,7 +119,6 @@
     "@types/lodash": "^4.17.20",
     "@types/node": "^18.19.68",
     "@types/pako": "^2.0.3",
-    "@types/protobufjs": "^6.0.0",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
