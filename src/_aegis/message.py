@@ -2,6 +2,16 @@ from typing import override
 
 
 class Message:
+    """
+    Represents a message sent by an agent during a specific round.
+
+    Attributes:
+        message (str): The content of the message.
+        round_num (int): The round number when the message was sent.
+        sender_id (int): The ID of the agent who sent the message.
+
+    """
+
     def __init__(self, message: str, round_num: int, sender_id: int) -> None:
         self.message: str = message
         self.round_num: int = round_num

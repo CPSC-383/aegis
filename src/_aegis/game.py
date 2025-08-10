@@ -196,10 +196,10 @@ class Game:
         for loc, teams_data in self._queued_layers_to_remove.items():
             # set true if at least one team meets threshold to remove the layer
             will_remove = False
-            agents_needed_to_remove = cast(
-                "Rubble | Survivor", self.get_cell_info_at(loc).top_layer
-            ).agents_required
-
+            agents_needed_to_remove = 1
+            top_layer = self.get_cell_info_at(loc).top_layer
+            if isinstance(top_layer, Rubble):
+                agents_needed_to_remove = top_layer.agents_required
             # see if each team met threshold to acc remove the layer
             for team, num_agents_queued in teams_data.items():
                 if num_agents_queued >= agents_needed_to_remove:
@@ -217,13 +217,12 @@ class Game:
         top_layer = self.get_cell_info_at(loc).top_layer
 
         if isinstance(top_layer, Survivor):
-            is_alive = top_layer.get_health() > 0
             points = (
                 Constants.SURVIVOR_SAVE_ALIVE_SCORE
                 if is_alive
                 else Constants.SURVIVOR_SAVE_DEAD_SCORE
             )
-            self.team_info.add_saved(team, 1, is_alive=is_alive)
+            self.team_info.add_saved(team, 1, is_alive=top_layer.health > 0)
             self.team_info.add_score(team, points)
         # elif isinstance(top_layer, Rubble):
         #     pass

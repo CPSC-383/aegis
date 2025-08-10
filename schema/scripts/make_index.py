@@ -1,5 +1,4 @@
 # noqa: INP001
-# ruff: noqa: T201
 
 """Generate index.aegis.ts and index.ts for TS schema."""
 
