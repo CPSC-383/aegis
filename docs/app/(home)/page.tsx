@@ -12,7 +12,7 @@ import {
   Eye,
   Sparkle,
 } from "lucide-react"
-import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { NebulaBackground } from "@/components/nebula"
 import { useEffect, useState } from "react"
 import AegisVersion from "@/components/aegis-version"
 
@@ -57,7 +57,7 @@ export default function HomePage() {
         if (!res.ok) throw new Error("Failed to fetch version")
         const data = await res.json()
         setVersion(data.info.version)
-      } catch (e) {
+      } catch {
         setVersion(null)
       }
     }
@@ -66,7 +66,7 @@ export default function HomePage() {
 
   return (
     <main className="relative flex h-full flex-col items-center justify-center px-4 py-12 text-white overflow-hidden">
-      <NebulaBackground {...NebulaPresets.home} />
+      <NebulaBackground gradient="bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950" />
 
       <div className="hidden sm:absolute top-4 left-4 right-4 z-20 sm:flex justify-between items-center text-xs font-mono">
         <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur px-3 py-1 rounded border border-cyan-500/30">

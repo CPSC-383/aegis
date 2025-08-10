@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { guides } from "@/lib/source"
-import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { NebulaBackground } from "@/components/nebula"
 import {
   Compass,
   Stars,
@@ -32,7 +32,7 @@ export default function GuidesPage() {
 
   return (
     <main className="relative flex flex-col h-full items-center px-4 py-12 text-white overflow-hidden">
-      <NebulaBackground {...NebulaPresets.guides} />
+      <NebulaBackground gradient="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950" />
 
       <div className="hidden sm:absolute top-4 left-4 right-4 z-20 sm:flex justify-between items-center text-xs font-mono">
         <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur px-3 py-1 rounded border border-cyan-500/30">

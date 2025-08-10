@@ -1,8 +1,6 @@
 "use client"
 
 interface NebulaBackgroundProps {
-  /** Nebula core color */
-  nebulaColor?: string
   /** Background gradient */
   gradient?: string
   /** Additional CSS classes */
@@ -74,47 +72,4 @@ export const NebulaBackground = ({
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-900/5 to-transparent opacity-20" />
     </div>
   )
-}
-
-// Preset configurations for different scenes
-export const NebulaPresets = {
-  // Home page - rich and atmospheric
-  home: {
-    particleCount: 30,
-    particleSize: { min: 2, max: 4 },
-    nebulaColor: "purple-500/10",
-    gradient: "bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950",
-  },
-
-  // Documentation pages - subtle and non-distracting
-  docs: {
-    particleCount: 15,
-    particleSize: { min: 1, max: 2 },
-    nebulaColor: "slate-500/5",
-    gradient: "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800",
-  },
-
-  // Guides page - medium intensity
-  guides: {
-    particleCount: 20,
-    particleSize: { min: 1, max: 3 },
-    nebulaColor: "indigo-500/8",
-    gradient: "bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950",
-  },
-
-  // Alert/danger pages - red tinted
-  alert: {
-    particleCount: 25,
-    particleSize: { min: 2, max: 3 },
-    nebulaColor: "red-500/10",
-    gradient: "bg-gradient-to-br from-slate-950 via-slate-900 to-rose-950",
-  },
-
-  // Clean/minimal - for content pages
-  minimal: {
-    particleCount: 10,
-    particleSize: { min: 1, max: 2 },
-    nebulaColor: "slate-500/3",
-    gradient: "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900",
-  },
 }

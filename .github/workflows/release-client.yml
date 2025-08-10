@@ -15,9 +15,6 @@ on:
 permissions:
   contents: write
 
-env:
-  NODE_VERSION: "20"
-  WORKING_DIR: ./client
 
 jobs:
   build-electron:
@@ -32,6 +29,10 @@ jobs:
           - os: windows-latest
             platform: win
     runs-on: ${{ matrix.os }}
+    env:
+      NODE_VERSION: "20"
+      WORKING_DIR: ./client
+      ARTIFACT_PATH: "./packed-client/${{ matrix.path }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,25 +57,19 @@ jobs:
       - name: Build app
         working-directory: ${{ env.WORKING_DIR }}
         shell: bash
-        run: |
-          case "${{ matrix.platform }}" in
-            mac)
-              npm run build:pack:mac
-              ;;
-            linux)
-              npm run build:pack:linux
-              ;;
-            win)
-              npm run build:pack:win
-              ;;
-          esac
+        run: npm run build:pack
+
+      - name: Prepare zips
+        working-directory: ${{ env.WORKING_DIR }}
+        run: 7z a -tzip packed-client/${{ matrix.platform }}-client.zip ${{ env.ARTIFACT_PATH }}
+
 
       - name: Upload built client as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}-electron
+          name: ${{ matrix.platform }}-client
           path: |
-            ${{ env.WORKING_DIR }}/packed-client/**
+            ${{ env.WORKING_DIR }}/packed-client/*-client.zip
           if-no-files-found: error
 
   release:
@@ -112,33 +107,11 @@ jobs:
         with:
           path: ./artifacts/
 
-      - name: Prepare zips
-        run: |
-          mkdir -p release
-          if compgen -G "artifacts/mac-electron/mac-universal/*.app" > /dev/null; then
-            echo "Found Mac app, creating zip..."
-            zip -r release/mac-client.zip artifacts/mac-electron/mac-universal/*.app
-          else
-            echo "No Mac app found at expected path"
-          fi
-          if compgen -G "artifacts/linux-electron/*.AppImage" > /dev/null; then
-            echo "Found Linux AppImage, creating zip..."
-            zip -j release/linux-client.zip artifacts/linux-electron/*.AppImage
-          else
-            echo "No Linux AppImage found at expected path"
-          fi
-          if compgen -G "artifacts/win-electron/*.exe" > /dev/null; then
-            echo "Found Windows exe, creating zip..."
-            zip -j release/win-client.zip artifacts/win-electron/*.exe
-          else
-            echo "No Windows exe found at expected path"
-          fi
-
       - name: Upload assets to GitHub Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: release/*.zip
+          file: artifacts/**/*.zip
           file_glob: true
           tag: ${{ steps.resolve.outputs.tag }}
           release_name: "Client Release ${{ steps.resolve.outputs.tag }}"
