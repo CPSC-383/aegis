@@ -106,18 +106,11 @@ jobs:
         with:
           path: ./artifacts/
 
-      - name: List downloaded artifacts
-        run: |
-          echo "Listing contents of artifacts directory:"
-          find ./artifacts -type f -name "*.zip" -exec ls -lh {} \;
-          echo "All files in artifacts directory:"
-          find ./artifacts -type f
-
       - name: Upload assets to GitHub Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: artifacts/*.zip
+          file: artifacts/**/*.zip
           file_glob: true
           tag: ${{ steps.resolve.outputs.tag }}
           release_name: "Client Release ${{ steps.resolve.outputs.tag }}"
