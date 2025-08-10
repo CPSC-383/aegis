@@ -7,6 +7,16 @@ to produce the public-facing `aegis/stub.py`.
 It is NOT part of the runtime API.
 """
 
+from . import (
+    CellInfo,
+    Direction,
+    Location,
+    Message,
+    Rubble,
+    Survivor,
+    Team,
+)
+
 
 def get_round_number() -> int:
     """Return the current round number."""
@@ -16,7 +26,7 @@ def get_id() -> int:
     """Return the id of the current agent."""
 
 
-def get_team() -> int:
+def get_team() -> Team:
     """Return the current team of the agent."""
 
 
@@ -81,8 +91,7 @@ def read_messages(round_num: int = -1) -> list[Message]:
     Retrieve messages from the message buffer.
 
     Args:
-        round_num (int, optional): The round number to retrieve messages from.
-            Defaults to -1, which returns messages from all rounds.
+        round_num (int, optional): The round number to retrieve messages from. Defaults to -1, which returns messages from all rounds.
 
     Returns:
         list[Message]: List of messages.

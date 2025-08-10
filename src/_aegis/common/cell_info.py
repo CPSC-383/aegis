@@ -7,13 +7,25 @@ from .objects import WorldObject
 
 
 class CellInfo:
+    """
+    Represents information about a cell in the world.
+
+    Attributes:
+        type (CellType): The type of the cell.
+        location (Location): The coordinates of the cell.
+        move_cost (int): The movement cost to traverse this cell.
+        agents (list[int]): List of agent IDs currently in this cell.
+        layers (list[WorldObject]): Stack of world objects present in the cell, ordered by layer.
+
+    """
+
     def __init__(
         self,
         layers: list[WorldObject],
-        cell_type: CellType = CellType.NORMAL_CELL,
-        location: Location | None = None,
-        move_cost: int = 0,
-        agents: list[int] | None = None,
+        cell_type: CellType,
+        location: Location | None,
+        move_cost: int,
+        agents: list[int] | None,
     ) -> None:
         self.type: CellType = cell_type
         self.location: Location = location if location is not None else Location(-1, -1)
@@ -23,9 +35,17 @@ class CellInfo:
 
     @property
     def top_layer(self) -> WorldObject | None:
+        """Get the top-most layer object of the cell."""
         return self.layers[0] if self.layers else None
 
     def is_killer_cell(self) -> bool:
+        """
+        Check if the cell is a killer cell.
+
+        Returns:
+            bool: True if the cell type is KILLER_CELL, else False.
+
+        """
         return self.type == CellType.KILLER_CELL
 
     @override

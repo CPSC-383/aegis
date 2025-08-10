@@ -76,11 +76,9 @@ def serialize_world(world: World) -> world_pb2.World:
             if isinstance(layer, Survivor):
                 survivor_proto = layer_proto.survivor
                 survivor_proto.id = layer.id
-                survivor_proto.health = layer.get_health()
+                survivor_proto.health = layer.health
                 survivor_proto.state = (
-                    SurvivorState.ALIVE
-                    if layer.get_health() > 0
-                    else SurvivorState.DEAD
+                    SurvivorState.ALIVE if layer.health > 0 else SurvivorState.DEAD
                 )
             elif isinstance(layer, Rubble):
                 rubble_proto = layer_proto.rubble

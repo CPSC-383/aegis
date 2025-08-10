@@ -6,14 +6,51 @@ from _aegis.common.direction import Direction
 
 
 class Location:
+    """
+    Represents a coordinate location with x and y integer values.
+
+    Attributes:
+        x (int): The x-coordinate.
+        y (int): The y-coordinate.
+
+    """
+
     def __init__(self, x: int, y: int) -> None:
+        """
+        Initialize a Location with given x and y coordinates.
+
+        Arguments:
+            x (int): The x-coordinate.
+            y (int): The y-coordinate.
+
+        """
         self.x: int = x
         self.y: int = y
 
     def add(self, direction: Direction) -> Location:
+        """
+        Return a new Location by moving this Location in the specified direction.
+
+        Arguments:
+            direction (Direction): The direction to move.
+
+        Returns:
+            Location: A new Location in the given direction.
+
+        """
         return Location(self.x + direction.dx, self.y + direction.dy)
 
     def direction_to(self, location: Location) -> Direction:
+        """
+        Determine the cardinal Direction from this Location to another Location.
+
+        Arguments:
+            location (Location): The target location.
+
+        Returns:
+            Direction: The cardinal direction pointing towards the target location.
+
+        """
         dx = location.x - self.x
         dy = location.y - self.y
 
@@ -34,11 +71,31 @@ class Location:
         return direction_map.get(key, Direction.CENTER)
 
     def distance_to(self, location: Location) -> int:
+        """
+        Calculate the squared Euclidean distance from this Location to another.
+
+        Arguments:
+            location (Location): The target location.
+
+        Returns:
+            int: The squared distance between the two locations.
+
+        """
         dx = self.x - location.x
         dy = self.y - location.y
         return dx * dx + dy * dy
 
     def is_adjacent_to(self, location: Location) -> bool:
+        """
+        Check if this Location is adjacent to another Location.
+
+        Arguments:
+            location (Location): The target location.
+
+        Returns:
+            bool: True if the other location is adjacent, else False.
+
+        """
         dx = self.x - location.x
         dy = self.y - location.y
         return -1 <= dx <= 1 and -1 <= dy <= 1
