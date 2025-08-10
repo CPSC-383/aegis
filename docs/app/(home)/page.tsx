@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import {
   BookText,
@@ -11,6 +13,8 @@ import {
   Sparkle,
 } from "lucide-react"
 import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { useEffect, useState } from "react"
+import AegisVersion from "@/components/aegis-version"
 
 const cards = [
   {
@@ -44,6 +48,22 @@ const cards = [
 ]
 
 export default function HomePage() {
+  const [version, setVersion] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchVersion() {
+      try {
+        const res = await fetch("https://pypi.org/pypi/aegis-game/json")
+        if (!res.ok) throw new Error("Failed to fetch version")
+        const data = await res.json()
+        setVersion(data.info.version)
+      } catch (e) {
+        setVersion(null)
+      }
+    }
+    fetchVersion()
+  }, [])
+
   return (
     <main className="relative flex h-full flex-col items-center justify-center px-4 py-12 text-white overflow-hidden">
       <NebulaBackground {...NebulaPresets.home} />
@@ -96,11 +116,7 @@ export default function HomePage() {
           manage Lumen reserves, and coordinate life-saving missions across hostile
           regions of space.
         </p>
-
-        <div className="text-xs font-mono text-green-400 bg-slate-900/50 rounded px-3 py-1 border border-green-500/30">
-          CURRENT MISSION: Sector 7-Alpha • 3 Survivors Located • Commander Team
-          Deployed
-        </div>
+        {version && <AegisVersion version={version} />}
       </div>
 
       <div className="z-10 grid gap-4 sm:grid-cols-2 max-w-4xl w-full">
