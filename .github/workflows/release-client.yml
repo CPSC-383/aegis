@@ -106,6 +106,13 @@ jobs:
         with:
           path: ./artifacts/
 
+      - name: Debug: List downloaded artifacts
+        run: |
+          echo "Listing contents of artifacts directory:"
+          find ./artifacts -type f -name "*.zip" -exec ls -lh {} \;
+          echo "All files in artifacts directory:"
+          find ./artifacts -type f
+
       - name: Upload assets to GitHub Release
         uses: svenstaro/upload-release-action@v2
         with:
