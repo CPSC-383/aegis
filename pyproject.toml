@@ -30,7 +30,7 @@ path = "src/aegis/__init__.py"
 
 [tool.ruff]
 line-length = 88
-exclude = ["src/_aegis/sandbox.py", "src/_aegis/schemas/**", "src/_aegis/full_stub.py", "aegents/**]
+exclude = ["src/_aegis/sandbox.py", "src/_aegis/schemas/**", "src/_aegis/full_stub.py", "aegents/**"]
 
 [tool.ruff.lint]
 select = ["ALL"]
