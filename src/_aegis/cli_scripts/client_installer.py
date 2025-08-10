@@ -17,7 +17,7 @@ class ClientInstaller:
     OWNER: str = "CPSC-383"
     REPO: str = "AEGIS"
     CHUNK_SIZE: int = 8192
-    CLIENT_DIR: Path = Path("client-temp")
+    CLIENT_DIR: Path = Path("client")
 
     PLATFORM_ASSETS: ClassVar[dict[str, str]] = {
         "windows": "win-client.zip",
