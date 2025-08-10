@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { InlineTOCError } from "@/components/inline-toc-error"
 import { errors } from "@/lib/source"
-import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { NebulaBackground } from "@/components/nebula"
 import { ArrowLeft, AlertTriangle, Cpu, Eye, HardDrive, Shield } from "lucide-react"
 import { getMDXComponents } from "@/mdx-components"
 
@@ -15,7 +15,7 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
-      <NebulaBackground {...NebulaPresets.alert} />
+      <NebulaBackground gradient="bg-gradient-to-br from-slate-950 via-slate-900 to-rose-950" />
 
       <div className="relative z-20 p-4">
         <div className="flex items-center justify-between text-xs font-mono">

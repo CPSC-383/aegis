@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { BookOpen, FileText, Code, Zap, ArrowRight } from "lucide-react"
-import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { NebulaBackground } from "@/components/nebula"
 import getConfig from "next/config"
 
 const docCategories = [

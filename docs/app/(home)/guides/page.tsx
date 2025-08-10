@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { guides } from "@/lib/source"
-import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { NebulaBackground } from "@/components/nebula"
 import {
   Compass,
   Stars,

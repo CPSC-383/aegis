@@ -3,7 +3,7 @@ import Link from "next/link"
 import { getMDXComponents } from "@/mdx-components"
 import { InlineTOC } from "@/components/inline-toc"
 import { guides } from "@/lib/source"
-import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { NebulaBackground } from "@/components/nebula"
 import {
   ArrowLeft,
   User,

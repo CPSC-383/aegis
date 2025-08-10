@@ -12,7 +12,7 @@ import {
   Eye,
   Sparkle,
 } from "lucide-react"
-import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { NebulaBackground } from "@/components/nebula"
 import { useEffect, useState } from "react"
 import AegisVersion from "@/components/aegis-version"
 

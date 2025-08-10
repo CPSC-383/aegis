@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { errors } from "@/lib/source"
-import { NebulaBackground, NebulaPresets } from "@/components/nebula"
+import { NebulaBackground } from "@/components/nebula"
 import {
   AlertTriangle,
   Zap,
