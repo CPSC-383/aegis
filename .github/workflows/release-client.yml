@@ -112,33 +112,26 @@ jobs:
         with:
           path: ./artifacts/
 
-      - name: Debug - List all artifacts
-        run: |
-          echo "=== Artifacts structure ==="
-          find ./artifacts -type f -name "*" | head -20
-          echo ""
-          echo "=== Looking for specific patterns ==="
-          echo "Mac apps:"
-          find ./artifacts -name "*.app" -type d || echo "No .app bundles found"
-          echo "Linux AppImages:"
-          find ./artifacts -name "*.AppImage" -type f || echo "No .AppImage files found"  
-          echo "Windows executables:"
-          find ./artifacts -name "*.exe" -type f || echo "No .exe files found"
-
       - name: Prepare zips
         run: |
           mkdir -p release
-          # mac: keep .app bundle structure under packed-client/mac-universal/*.app
-          if compgen -G "artifacts/mac-electron/packed-client/mac-universal/*.app" > /dev/null; then
-            zip -r release/mac-client.zip artifacts/mac-electron/packed-client/mac-universal/*.app
+          if compgen -G "artifacts/mac-electron/mac-universal/*.app" > /dev/null; then
+            echo "Found Mac app, creating zip..."
+            zip -r release/mac-client.zip artifacts/mac-electron/mac-universal/*.app
+          else
+            echo "No Mac app found at expected path"
           fi
-          # linux: include just the AppImage under packed-client/*.AppImage
-          if compgen -G "artifacts/linux-electron/packed-client/*.AppImage" > /dev/null; then
-            zip -j release/linux-client.zip artifacts/linux-electron/packed-client/*.AppImage
+          if compgen -G "artifacts/linux-electron/*.AppImage" > /dev/null; then
+            echo "Found Linux AppImage, creating zip..."
+            zip -j release/linux-client.zip artifacts/linux-electron/*.AppImage
+          else
+            echo "No Linux AppImage found at expected path"
           fi
-          # windows: include just the exe under packed-client/*.exe
-          if compgen -G "artifacts/win-electron/packed-client/*.exe" > /dev/null; then
-            zip -j release/win-client.zip artifacts/win-electron/packed-client/*.exe
+          if compgen -G "artifacts/win-electron/*.exe" > /dev/null; then
+            echo "Found Windows exe, creating zip..."
+            zip -j release/win-client.zip artifacts/win-electron/*.exe
+          else
+            echo "No Windows exe found at expected path"
           fi
 
       - name: Upload assets to GitHub Release
