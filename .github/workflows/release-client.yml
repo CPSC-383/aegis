@@ -112,6 +112,19 @@ jobs:
         with:
           path: ./artifacts/
 
+      - name: Debug - List all artifacts
+        run: |
+          echo "=== Artifacts structure ==="
+          find ./artifacts -type f -name "*" | head -20
+          echo ""
+          echo "=== Looking for specific patterns ==="
+          echo "Mac apps:"
+          find ./artifacts -name "*.app" -type d || echo "No .app bundles found"
+          echo "Linux AppImages:"
+          find ./artifacts -name "*.AppImage" -type f || echo "No .AppImage files found"  
+          echo "Windows executables:"
+          find ./artifacts -name "*.exe" -type f || echo "No .exe files found"
+
       - name: Prepare zips
         run: |
           mkdir -p release
