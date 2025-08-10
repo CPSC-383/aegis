@@ -17,10 +17,20 @@ body:
       options:
         - label: I have read all the docs
           required: true
-        - label: I have updated aegis to the latest version before submitting this issue
+        - label: I have updated to the latest version before submitting this issue
           required: true
         - label: I have searched the existing issues
           required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: "Affected Component"
+      description: "Select which part of the system is experiencing the issue"
+      options:
+        - Aegis
+        - Client
+    validations:
+      required: true
   - type: input
     attributes:
       label: "Operating system/version"

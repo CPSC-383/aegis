@@ -10,8 +10,18 @@ body:
       options:
         - label: I have searched existing feature requests and issues
           required: true
-        - label: This feature doesn't already exist in aegis
+        - label: This feature doesn't already exist
           required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: "Target Component"
+      description: "Select which part of the system should include this feature"
+      options:
+        - Aegis
+        - Client
+    validations:
+      required: true
   - type: textarea
     validations:
       required: true
