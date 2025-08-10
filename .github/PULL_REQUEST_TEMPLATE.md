@@ -16,4 +16,4 @@
 
 ## Checklist
 
-- [ ] I've read the [CONTRIBUTING](https://github.com/LazyVim/LazyVim/blob/main/CONTRIBUTING.md) guidelines.
+- [ ] I've read the [CONTRIBUTING](https://github.com/CPSC-383/aegis/blob/dev/CONTRIBUTING.md) guidelines.
