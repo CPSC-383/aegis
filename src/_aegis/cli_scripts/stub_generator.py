@@ -14,7 +14,7 @@ import ast
 from importlib import resources
 from pathlib import Path
 
-from .aegis_config import has_feature
+from _aegis.aegis_config import has_feature
 
 # Feature flags to control which functions get included in the stub
 IS_PREDICTIONS_ENABLED = has_feature("ALLOW_AGENT_PREDICTIONS")
@@ -213,7 +213,7 @@ def main() -> None:
 
     content = header + "\n" + stub_code + "\n"
 
-    output_path = Path(__file__).resolve().parent.parent / "aegis" / "stub.py"
+    output_path = Path(__file__).resolve().parent.parent.parent / "aegis" / "stub.py"
     try:
         _ = output_path.write_text(content, encoding="utf-8")
         print(f"Successfully wrote stub to {output_path}")
