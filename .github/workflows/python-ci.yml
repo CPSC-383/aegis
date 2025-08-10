@@ -3,9 +3,8 @@ name: Python CI Pipeline
 on:
   pull_request:
     branches: [main, dev]
-
-permissions:
-  contents: write
+    paths:
+      - 'src/**' # only run if something in src/ changes
 
 jobs:
   lint:

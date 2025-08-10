@@ -8,6 +8,7 @@ const pkg = JSON.parse(readFileSync("./package.json", "utf-8"))
 const config = {
   reactStrictMode: true,
   output: "export",
+  distDir: "build",
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   basePath: process.env.NODE_ENV === "production" ? "/aegis" : "",
   trailingSlash: true,
