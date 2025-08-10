@@ -8,7 +8,6 @@ Do not modify manually.
 # pyright: reportUnusedImport=false
 # pyright: reportUnusedParameter=false
 
-
 from . import (
     CellInfo,
     Direction,
