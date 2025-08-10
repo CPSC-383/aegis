@@ -15,10 +15,6 @@ on:
 permissions:
   contents: write
 
-env:
-  NODE_VERSION: "20"
-  WORKING_DIR: ./client
-  ARTIFACT_PATH: "./packed-client/${{ matrix.path }}"
 
 jobs:
   build-electron:
@@ -33,6 +29,10 @@ jobs:
           - os: windows-latest
             platform: win
     runs-on: ${{ matrix.os }}
+    env:
+      NODE_VERSION: "20"
+      WORKING_DIR: ./client
+      ARTIFACT_PATH: "./packed-client/${{ matrix.path }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
