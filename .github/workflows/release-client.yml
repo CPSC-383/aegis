@@ -49,10 +49,6 @@ jobs:
         working-directory: ./schema
         run: npm ci
 
-      - name: Build schema
-        working-directory: ./schema
-        run: npm run build
-
       - name: Install client dependencies
         working-directory: ${{ env.WORKING_DIR }}
         run: npm ci
