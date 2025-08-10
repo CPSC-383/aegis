@@ -1,8 +1,6 @@
 # Configuration Presets
 
-⚠️ **IMPORTANT: These are READ-ONLY template files** ⚠️
-
-These preset files contain example configurations that you can copy into the main `config/config.yaml` file. **Do not edit these files directly** - they are templates only.
+These preset files contain example configurations that you can copy into the main `config/config.yaml` file. They are packaged into aegis release for use with `aegis init` which starts off config.yml based on one of these presets
 
 ## How to use presets:
 
@@ -15,8 +13,7 @@ These preset files contain example configurations that you can copy into the mai
 
 - `pathfinding-assignment.yaml` - Settings for pathfinding assignments
 - `multi-agent-assignment.yaml` - Settings for multi-agent assignments
-- `competition-single.yaml` - Configuration for competition mode with a single team
-- `competition-versus.yaml` - Configuration for competition mode with two teams
+- `competition.yaml` - Configuration for competition mode with two teams
 
 ## Example:
 

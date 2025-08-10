@@ -1,0 +1,21 @@
+# Competition Template
+# Copy these settings to config/config.yaml and modify as needed
+
+# General aegis features
+features:
+  ALLOW_AGENT_PREDICTIONS: true
+  ALLOW_DYNAMIC_SPAWNING: true
+  ALLOW_AGENT_MESSAGES: true
+  ALLOW_AGENT_ABILITIES: true
+  ALLOW_AGENT_TYPES: false
+  HIDDEN_MOVE_COSTS: false
+  ALLOW_CUSTOM_AGENT_COUNT: true
+  DEFAULT_AGENT_AMOUNT: 7
+
+# Settings more specific to competitions, usually only competitions will decide to enable these
+competition_specific:
+  VERSUS_MODE: false
+
+# Client-specific configuration
+client:
+  CONFIG_TYPE: "competition" # "assignment" or "competition"

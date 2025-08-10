@@ -1,0 +1,21 @@
+# Pathfinding Assignment Configuration Template
+# Copy these settings to config/config.yaml and modify as needed
+
+# General aegis features
+features:
+  ALLOW_AGENT_PREDICTIONS: false
+  ALLOW_DYNAMIC_SPAWNING: false
+  ALLOW_AGENT_MESSAGES: false
+  ALLOW_AGENT_ABILITIES: false
+  ALLOW_AGENT_TYPES: false
+  HIDDEN_MOVE_COSTS: true
+  ALLOW_CUSTOM_AGENT_COUNT: false
+  DEFAULT_AGENT_AMOUNT: 1
+
+# Settings more specific to competitions, usually only competitions will decide to enable these
+competition_specific:
+  VERSUS_MODE: false
+
+# Client-specific configuration
+client:
+  CONFIG_TYPE: "assignment" # "assignment" or "competition"

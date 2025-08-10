@@ -14,5 +14,4 @@ __all__ = [
     "Survivor",
     "main",
 ]
-
 __version__ = "2.0.0"
