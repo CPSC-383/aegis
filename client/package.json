@@ -30,7 +30,7 @@
     ],
     "win": {
       "executableName": "client",
-      "icon": "./src/assets/goobs/goob.png",
+      "icon": "./src/assets/goobs/favicon.ico",
       "target": [
         {
           "target": "portable",
@@ -43,7 +43,7 @@
     "mac": {
       "mergeASARs": false,
       "category": "public.app-category.games",
-      "icon": "./src/assets/goobs/goob.png",
+      "icon": "./src/assets/goobs/favicon.ico",
       "target": [
         {
           "target": "dir",
@@ -54,7 +54,7 @@
       ]
     },
     "linux": {
-      "icon": "./src/assets/goobs/goob.png",
+      "icon": "./src/assets/goobs/favicon.ico",
       "target": [
         {
           "target": "appImage",
