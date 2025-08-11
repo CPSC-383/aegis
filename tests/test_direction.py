@@ -7,7 +7,7 @@ import pytest
 from src._aegis.common import Direction
 
 
-class TestDirectionBasics:
+class TestBasics:
     """Test basic Direction enum functionality."""
 
     def test_direction_values(self) -> None:
@@ -47,7 +47,7 @@ class TestDirectionBasics:
         assert Direction.CENTER.dy == 0
 
 
-class TestDirectionRotation:
+class TestRotation:
     """Test direction rotation methods."""
 
     @pytest.mark.parametrize(
@@ -110,7 +110,7 @@ class TestDirectionRotation:
             assert back_to_original == direction
 
 
-class TestDirectionOpposite:
+class TestOpposite:
     """Test the get_opposite method."""
 
     @pytest.mark.parametrize(
@@ -139,7 +139,7 @@ class TestDirectionOpposite:
             assert opposite_of_opposite == direction
 
 
-class TestDirectionEdgeCases:
+class TestEdgeCases:
     """Test edge cases and error conditions."""
 
     def test_all_directions_exist(self) -> None:
