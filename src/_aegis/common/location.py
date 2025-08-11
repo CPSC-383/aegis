@@ -102,7 +102,7 @@ class Location:
 
     @override
     def __str__(self) -> str:
-        return f"( X {self.x} , Y {self.y} )"
+        return f"({self.x}, {self.y})"
 
     @override
     def __repr__(self) -> str:

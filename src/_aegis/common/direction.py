@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import override
 
 
 class Direction(Enum):
@@ -92,28 +91,6 @@ class Direction(Enum):
             return self
         new_index = (dir_to_index[self] + 4) % 8
         return dir_order[new_index]
-
-    @override
-    def __str__(self) -> str:
-        """
-        Return the string representation of the direction (its name).
-
-        Returns:
-            str: The name of the direction.
-
-        """
-        return self.name
-
-    @override
-    def __repr__(self) -> str:
-        """
-        Return the repr string of the direction (same as str).
-
-        Returns:
-            str: The name of the direction.
-
-        """
-        return self.__str__()
 
 
 dir_order = [
