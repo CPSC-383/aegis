@@ -27,6 +27,9 @@ class ElectronApp {
       height: 800,
       autoHideMenuBar: true,
       title: "AEGIS",
+      icon: is.dev
+        ? path.resolve(__dirname, "../../src/assets/goobs/goob.ico")
+        : path.resolve(__dirname, "../../assets/goobs/goob.ico"),
       webPreferences: {
         devTools: is.dev,
         preload: path.join(__dirname, "../preload/index.js"),
