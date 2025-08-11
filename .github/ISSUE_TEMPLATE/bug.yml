@@ -26,6 +26,7 @@ body:
     attributes:
       label: "Affected Component"
       description: "Select which part of the system is experiencing the issue"
+      multiple: true
       options:
         - Aegis
         - Client
