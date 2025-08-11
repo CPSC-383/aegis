@@ -1,5 +1,6 @@
 # pyright: reportImportCycles = false
 
+import sys
 from typing import TYPE_CHECKING
 
 from .common import Direction, Location
@@ -49,6 +50,7 @@ class Agent:
         self.errors.clear()
         self.core.run()  # pyright: ignore[reportOptionalMemberAccess]
         self.log_errors()
+        self.penalize_for_errors()
         self.process_end_of_turn()
 
     def kill(self) -> None:
@@ -81,12 +83,33 @@ class Agent:
 
     def log_errors(self) -> None:
         for error in self.errors:
-            self.log(error)
+            if self.debug:
+                self.log(error, is_error=True)
+            else:
+                print(
+                    f"[Agent#({self.id}:{self.team.name})@{self.game.round}] [ERROR] Error thrown this round. (Turn on debug to see error message)",
+                    file=sys.stderr,
+                )
 
-    def log(self, *args: object) -> None:
+    def log(self, *args: object, is_error: bool = False) -> None:
         if not self.debug:
             return
 
         agent_id = self.id
-        print(f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ", end="")
+        if is_error:
+            print(
+                f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ",
+                end="",
+                file=sys.stderr,
+            )
+        else:
+            print(f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ", end="")
         print(*args)
+
+    def penalize_for_errors(self) -> None:
+        if self.errors:
+            self.add_energy(Constants.ENERGY_PENALTY_FOR_ERRORS)
+            print(
+                f"[Agent#({self.id}:{self.team.name})@{self.game.round}] [ERROR] penalized {Constants.ENERGY_PENALTY_FOR_ERRORS} energy for error.",
+                file=sys.stderr,
+            )

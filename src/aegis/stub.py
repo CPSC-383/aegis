@@ -7,6 +7,8 @@ Do not modify manually.
 # pyright: reportReturnType=false
 # pyright: reportUnusedImport=false
 # pyright: reportUnusedParameter=false
+import numpy as np
+from numpy.typing import NDArray
 
 from . import (
     CellInfo,
@@ -66,6 +68,17 @@ def recharge() -> None:
     """
 
 
+def predict(surv_id: int, label: np.int32) -> None:
+    """
+    Submit a prediction.
+
+    Args:
+        surv_id (int): The unique ID of the survivor.
+        label (int): The predicted label/classification for the survivor.
+
+    """
+
+
 def on_map(loc: Location) -> bool:
     """
     Check whether a location is within the bounds of the world.
@@ -113,6 +126,17 @@ def log(*args: object) -> None:
 
     Args:
         *args: The message to log.
+
+    """
+
+
+def read_pending_predictions() -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
+    """
+    Retrieve the list of pending predictions stored by the agent's team.
+
+    Returns:
+        list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]: A list of tuples representing pending survivor predictions (surv_id, image_to_predict, all_unique_labels).
+            Returns an empty list if no pending predictions are available.
 
     """
 

@@ -25,6 +25,7 @@ class Constants:
     PREDICTION_ENERGY_COST: int = 1
     MOVE_ENERGY_COST: int = 1
     DRONE_SCAN_ENERGY_COST: int = 2
+    ENERGY_PENALTY_FOR_ERRORS: int = -10
 
     # Directives constants
     MAX_DIRECTIVES: int = 5
