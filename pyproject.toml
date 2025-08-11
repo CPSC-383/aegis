@@ -46,6 +46,7 @@ ignore = [
   "TD002", # TODO needs an author (again?!)
   "TD003", # TODO needs an issue link
   "T201", # print() found
+  "S101", # assert
 ]
 
 [tool.pyright]
@@ -60,5 +61,6 @@ aegis = "aegis:main"
 dev = [
     "griffe>=1.11.0",
     "hatch>=1.14.1",
+    "pytest>=8.4.1",
     "ruff>=0.12.2",
 ]
