@@ -6,11 +6,6 @@
         "height": 15
       },
       "seed": 5416,
-      "world_file_levels": {
-        "high": 14,
-        "mid": 7,
-        "low": 3
-      },
       "agent_energy": 500
     }
   },
@@ -52,7 +47,7 @@
     }
   ],
   "cell_types": {
-    "fire_cells": [
+    "killer_cells": [
       {
         "x": 4,
         "y": 8
@@ -74,7 +69,6 @@
         "y": 8
       }
     ],
-    "killer_cells": [],
     "charging_cells": []
   },
   "stacks": [
@@ -328,19 +322,13 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -395,15 +383,15 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
+            "energy_required": 0,
+            "agents_required": 0
           }
         },
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
+            "energy_required": 0,
+            "agents_required": 0
           }
         }
       ]
@@ -602,19 +590,13 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -669,8 +651,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
+            "energy_required": 0,
+            "agents_required": 0
           }
         }
       ]
@@ -869,19 +851,13 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -936,8 +912,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
+            "energy_required": 0,
+            "agents_required": 0
           }
         }
       ]
@@ -1136,19 +1112,13 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -1203,8 +1173,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
+            "energy_required": 0,
+            "agents_required": 0
           }
         }
       ]
@@ -1403,19 +1373,13 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -1470,8 +1434,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
+            "energy_required": 0,
+            "agents_required": 0
           }
         }
       ]
@@ -1670,19 +1634,13 @@
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -1737,8 +1695,8 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 0
+            "energy_required": 0,
+            "agents_required": 0
           }
         }
       ]

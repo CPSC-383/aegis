@@ -1,0 +1,20 @@
+# This is the configuration file for all AEGIS system features.
+
+# General aegis features
+features:
+  ALLOW_AGENT_PREDICTIONS: false
+  ALLOW_DYNAMIC_SPAWNING: false
+  ALLOW_AGENT_MESSAGES: false
+  ALLOW_DRONE_SCAN: true
+  ALLOW_AGENT_TYPES: false
+  HIDDEN_MOVE_COSTS: true
+  ALLOW_CUSTOM_AGENT_COUNT: true
+  DEFAULT_AGENT_AMOUNT: 4
+
+# Settings more specific to competitions, usually only competitions will decide to enable these
+competition_specific:
+  VERSUS_MODE: false
+
+# Client-specific configuration
+client:
+  CONFIG_TYPE: "assignment" # "assignment" or "competition"

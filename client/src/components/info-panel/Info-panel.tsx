@@ -1,118 +1,115 @@
-import { useEffect, useState } from 'react'
-import { useAppContext } from '@/contexts/AppContext'
-import { EventType, listenEvent } from '@/events'
-import AgentPanel from './Agent-panel'
-import CellPanel from './Cell-panel'
-import { AgentInfoDict, CellDict } from '@/core/simulation'
-import { SpawnZoneTypes, StackContent } from '@/core/world'
+import useCanvas from "@/hooks/useCanvas"
+import { useEffect, useRef } from "react"
+import {
+  Stepper,
+  StepperDescription,
+  StepperIndicator,
+  StepperItem,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
+} from "@/components/ui/stepper"
+import useRound from "@/hooks/useRound"
+import { schema } from "aegis-schema"
+import World from "@/core/World"
+import useGames from "@/hooks/useGames"
 
-function InfoPanel() {
-    const { appState } = useAppContext()
-    const { simulation, selectedCell } = appState
-    const [cellInfo, setCellInfo] = useState<CellDict | undefined>()
-    const [cellLayers, setCellLayers] = useState<StackContent[]>([])
-    const [agents, setAgents] = useState<AgentInfoDict[]>([])
-    const [selectedAgent, setSelectedAgent] = useState<AgentInfoDict | undefined>()
-    const [spawns, setSpawns] = useState<{ type: SpawnZoneTypes; groups: number[] } | undefined>(undefined)
+export default function InfoPanel(): JSX.Element | null {
+  const { selectedTile } = useCanvas()
+  const round = useRound()
+  const games = useGames()
+  const initialWorldRef = useRef<World | null>(null)
 
-    const gatherData = () => {
-        if (!simulation || !selectedCell) return
+  const currentWorld = round?.world.copy() ?? null
+  const initialWorld = initialWorldRef.current
 
-        const { x, y } = selectedCell
-
-        setCellInfo(simulation.getInfoAtCell(x, y))
-        setCellLayers(simulation.getLayersAtCell(x, y))
-        setAgents(simulation.getAgentsAtCell(x, y))
-        setSpawns(simulation.getSpawns(x, y))
+  useEffect(() => {
+    if (round && !initialWorldRef.current) {
+      initialWorldRef.current = round.game.world.copy()
     }
+  }, [round])
 
-    // This is to get the info for a new
-    // selected cell, or when the sim started
-    useEffect(() => {
-        gatherData()
-        setSelectedAgent(undefined)
-    }, [simulation, selectedCell])
+  if (!round || !games?.playable) {
+    return null
+  }
+  if (!selectedTile) {
+    return <div>Select a cell to look at</div>
+  }
 
-    // This will update the cell every round
-    listenEvent(EventType.RENDER, gatherData)
+  const currentLayers = currentWorld
+    ? currentWorld.cellAt(selectedTile.x, selectedTile.y).layers
+    : []
 
-    if (!simulation || !selectedCell) {
-        return <div className="p-4 mx-auto">Select a cell when a map is loaded!</div>
-    }
+  const initialLayers = initialWorld
+    ? initialWorld.cellAt(selectedTile.x, selectedTile.y).layers
+    : []
 
-    return (
-        <div className="absolute w-full h-screen p-4">
-            <div className="h-full space-y-4 p-4 border-2 border-gray-300 bg-white shadow-md rounded-md overflow-auto scrollbar">
-                {selectedAgent && (
-                    <AgentPanel
-                        selectedAgent={selectedAgent}
-                        setSelectedAgent={setSelectedAgent}
-                        setCellLayers={setCellLayers}
-                        simulation={simulation}
-                    />
-                )}
-                {!selectedAgent && (
-                    <CellPanel
-                        selectedCell={selectedCell}
-                        setSelectedAgent={setSelectedAgent}
-                        cellInfo={cellInfo}
-                        agents={agents}
-                        simulation={simulation}
-                    />
-                )}
-                <div className="m-2">
-                    <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Layers</h3>
-                    <div className={`${cellLayers.length === 0 ? 'py-2' : 'p-4'}`}>
-                        {cellLayers.length === 0 ? (
-                            <p className="text-gray-500">Nothing at this location.</p>
-                        ) : (
-                            <div className="relative border-s border-gray-600">
-                                {cellLayers
-                                    .slice()
-                                    .reverse()
-                                    .map((layer, index) => (
-                                        <div key={index} className="flex items-center mb-10 ms-6">
-                                            <div className="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -start-4 ring-4 ring-white">
-                                                {index + 1}
-                                            </div>
-                                            <div>
-                                                <p className="text-sm">
-                                                    {layer.type.toUpperCase()}(
-                                                    {Object.values(layer.arguments).join(', ')})
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-                {spawns && (
-                    <div className="m-2">
-                        <h3 className="text-lg border-b border-gray-300 pb-2 mb-2">Spawn</h3>
-                        {!spawns ? (
-                            <p className="text-gray-500">Nothing at this location.</p>
-                        ) : (
-                            <>
-                                <div>Type: {spawns.type}</div>
-                                {spawns.type === SpawnZoneTypes.Group && (
-                                    <div>
-                                        Groups:{' '}
-                                        {spawns.groups.map((group, index) => (
-                                            <span key={index}>
-                                                {group}
-                                                {index < spawns.groups.length - 1 ? ', ' : ''}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </div>
-                )}
-            </div>
-        </div>
-    )
+  const step = initialLayers.length - currentLayers.length + 1
+
+  return (
+    <div>
+      <h2 className="text-center my-4 font-medium">
+        Cell: (X: {selectedTile.x}, Y: {selectedTile.y})
+      </h2>
+      <Stepper orientation="vertical" value={step}>
+        {initialLayers.map((layer, i) => (
+          <StepperItem
+            key={i}
+            step={i + 1}
+            className={`relative items-start not-last:flex-1 ${i + 1 < step ? "opacity-50" : ""}`}
+          >
+            <StepperTrigger className="items-start rounded pb-4 last:pb-0 pointer-events-none">
+              <StepperIndicator />
+              <ObjectDisplay layer={layer} />
+            </StepperTrigger>
+            {i + 1 < initialLayers.length && (
+              <StepperSeparator className="absolute inset-y-0 top-[calc(1.5rem+0.125rem)] left-3 -order-1 m-0 -translate-x-1/2 group-data-[orientation=vertical]/stepper:h-[calc(100%-1.5rem-0.25rem)]" />
+            )}
+          </StepperItem>
+        ))}
+      </Stepper>
+    </div>
+  )
 }
 
-export default InfoPanel
+function ObjectDisplay({ layer }: { layer: schema.WorldObject }): JSX.Element {
+  const { object } = layer
+
+  const title = (): string => {
+    switch (object.oneofKind) {
+      case "survivor":
+        return "Survivor"
+      case "rubble":
+        return "Rubble"
+      default:
+        return "Unknown Object"
+    }
+  }
+
+  const description = (): JSX.Element => {
+    switch (object.oneofKind) {
+      case "survivor":
+        return <span className="block">Health: {object.survivor.health}</span>
+      case "rubble":
+        return (
+          <>
+            <span className="block">
+              Energy Required: {object.rubble.energyRequired}
+            </span>
+            <span className="block">
+              Agents Required: {object.rubble.agentsRequired}
+            </span>
+          </>
+        )
+      default:
+        return <em className="text-muted-foreground">No data</em>
+    }
+  }
+
+  return (
+    <div className="mt-0.5 px-2 text-left">
+      <StepperTitle>{title()}</StepperTitle>
+      <StepperDescription>{description()}</StepperDescription>
+    </div>
+  )
+}

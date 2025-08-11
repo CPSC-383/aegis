@@ -1,4 +1,3 @@
-import tensorflow as tf
 import numpy as np
 import os
 import matplotlib.pyplot as plt
@@ -25,7 +24,7 @@ plt.axis("off")
 plt.show()
 
 # save data to the 4 spots ! !
-agent_training_output_dir = os.path.join("src", "agent", "model_training_data")
+agent_training_output_dir = os.path.join("src", "assist", "model_training_data")
 ares_testing_output_dir = os.path.join(
     "src", "aegis", "agent_predictions", "model_testing_data"
 )

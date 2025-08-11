@@ -1,9 +1,13 @@
-*__pycache__*
-replay.txt
-
 # Python venv
-venv
 .venv
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
 
 
 # Client Stuff
@@ -17,7 +21,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-out
+build
 dist
 dist-ssr
 *.local
@@ -33,5 +37,5 @@ dist-ssr
 *.sln
 *.sw?
 packed-client
-WorldInfoFile.out
 .prettierrc
+replay.txt

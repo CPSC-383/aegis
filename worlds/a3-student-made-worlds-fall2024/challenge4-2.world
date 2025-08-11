@@ -6,11 +6,6 @@
         "height": 15
       },
       "seed": 6093,
-      "world_file_levels": {
-        "high": 12,
-        "mid": 9,
-        "low": 2
-      },
       "agent_energy": 500
     }
   },
@@ -22,7 +17,6 @@
     }
   ],
   "cell_types": {
-    "fire_cells": [],
     "killer_cells": [],
     "charging_cells": []
   },
@@ -37,17 +31,14 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
+            "energy_required": 0,
+            "agents_required": 2
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -166,17 +157,14 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
+            "energy_required": 0,
+            "agents_required": 2
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -1751,17 +1739,14 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
+            "energy_required": 0,
+            "agents_required": 2
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]
@@ -1880,17 +1865,14 @@
         {
           "type": "rb",
           "arguments": {
-            "remove_energy": 0,
-            "remove_agents": 2
+            "energy_required": 0,
+            "agents_required": 2
           }
         },
         {
           "type": "sv",
           "arguments": {
-            "energy_level": 100,
-            "body_mass": 0,
-            "mental_state": 0,
-            "damage_factor": 0
+            "energy_level": 100
           }
         }
       ]

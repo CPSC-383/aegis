@@ -1,3 +1,4 @@
-export * from './aegis-api'
-export * from './scaffold'
-export * from './websocket'
+export * from "./aegis-api"
+export * from "./config"
+export { createScaffold } from "./scaffold"
+export * from "./websocket"

@@ -8,13 +8,10 @@
     "outDir": "./dist",
     "baseUrl": ".",
     "paths": {
-        "@/*": ["./src/*"],
-        // https://github.com/rollup/rollup/issues/5199
-        "rollup/parseAst": ["./node_modules/rollup/dist/parseAst"]
+      "@/*": ["./src/*"],
+      // https://github.com/rollup/rollup/issues/5199
+      "rollup/parseAst": ["./node_modules/rollup/dist/parseAst"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "packed-client"
-  ]
+  "exclude": ["node_modules", "packed-client"]
 }
