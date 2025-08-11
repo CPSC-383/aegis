@@ -1,0 +1,178 @@
+name: Client CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'client/**' # only run if something in client/ changes
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node 
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: client
+        run: npx eslint src src-electron
+
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node 
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Test build
+        working-directory: client
+        run: npm run build:pack
+
+  release-please:
+    runs-on: ubuntu-latest
+    if: ${{ !failure() && github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure release-please
+        id: release-config
+        run: |
+          if [ -f .github/release-please-config.json ]; then
+            echo "config-file=.github/release-please-config.json" >> $GITHUB_OUTPUT
+            [ -f .github/release-please-manifest.json ] &&
+              echo "manifest-file=.github/release-please-manifest.json" >> $GITHUB_OUTPUT
+            [ -f .github/.release-please-manifest.json ] &&
+              echo "manifest-file=.github/.release-please-manifest.json" >> $GITHUB_OUTPUT
+          else
+            echo "release-type=node" >> $GITHUB_OUTPUT
+          fi
+          exit 0
+
+      - name: Release
+        uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: ${{ steps.release-config.outputs.config-file }}
+          release-type: ${{ steps.release-config.outputs.release-type }}
+          manifest-file: ${{ steps.release-config.outputs.manifest-file }}
+
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            platform: mac
+          - os: ubuntu-22.04
+            platform: linux
+          - os: windows-latest
+            platform: win
+    runs-on: ${{ matrix.os }}
+    needs: [test-build, release-please]
+    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.release_created == 'true' }}
+    env:
+      NODE_VERSION: "20"
+      WORKING_DIR: ./client
+      ARTIFACT_PATH: "./packed-client/${{ matrix.path }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            schema/package-lock.json
+            client/package-lock.json
+
+      - name: Install schema dependencies
+        working-directory: ./schema
+        run: npm ci
+
+      - name: Install client dependencies
+        working-directory: ${{ env.WORKING_DIR }}
+        run: npm ci
+
+      - name: Build app
+        working-directory: ${{ env.WORKING_DIR }}
+        shell: bash
+        run: npm run build:pack
+
+      - name: Prepare zips
+        working-directory: ${{ env.WORKING_DIR }}
+        run: 7z a -tzip packed-client/${{ matrix.platform }}-client.zip ${{ env.ARTIFACT_PATH }}
+
+
+      - name: Upload built client as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-client
+          path: |
+            ${{ env.WORKING_DIR }}/packed-client/*-client.zip
+          if-no-files-found: error
+
+  release:
+    needs: [build, release-please] 
+    runs-on: ubuntu-latest
+    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.release_created == 'true' }}
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts/
+
+      - name: Upload assets to GitHub Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: artifacts/**/*.zip
+          file_glob: true
+          tag: ${{ needs.release-please.outputs.tag_name }}
+          release_name: "Client Release ${{ needs.release-please.outputs.tag_name }}"
+          overwrite: true
+          make_latest: true
+
+      - name: Tag stable versions
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git remote add gh-token "https://${{ secrets.GITHUB_TOKEN }}@github.com/google-github-actions/release-please-action.git"
+          git tag -d client/stable || true
+          git push origin :client/stable || true
+          git tag -a client/stable -m "Last Stable Client Release"
+          git push origin client/stable
