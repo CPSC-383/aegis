@@ -1,12 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "packages": {
+    "client": {
+      "release-type": "node"
+    },
     ".": {
       "release-type": "python"
-    },
-    "client": {
-      "release-type": "node",
-      "path": "client"
     }
   }
 }
