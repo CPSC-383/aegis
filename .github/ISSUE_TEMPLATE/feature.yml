@@ -17,6 +17,7 @@ body:
     attributes:
       label: "Target Component"
       description: "Select which part of the system should include this feature"
+      multiple: true
       options:
         - Aegis
         - Client
