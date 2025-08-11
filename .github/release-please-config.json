@@ -5,8 +5,7 @@
       "release-type": "node"
     },
     ".": {
-      "release-type": "python",
-      "package-name": "aegis"
+      "release-type": "python"
     }
   }
 }
