@@ -3,6 +3,10 @@
   "packages": {
     ".": {
       "release-type": "python"
+    },
+    "client": {
+      "release-type": "node",
+      "path": "client"
     }
   }
 }

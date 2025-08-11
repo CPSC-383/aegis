@@ -3,9 +3,6 @@ on:
   issues:
     types: [ opened ]
 
-permissions:
-  contents: read
-
 jobs:
   label-component:
     runs-on: ubuntu-latest
