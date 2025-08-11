@@ -58,7 +58,7 @@ jobs:
 
   release-please:
     runs-on: ubuntu-latest
-    if: ${{ false && !failure() && github.ref == 'refs/heads/main' }}
+    if: ${{ !failure() && github.ref == 'refs/heads/main' }}
     permissions:
       contents: write
       pull-requests: write
