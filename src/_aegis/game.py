@@ -61,18 +61,13 @@ class Game:
     def _init_spawn(self) -> None:
         spawns = self.get_spawns()
         loc = random.choice(spawns)
-        agent_type = (
-            AgentType.COMMANDER
-            if has_feature("ALLOW_AGENT_TYPES")
-            else AgentType.NO_UNIT
-        )
         if self.args.agent and self.args.agent2 is None:
-            self.spawn_agent(loc, Team.GOOBS, agent_type)
+            self.spawn_agent(loc, Team.GOOBS, AgentType.COMMANDER)
         elif self.args.agent2 and self.args.agent is None:
-            self.spawn_agent(loc, Team.VOIDSEERS, agent_type)
+            self.spawn_agent(loc, Team.VOIDSEERS, AgentType.COMMANDER)
         else:
             for team in Team:
-                self.spawn_agent(loc, team, agent_type)
+                self.spawn_agent(loc, team, AgentType.COMMANDER)
 
     def _run_turn(self, agent: Agent) -> None:
         start = time.perf_counter()
@@ -168,9 +163,8 @@ class Game:
         agent_id: int | None = None,
     ) -> None:
         agent_id = self.id_gen.next_id() if agent_id is None else agent_id
-        agent = Agent(
-            self, agent_id, loc, team, self.world.start_energy, agent_type=agent_type
-        )
+        energy = int(self.world.start_energy * agent_type.energy_multiplier)
+        agent = Agent(self, agent_id, loc, team, energy, agent_type)
         ac = AgentController(self, agent)
         agent.launch(self.code[team.value], self.methods(ac), debug=self.args.debug)
         self.add_agent(agent, loc)

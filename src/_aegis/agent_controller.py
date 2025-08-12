@@ -28,9 +28,7 @@ class AgentController:
             error = "Argument has invalid None value"
             raise AgentError(error)
 
-    def assert_spawn(
-        self, loc: Location, team: Team, agent_type: AgentType | None
-    ) -> None:
+    def assert_spawn(self, loc: Location, team: Team) -> None:
         if loc not in self._game.get_spawns():
             error = f"Invalid spawn: {loc}"
             raise AgentError(error)
@@ -38,14 +36,6 @@ class AgentController:
         units = self._game.team_info.get_units(team)
         if units == self._game.args.amount:
             error = "Max agents reached."
-            raise AgentError(error)
-
-        if not has_feature("ALLOW_AGENT_TYPES") and agent_type != AgentType.NO_UNIT:
-            error = "Spawning agents with types is disabled."
-            raise AgentError(error)
-
-        if has_feature("ALLOW_AGENT_TYPES") and agent_type == AgentType.NO_UNIT:
-            error = "Spawning agent with no type is not allowed."
             raise AgentError(error)
 
     def assert_loc(self, loc: Location) -> None:
@@ -202,7 +192,7 @@ class AgentController:
         return cell_info
 
     def spawn_agent(self, loc: Location, agent_type: AgentType) -> None:
-        self.assert_spawn(loc, self._agent.team, agent_type)
+        self.assert_spawn(loc, self._agent.team)
         self._game.spawn_agent(loc, self._agent.team, agent_type)
 
     def read_pending_predictions(
