@@ -19,7 +19,7 @@ from _aegis.aegis_config import has_feature
 # Feature flags to control which functions get included in the stub
 IS_PREDICTIONS_ENABLED = has_feature("ALLOW_AGENT_PREDICTIONS")
 IS_MESSAGES_ENABLED = has_feature("ALLOW_AGENT_MESSAGES")
-IS_DYNAMIC_SPAWNING_ENABLED = has_feature("ALLOW_DYNAMIC_SPAWNING")
+IS_DYNAMIC_SPAWNING_ENABLED = has_feature("ALLOW_AGENT_TYPES")
 IS_DRONE_SCAN_ENABLED = has_feature("ALLOW_DRONE_SCAN")
 
 # Grouped function names by feature flag
