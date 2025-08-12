@@ -28,7 +28,7 @@ include = [
 
 [tool.ruff]
 line-length = 88
-exclude = ["src/_aegis/sandbox.py", "src/_aegis/schemas/**", "src/_aegis/full_stub.py", "agents/**", "src/_aegis/templates/**"]
+exclude = ["src/_aegis/sandbox.py", "src/_aegis/schemas/**", "agents/**", "src/_aegis/templates/**"]
 
 [tool.ruff.lint]
 select = ["ALL"]
