@@ -40,7 +40,7 @@ class AgentController:
             error = "Max agents reached."
             raise AgentError(error)
 
-        if has_feature("ALLOW_AGENT_TYPES") and unit_type is not None:
+        if not has_feature("ALLOW_AGENT_TYPES") and unit_type != UnitType.NO_UNIT:
             error = "Spawning agents with types is disabled."
             raise AgentError(error)
 
@@ -65,6 +65,9 @@ class AgentController:
 
     def get_id(self) -> int:
         return self._agent.id
+
+    def get_type(self) -> UnitType:
+        return self._agent.type
 
     def get_team(self) -> Team:
         return self._agent.team
@@ -178,7 +181,9 @@ class AgentController:
 
         return cell_info
 
-    def spawn_agent(self, loc: Location, unit_type: UnitType | None = None) -> None:
+    def spawn_agent(
+        self, loc: Location, unit_type: UnitType = UnitType.NO_UNIT
+    ) -> None:
         self.assert_spawn(loc, self._agent.team, unit_type)
         self._game.spawn_agent(loc, self._agent.team, unit_type=unit_type)
 

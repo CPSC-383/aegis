@@ -24,7 +24,7 @@ class Agent:
         location: Location,
         team: Team,
         energy_level: int,
-        unit_type: UnitType | None,
+        unit_type: UnitType,
     ) -> None:
         self.game: Game = game
         self.has_visited: list[bool] = [False] * (game.world.height * game.world.width)
@@ -32,7 +32,7 @@ class Agent:
         self.team: Team = team
         self.location: Location = location
         self.energy_level: int = energy_level
-        self.type: UnitType | None = unit_type
+        self.type: UnitType = unit_type
         self.core: LumenCore | None = None
         self.message_buffer: MessageBuffer = MessageBuffer()
         self.steps_taken: int = 0

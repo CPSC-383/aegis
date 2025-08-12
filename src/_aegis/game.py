@@ -61,11 +61,13 @@ class Game:
     def _init_spawn(self) -> None:
         spawns = self.get_spawns()
         loc = random.choice(spawns)
-        commander = UnitType.COMMANDER if has_feature("ALLOW_AGENT_TYPES") else None
+        unit_type = (
+            UnitType.COMMANDER if has_feature("ALLOW_AGENT_TYPES") else UnitType.NO_UNIT
+        )
         if self.args.agent and self.args.agent2 is None:
-            self.spawn_agent(loc, Team.GOOBS, unit_type=commander)
+            self.spawn_agent(loc, Team.GOOBS, unit_type=unit_type)
         elif self.args.agent2 and self.args.agent is None:
-            self.spawn_agent(loc, Team.VOIDSEERS, unit_type=commander)
+            self.spawn_agent(loc, Team.VOIDSEERS, unit_type=unit_type)
         else:
             for team in Team:
                 self.spawn_agent(loc, team)
@@ -161,7 +163,7 @@ class Game:
         loc: Location,
         team: Team,
         agent_id: int | None = None,
-        unit_type: UnitType | None = None,
+        unit_type: UnitType = UnitType.NO_UNIT,
     ) -> None:
         agent_id = self.id_gen.next_id() if agent_id is None else agent_id
         agent = Agent(
