@@ -29,7 +29,6 @@ class GameOverReason(Enum):
 
 FeatureKey = Literal[
     "ALLOW_AGENT_PREDICTIONS",
-    "ALLOW_DYNAMIC_SPAWNING",
     "ALLOW_AGENT_MESSAGES",
     "ALLOW_DRONE_SCAN",
     "ALLOW_AGENT_TYPES",
@@ -45,7 +44,6 @@ ConfigType = Literal["assignment", "competition"]
 
 class FeaturesConfig(TypedDict):
     ALLOW_AGENT_PREDICTIONS: bool
-    ALLOW_DYNAMIC_SPAWNING: bool
     ALLOW_AGENT_MESSAGES: bool
     ALLOW_DRONE_SCAN: bool
     ALLOW_AGENT_TYPES: bool

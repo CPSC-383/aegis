@@ -8,6 +8,7 @@ It is NOT part of the runtime API.
 """
 
 from . import (
+    AgentType,
     CellInfo,
     Direction,
     Location,
@@ -24,6 +25,9 @@ def get_round_number() -> int:
 
 def get_id() -> int:
     """Return the id of the current agent."""
+
+def get_type() -> AgentType:
+    """Return the type of the current agent."""
 
 
 def get_team() -> Team:

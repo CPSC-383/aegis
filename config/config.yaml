@@ -3,7 +3,6 @@
 # General aegis features
 features:
   ALLOW_AGENT_PREDICTIONS: false
-  ALLOW_DYNAMIC_SPAWNING: false
   ALLOW_AGENT_MESSAGES: false
   ALLOW_DRONE_SCAN: true
   ALLOW_AGENT_TYPES: false

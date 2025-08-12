@@ -3,6 +3,7 @@
 import sys
 from typing import TYPE_CHECKING
 
+from .agent_type import AgentType
 from .common import Direction, Location
 from .constants import Constants
 from .message_buffer import MessageBuffer
@@ -16,13 +17,14 @@ if TYPE_CHECKING:
 
 
 class Agent:
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         game: "Game",
         agent_id: int,
         location: Location,
         team: Team,
         energy_level: int,
+        agent_type: AgentType,
     ) -> None:
         self.game: Game = game
         self.has_visited: list[bool] = [False] * (game.world.height * game.world.width)
@@ -30,6 +32,7 @@ class Agent:
         self.team: Team = team
         self.location: Location = location
         self.energy_level: int = energy_level
+        self.type: AgentType = agent_type
         self.core: LumenCore | None = None
         self.message_buffer: MessageBuffer = MessageBuffer()
         self.steps_taken: int = 0
