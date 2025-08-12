@@ -21,6 +21,7 @@ from .sandbox.sandbox import Sandbox
 from .team import Team
 from .team_info import TeamInfo
 from .types import GameOverReason, MethodDict
+from .unit_type import UnitType
 from .world import World
 
 
@@ -60,10 +61,11 @@ class Game:
     def _init_spawn(self) -> None:
         spawns = self.get_spawns()
         loc = random.choice(spawns)
+        commander = UnitType.COMMANDER if has_feature("ALLOW_AGENT_TYPES") else None
         if self.args.agent and self.args.agent2 is None:
-            self.spawn_agent(loc, Team.GOOBS)
+            self.spawn_agent(loc, Team.GOOBS, unit_type=commander)
         elif self.args.agent2 and self.args.agent is None:
-            self.spawn_agent(loc, Team.VOIDSEERS)
+            self.spawn_agent(loc, Team.VOIDSEERS, unit_type=commander)
         else:
             for team in Team:
                 self.spawn_agent(loc, team)
@@ -155,10 +157,16 @@ class Game:
         self.end_if_no_units(agent.team)
 
     def spawn_agent(
-        self, loc: Location, team: Team, agent_id: int | None = None
+        self,
+        loc: Location,
+        team: Team,
+        agent_id: int | None = None,
+        unit_type: UnitType | None = None,
     ) -> None:
         agent_id = self.id_gen.next_id() if agent_id is None else agent_id
-        agent = Agent(self, agent_id, loc, team, self.world.start_energy)
+        agent = Agent(
+            self, agent_id, loc, team, self.world.start_energy, unit_type=unit_type
+        )
         ac = AgentController(self, agent)
         agent.launch(self.code[team.value], self.methods(ac), debug=self.args.debug)
         self.add_agent(agent, loc)

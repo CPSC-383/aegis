@@ -11,6 +11,7 @@ from .common.objects.survivor import Survivor
 from .constants import Constants
 from .message import Message
 from .team import Team
+from .unit_type import UnitType
 
 if TYPE_CHECKING:
     from .agent import Agent
@@ -27,7 +28,9 @@ class AgentController:
             error = "Argument has invalid None value"
             raise AgentError(error)
 
-    def assert_spawn(self, loc: Location, team: Team) -> None:
+    def assert_spawn(
+        self, loc: Location, team: Team, unit_type: UnitType | None
+    ) -> None:
         if loc not in self._game.get_spawns():
             error = f"Invalid spawn: {loc}"
             raise AgentError(error)
@@ -35,6 +38,10 @@ class AgentController:
         units = self._game.team_info.get_units(team)
         if units == self._game.args.amount:
             error = "Max agents reached."
+            raise AgentError(error)
+
+        if has_feature("ALLOW_AGENT_TYPES") and unit_type is not None:
+            error = "Spawning agents with types is disabled."
             raise AgentError(error)
 
     def assert_loc(self, loc: Location) -> None:
@@ -171,9 +178,9 @@ class AgentController:
 
         return cell_info
 
-    def spawn_agent(self, loc: Location) -> None:
-        self.assert_spawn(loc, self._agent.team)
-        self._game.spawn_agent(loc, self._agent.team)
+    def spawn_agent(self, loc: Location, unit_type: UnitType | None = None) -> None:
+        self.assert_spawn(loc, self._agent.team, unit_type)
+        self._game.spawn_agent(loc, self._agent.team, unit_type=unit_type)
 
     def read_pending_predictions(
         self,

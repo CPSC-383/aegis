@@ -10,19 +10,21 @@ from .sandbox.core import LumenCore
 from .sandbox.sandbox import Sandbox
 from .team import Team
 from .types import MethodDict
+from .unit_type import UnitType
 
 if TYPE_CHECKING:
     from .game import Game
 
 
 class Agent:
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         game: "Game",
         agent_id: int,
         location: Location,
         team: Team,
         energy_level: int,
+        unit_type: UnitType | None,
     ) -> None:
         self.game: Game = game
         self.has_visited: list[bool] = [False] * (game.world.height * game.world.width)
@@ -30,6 +32,7 @@ class Agent:
         self.team: Team = team
         self.location: Location = location
         self.energy_level: int = energy_level
+        self.type: UnitType | None = unit_type
         self.core: LumenCore | None = None
         self.message_buffer: MessageBuffer = MessageBuffer()
         self.steps_taken: int = 0
