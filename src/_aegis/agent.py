@@ -3,6 +3,7 @@
 import sys
 from typing import TYPE_CHECKING
 
+from .agent_type import AgentType
 from .common import Direction, Location
 from .constants import Constants
 from .message_buffer import MessageBuffer
@@ -10,7 +11,6 @@ from .sandbox.core import LumenCore
 from .sandbox.sandbox import Sandbox
 from .team import Team
 from .types import MethodDict
-from .unit_type import UnitType
 
 if TYPE_CHECKING:
     from .game import Game
@@ -24,7 +24,7 @@ class Agent:
         location: Location,
         team: Team,
         energy_level: int,
-        unit_type: UnitType,
+        agent_type: AgentType,
     ) -> None:
         self.game: Game = game
         self.has_visited: list[bool] = [False] * (game.world.height * game.world.width)
@@ -32,7 +32,7 @@ class Agent:
         self.team: Team = team
         self.location: Location = location
         self.energy_level: int = energy_level
-        self.type: UnitType = unit_type
+        self.type: AgentType = agent_type
         self.core: LumenCore | None = None
         self.message_buffer: MessageBuffer = MessageBuffer()
         self.steps_taken: int = 0

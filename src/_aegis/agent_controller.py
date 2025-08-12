@@ -5,13 +5,13 @@ import numpy as np
 from numpy.typing import NDArray
 
 from .aegis_config import has_feature
+from .agent_type import AgentType
 from .common import CellInfo, Direction, Location
 from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
 from .constants import Constants
 from .message import Message
 from .team import Team
-from .unit_type import UnitType
 
 if TYPE_CHECKING:
     from .agent import Agent
@@ -29,7 +29,7 @@ class AgentController:
             raise AgentError(error)
 
     def assert_spawn(
-        self, loc: Location, team: Team, unit_type: UnitType | None
+        self, loc: Location, team: Team, agent_type: AgentType | None
     ) -> None:
         if loc not in self._game.get_spawns():
             error = f"Invalid spawn: {loc}"
@@ -40,7 +40,7 @@ class AgentController:
             error = "Max agents reached."
             raise AgentError(error)
 
-        if not has_feature("ALLOW_AGENT_TYPES") and unit_type != UnitType.NO_UNIT:
+        if not has_feature("ALLOW_AGENT_TYPES") and agent_type != AgentType.NO_UNIT:
             error = "Spawning agents with types is disabled."
             raise AgentError(error)
 
@@ -66,7 +66,7 @@ class AgentController:
     def get_id(self) -> int:
         return self._agent.id
 
-    def get_type(self) -> UnitType:
+    def get_type(self) -> AgentType:
         return self._agent.type
 
     def get_team(self) -> Team:
@@ -182,10 +182,10 @@ class AgentController:
         return cell_info
 
     def spawn_agent(
-        self, loc: Location, unit_type: UnitType = UnitType.NO_UNIT
+        self, loc: Location, agent_type: AgentType = AgentType.NO_UNIT
     ) -> None:
-        self.assert_spawn(loc, self._agent.team, unit_type)
-        self._game.spawn_agent(loc, self._agent.team, unit_type=unit_type)
+        self.assert_spawn(loc, self._agent.team, agent_type)
+        self._game.spawn_agent(loc, self._agent.team, agent_type=agent_type)
 
     def read_pending_predictions(
         self,

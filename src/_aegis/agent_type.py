@@ -8,7 +8,7 @@ class Attributes:
     action_cooldown: int
 
 
-class UnitType(Enum):
+class AgentType(Enum):
     NO_UNIT = Attributes(0, 10)
     """No unit type; used when the config `ALLOW_AGENT_TYPES` is disabled."""
 

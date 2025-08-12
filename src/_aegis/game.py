@@ -10,6 +10,7 @@ from .aegis_config import has_feature
 from .agent import Agent
 from .agent_controller import AgentController
 from .agent_predictions.prediction_handler import PredictionHandler
+from .agent_type import AgentType
 from .args_parser import LaunchArgs
 from .common import Cell, CellInfo, Direction, Location
 from .common.objects import Rubble, Survivor
@@ -21,7 +22,6 @@ from .sandbox.sandbox import Sandbox
 from .team import Team
 from .team_info import TeamInfo
 from .types import GameOverReason, MethodDict
-from .unit_type import UnitType
 from .world import World
 
 
@@ -61,16 +61,18 @@ class Game:
     def _init_spawn(self) -> None:
         spawns = self.get_spawns()
         loc = random.choice(spawns)
-        unit_type = (
-            UnitType.COMMANDER if has_feature("ALLOW_AGENT_TYPES") else UnitType.NO_UNIT
+        agent_type = (
+            AgentType.COMMANDER
+            if has_feature("ALLOW_AGENT_TYPES")
+            else AgentType.NO_UNIT
         )
         if self.args.agent and self.args.agent2 is None:
-            self.spawn_agent(loc, Team.GOOBS, unit_type=unit_type)
+            self.spawn_agent(loc, Team.GOOBS, agent_type=agent_type)
         elif self.args.agent2 and self.args.agent is None:
-            self.spawn_agent(loc, Team.VOIDSEERS, unit_type=unit_type)
+            self.spawn_agent(loc, Team.VOIDSEERS, agent_type=agent_type)
         else:
             for team in Team:
-                self.spawn_agent(loc, team)
+                self.spawn_agent(loc, team, agent_type=agent_type)
 
     def _run_turn(self, agent: Agent) -> None:
         start = time.perf_counter()
@@ -163,11 +165,11 @@ class Game:
         loc: Location,
         team: Team,
         agent_id: int | None = None,
-        unit_type: UnitType = UnitType.NO_UNIT,
+        agent_type: AgentType = AgentType.NO_UNIT,
     ) -> None:
         agent_id = self.id_gen.next_id() if agent_id is None else agent_id
         agent = Agent(
-            self, agent_id, loc, team, self.world.start_energy, unit_type=unit_type
+            self, agent_id, loc, team, self.world.start_energy, agent_type=agent_type
         )
         ac = AgentController(self, agent)
         agent.launch(self.code[team.value], self.methods(ac), debug=self.args.debug)
@@ -439,6 +441,7 @@ class Game:
             "drone_scan": ac.drone_scan,
             "get_round_number": ac.get_round_number,
             "get_id": ac.get_id,
+            "get_type": ac.get_type,
             "get_team": ac.get_team,
             "get_location": ac.get_location,
             "get_cell_info_at": ac.get_cell_info_at,
