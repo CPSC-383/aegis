@@ -8,12 +8,7 @@ from _aegis.common import CellInfo, Direction, Location
 from _aegis.message import Message
 from _aegis.team import Team
 
-from .features import (
-    requires_drone_scan,
-    requires_messages,
-    requires_predictions,
-    requires_spawning,
-)
+from .decorator import requires
 
 
 def get_round_number() -> int:
@@ -113,12 +108,12 @@ def log(*args: object) -> None:
     """
 
 
-@requires_spawning
+@requires("ALLOW_DYNAMIC_SPAWNING")
 def get_spawns() -> list[Location]:
     """Return a list of spawn locations."""
 
 
-@requires_spawning
+@requires("ALLOW_DYNAMIC_SPAWNING")
 def spawn_agent(loc: Location) -> None:
     """
     Spawn an agent.
@@ -129,7 +124,7 @@ def spawn_agent(loc: Location) -> None:
     """
 
 
-@requires_predictions
+@requires("ALLOW_AGENT_PREDICTIONS")
 def predict(surv_id: int, label: np.int32) -> None:
     """
     Submit a prediction.
@@ -141,7 +136,7 @@ def predict(surv_id: int, label: np.int32) -> None:
     """
 
 
-@requires_predictions
+@requires("ALLOW_AGENT_PREDICTIONS")
 def read_pending_predictions() -> list[
     tuple[int, NDArray[np.uint8], NDArray[np.int32]]
 ]:
@@ -155,7 +150,7 @@ def read_pending_predictions() -> list[
     """
 
 
-@requires_messages
+@requires("ALLOW_AGENT_MESSAGES")
 def send_message(message: str, dest_ids: list[int]) -> None:
     """
     Send a message to specified destination agents on the same team, excluding self.
@@ -167,7 +162,7 @@ def send_message(message: str, dest_ids: list[int]) -> None:
     """
 
 
-@requires_messages
+@requires("ALLOW_AGENT_MESSAGES")
 def read_messages(round_num: int = -1) -> list[Message]:
     """
     Retrieve messages from the message buffer.
@@ -181,7 +176,7 @@ def read_messages(round_num: int = -1) -> list[Message]:
     """
 
 
-@requires_drone_scan
+@requires("ALLOW_DRONE_SCAN")
 def drone_scan(loc: Location) -> None:
     """
     Scan a location with a drone.
