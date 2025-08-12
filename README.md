@@ -4,7 +4,7 @@ AEGIS is a survivor simulation used in CPSC 383. This repo contains:
 
 - Server/engine (Python package) that runs simulations and exposes a WebSocket for the client
 - Client (Electron, React, TypeScript, Tailwind CSS) for visualizing and controlling simulations
-- Documentation site (Next.js/MDX; see `docs/README.md`)
+- Documentation site (Next.js/MDX)
 
 ### Repo Layout
 
@@ -118,7 +118,7 @@ aegis launch --world ExampleWorld --agent agent_path
 
 ### Client
 
-For instructions on local development and setup of the client application, please see the [client README](https://github.com/CPSC-383/aegis/blob/main/client/README.md).
+For instructions on local development and setup of the client application, please see the [client README](https://github.com/CPSC-383/aegis/blob/main/client/README.md)
 
 ### Documentation
 
