@@ -129,6 +129,7 @@ def build_header(funcs: list[ast.FunctionDef]) -> str:
         imports.extend(["import numpy as np", "from numpy.typing import NDArray"])
 
     rel_imports: list[str] = [
+        "AgentType",
         "CellInfo",
         "Direction",
         "Location",

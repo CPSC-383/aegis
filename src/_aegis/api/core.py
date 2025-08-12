@@ -4,6 +4,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
+from _aegis.agent_type import AgentType
 from _aegis.common import CellInfo, Direction, Location
 from _aegis.message import Message
 from _aegis.team import Team
@@ -16,7 +17,11 @@ def get_round_number() -> int:
 
 
 def get_id() -> int:
-    """Return the id of the current agent."""
+    """Return the id of the agent."""
+
+
+def get_type() -> AgentType:
+    """Return the type of the agent."""
 
 
 def get_team() -> Team:
@@ -108,12 +113,12 @@ def log(*args: object) -> None:
     """
 
 
-@requires("ALLOW_DYNAMIC_SPAWNING")
+@requires("ALLOW_AGENT_TYPES")
 def get_spawns() -> list[Location]:
     """Return a list of spawn locations."""
 
 
-@requires("ALLOW_DYNAMIC_SPAWNING")
+@requires("ALLOW_AGENT_TYPES")
 def spawn_agent(loc: Location) -> None:
     """
     Spawn an agent.
