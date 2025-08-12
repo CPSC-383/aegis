@@ -67,12 +67,12 @@ class Game:
             else AgentType.NO_UNIT
         )
         if self.args.agent and self.args.agent2 is None:
-            self.spawn_agent(loc, Team.GOOBS, agent_type=agent_type)
+            self.spawn_agent(loc, Team.GOOBS, agent_type)
         elif self.args.agent2 and self.args.agent is None:
-            self.spawn_agent(loc, Team.VOIDSEERS, agent_type=agent_type)
+            self.spawn_agent(loc, Team.VOIDSEERS, agent_type)
         else:
             for team in Team:
-                self.spawn_agent(loc, team, agent_type=agent_type)
+                self.spawn_agent(loc, team, agent_type)
 
     def _run_turn(self, agent: Agent) -> None:
         start = time.perf_counter()
@@ -164,8 +164,8 @@ class Game:
         self,
         loc: Location,
         team: Team,
+        agent_type: AgentType,
         agent_id: int | None = None,
-        agent_type: AgentType = AgentType.NO_UNIT,
     ) -> None:
         agent_id = self.id_gen.next_id() if agent_id is None else agent_id
         agent = Agent(

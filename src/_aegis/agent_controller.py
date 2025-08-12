@@ -44,6 +44,10 @@ class AgentController:
             error = "Spawning agents with types is disabled."
             raise AgentError(error)
 
+        if has_feature("ALLOW_AGENT_TYPES") and agent_type == AgentType.NO_UNIT:
+            error = "Spawning agent with no type is not allowed."
+            raise AgentError(error)
+
     def assert_loc(self, loc: Location) -> None:
         self.assert_not_none(loc)
         if not self._game.on_map(loc):
@@ -197,11 +201,9 @@ class AgentController:
 
         return cell_info
 
-    def spawn_agent(
-        self, loc: Location, agent_type: AgentType = AgentType.NO_UNIT
-    ) -> None:
+    def spawn_agent(self, loc: Location, agent_type: AgentType) -> None:
         self.assert_spawn(loc, self._agent.team, agent_type)
-        self._game.spawn_agent(loc, self._agent.team, agent_type=agent_type)
+        self._game.spawn_agent(loc, self._agent.team, agent_type)
 
     def read_pending_predictions(
         self,
