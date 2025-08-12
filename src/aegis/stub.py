@@ -10,6 +10,7 @@ Do not modify manually.
 
 
 from . import (
+    AgentType,
     CellInfo,
     Direction,
     Location,
@@ -24,7 +25,11 @@ def get_round_number() -> int:
 
 
 def get_id() -> int:
-    """Return the id of the current agent."""
+    """Return the id of the agent."""
+
+
+def get_type() -> AgentType:
+    """Return the type of the agent."""
 
 
 def get_team() -> Team:

@@ -113,6 +113,41 @@ def should_include_function(func: ast.FunctionDef) -> bool:
     return True
 
 
+def get_all_from_init() -> list[str]:
+    """Read and parse __init__.py from the `aegis` package to extract __all__."""
+    try:
+        source = resources.read_text("aegis", "__init__.py")
+    except FileNotFoundError:
+        print("Warning: __init__.py not found in src.aegis")
+        return []
+    except OSError as e:
+        print(f"Error reading __init__.py: {e}")
+        return []
+
+    tree = ast.parse(source)
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+
+        for target in node.targets:
+            if not (isinstance(target, ast.Name) and target.id == "__all__"):
+                continue
+
+            if not isinstance(node.value, ast.List):
+                continue
+
+            return [
+                elt.value
+                for elt in node.value.elts
+                if isinstance(elt, ast.Constant)
+                and isinstance(elt.value, str)
+                and elt.value != "main"
+            ]
+
+    print("Warning: __all__ not found in __init__.py")
+    return []
+
+
 def build_header(funcs: list[ast.FunctionDef]) -> str:
     """
     Generate the import/header section for the stub file.
@@ -128,18 +163,10 @@ def build_header(funcs: list[ast.FunctionDef]) -> str:
     if needs_numpy:
         imports.extend(["import numpy as np", "from numpy.typing import NDArray"])
 
-    rel_imports: list[str] = [
-        "AgentType",
-        "CellInfo",
-        "Direction",
-        "Location",
-        "Rubble",
-        "Survivor",
-        "Team",
-    ]
+    rel_imports = get_all_from_init()
 
-    if needs_messages:
-        rel_imports.append("Message")
+    if not needs_messages:
+        rel_imports.remove("Message")
 
     rel_imports.sort()
 
