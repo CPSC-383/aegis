@@ -5,6 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from .aegis_config import has_feature
+from .agent import Agent
 from .agent_type import AgentType
 from .common import CellInfo, Direction, Location
 from .common.objects.rubble import Rubble
@@ -14,7 +15,6 @@ from .message import Message
 from .team import Team
 
 if TYPE_CHECKING:
-    from .agent import Agent
     from .game import Game
 
 
@@ -58,6 +58,22 @@ class AgentController:
             error = "Agent moved off the map"
             raise AgentError(error)
 
+    def assert_dig(self, agent: Agent) -> None:
+        if has_feature("ALLOW_AGENT_TYPES") and agent.type not in (
+            AgentType.ENGINEER,
+            AgentType.COMMANDER,
+        ):
+            error = "Action not allowed. Only ENGINEER and COMMANDER can dig."
+            raise AgentError(error)
+
+    def assert_save(self, agent: Agent) -> None:
+        if has_feature("ALLOW_AGENT_TYPES") and agent.type not in (
+            AgentType.MEDIC,
+            AgentType.COMMANDER,
+        ):
+            error = "Action not allowed. Only MEDIC and COMMANDER can save."
+            raise AgentError(error)
+
     # Public Agent Methods
 
     def get_round_number(self) -> int:
@@ -87,7 +103,7 @@ class AgentController:
 
     def save(self) -> None:
         """Determine if there is a valid surv to save at this location, if so, (try to) save it."""
-        # TODO @dante: add assert for unit type once thats added
+        self.assert_save(self._agent)
         cell = self._game.get_cell_at(self._agent.location)
         top_layer = cell.get_top_layer()
         if top_layer is None or not isinstance(top_layer, Survivor):
@@ -110,7 +126,7 @@ class AgentController:
 
     def dig(self) -> None:
         """Determine if there is a valid rubble to dig at this location, if so, (try to) dig it."""
-        # TODO @dante: add assert for unit type once thats added
+        self.assert_dig(self._agent)
         cell = self._game.get_cell_at(self._agent.location)
         top_layer = cell.get_top_layer()
         if top_layer is None or not isinstance(top_layer, Rubble):
