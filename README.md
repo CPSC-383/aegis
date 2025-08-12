@@ -4,9 +4,7 @@ AEGIS is a survivor simulation used in CPSC 383. This repo contains:
 
 - Server/engine (Python package) that runs simulations and exposes a WebSocket for the client
 - Client (Electron, React, TypeScript, Tailwind CSS) for visualizing and controlling simulations
-- Documentation site (Next.js/MDX; see `docs/README.md`)
-
----
+- Documentation site (Next.js/MDX)
 
 ### Repo Layout
 
@@ -18,15 +16,11 @@ AEGIS is a survivor simulation used in CPSC 383. This repo contains:
 - `agents`: Example/reference agents (e.g., `agent_path`, `agent_mas`, `agent_prediction`)
 - `config/config.yaml`: Runtime configuration for the engine
 
----
-
 ### Prerequisites
 
 - Python 3.12+
 - Node.js 20+
 - `uv` (for Python env/build) — `pip install uv` or see `https://docs.astral.sh/uv/`
-
----
 
 ### Package name (PyPI)
 
@@ -37,8 +31,6 @@ pip install aegis-game
 ```
 
 The CLI entrypoint is `aegis` (e.g., `aegis launch`).
-
----
 
 ### Download for usage in assignments or competitions
 
@@ -65,13 +57,13 @@ This creates all necessary files/folders in your project that an aegis simulatio
 
 Edit `config/config.yaml` to enable/disable features (e.g., messages, dynamic spawning, abilities). If you change features, regenerate stubs so the API your agent recongizes matches the config:
 
-```PowerShell
+```bash
 aegis forge
 ```
 
 4. Launch a game (through the console)
 
-```PowerShell
+```bash
 # One agent
 aegis launch --world ExampleWorld --agent agent_path
 
@@ -91,86 +83,46 @@ Notes:
 
 TODO
 
----
-
 ### Download for Development
 
-1. Clone and set up Python
+Before you start, please read our [Contributing Guidelines](https://github.com/CPSC-383/aegis/blob/main/CONTRIBUTING.md) to understand
+the full contribution process, coding standards, and PR requirements.
+
+1. Clone the repository and set up the Python environment
 
 ```bash
 git clone https://github.com/CPSC-383/aegis.git
 cd aegis
 uv sync --group dev
-# Activate the virtualenv
-# macOS/Linux
+```
+
+2. Activate the virtual environment
+
+On macOS/Linux:
+
+```bash
 source .venv/bin/activate
-# Windows (PowerShell)
+```
+
+On Windows (PowerShell):
+
+```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-2. Run the server locally
+3. Run locally
 
-```PowerShell
+```bash
 aegis launch --world ExampleWorld --agent agent_path
 ```
 
-3. Run the client in development mode
+### Client
 
-```PowerShell
-cd client
-npm ci
-npm run dev
-```
-
-4. Linting and typing (Python)
-
-```PowerShell
-# After `uv sync --group dev`
-uv run ruff check .
-uv run pyright
-```
-
----
+For instructions on local development and setup of the client application, please see the [client README](https://github.com/CPSC-383/aegis/blob/main/client/README.md)
 
 ### Documentation
 
-See `docs/README.md` for local development and deployment of the docs site.
-
----
-
-### Releasing
-
-Releases are tag-driven and handled via GitHub Actions. Client and engine (Aegis) are released separately.
-
-- Client tags: `client-v<major>.<minor>.<patch>`
-- Aegis tags: `aegis-v<major>.<minor>.<patch>`
-
-1. Client release
-
-```PowerShell
-cd client
-npm version [patch|minor|major]
-git tag -a client-v<major>.<minor>.<patch> -m "Client Release <version>"
-git push origin client-v<major>.<minor>.<patch>
-```
-
-2. Aegis (Python) release
-
-```PowerShell
-# Bump version in the Python package
-hatch version [release|major|minor|patch|a|b|pre|post|dev]
-git tag -a aegis-v<major>.<minor>.<patch> -m "Aegis Release <version>"
-git push origin aegis-v<major>.<minor>.<patch>
-```
-
-After tags are pushed, the corresponding workflows will:
-
-- Build and upload artifacts to a GitHub Release
-- For Aegis, also publish to the configured Python package index (currently set to TestPyPI in the workflow)
-
-After the workflow completes, open the created GitHub Release and add in any notes for the release if you please
-
----
+The documentation can be found [here](https://github.com/CPSC-383/aegis-docs).
 
 ### Troubleshooting
 
