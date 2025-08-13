@@ -33,6 +33,7 @@ class Agent:
         self.location: Location = location
         self.energy_level: int = energy_level
         self.type: AgentType = agent_type
+        self.action_cooldown: int = agent_type.action_cooldown
         self.core: LumenCore | None = None
         self.message_buffer: MessageBuffer = MessageBuffer()
         self.steps_taken: int = 0
@@ -43,6 +44,8 @@ class Agent:
         if self.core is None:
             error = "Trying to run an agent that hasn't launched"
             raise RuntimeError(error)
+
+        self.action_cooldown = max(0, self.action_cooldown - Constants.COOLDOWN_TICK)
 
     def process_end_of_turn(self) -> None:
         self.message_buffer.next_round(self.game.round + 1)
@@ -80,6 +83,9 @@ class Agent:
     def add_energy(self, energy: int) -> None:
         self.energy_level += energy
         self.energy_level = min(Constants.MAX_ENERGY_LEVEL, self.energy_level)
+
+    def add_cooldown(self, cooldown: int = -1) -> None:
+        self.action_cooldown = self.type.action_cooldown if cooldown == -1 else cooldown
 
     def error(self, msg: str) -> None:
         self.errors.append(msg)

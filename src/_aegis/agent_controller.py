@@ -90,6 +90,7 @@ class AgentController:
 
     def move(self, direction: Direction) -> None:
         self.assert_move(direction)
+        self._agent.add_cooldown()
         self._agent.apply_movement_cost(direction)
         new_loc = self._agent.location.add(direction)
         self._game.move_agent(self._agent.id, self._agent.location, new_loc)
@@ -98,6 +99,7 @@ class AgentController:
     def save(self) -> None:
         """Determine if there is a valid surv to save at this location, if so, (try to) save it."""
         self.assert_save(self._agent)
+        self._agent.add_cooldown()
         cell = self._game.get_cell_at(self._agent.location)
         top_layer = cell.get_top_layer()
         if top_layer is None or not isinstance(top_layer, Survivor):
@@ -121,6 +123,7 @@ class AgentController:
     def dig(self) -> None:
         """Determine if there is a valid rubble to dig at this location, if so, (try to) dig it."""
         self.assert_dig(self._agent)
+        self._agent.add_cooldown()
         cell = self._game.get_cell_at(self._agent.location)
         top_layer = cell.get_top_layer()
         if top_layer is None or not isinstance(top_layer, Rubble):
@@ -130,6 +133,7 @@ class AgentController:
 
     def predict(self, surv_id: int, label: np.int32) -> None:
         # TODO @dante: assert predict
+        self._agent.add_cooldown()
         if not has_feature("ALLOW_AGENT_PREDICTIONS"):
             msg = "Predictions are not enabled, therefore this method is not available."
             raise AgentError(msg)
