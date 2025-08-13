@@ -11,6 +11,7 @@ class TeamInfo:
         self._predicted: list[int] = [0] * 2
         self._score: list[int] = [0] * 2
         self._units: list[int] = [0] * 2
+        self._lumens: list[int] = [0] * 2
 
     def get_saved(self, team: Team) -> int:
         return self._saved[team.value]
@@ -36,6 +37,9 @@ class TeamInfo:
     def get_units(self, team: Team) -> int:
         return self._units[team.value]
 
+    def get_lumens(self, team: Team) -> int:
+        return self._lumens[team.value]
+
     def _add(self, array: list[int], team: Team, amount: int = 1) -> None:
         array[team.value] += amount
 
@@ -58,3 +62,6 @@ class TeamInfo:
 
     def add_units(self, team: Team, amount: int) -> None:
         self._add(self._units, team, amount)
+
+    def add_lumens(self, team: Team, amount: int) -> None:
+        self._add(self._lumens, team, amount)

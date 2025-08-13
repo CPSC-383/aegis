@@ -13,6 +13,7 @@ class Constants:
     DEFAULT_MAX_ROUNDS: int = 1000
     MESSAGE_HISTORY_LIMIT: int = 5
     MAX_TURN_TIME_LIMIT: float = 1.0
+    INITIAL_TEAM_LUMENS: int = 100
 
     # Points constants
     SURVIVOR_SAVE_ALIVE_SCORE: int = 100
@@ -31,11 +32,10 @@ class Constants:
     DRONE_SCAN_ENERGY_COST: int = 2
     ENERGY_PENALTY_FOR_ERRORS: int = -10
 
-    # Directives constants
-    MAX_DIRECTIVES: int = 5
-
     # Symbol prediction constants
     NUM_OF_TESTING_IMAGES: int = 704
 
     # Other
     DRONE_SCAN_DURATION: int = 5
+    LUMENS_PER_SAVE: int = 20
+    LUMENS_PER_ROUND: int = 5

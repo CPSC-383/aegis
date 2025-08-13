@@ -105,6 +105,9 @@ class AgentController:
         """Return the current energy level of the agent."""
         return self._agent.energy_level
 
+    def get_lumens(self) -> int:
+        return self._game.team_info.get_lumens(self._agent.team)
+
     def move(self, direction: Direction) -> None:
         """
         Move the agent in the specified direction.
