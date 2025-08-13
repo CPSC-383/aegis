@@ -109,7 +109,7 @@ jobs:
             platform: win
     runs-on: ${{ matrix.os }}
     needs: [test-build, release-please]
-    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == "true" }}
+    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == 'true' }}
     env:
       NODE_VERSION: "20"
       WORKING_DIR: ./client
@@ -156,7 +156,7 @@ jobs:
   release:
     needs: [build, release-please] 
     runs-on: ubuntu-latest
-    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == "true" }}
+    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == 'true' }}
     permissions:
       contents: write
     steps:
