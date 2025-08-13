@@ -203,7 +203,7 @@ class AgentController:
 
             1. surv_id: The ID of the saved survivor that triggered this prediction.
             2. image_to_predict: The symbol image data for model input.
-            3. all_unique_labels:  he set of possible symbol labels.
+            3. all_unique_labels: The set of possible symbol labels.
 
         Returns:
             A list of pending symbol predictions. Returns an empty list if no pending
