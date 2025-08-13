@@ -10,9 +10,9 @@ class Rubble(WorldObject):
     Represents a rubble object in the world.
 
     Attributes:
-        id (int): Unique identifier for the rubble.
-        energy_required (int): Amount of energy needed to remove the rubble.
-        agents_required (int): Number of agents required to remove the rubble.
+        id: Unique identifier for the rubble.
+        energy_required: Amount of energy needed to remove the rubble.
+        agents_required: Number of agents required to remove the rubble.
 
     """
 

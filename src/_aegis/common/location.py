@@ -10,8 +10,8 @@ class Location:
     Represents a coordinate location with x and y integer values.
 
     Attributes:
-        x (int): The x-coordinate.
-        y (int): The y-coordinate.
+        x: The x-coordinate.
+        y: The y-coordinate.
 
     """
 
@@ -19,9 +19,9 @@ class Location:
         """
         Initialize a Location with given x and y coordinates.
 
-        Arguments:
-            x (int): The x-coordinate.
-            y (int): The y-coordinate.
+        Args:
+            x: The x-coordinate.
+            y: The y-coordinate.
 
         """
         self.x: int = x
@@ -29,26 +29,26 @@ class Location:
 
     def add(self, direction: Direction) -> Location:
         """
-        Return a new Location by moving this Location in the specified direction.
+        Return a new location by moving this Location in the specified direction.
 
-        Arguments:
-            direction (Direction): The direction to move.
+        Args:
+            direction: The direction to move.
 
         Returns:
-            Location: A new Location in the given direction.
+            A new location in the given direction.
 
         """
         return Location(self.x + direction.dx, self.y + direction.dy)
 
     def direction_to(self, location: Location) -> Direction:
         """
-        Determine the cardinal Direction from this Location to another Location.
+        Determine the cardinal direction from this location to another location.
 
-        Arguments:
-            location (Location): The target location.
+        Args:
+            location: The target location.
 
         Returns:
-            Direction: The cardinal direction pointing towards the target location.
+            The cardinal direction pointing towards the target location.
 
         """
         dx = location.x - self.x
@@ -72,10 +72,10 @@ class Location:
 
     def distance_to(self, location: Location) -> int:
         """
-        Calculate the squared Euclidean distance from this Location to another.
+        Calculate the squared Euclidean distance from this location to another.
 
-        Arguments:
-            location (Location): The target location.
+        Args:
+            location: The target location.
 
         Returns:
             int: The squared distance between the two locations.
@@ -90,10 +90,10 @@ class Location:
         Check if this Location is adjacent to another Location.
 
         Arguments:
-            location (Location): The target location.
+            location: The target location.
 
         Returns:
-            bool: True if the other location is adjacent, else False.
+            True if the other location is adjacent, else False.
 
         """
         dx = self.x - location.x

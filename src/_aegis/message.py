@@ -6,9 +6,9 @@ class Message:
     Represents a message sent by an agent during a specific round.
 
     Attributes:
-        message (str): The content of the message.
-        round_num (int): The round number when the message was sent.
-        sender_id (int): The ID of the agent who sent the message.
+        message: The content of the message.
+        round_num: The round number when the message was sent.
+        sender_id: The ID of the agent who sent the message.
 
     """
 
