@@ -294,7 +294,7 @@ Do not modify manually.
         """Write the generated content to the stub file."""
         output_path = Path(__file__).parent.parent.parent / "aegis" / "stub.py"
         try:
-            _ = output_path.write_text(content, encoding="utf-8")
+            _ = output_path.write_text(content, encoding="utf-8", newline="\n")
             print("Successfully generated stub.")
         except (OSError, PermissionError) as e:
             print(f"Error writing stub.py: {e}")
