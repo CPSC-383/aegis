@@ -305,15 +305,6 @@ class Game:
                 self.game_pb.add_drone_scan(loc, team, duration)
 
     def save(self, survivor: Survivor, agent: Agent) -> None:
-        """
-        Process saving the surv at this loc. If enough agents save it, the layer will be removed, and points awarded to team.
-
-        Args:
-            survivor (Survivor): The survivor to save
-            agent (Agent): The agent saving the survivor
-
-        """
-        # Check if this team has already queued this survivor for removal this round
         if (
             agent.location in self._queued_layers_to_remove
             and agent.team in self._queued_layers_to_remove[agent.location]
@@ -323,7 +314,6 @@ class Game:
             )
             return
 
-        # Queue the survivor layer for removal (this is what actually saves the survivor)
         self.queue_layer_to_remove(agent.location, agent.team)
 
         LOGGER.info(
@@ -342,24 +332,13 @@ class Game:
             )
 
     def dig(self, agent: Agent) -> None:
-        """
-        Process digging rubble at this location. If enough agents dig it, the layer will be removed, and points awarded to team.
-
-        Args:
-            agent (Agent): The agent digging the rubble
-
-        """
         rubble_energy_required = cast(
             "Rubble", self.get_cell_info_at(agent.location).top_layer
         ).energy_required
-        # only let agent try to dig this rubble if they can cough up the required energy
         if agent.energy_level < rubble_energy_required:
             return
 
-        # remove energy for every dig regardless of success or failure
         agent.add_energy(-rubble_energy_required)
-
-        # try to dig the rubble (layer gets removed if enough team agents dig it)
         self.queue_layer_to_remove(agent.location, agent.team)
 
     def predict(self, surv_id: int, label: np.int32, agent: Agent) -> None:
@@ -381,6 +360,16 @@ class Game:
         self.team_info.add_predicted(agent.team, 1, correct=is_correct)
 
     def on_map(self, loc: Location) -> bool:
+        """
+        Check whether a location is within the bounds of the world.
+
+        Args:
+            loc: The location to check.
+
+        Returns:
+            True if the location is on the map, False otherwise.
+
+        """
         return 0 <= loc.x < self.world.width and 0 <= loc.y < self.world.height
 
     def get_cell_at(self, loc: Location) -> Cell:
@@ -398,30 +387,23 @@ class Game:
         self.game_pb.add_team_info(Team.VOIDSEERS, self.team_info)
 
     def get_survs(self) -> list[Location]:
+        """Return a list of survivor locations."""
         return [
             cell.location for cell in self.world.cells if cell.number_of_survivors() > 0
         ]
 
     @requires("ALLOW_AGENT_TYPES")
     def get_spawns(self) -> list[Location]:
+        """Return a list of spawn locations."""
         return [cell.location for cell in self.world.cells if cell.is_spawn()]
 
     def get_charging_cells(self) -> list[Location]:
+        """Return a list of charging locations."""
         return [cell.location for cell in self.world.cells if cell.is_charging_cell()]
 
     def get_prediction_info_for_agent(
         self, team: Team
     ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
-        """
-        Get prediction information for a survivor saved by an agent's team.
-
-        Args:
-            team: The agent's team
-
-        Returns:
-            List of pending predictions for the team (Empty if no pending predictions) structured as (survivor_id, image, unique_labels)
-
-        """
         if (
             not has_feature("ALLOW_AGENT_PREDICTIONS")
             or self._prediction_handler is None
