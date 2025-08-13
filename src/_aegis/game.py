@@ -42,6 +42,8 @@ class Game:
         self.round: int = 0
         self.id_gen: IDGenerator = IDGenerator()
         self.team_info: TeamInfo = TeamInfo()
+        self.team_info.add_lumens(Team.GOOBS, Constants.INITIAL_TEAM_LUMENS)
+        self.team_info.add_lumens(Team.VOIDSEERS, Constants.INITIAL_TEAM_LUMENS)
         self.game_pb: GamePb = game_pb
         # key is location, value is team -> num of agents queuing to remove the layer this round
         self._queued_layers_to_remove: dict[Location, dict[Team, int]] = {}
@@ -84,6 +86,8 @@ class Game:
         self.tick_drone_scans()
         self.round += 1
         self.game_pb.start_round(self.round)
+        self.team_info.add_lumens(Team.GOOBS, Constants.LUMENS_PER_ROUND)
+        self.team_info.add_lumens(Team.VOIDSEERS, Constants.LUMENS_PER_ROUND)
         self.for_each_agent(self._run_turn)
         self.activate_pending_drone_scans()
         self.game_pb.send_drone_scan_update(self._drone_scans)
@@ -230,8 +234,7 @@ class Game:
             )
             self.team_info.add_saved(team, 1, is_alive=top_layer.health > 0)
             self.team_info.add_score(team, points)
-        # elif isinstance(top_layer, Rubble):
-        #     pass
+            self.team_info.add_score(team, Constants.LUMENS_PER_SAVE)
 
     def remove_layer(self, loc: Location) -> None:
         cell = self.get_cell_at(loc)
@@ -290,9 +293,6 @@ class Game:
         for loc, teams in self._drone_scans.items():
             for team, duration in list(teams.items()):
                 teams[team] = duration - 1
-                # LOGGER.info(
-                #     f"Drone scan at {loc} for {team.name} has {teams[team]} duration on round {self.round}"
-                # )
                 if teams[team] <= 0:
                     del self._drone_scans[loc][team]
 
