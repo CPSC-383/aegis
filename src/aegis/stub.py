@@ -21,112 +21,50 @@ from . import (
 
 
 def get_round_number() -> int:
-    """Return the current round number."""
 
 
 def get_id() -> int:
-    """Return the id of the agent."""
 
 
 def get_type() -> AgentType:
-    """Return the type of the agent."""
 
 
 def get_team() -> Team:
-    """Return the current team of the agent."""
 
 
 def get_location() -> Location:
-    """Return the current location of the agent."""
 
 
 def get_energy_level() -> int:
-    """Return the current energy level of the agent."""
 
 
 def move(direction: Direction) -> None:
-    """
-    Move the agent in the specified direction.
-
-    Args:
-        direction (Direction): The direction in which the agent should move.
-
-    """
 
 
 def save() -> None:
-    """Save a survivor."""
-
-
-def dig() -> None:
-    """Dig rubble."""
+    """Determine if there is a valid surv to save at this location, if so, (try to) save it."""
 
 
 def recharge() -> None:
-    """
-    Recharge the agent's energy.
-
-    This function only works if the agent is currently on a charging cell.
-
-    """
 
 
-def on_map(loc: Location) -> bool:
-    """
-    Check whether a location is within the bounds of the world.
-
-    Args:
-        loc: The location to check.
-
-    Returns:
-        `True` if the location is on the map, `False` otherwise.
-
-    """
-
-
-def get_cell_info_at(loc: Location) -> CellInfo:
-    """
-    Return the cell info at a given location.
-
-    If the location is adjacent (1 tile away) to the agent,
-    or has been scanned by a drone, all layers and visible agents.
-
-    If the location is not adjacent or hasn't been scanned, only the top layer is returned,
-    and agent presence is hidden.
-
-    Args:
-        loc: The location to query.
-
-    Returns:
-        The `CellInfo` at the specified location, potentially with limited information
-        depending on visibility rules.
-
-    """
-
-
-def get_survs() -> list[Location]:
-    """Return a list of locations where survivors are present."""
-
-
-def get_charging_cells() -> list[Location]:
-    """Return a list of locations where charging cells are present."""
-
-
-def log(*args: object) -> None:
-    """
-    Log a message.
-
-    Args:
-        *args: The message to log.
-
-    """
+def dig() -> None:
+    """Determine if there is a valid rubble to dig at this location, if so, (try to) dig it."""
 
 
 def drone_scan(loc: Location) -> None:
-    """
-    Scan a location with a drone.
 
-    Args:
-        loc: The location to scan.
 
-    """
+def get_cell_info_at(loc: Location) -> CellInfo:
+
+
+def log(*args: object) -> None:
+
+
+def on_map(loc: Location) -> bool:
+
+
+def get_survs() -> list[Location]:
+
+
+def get_charging_cells() -> list[Location]:

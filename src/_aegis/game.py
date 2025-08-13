@@ -6,6 +6,8 @@ from typing import cast
 import numpy as np
 from numpy.typing import NDArray
 
+from _aegis.decorator import requires
+
 from .aegis_config import has_feature
 from .agent import Agent
 from .agent_controller import AgentController
@@ -400,6 +402,7 @@ class Game:
             cell.location for cell in self.world.cells if cell.number_of_survivors() > 0
         ]
 
+    @requires("ALLOW_AGENT_TYPES")
     def get_spawns(self) -> list[Location]:
         return [cell.location for cell in self.world.cells if cell.is_spawn()]
 
@@ -444,6 +447,7 @@ class Game:
             "read_messages": ac.read_messages,
             "move": ac.move,
             "save": ac.save,
+            "dig": ac.dig,
             "recharge": ac.recharge,
             "predict": ac.predict,
             "spawn_agent": ac.spawn_agent,

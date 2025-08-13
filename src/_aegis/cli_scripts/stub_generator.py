@@ -46,7 +46,7 @@ def format_args(args: ast.arguments) -> str:
     """
     res: list[str] = []
 
-    total_args = args.args
+    total_args = [a for a in args.args if a.arg != "self"]
     defaults = args.defaults
     num_defaults = len(defaults)
     num_args = len(total_args)
@@ -148,7 +148,79 @@ def get_all_from_init() -> list[str]:
     return []
 
 
-def build_header(funcs: list[ast.FunctionDef]) -> str:
+def get_all_methods() -> list[str]:
+    try:
+        source = resources.read_text("_aegis", "game.py")
+    except FileNotFoundError:
+        print("Warning: game.py not found in src._aegis")
+        return []
+    except OSError as e:
+        print(f"Error reading game.py: {e}")
+        return []
+
+    tree = ast.parse(source)
+    methods: list[str] = []
+
+    for node in tree.body:
+        if not isinstance(node, ast.ClassDef):
+            continue
+
+        for func in node.body:
+            if not (isinstance(func, ast.FunctionDef) and func.name == "methods"):
+                continue
+
+            for n in ast.walk(func):
+                if not (isinstance(n, ast.Return) and isinstance(n.value, ast.Dict)):
+                    continue
+
+                methods.extend(
+                    k.value
+                    for k in n.value.keys
+                    if isinstance(k, ast.Constant)
+                    and isinstance(k.value, str)
+                    and not k.value[0].isupper()
+                )
+
+    return methods
+
+
+def get_ac_methods(all_methods: list[str]) -> list[ast.FunctionDef]:
+    try:
+        source = resources.read_text("_aegis", "agent_controller.py")
+    except FileNotFoundError:
+        print("Warning: agent_controller.py not found in src._aegis")
+        return []
+    except OSError as e:
+        print(f"Error reading agent_controller.py: {e}")
+        return []
+
+    tree = ast.parse(source)
+    return [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef) and node.name in all_methods
+    ]
+
+
+def get_game_methods(all_methods: list[str]) -> list[ast.FunctionDef]:
+    try:
+        source = resources.read_text("_aegis", "game.py")
+    except FileNotFoundError:
+        print("Warning: agent_controller.py not found in src._aegis")
+        return []
+    except OSError as e:
+        print(f"Error reading agent_controller.py: {e}")
+        return []
+
+    tree = ast.parse(source)
+    return [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef) and node.name in all_methods
+    ]
+
+
+def build_header(methods: list[ast.FunctionDef]) -> str:
     """
     Generate the import/header section for the stub file.
 
@@ -156,8 +228,8 @@ def build_header(funcs: list[ast.FunctionDef]) -> str:
         str: The header string to be prepended to the stub.
 
     """
-    needs_numpy = any("predict" in node.name for node in funcs)
-    needs_messages = any("message" in node.name for node in funcs)
+    needs_numpy = any("predict" in node.name for node in methods)
+    needs_messages = any("message" in node.name for node in methods)
 
     imports: list[str] = []
     if needs_numpy:
@@ -191,28 +263,12 @@ Do not modify manually.
 '''
 
 
-def generate_stub() -> None:
+def generate_stub(methods: list[ast.FunctionDef]) -> None:
     """Generate the stub file from decorated API functions."""
-    try:
-        source = resources.read_text("_aegis.api", "core.py")
-    except FileNotFoundError:
-        print("Error: `_aegis/api/core.py` not found.")
-        return
-    except OSError as e:
-        print(f"I/O error while reading core.py: {e}")
-        return
-
-    tree = ast.parse(source)
-    funcs = [
-        node
-        for node in tree.body
-        if isinstance(node, ast.FunctionDef) and should_include_function(node)
-    ]
-
-    header = build_header(funcs)
+    header = build_header(methods)
 
     stubs: list[str] = []
-    for i, node in enumerate(funcs):
+    for i, node in enumerate(methods):
         docstring = ast.get_docstring(node)
         signature = f"def {node.name}({format_args(node.args)}) -> {format_return(node.returns)}:"
 
@@ -229,7 +285,7 @@ def generate_stub() -> None:
                 )
                 stub += f'\n{" " * 4}"""\n{indented_lines}\n\n{" " * 4}"""'
 
-        if i != len(funcs) - 1:
+        if i != len(methods) - 1:
             stub += "\n"
 
         stubs.append(stub)
@@ -238,6 +294,17 @@ def generate_stub() -> None:
     output_path = Path(__file__).parent.parent.parent / "aegis" / "stub.py"
     try:
         _ = output_path.write_text(content, encoding="utf-8")
-        print(f"Successfully generated stub with {len(funcs)} functions")
+        print(f"Successfully generated stub with {len(methods)} functions")
     except (OSError, PermissionError) as e:
         print(f"Error writing stub.py: {e}")
+
+
+def main() -> None:
+    all_str_methods = get_all_methods()
+    ac_methods = get_ac_methods(all_str_methods)
+    ac_names = {m.name for m in ac_methods}
+    game_methods = get_game_methods(all_str_methods)
+    game_methods = [m for m in game_methods if m.name not in ac_names]
+    all_methods = ac_methods + game_methods
+    methods = [m for m in all_methods if should_include_function(m)]
+    generate_stub(methods)

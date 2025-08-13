@@ -11,6 +11,7 @@ from .common import CellInfo, Direction, Location
 from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
 from .constants import Constants
+from .decorator import requires
 from .message import Message
 from .team import Team
 
@@ -128,6 +129,7 @@ class AgentController:
 
         self._game.dig(self._agent)
 
+    @requires("ALLOW_AGENT_PREDICTIONS")
     def predict(self, surv_id: int, label: np.int32) -> None:
         # TODO @dante: assert predict
         if not has_feature("ALLOW_AGENT_PREDICTIONS"):
@@ -136,6 +138,17 @@ class AgentController:
 
         self._game.predict(surv_id, label, self._agent)
 
+    @requires("ALLOW_AGENT_PREDICTIONS")
+    def read_pending_predictions(
+        self,
+    ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
+        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
+            msg = "Predictions are not enabled, therefore this method is not available."
+            raise AgentError(msg)
+
+        return self._game.get_prediction_info_for_agent(self._agent.team)
+
+    @requires("ALLOW_AGENT_MESSAGES")
     def send_message(self, message: str, dest_ids: list[int]) -> None:
         # TODO @dante: add assert for message
 
@@ -157,11 +170,13 @@ class AgentController:
         for agent_id in dest_ids:
             self._game.get_agent(agent_id).message_buffer.add_message(msg)
 
+    @requires("ALLOW_AGENT_MESSAGES")
     def read_messages(self, round_num: int = -1) -> list[Message]:
         if round_num == -1:
             return self._agent.message_buffer.get_all_messages()
         return self._agent.message_buffer.get_messages(round_num)
 
+    @requires("ALLOW_DRONE_SCAN")
     def drone_scan(self, loc: Location) -> None:
         if not has_feature("ALLOW_DRONE_SCAN"):
             msg = "Drone scan is not enabled, therefore this method is not available."
@@ -191,18 +206,10 @@ class AgentController:
 
         return cell_info
 
+    @requires("ALLOW_AGENT_TYPES")
     def spawn_agent(self, loc: Location, agent_type: AgentType) -> None:
         self.assert_spawn(loc, self._agent.team)
         self._game.spawn_agent(loc, self._agent.team, agent_type)
-
-    def read_pending_predictions(
-        self,
-    ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
-        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
-            msg = "Predictions are not enabled, therefore this method is not available."
-            raise AgentError(msg)
-
-        return self._game.get_prediction_info_for_agent(self._agent.team)
 
     def log(self, *args: object) -> None:
         self._agent.log(*args)
