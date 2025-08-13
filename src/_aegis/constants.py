@@ -19,6 +19,10 @@ class Constants:
     SURVIVOR_SAVE_DEAD_SCORE: int = 50
     PRED_CORRECT_SCORE: int = 10
 
+    # Cooldown constants
+    COOLDOWN_LIMIT: int = 10
+    COOLDOWN_TICK: int = 10
+
     # Energy constants
     OBSERVE_ENERGY_COST: int = 1
     SAVE_ENERGY_COST: int = 1

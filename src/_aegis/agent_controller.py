@@ -117,6 +117,7 @@ class AgentController:
 
         """
         self.assert_move(direction)
+        self._agent.add_cooldown()
         self._agent.apply_movement_cost(direction)
         new_loc = self._agent.location.add(direction)
         self._game.move_agent(self._agent.id, self._agent.location, new_loc)
@@ -133,6 +134,7 @@ class AgentController:
 
         """
         self.assert_save(self._agent)
+        self._agent.add_cooldown()
         cell = self._game.get_cell_at(self._agent.location)
         top_layer = cell.get_top_layer()
         if top_layer is None or not isinstance(top_layer, Survivor):
@@ -169,6 +171,7 @@ class AgentController:
 
         """
         self.assert_dig(self._agent)
+        self._agent.add_cooldown()
         cell = self._game.get_cell_at(self._agent.location)
         top_layer = cell.get_top_layer()
         if top_layer is None or not isinstance(top_layer, Rubble):
