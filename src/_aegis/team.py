@@ -23,7 +23,7 @@ class Team(Enum):
         Get the opposing team.
 
         Returns:
-            Team: The opponent team of the current team.
+            The opponent team of the current team.
 
         """
         return Team.VOIDSEERS if self == Team.GOOBS else Team.GOOBS

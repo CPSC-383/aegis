@@ -11,6 +11,7 @@ from .common import CellInfo, Direction, Location
 from .common.objects.rubble import Rubble
 from .common.objects.survivor import Survivor
 from .constants import Constants
+from .decorator import requires
 from .message import Message
 from .team import Team
 
@@ -68,27 +69,53 @@ class AgentController:
             error = "Action not allowed. Only MEDIC and COMMANDER can save."
             raise AgentError(error)
 
+    def assert_predict(self) -> None:
+        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
+            msg = "Predictions are not enabled, therefore this method is not available."
+            raise AgentError(msg)
+
+    def assert_scan(self) -> None:
+        if not has_feature("ALLOW_DRONE_SCAN"):
+            msg = "Drone scan is not enabled, therefore this method is not available."
+            raise AgentError(msg)
+
     # Public Agent Methods
 
     def get_round_number(self) -> int:
+        """Return the current round number."""
         return self._game.round
 
     def get_id(self) -> int:
+        """Return the id of the agent."""
         return self._agent.id
 
     def get_type(self) -> AgentType:
+        """Return the type of the agent."""
         return self._agent.type
 
     def get_team(self) -> Team:
+        """Return the current team of the agent."""
         return self._agent.team
 
     def get_location(self) -> Location:
+        """Return the current location of the agent."""
         return self._agent.location
 
     def get_energy_level(self) -> int:
+        """Return the current energy level of the agent."""
         return self._agent.energy_level
 
     def move(self, direction: Direction) -> None:
+        """
+        Move the agent in the specified direction.
+
+        Args:
+            direction: The direction in which the agent should move.
+
+        Raises:
+            AgentError: If the move is invalid.
+
+        """
         self.assert_move(direction)
         self._agent.add_cooldown()
         self._agent.apply_movement_cost(direction)
@@ -97,7 +124,15 @@ class AgentController:
         self._agent.location = new_loc
 
     def save(self) -> None:
-        """Determine if there is a valid surv to save at this location, if so, (try to) save it."""
+        """
+        Save a survivor located at the agent's current location.
+
+        If no survivor is present, the function has no effect.
+
+        Raises:
+            AgentError: If saving is invalid according to game rules.
+
+        """
         self.assert_save(self._agent)
         self._agent.add_cooldown()
         cell = self._game.get_cell_at(self._agent.location)
@@ -108,7 +143,14 @@ class AgentController:
         self._game.save(top_layer, self._agent)
 
     def recharge(self) -> None:
-        # TODO @dante: assert recharge
+        """
+        Recharge the agent's energy if on a charging cell.
+
+        Energy restored is equal to `Constants.NORMAL_CHARGE` per recharge,
+        but cannot exceed `Constants.MAX_ENERGY_LEVEL`.
+
+        Does nothing if the agent is not on a charging cell.
+        """
         cell = self._game.get_cell_at(self._agent.location)
         if not cell.is_charging_cell():
             return
@@ -121,7 +163,13 @@ class AgentController:
         self._agent.add_energy(energy)
 
     def dig(self) -> None:
-        """Determine if there is a valid rubble to dig at this location, if so, (try to) dig it."""
+        """
+        Dig rubble at the agent's current location.
+
+        Raises:
+            AgentError: If digging is invalid according to game rules.
+
+        """
         self.assert_dig(self._agent)
         self._agent.add_cooldown()
         cell = self._game.get_cell_at(self._agent.location)
@@ -131,18 +179,59 @@ class AgentController:
 
         self._game.dig(self._agent)
 
+    @requires("ALLOW_AGENT_PREDICTIONS")
     def predict(self, surv_id: int, label: np.int32) -> None:
-        # TODO @dante: assert predict
-        self._agent.add_cooldown()
-        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
-            msg = "Predictions are not enabled, therefore this method is not available."
-            raise AgentError(msg)
+        """
+        Submit a prediction.
 
+        Args:
+            surv_id: The unique ID of the survivor.
+            label: The predicted symbol label/classification.
+
+        Raises:
+            AgentError: If predictions are not enabled.
+
+        """
+        self.assert_predict()
         self._game.predict(surv_id, label, self._agent)
 
-    def send_message(self, message: str, dest_ids: list[int]) -> None:
-        # TODO @dante: add assert for message
+    @requires("ALLOW_AGENT_PREDICTIONS")
+    def read_pending_predictions(
+        self,
+    ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
+        """
+        Retrieve the list of pending predictions stored by the agent's team.
 
+        Each prediction is represented as a tuple containing:
+
+            1. surv_id: The ID of the saved survivor that triggered this prediction.
+            2. image_to_predict: The symbol image data for model input.
+            3. all_unique_labels: The set of possible symbol labels.
+
+        Returns:
+            A list of pending symbol predictions. Returns an empty list if no pending
+            predictions are available.
+
+        Raises:
+            AgentError: If predictions are not enabled.
+
+        """
+        self.assert_predict()
+        return self._game.get_prediction_info_for_agent(self._agent.team)
+
+    @requires("ALLOW_AGENT_MESSAGES")
+    def send_message(self, message: str, dest_ids: list[int]) -> None:
+        """
+        Send a message to team members, excluding self.
+
+        If `dest_ids` is empty, the message is broadcast to all team members
+        except the sender.
+
+        Args:
+            message: The content of the message to send.
+            dest_ids: A list of agent IDs to send the message to.
+
+        """
         if not dest_ids:
             dest_ids = [
                 agent.id
@@ -161,22 +250,57 @@ class AgentController:
         for agent_id in dest_ids:
             self._game.get_agent(agent_id).message_buffer.add_message(msg)
 
+    @requires("ALLOW_AGENT_MESSAGES")
     def read_messages(self, round_num: int = -1) -> list[Message]:
+        """
+        Retrieve messages from the agent's message buffer.
+
+        Args:
+            round_num: If provided only messages from this round are returned.
+
+        Returns:
+            A list of messages.
+
+        """
         if round_num == -1:
             return self._agent.message_buffer.get_all_messages()
         return self._agent.message_buffer.get_messages(round_num)
 
+    @requires("ALLOW_DRONE_SCAN")
     def drone_scan(self, loc: Location) -> None:
-        if not has_feature("ALLOW_DRONE_SCAN"):
-            msg = "Drone scan is not enabled, therefore this method is not available."
-            raise AgentError(msg)
+        """
+        Scan a location using a drone.
 
+        Args:
+            loc: The location to scan.
+
+        Raises:
+            AgentError: If drone scan is not enabled or location is invalid.
+
+        """
+        self.assert_scan()
         self.assert_loc(loc)
 
         self._game.start_drone_scan(loc, self._agent.team)
         self._agent.add_energy(-Constants.DRONE_SCAN_ENERGY_COST)
 
     def get_cell_info_at(self, loc: Location) -> CellInfo:
+        """
+        Return the cell info at a given location.
+
+        If the location is adjacent (1 tile away) to the agent or has been scanned by a drone,
+        all layers and agents at that location are visible. Otherwise, only the top layer is
+        visible and agent presence is hidden.
+
+        If `HIDDEN_MOVE_COSTS` feature is enabled, unvisited cells have `move_cost = 1`.
+
+        Args:
+            loc: The location to query.
+
+        Returns:
+            Information about the cell at the given location.
+
+        """
         self.assert_loc(loc)
 
         idx = loc.x + loc.y * self._game.world.width
@@ -195,22 +319,32 @@ class AgentController:
 
         return cell_info
 
+    @requires("ALLOW_AGENT_TYPES")
     def spawn_agent(self, loc: Location, agent_type: AgentType) -> None:
+        """
+        Spawn an agent at a specified location with a given type.
+
+        Args:
+            loc: A valid spawn location.
+            agent_type: The type of agent to spawn.
+
+        Raises:
+            AgentError: If spawn location is invalid or max amount reached.
+
+        """
         self.assert_spawn(loc, self._agent.team)
         self._game.spawn_agent(loc, self._agent.team, agent_type)
 
-    def read_pending_predictions(
-        self,
-    ) -> list[tuple[int, NDArray[np.uint8], NDArray[np.int32]]]:
-        if not has_feature("ALLOW_AGENT_PREDICTIONS"):
-            msg = "Predictions are not enabled, therefore this method is not available."
-            raise AgentError(msg)
-
-        return self._game.get_prediction_info_for_agent(self._agent.team)
-
     def log(self, *args: object) -> None:
+        """
+        Log a message.
+
+        Args:
+            *args: One or more items to log.
+
+        """
         self._agent.log(*args)
 
 
 class AgentError(Exception):
-    pass
+    """An error that occurs during agent actions or validations."""

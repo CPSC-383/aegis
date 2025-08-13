@@ -11,8 +11,8 @@ class Survivor(WorldObject):
     Represents a survivor in the world.
 
     Attributes:
-        id (int): Unique identifier for the survivor.
-        health (int): Current health of the survivor.
+        id: Unique identifier for the survivor.
+        health: Current health of the survivor.
 
     """
 
@@ -27,7 +27,7 @@ class Survivor(WorldObject):
         Check if the survivor is alive.
 
         Returns:
-            bool: True if the survivor is ALIVE, False otherwise.
+            True if the survivor is ALIVE, False otherwise.
 
         """
         return self._state == self.State.ALIVE

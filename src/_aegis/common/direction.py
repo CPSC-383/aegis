@@ -39,12 +39,12 @@ class Direction(Enum):
 
     @property
     def dx(self) -> int:
-        """Get the change in the x direction."""
+        """The change in the x direction."""
         return self.value[0]
 
     @property
     def dy(self) -> int:
-        """Get the change in the y direction."""
+        """The change in the y direction."""
         return self.value[1]
 
     def rotate_left(self) -> Direction:
@@ -54,7 +54,7 @@ class Direction(Enum):
         The center direction returns itself unchanged.
 
         Returns:
-            Direction: The direction rotated left.
+            The direction rotated left.
 
         """
         if self == Direction.CENTER:
@@ -69,7 +69,7 @@ class Direction(Enum):
         The center direction returns itself unchanged.
 
         Returns:
-            Direction: The direction rotated right.
+            The direction rotated right.
 
         """
         if self == Direction.CENTER:
@@ -84,7 +84,7 @@ class Direction(Enum):
         The center direction returns itself unchanged.
 
         Returns:
-            Direction: The opposite direction.
+            The opposite direction.
 
         """
         if self == Direction.CENTER:

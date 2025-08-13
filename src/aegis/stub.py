@@ -8,7 +8,6 @@ Do not modify manually.
 # pyright: reportUnusedImport=false
 # pyright: reportUnusedParameter=false
 
-
 from . import (
     AgentType,
     CellInfo,
@@ -49,24 +48,86 @@ def move(direction: Direction) -> None:
     Move the agent in the specified direction.
 
     Args:
-        direction (Direction): The direction in which the agent should move.
+        direction: The direction in which the agent should move.
+
+    Raises:
+        AgentError: If the move is invalid.
 
     """
 
 
 def save() -> None:
-    """Save a survivor."""
+    """
+    Save a survivor located at the agent's current location.
 
+    If no survivor is present, the function has no effect.
 
-def dig() -> None:
-    """Dig rubble."""
+    Raises:
+        AgentError: If saving is invalid according to game rules.
+
+    """
 
 
 def recharge() -> None:
     """
-    Recharge the agent's energy.
+    Recharge the agent's energy if on a charging cell.
 
-    This function only works if the agent is currently on a charging cell.
+    Energy restored is equal to `Constants.NORMAL_CHARGE` per recharge,
+    but cannot exceed `Constants.MAX_ENERGY_LEVEL`.
+
+    Does nothing if the agent is not on a charging cell.
+
+    """
+
+
+def dig() -> None:
+    """
+    Dig rubble at the agent's current location.
+
+    Raises:
+        AgentError: If digging is invalid according to game rules.
+
+    """
+
+
+def drone_scan(loc: Location) -> None:
+    """
+    Scan a location using a drone.
+
+    Args:
+        loc: The location to scan.
+
+    Raises:
+        AgentError: If drone scan is not enabled or location is invalid.
+
+    """
+
+
+def get_cell_info_at(loc: Location) -> CellInfo:
+    """
+    Return the cell info at a given location.
+
+    If the location is adjacent (1 tile away) to the agent or has been scanned by a drone,
+    all layers and agents at that location are visible. Otherwise, only the top layer is
+    visible and agent presence is hidden.
+
+    If `HIDDEN_MOVE_COSTS` feature is enabled, unvisited cells have `move_cost = 1`.
+
+    Args:
+        loc: The location to query.
+
+    Returns:
+        Information about the cell at the given location.
+
+    """
+
+
+def log(*args: object) -> None:
+    """
+    Log a message.
+
+    Args:
+        *args: One or more items to log.
 
     """
 
@@ -79,54 +140,14 @@ def on_map(loc: Location) -> bool:
         loc: The location to check.
 
     Returns:
-        `True` if the location is on the map, `False` otherwise.
-
-    """
-
-
-def get_cell_info_at(loc: Location) -> CellInfo:
-    """
-    Return the cell info at a given location.
-
-    If the location is adjacent (1 tile away) to the agent,
-    or has been scanned by a drone, all layers and visible agents.
-
-    If the location is not adjacent or hasn't been scanned, only the top layer is returned,
-    and agent presence is hidden.
-
-    Args:
-        loc: The location to query.
-
-    Returns:
-        The `CellInfo` at the specified location, potentially with limited information
-        depending on visibility rules.
+        True if the location is on the map, False otherwise.
 
     """
 
 
 def get_survs() -> list[Location]:
-    """Return a list of locations where survivors are present."""
+    """Return a list of survivor locations."""
 
 
 def get_charging_cells() -> list[Location]:
-    """Return a list of locations where charging cells are present."""
-
-
-def log(*args: object) -> None:
-    """
-    Log a message.
-
-    Args:
-        *args: The message to log.
-
-    """
-
-
-def drone_scan(loc: Location) -> None:
-    """
-    Scan a location with a drone.
-
-    Args:
-        loc: The location to scan.
-
-    """
+    """Return a list of charging locations."""

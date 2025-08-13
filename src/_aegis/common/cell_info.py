@@ -11,11 +11,11 @@ class CellInfo:
     Represents information about a cell in the world.
 
     Attributes:
-        type (CellType): The type of the cell.
-        location (Location): The coordinates of the cell.
-        move_cost (int): The movement cost to traverse this cell.
-        agents (list[int]): List of agent IDs currently in this cell.
-        layers (list[WorldObject]): Stack of world objects present in the cell, ordered by layer.
+        type: The type of the cell.
+        location: The coordinates of the cell.
+        move_cost: The movement cost to traverse this cell.
+        agents: List of agent IDs currently in this cell.
+        layers: Stack of world objects present in the cell.
 
     """
 
@@ -35,7 +35,7 @@ class CellInfo:
 
     @property
     def top_layer(self) -> WorldObject | None:
-        """Get the top-most layer object of the cell."""
+        """Get the top-most layer of the cell."""
         return self.layers[0] if self.layers else None
 
     def is_killer_cell(self) -> bool:

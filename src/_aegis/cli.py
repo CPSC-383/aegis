@@ -20,10 +20,10 @@ def main() -> None:
             sys.exit(1)
 
     elif args.command == "forge":
-        from .cli_scripts.stub_generator import generate_stub  # noqa: PLC0415
+        from .cli_scripts.build_public_api import main as build_api  # noqa: PLC0415
 
         try:
-            generate_stub()
+            build_api()
         except Exception:  # noqa: BLE001
             traceback.print_exc()
             sys.exit(1)
