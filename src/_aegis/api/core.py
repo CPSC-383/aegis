@@ -1,22 +1,15 @@
-"""
-DO NOT IMPORT THIS FILE.
+# pyright: reportReturnType=false
+# pyright: reportUnusedParameter=false
 
-This file contains all possible agent stub functions and is used by the stub generator
-to produce the public-facing `aegis/stub.py`.
+import numpy as np
+from numpy.typing import NDArray
 
-It is NOT part of the runtime API.
-"""
+from _aegis.agent_type import AgentType
+from _aegis.common import CellInfo, Direction, Location
+from _aegis.message import Message
+from _aegis.team import Team
 
-from . import (
-    AgentType,
-    CellInfo,
-    Direction,
-    Location,
-    Message,
-    Rubble,
-    Survivor,
-    Team,
-)
+from .decorator import requires
 
 
 def get_round_number() -> int:
@@ -24,10 +17,11 @@ def get_round_number() -> int:
 
 
 def get_id() -> int:
-    """Return the id of the current agent."""
+    """Return the id of the agent."""
+
 
 def get_type() -> AgentType:
-    """Return the type of the current agent."""
+    """Return the type of the agent."""
 
 
 def get_team() -> Team:
@@ -65,41 +59,6 @@ def recharge() -> None:
     Recharge the agent's energy.
 
     This function only works if the agent is currently on a charging cell.
-    """
-
-
-def predict(surv_id: int, label: np.int32) -> None:
-    """
-    Submit a prediction.
-
-    Args:
-        surv_id (int): The unique ID of the survivor.
-        label (int): The predicted label/classification for the survivor.
-
-    """
-
-
-def send_message(message: str, dest_ids: list[int]) -> None:
-    """
-    Send a message to specified destination agents on the same team, excluding self.
-
-    Args:
-        message (str): The content of the message to send.
-        dest_ids (list[int]): List of agent IDs to send the message to. If empty, message is broadcast to team excluding self.
-
-    """
-
-
-def read_messages(round_num: int = -1) -> list[Message]:
-    """
-    Retrieve messages from the message buffer.
-
-    Args:
-        round_num (int, optional): The round number to retrieve messages from. Defaults to -1, which returns messages from all rounds.
-
-    Returns:
-        list[Message]: List of messages.
-
     """
 
 
@@ -144,20 +103,6 @@ def get_charging_cells() -> list[Location]:
     """Return a list of locations where charging cells are present."""
 
 
-def get_spawns() -> list[Location]:
-    """Return a list of spawn locations."""
-
-
-def spawn_agent(loc: Location) -> None:
-    """
-    Spawn an agent.
-
-    Args:
-        loc: A valid spawn location.
-
-    """
-
-
 def log(*args: object) -> None:
     """
     Log a message.
@@ -168,6 +113,35 @@ def log(*args: object) -> None:
     """
 
 
+@requires("ALLOW_AGENT_TYPES")
+def get_spawns() -> list[Location]:
+    """Return a list of spawn locations."""
+
+
+@requires("ALLOW_AGENT_TYPES")
+def spawn_agent(loc: Location) -> None:
+    """
+    Spawn an agent.
+
+    Args:
+        loc: A valid spawn location.
+
+    """
+
+
+@requires("ALLOW_AGENT_PREDICTIONS")
+def predict(surv_id: int, label: np.int32) -> None:
+    """
+    Submit a prediction.
+
+    Args:
+        surv_id (int): The unique ID of the survivor.
+        label (int): The predicted label/classification for the survivor.
+
+    """
+
+
+@requires("ALLOW_AGENT_PREDICTIONS")
 def read_pending_predictions() -> list[
     tuple[int, NDArray[np.uint8], NDArray[np.int32]]
 ]:
@@ -181,6 +155,33 @@ def read_pending_predictions() -> list[
     """
 
 
+@requires("ALLOW_AGENT_MESSAGES")
+def send_message(message: str, dest_ids: list[int]) -> None:
+    """
+    Send a message to specified destination agents on the same team, excluding self.
+
+    Args:
+        message (str): The content of the message to send.
+        dest_ids (list[int]): List of agent IDs to send the message to. If empty, message is broadcast to team excluding self.
+
+    """
+
+
+@requires("ALLOW_AGENT_MESSAGES")
+def read_messages(round_num: int = -1) -> list[Message]:
+    """
+    Retrieve messages from the message buffer.
+
+    Args:
+        round_num (int, optional): The round number to retrieve messages from. Defaults to -1, which returns messages from all rounds.
+
+    Returns:
+        list[Message]: List of messages.
+
+    """
+
+
+@requires("ALLOW_DRONE_SCAN")
 def drone_scan(loc: Location) -> None:
     """
     Scan a location with a drone.
