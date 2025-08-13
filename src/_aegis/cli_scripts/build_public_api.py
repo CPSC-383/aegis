@@ -253,7 +253,7 @@ class StubGenerator:
 
         import_lines: list[str] = []
         import_lines.extend(imports)
-        import_lines.append("\nfrom . import (")
+        import_lines.append("from . import (")
         import_lines.extend(f"    {name}," for name in relative_imports)
         import_lines.append(")\n\n")
 
