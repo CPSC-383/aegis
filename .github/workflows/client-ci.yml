@@ -64,7 +64,7 @@ jobs:
       pull-requests: write
       issues: write
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
+      releases_created: ${{ steps.release.outputs.releases_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - name: Checkout Repository
@@ -92,6 +92,10 @@ jobs:
           release-type: ${{ steps.release-config.outputs.release-type }}
           manifest-file: ${{ steps.release-config.outputs.manifest-file }}
 
+      - name: Debug release
+        run: |
+          echo "${{ toJSON(steps.release.outputs) }}"
+
   build:
     strategy:
       matrix:
@@ -104,7 +108,7 @@ jobs:
             platform: win
     runs-on: ${{ matrix.os }}
     needs: [test-build, release-please]
-    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.release_created == 'true' }}
+    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created }}
     env:
       NODE_VERSION: "20"
       WORKING_DIR: ./client
@@ -151,7 +155,7 @@ jobs:
   release:
     needs: [build, release-please] 
     runs-on: ubuntu-latest
-    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.release_created == 'true' }}
+    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created }}
     permissions:
       contents: write
     steps:
