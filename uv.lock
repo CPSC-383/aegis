@@ -4,6 +4,7 @@ requires-python = ">=3.12"
 
 [[package]]
 name = "aegis-game"
+version = "2.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
