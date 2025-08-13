@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/CPSC-383/aegis/compare/aegis-v2.1.0...aegis-v2.2.0) (2025-08-13)
+
+
+### Miscellaneous Chores
+
+* release 2.2.0 ([#286](https://github.com/CPSC-383/aegis/issues/286)) ([0466f4b](https://github.com/CPSC-383/aegis/commit/0466f4bfdddc7097462c1424af4c68c03cdbfcd3))
+
 ## [2.1.0](https://github.com/CPSC-383/aegis/compare/aegis-v2.1.0...aegis-v2.1.0) (2025-08-13)
 
 
