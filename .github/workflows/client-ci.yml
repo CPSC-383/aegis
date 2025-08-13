@@ -92,6 +92,10 @@ jobs:
           release-type: ${{ steps.release-config.outputs.release-type }}
           manifest-file: ${{ steps.release-config.outputs.manifest-file }}
 
+      - name: Debug release
+        run: |
+          echo "${{ toJSON(steps.release.outputs) }}"
+
   build:
     strategy:
       matrix:

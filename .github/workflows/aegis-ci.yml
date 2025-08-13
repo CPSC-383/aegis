@@ -77,6 +77,10 @@ jobs:
           release-type: ${{ steps.release-config.outputs.release-type }}
           manifest-file: ${{ steps.release-config.outputs.manifest-file }}
 
+      - name: Debug release
+        run: |
+          echo "${{ toJSON(steps.release.outputs) }}"
+
       - name: Install uv
         if: ${{ steps.release.outputs.releases_created }}
         uses: astral-sh/setup-uv@v6
