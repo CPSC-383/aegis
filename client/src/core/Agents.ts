@@ -5,6 +5,7 @@ import { schema } from "aegis-schema"
 import Game from "./Game"
 import Games from "./Games"
 import invariant from "tiny-invariant"
+import { TILE_SIZE } from "@/utils/constants"
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()
@@ -92,9 +93,22 @@ export default class Agents {
   }
 
   public draw(game: Game, ctx: CanvasRenderingContext2D): void {
-    // TODO: draw multiple agents on a cell
-    for (const agent of this.agents.values()) {
-      agent.draw(game, ctx)
+    for (const cell of game.world.cells) {
+      const agents = cell.agents
+      const perRow = 5
+
+      agents.forEach((id, i) => {
+        const agent = this.getById(id)
+        const size = Math.max(
+          TILE_SIZE / perRow / TILE_SIZE,
+          TILE_SIZE / agents.length / TILE_SIZE
+        )
+
+        const offsetX = (i % perRow) * size
+        const offsetY = Math.floor(i / perRow) * size
+
+        agent.draw(game, ctx, offsetX, offsetY, size)
+      })
     }
   }
 
@@ -123,15 +137,19 @@ export class Agent {
     this.lastLoc = this.loc
   }
 
-  public draw(game: Game, ctx: CanvasRenderingContext2D): void {
+  public draw(
+    game: Game,
+    ctx: CanvasRenderingContext2D,
+    offsetX: number = 0,
+    offsetY: number = 0,
+    size: number = TILE_SIZE
+  ): void {
     const goob = getImage(this.imgPath)
     invariant(goob, "goob should already be loaded")
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
-    if (this.dead) {
-      ctx.globalAlpha = 0.5
-    }
-    ctx.drawImage(goob, pos.x, pos.y, 1, 1)
+    ctx.globalAlpha = this.dead ? 0.5 : 1
+    ctx.drawImage(goob, pos.x + offsetX, pos.y + offsetY, size, size)
     ctx.globalAlpha = 1
   }
 
