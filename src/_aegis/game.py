@@ -63,6 +63,18 @@ class Game:
         self._init_spawn()
 
     def _init_spawn(self) -> None:
+        if not has_feature("ALLOW_AGENT_TYPES"):
+            spawns = self.world.init_spawns
+            positive_spawns = [loc for loc, amt in spawns.items() if amt > 0]
+            zero_spawns = [loc for loc, amt in spawns.items() if amt == 0]
+
+            for loc in positive_spawns + zero_spawns:
+                if self.args.agent is not None:
+                    self.spawn_agent(loc, Team.GOOBS, AgentType.COMMANDER)
+                if self.args.agent2 is not None:
+                    self.spawn_agent(loc, Team.VOIDSEERS, AgentType.COMMANDER)
+            return
+
         spawns = self.get_spawns()
         loc = random.choice(spawns)
         if self.args.agent and self.args.agent2 is None:

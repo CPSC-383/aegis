@@ -110,7 +110,6 @@ def deserialize_world(data: bytes) -> World:
     cells = [cell_from_proto(proto_cell) for proto_cell in proto_world.cells]
 
     spawns = init_spawns_from_proto(proto_world)
-    print(spawns)
     return World(
         proto_world.width,
         proto_world.height,
