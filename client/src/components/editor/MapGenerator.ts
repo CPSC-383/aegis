@@ -66,12 +66,6 @@ export async function exportWorld(
   worldName: string
 ): Promise<string | null> {
   const world = round.world
-  const agents = round.agents
-  const initialAgents = Array.from(agents.agents.values()).map(agent => ({
-    agentId: agent.id,
-    loc: schema.Location.create({ x: agent.loc.x, y: agent.loc.y }),
-    team: agent.team,
-  }))
   const validationError = WorldValidator.validate(world)
   if (validationError) {
     return validationError
@@ -84,7 +78,7 @@ export async function exportWorld(
       seed: Math.floor(Math.random() * 10000),
       startEnergy: world.startEnergy,
       cells: world.cells,
-      initialAgents
+      initSpawns: world.initSpawns
     })
     const binary = schema.World.toBinary(protoWorld)
 

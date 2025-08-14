@@ -12,5 +12,5 @@ message World {
   int32 start_energy = 4;
   repeated Cell cells = 5;
   int32 total_survivors = 6;
-  repeated Spawn initial_agents = 7;
+  repeated InitSpawn init_spawns = 7;
 }

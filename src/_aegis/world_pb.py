@@ -2,7 +2,7 @@ from pathlib import Path
 
 from google.protobuf.message import DecodeError
 
-from .common import Cell
+from .common import Cell, Location
 from .common.objects import Rubble, Survivor
 from .schemas import world_pb2
 from .schemas.cell_pb2 import Cell as PbCell
@@ -89,6 +89,16 @@ def serialize_world(world: World) -> world_pb2.World:
     return proto_world
 
 
+def init_spawns_from_proto(world: world_pb2.World) -> dict[Location, int]:
+    spawns: dict[Location, int] = {}
+
+    for spawn in world.init_spawns:
+        loc = Location(spawn.loc.x, spawn.loc.y)
+        spawns[loc] = spawns.get(loc, 0) + spawn.amount
+
+    return spawns
+
+
 def deserialize_world(data: bytes) -> World:
     try:
         proto_world = world_pb2.World()
@@ -99,12 +109,15 @@ def deserialize_world(data: bytes) -> World:
 
     cells = [cell_from_proto(proto_cell) for proto_cell in proto_world.cells]
 
+    spawns = init_spawns_from_proto(proto_world)
+    print(spawns)
     return World(
         proto_world.width,
         proto_world.height,
         proto_world.seed,
         proto_world.start_energy,
         cells,
+        spawns,
     )
 
 

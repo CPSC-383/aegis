@@ -48,14 +48,6 @@ export default class Agents {
     return agent
   }
 
-  public removeAgentsAtLoc(loc: Vector): void {
-    for (const [id, agent] of this.agents) {
-      if (agent.loc.x === loc.x && agent.loc.y === loc.y) {
-        this.agents.delete(id)
-      }
-    }
-  }
-
   public clearDead(): void {
     for (const agent of this.agents.values()) {
       if (!agent.dead) {
@@ -63,23 +55,6 @@ export default class Agents {
       }
       this.agents.delete(agent.id)
     }
-  }
-
-  public getNextID(): number {
-    return Math.max(0, ...this.agents.keys()) + 1
-  }
-
-  public spawnAgentFromValues(id: number, loc: schema.Location): void {
-    invariant(
-      !this.agents.has(id),
-      `Cannot spawn agent: one already exists with ID ${id}`
-    )
-
-    // TODO: pass in proper team from spawn agent.
-    const team = schema.Team.GOOBS
-    const agent = new Agent(this.games, id, team, loc, goobA)
-    this.agents.set(id, agent)
-    agent.default()
   }
 
   public spawnAgent(_agent: schema.Spawn): void {

@@ -10,3 +10,8 @@ message Spawn {
   Location loc = 2;
   Team team = 3;
 }
+
+message InitSpawn {
+  Location loc = 1;
+  int32 amount = 2;
+}

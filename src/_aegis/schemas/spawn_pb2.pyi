@@ -16,3 +16,11 @@ class Spawn(_message.Message):
     loc: _location_pb2.Location
     team: _team_pb2.Team
     def __init__(self, agentId: _Optional[int] = ..., loc: _Optional[_Union[_location_pb2.Location, _Mapping]] = ..., team: _Optional[_Union[_team_pb2.Team, str]] = ...) -> None: ...
+
+class InitSpawn(_message.Message):
+    __slots__ = ("loc", "amount")
+    LOC_FIELD_NUMBER: _ClassVar[int]
+    AMOUNT_FIELD_NUMBER: _ClassVar[int]
+    loc: _location_pb2.Location
+    amount: int
+    def __init__(self, loc: _Optional[_Union[_location_pb2.Location, _Mapping]] = ..., amount: _Optional[int] = ...) -> None: ...

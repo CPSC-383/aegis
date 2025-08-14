@@ -1,7 +1,6 @@
 import { schema } from "aegis-schema"
 import Round from "./Round"
 import World from "./World"
-import Agents from "./Agents"
 
 export enum EditorBrushTypes {
   POSITIVE_INTEGER,
@@ -52,7 +51,6 @@ export abstract class EditorBrush {
 
 export class ZoneBrush extends EditorBrush {
   name = "Zone"
-  private agents: Agents
 
   public readonly fields: Record<string, EditorField> = {
     zoneType: {
@@ -81,7 +79,6 @@ export class ZoneBrush extends EditorBrush {
 
   constructor(round: Round) {
     super(round.world)
-    this.agents = round.agents
   }
 
   apply(
@@ -99,8 +96,11 @@ export class ZoneBrush extends EditorBrush {
 
     if (rightClick) {
       cell.type = schema.CellType.NORMAL
+
       if (cellType === schema.CellType.SPAWN) {
-        this.agents.removeAgentsAtLoc({ x, y })
+        this.world.initSpawns = this.world.initSpawns.filter(
+          (spawn) => spawn.loc!.x !== x || spawn.loc!.y !== y
+        )
       }
       return
     }
@@ -111,13 +111,20 @@ export class ZoneBrush extends EditorBrush {
       const loc = schema.Location.create({ x, y })
       const amount = Number(
         fields.zoneType.options
-          ?.find(opt => opt.value === cellType)
+          ?.find((opt) => opt.value === cellType)
           ?.attributes?.fields.amount?.value ?? 0
       )
-      for (let i = 0; i < amount; i++) {
-        const id = this.agents.getNextID()
-        this.agents.spawnAgentFromValues(id, loc)
-      }
+
+      // Remove previous entry for this location
+      this.world.initSpawns = this.world.initSpawns.filter(
+        (spawn) => spawn.loc!.x !== x || spawn.loc!.y !== y
+      )
+
+      // Add new spawn info
+      this.world.initSpawns.push({
+        loc,
+        amount,
+      })
     }
   }
 }
