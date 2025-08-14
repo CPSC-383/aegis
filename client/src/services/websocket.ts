@@ -64,7 +64,6 @@ export class ClientWebSocket {
       }
 
       if (event.event.oneofKind === "droneScanUpdate") {
-        console.log("Received drone scan update:", event.event.droneScanUpdate)
         if (this.game) {
           this.game.currentRound.world.applyDroneScanUpdate(event.event.droneScanUpdate)
         }
