@@ -20,6 +20,7 @@ export default function Field({ field, onChange }: FieldProps): JSX.Element {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (newValue: any): void => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let processedValue: any = newValue
 
     if (
@@ -29,7 +30,9 @@ export default function Field({ field, onChange }: FieldProps): JSX.Element {
       processedValue = Number(newValue)
     } else if (field.type === EditorBrushTypes.SINGLE_SELECT) {
       // convert string back to number if the option value is a number
-      const numericOption = field.options?.find(opt => String(opt.value) === String(newValue))
+      const numericOption = field.options?.find(
+        (opt) => String(opt.value) === String(newValue)
+      )
       processedValue = numericOption ? numericOption.value : newValue
     }
 
@@ -43,7 +46,6 @@ export default function Field({ field, onChange }: FieldProps): JSX.Element {
       {field.label && (
         <Label className="text-xs text-muted-foreground">{field.label}</Label>
       )}
-
 
       <div className="flex items-center gap-2">
         {field.type === EditorBrushTypes.POSITIVE_INTEGER && (

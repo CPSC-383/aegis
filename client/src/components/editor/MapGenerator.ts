@@ -78,7 +78,7 @@ export async function exportWorld(
       seed: Math.floor(Math.random() * 10000),
       startEnergy: world.startEnergy,
       cells: world.cells,
-      initSpawns: world.initSpawns
+      initSpawns: world.initSpawns,
     })
     const binary = schema.World.toBinary(protoWorld)
 

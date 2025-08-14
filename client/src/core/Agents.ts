@@ -6,7 +6,6 @@ import Game from "./Game"
 import Games from "./Games"
 import invariant from "tiny-invariant"
 import { TILE_SIZE } from "@/utils/constants"
-import { Vector } from "@/types"
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()

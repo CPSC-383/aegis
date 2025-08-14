@@ -25,7 +25,13 @@ import { Label } from "../ui/label"
 import Brush from "./Brush"
 import { exportWorld, importWorld } from "./MapGenerator"
 
-export default function Editor({ isOpen, scaffold }: { isOpen: boolean, scaffold: Scaffold }): JSX.Element | null {
+export default function Editor({
+  isOpen,
+  scaffold,
+}: {
+  isOpen: boolean
+  scaffold: Scaffold
+}): JSX.Element | null {
   const round = useRound()
   const hoveredTile = useHover()
   const { rightClick, mouseDown } = useCanvas()

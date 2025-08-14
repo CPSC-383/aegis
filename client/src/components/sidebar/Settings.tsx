@@ -39,8 +39,9 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
     if (typeof value === "boolean") {
       return (
         <span
-          className={`px-2 py-1 rounded text-xs font-medium ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-            }`}
+          className={`px-2 py-1 rounded text-xs font-medium ${
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
         >
           {value ? "Enabled" : "Disabled"}
         </span>

@@ -3,7 +3,13 @@ import { EditorBrush, EditorBrushTypes } from "@/core/Brushes"
 import { Scaffold } from "@/types"
 import { useForceUpdate } from "@/utils/util"
 
-export default function Brush({ brush, scaffold }: { brush: EditorBrush, scaffold: Scaffold }): JSX.Element {
+export default function Brush({
+  brush,
+  scaffold,
+}: {
+  brush: EditorBrush
+  scaffold: Scaffold
+}): JSX.Element {
   const { getConfigValue } = scaffold
   const forceUpdate = useForceUpdate()
 
@@ -11,7 +17,7 @@ export default function Brush({ brush, scaffold }: { brush: EditorBrush, scaffol
 
   for (const [, field] of Object.entries(brush.fields)) {
     if (field.type === EditorBrushTypes.SINGLE_SELECT) {
-      const selectedOption = field.options?.find(opt => opt.value === field.value)
+      const selectedOption = field.options?.find((opt) => opt.value === field.value)
       if (selectedOption?.attributes?.fields) {
         combinedFields = {
           ...combinedFields,
@@ -35,7 +41,6 @@ export default function Brush({ brush, scaffold }: { brush: EditorBrush, scaffol
   const handleChange = (): void => {
     forceUpdate()
   }
-
 
   return (
     <div className="flex flex-col">

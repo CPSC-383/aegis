@@ -29,7 +29,7 @@ export default class World {
     public readonly cells: schema.Cell[],
     public readonly startEnergy: number,
     public initSpawns: schema.InitSpawn[]
-  ) { }
+  ) {}
 
   public applyRound(round: schema.Round | null): void {
     this.layerRemovals = []

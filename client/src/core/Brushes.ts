@@ -40,7 +40,7 @@ export abstract class EditorBrush {
   ): void
   public open: boolean = false
 
-  constructor(public readonly world: World) { }
+  constructor(public readonly world: World) {}
 
   withOpen(open: boolean): this {
     const clone = Object.create(Object.getPrototypeOf(this))
@@ -110,9 +110,8 @@ export class ZoneBrush extends EditorBrush {
     if (cellType === schema.CellType.SPAWN) {
       const loc = schema.Location.create({ x, y })
       const amount = Number(
-        fields.zoneType.options
-          ?.find((opt) => opt.value === cellType)
-          ?.attributes?.fields.amount?.value ?? 0
+        fields.zoneType.options?.find((opt) => opt.value === cellType)?.attributes
+          ?.fields.amount?.value ?? 0
       )
 
       // Remove previous entry for this location
