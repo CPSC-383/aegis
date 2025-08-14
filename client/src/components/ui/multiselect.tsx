@@ -75,7 +75,7 @@ export function MultiSelect({
         </div>
       </div>
 
-      <div className="max-h-48 overflow-y-auto border border-input rounded-md bg-background">
+      <div className="max-h-48 overflow-y-auto border border-input rounded-md bg-background scrollbar">
         {options.length === 0 ? (
           <div className="flex items-center justify-center py-8 text-muted-foreground text-sm">
             No worlds available
