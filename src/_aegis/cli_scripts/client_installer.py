@@ -45,7 +45,7 @@ class ClientInstaller:
 
     def _get_latest_release(self) -> dict[str, Any]:
         """Fetch the latest client release from GitHub."""
-        url = f"https://api.github.com/repos/{self.OWNER}/{self.REPO}/releases"
+        url = f"https://api.github.com/repos/{self.OWNER}/{self.REPO}/releases/latest"
 
         try:
             response = requests.get(url, timeout=10)
@@ -53,13 +53,12 @@ class ClientInstaller:
         except requests.RequestException as e:
             sys.exit(f"Failed to fetch releases: {e}")
 
-        releases = response.json()
-        client_releases = [r for r in releases if r["tag_name"].startswith("client-")]
+        release = response.json()
 
-        if not client_releases:
-            sys.exit("No client releases found")
+        if not release:
+            sys.exit("No client release found")
 
-        return max(client_releases, key=lambda r: r["published_at"])
+        return release
 
     def _find_asset(self, release: dict[str, Any]) -> dict[str, Any]:
         """Find the matching asset in a release."""
