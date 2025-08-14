@@ -28,6 +28,10 @@ export interface Spawn {
      * @generated from protobuf field: aegis.Team team = 3
      */
     team: Team;
+    /**
+     * @generated from protobuf field: int32 amount = 4
+     */
+    amount: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Spawn$Type extends MessageType<Spawn> {
@@ -35,13 +39,15 @@ class Spawn$Type extends MessageType<Spawn> {
         super("aegis.Spawn", [
             { no: 1, name: "agentId", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "loc", kind: "message", T: () => Location },
-            { no: 3, name: "team", kind: "enum", T: () => ["aegis.Team", Team] }
+            { no: 3, name: "team", kind: "enum", T: () => ["aegis.Team", Team] },
+            { no: 4, name: "amount", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Spawn>): Spawn {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.agentId = 0;
         message.team = 0;
+        message.amount = 0;
         if (value !== undefined)
             reflectionMergePartial<Spawn>(this, message, value);
         return message;
@@ -59,6 +65,9 @@ class Spawn$Type extends MessageType<Spawn> {
                     break;
                 case /* aegis.Team team */ 3:
                     message.team = reader.int32();
+                    break;
+                case /* int32 amount */ 4:
+                    message.amount = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -81,6 +90,9 @@ class Spawn$Type extends MessageType<Spawn> {
         /* aegis.Team team = 3; */
         if (message.team !== 0)
             writer.tag(3, WireType.Varint).int32(message.team);
+        /* int32 amount = 4; */
+        if (message.amount !== 0)
+            writer.tag(4, WireType.Varint).int32(message.amount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

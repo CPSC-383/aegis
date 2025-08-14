@@ -26,7 +26,7 @@ from . import location_pb2 as location__pb2
 from . import team_pb2 as team__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bspawn.proto\x12\x05\x61\x65gis\x1a\x0elocation.proto\x1a\nteam.proto\"Q\n\x05Spawn\x12\x0f\n\x07\x61gentId\x18\x01 \x01(\x05\x12\x1c\n\x03loc\x18\x02 \x01(\x0b\x32\x0f.aegis.Location\x12\x19\n\x04team\x18\x03 \x01(\x0e\x32\x0b.aegis.Teamb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bspawn.proto\x12\x05\x61\x65gis\x1a\x0elocation.proto\x1a\nteam.proto\"a\n\x05Spawn\x12\x0f\n\x07\x61gentId\x18\x01 \x01(\x05\x12\x1c\n\x03loc\x18\x02 \x01(\x0b\x32\x0f.aegis.Location\x12\x19\n\x04team\x18\x03 \x01(\x0e\x32\x0b.aegis.Team\x12\x0e\n\x06\x61mount\x18\x04 \x01(\x05\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,5 +34,5 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'spawn_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_SPAWN']._serialized_start=50
-  _globals['_SPAWN']._serialized_end=131
+  _globals['_SPAWN']._serialized_end=147
 # @@protoc_insertion_point(module_scope)
