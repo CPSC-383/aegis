@@ -317,7 +317,7 @@ export default function Editor({ isOpen, scaffold }: { isOpen: boolean, scaffold
 
           <ExportDialog
             onConfirm={async (filename) => {
-              const error = await exportWorld(round!.world, filename)
+              const error = await exportWorld(round!, filename)
               return error
             }}
           />

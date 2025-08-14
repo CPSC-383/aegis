@@ -23,15 +23,16 @@ _sym_db = _symbol_database.Default()
 
 
 from . import cell_pb2 as cell__pb2
+from . import spawn_pb2 as spawn__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bworld.proto\x12\x05\x61\x65gis\x1a\ncell.proto\"\x7f\n\x05World\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x12\x0c\n\x04seed\x18\x03 \x01(\x05\x12\x14\n\x0cstart_energy\x18\x04 \x01(\x05\x12\x1a\n\x05\x63\x65lls\x18\x05 \x03(\x0b\x32\x0b.aegis.Cell\x12\x17\n\x0ftotal_survivors\x18\x06 \x01(\x05\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bworld.proto\x12\x05\x61\x65gis\x1a\ncell.proto\x1a\x0bspawn.proto\"\xa5\x01\n\x05World\x12\r\n\x05width\x18\x01 \x01(\x05\x12\x0e\n\x06height\x18\x02 \x01(\x05\x12\x0c\n\x04seed\x18\x03 \x01(\x05\x12\x14\n\x0cstart_energy\x18\x04 \x01(\x05\x12\x1a\n\x05\x63\x65lls\x18\x05 \x03(\x0b\x32\x0b.aegis.Cell\x12\x17\n\x0ftotal_survivors\x18\x06 \x01(\x05\x12$\n\x0einitial_agents\x18\x07 \x03(\x0b\x32\x0c.aegis.Spawnb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'world_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_WORLD']._serialized_start=34
-  _globals['_WORLD']._serialized_end=161
+  _globals['_WORLD']._serialized_start=48
+  _globals['_WORLD']._serialized_end=213
 # @@protoc_insertion_point(module_scope)

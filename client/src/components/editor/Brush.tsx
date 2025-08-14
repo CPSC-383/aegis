@@ -21,7 +21,7 @@ export default function Brush({ brush, scaffold }: { brush: EditorBrush, scaffol
     }
   }
 
-  if (!getConfigValue("features.ALLOW_AGENT_TYPES")) {
+  if (getConfigValue("features.ALLOW_AGENT_TYPES")) {
     delete combinedFields.amount
   }
 

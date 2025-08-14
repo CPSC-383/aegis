@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Spawn } from "./spawn";
 import { Cell } from "./cell";
 /**
  * @generated from protobuf message aegis.World
@@ -39,6 +40,10 @@ export interface World {
      * @generated from protobuf field: int32 total_survivors = 6
      */
     totalSurvivors: number;
+    /**
+     * @generated from protobuf field: repeated aegis.Spawn initial_agents = 7
+     */
+    initialAgents: Spawn[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class World$Type extends MessageType<World> {
@@ -49,7 +54,8 @@ class World$Type extends MessageType<World> {
             { no: 3, name: "seed", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "start_energy", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "cells", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Cell },
-            { no: 6, name: "total_survivors", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 6, name: "total_survivors", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "initial_agents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Spawn }
         ]);
     }
     create(value?: PartialMessage<World>): World {
@@ -60,6 +66,7 @@ class World$Type extends MessageType<World> {
         message.startEnergy = 0;
         message.cells = [];
         message.totalSurvivors = 0;
+        message.initialAgents = [];
         if (value !== undefined)
             reflectionMergePartial<World>(this, message, value);
         return message;
@@ -86,6 +93,9 @@ class World$Type extends MessageType<World> {
                     break;
                 case /* int32 total_survivors */ 6:
                     message.totalSurvivors = reader.int32();
+                    break;
+                case /* repeated aegis.Spawn initial_agents */ 7:
+                    message.initialAgents.push(Spawn.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -117,6 +127,9 @@ class World$Type extends MessageType<World> {
         /* int32 total_survivors = 6; */
         if (message.totalSurvivors !== 0)
             writer.tag(6, WireType.Varint).int32(message.totalSurvivors);
+        /* repeated aegis.Spawn initial_agents = 7; */
+        for (let i = 0; i < message.initialAgents.length; i++)
+            Spawn.internalBinaryWrite(message.initialAgents[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

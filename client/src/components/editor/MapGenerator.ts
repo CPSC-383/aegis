@@ -1,6 +1,7 @@
 import Agents from "@/core/Agents"
 import Game from "@/core/Game"
 import Games from "@/core/Games"
+import Round from "@/core/Round"
 import World from "@/core/World"
 import { aegisAPI } from "@/services"
 import { schema } from "aegis-schema"
@@ -61,9 +62,16 @@ export async function importWorld(file: File): Promise<Games> {
 }
 
 export async function exportWorld(
-  world: World,
+  round: Round,
   worldName: string
 ): Promise<string | null> {
+  const world = round.world
+  const agents = round.agents
+  const initialAgents = Array.from(agents.agents.values()).map(agent => ({
+    agentId: agent.id,
+    loc: schema.Location.create({ x: agent.loc.x, y: agent.loc.y }),
+    team: agent.team,
+  }))
   const validationError = WorldValidator.validate(world)
   if (validationError) {
     return validationError
@@ -76,6 +84,7 @@ export async function exportWorld(
       seed: Math.floor(Math.random() * 10000),
       startEnergy: world.startEnergy,
       cells: world.cells,
+      initialAgents
     })
     const binary = schema.World.toBinary(protoWorld)
 
