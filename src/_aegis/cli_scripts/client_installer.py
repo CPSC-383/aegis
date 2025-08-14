@@ -14,7 +14,7 @@ import requests
 class ClientInstaller:
     """Handles downloading and installing AEGIS client releases."""
 
-    OWNER: str = "CPSC-383"
+    OWNER: str = "AEGIS-GAME"
     REPO: str = "AEGIS"
     CHUNK_SIZE: int = 8192
     CLIENT_DIR: Path = Path("client")
