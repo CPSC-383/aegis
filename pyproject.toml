@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aegis-game"
-description = "Survivor Simulation for CPSC383"
+description = "Survivor Simulation Game"
 version = "2.2.0"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -16,6 +16,10 @@ dependencies = [
     "restrictedpython>=8.0",
     "websocket-server==0.6.4",
 ]
+
+[project.urls]
+Documentation = "https://aegis-game.github.io/aegis-docs/"
+Repository = "https://github.com/AEGIS-GAME/aegis"
 
 [tool.hatch.build.targets.wheel]
 packages = [

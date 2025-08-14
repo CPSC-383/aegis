@@ -1,6 +1,6 @@
 ## AEGIS
 
-AEGIS is a survivor simulation used in CPSC 383. This repo contains:
+AEGIS is a survivor simulation game. This repo contains:
 
 - Server/engine (Python package) that runs simulations and exposes a WebSocket for the client
 - Client (Electron, React, TypeScript, Tailwind CSS) for visualizing and controlling simulations
@@ -45,7 +45,21 @@ cd my-new-project
 uv add aegis-game
 ```
 
-2. Create scaffold
+2. Activate the virtual environment
+
+On macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+On Windows (PowerShell):
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+3. Create scaffold
 
 ```
 aegis init
@@ -53,7 +67,7 @@ aegis init
 
 This creates all necessary files/folders in your project that an aegis simulation needs to run
 
-3. Configure features
+4. Configure features
 
 Edit `config/config.yaml` to enable/disable features (e.g., messages, dynamic spawning, abilities). If you change features, regenerate stubs so the API your agent recongizes matches the config:
 
@@ -61,7 +75,7 @@ Edit `config/config.yaml` to enable/disable features (e.g., messages, dynamic sp
 aegis forge
 ```
 
-4. Launch a game (through the console)
+5. Launch a game (through the console)
 
 ```bash
 # One agent
@@ -76,22 +90,22 @@ Run `aegis launch -h` to see all ways you can run an aegis simulation
 
 Notes:
 
-- World names are the file names under `worlds/` without the `.world` extension. For example, `worlds/ExampleWorld.world` → `--world ExampleWorld`.
-- Agent names are folder names under `agents/`. For example, `agents/agent_path` → `--agent agent_path`.
+- World names are the file names under `worlds/` without the `.world` extension. For example, `worlds/ExampleWorld.world` -> `--world ExampleWorld`.
+- Agent names are folder names under `agents/`. For example, `agents/agent_path` -> `--agent agent_path`.
 
-5. Use the client UI
+6. Use the client UI
 
 TODO
 
 ### Download for Development
 
-Before you start, please read our [Contributing Guidelines](https://github.com/CPSC-383/aegis/blob/main/CONTRIBUTING.md) to understand
+Before you start, please read our [Contributing Guidelines](https://github.com/AEGIS-GAME/aegis/blob/main/CONTRIBUTING.md) to understand
 the full contribution process, coding standards, and PR requirements.
 
 1. Clone the repository and set up the Python environment
 
 ```bash
-git clone https://github.com/CPSC-383/aegis.git
+git clone https://github.com/AEGIS-GAME/aegis.git
 cd aegis
 uv sync --group dev
 ```
@@ -118,11 +132,11 @@ aegis launch --world ExampleWorld --agent agent_path
 
 ### Client
 
-For instructions on local development and setup of the client application, please see the [client README](https://github.com/CPSC-383/aegis/blob/main/client/README.md)
+For instructions on local development and setup of the client application, please see the [client README](https://github.com/AEGIS-GAME/aegis/blob/main/client/README.md)
 
 ### Documentation
 
-The documentation can be found [here](https://github.com/CPSC-383/aegis-docs).
+The documentation can be found [here](https://github.com/AEGIS-GAME/aegis-docs).
 
 ### Troubleshooting
 
