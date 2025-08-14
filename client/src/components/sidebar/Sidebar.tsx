@@ -92,7 +92,7 @@ export default function Sidebar(): JSX.Element {
                     </div>
                   </TabsContent>
                   <TabsContent value={TabNames.Editor}>
-                    <Editor isOpen={selectedTab === TabNames.Editor} />
+                    <Editor isOpen={selectedTab === TabNames.Editor} scaffold={scaffold} />
                   </TabsContent>
                   <TabsContent value={TabNames.Settings}>
                     <Settings scaffold={scaffold} />

@@ -4,6 +4,7 @@ import World from "./World"
 
 export enum EditorBrushTypes {
   POSITIVE_INTEGER,
+  ZERO_OR_MORE,
   SINGLE_SELECT,
 }
 
@@ -16,7 +17,7 @@ export type EditorFieldBase = {
 }
 
 export type EditorField = EditorFieldBase & {
-  type: EditorBrushTypes.POSITIVE_INTEGER | EditorBrushTypes.SINGLE_SELECT
+  type: EditorBrushTypes
 }
 
 export type EditorFieldOption = {
@@ -39,7 +40,7 @@ export abstract class EditorBrush {
   ): void
   public open: boolean = false
 
-  constructor(public readonly world: World) {}
+  constructor(public readonly world: World) { }
 
   withOpen(open: boolean): this {
     const clone = Object.create(Object.getPrototypeOf(this))
@@ -57,7 +58,19 @@ export class ZoneBrush extends EditorBrush {
       value: schema.CellType.SPAWN,
       label: "Zone Type",
       options: [
-        { value: schema.CellType.SPAWN, label: "Spawn" },
+        {
+          value: schema.CellType.SPAWN,
+          label: "Spawn",
+          attributes: {
+            fields: {
+              amount: {
+                type: EditorBrushTypes.ZERO_OR_MORE,
+                label: "Spawn Amount",
+                value: 0,
+              },
+            },
+          },
+        },
         { value: schema.CellType.KILLER, label: "Killer" },
         { value: schema.CellType.CHARGING, label: "Charging" },
       ],

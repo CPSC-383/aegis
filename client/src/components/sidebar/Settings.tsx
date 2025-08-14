@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useLocalStorage } from "@/hooks/useLocalStorage"
-import { Scaffold } from "@/services"
+import { Scaffold } from "@/types"
 
 type Props = {
   scaffold: Scaffold
@@ -39,9 +39,8 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
     if (typeof value === "boolean") {
       return (
         <span
-          className={`px-2 py-1 rounded text-xs font-medium ${
-            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-          }`}
+          className={`px-2 py-1 rounded text-xs font-medium ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
         >
           {value ? "Enabled" : "Disabled"}
         </span>
