@@ -99,15 +99,16 @@ export default class Agents {
 
       agents.forEach((id, i) => {
         const agent = this.getById(id)
-        const size = Math.max(TILE_SIZE / perRow / TILE_SIZE, TILE_SIZE / agents.length / TILE_SIZE)
+        const size = Math.max(
+          TILE_SIZE / perRow / TILE_SIZE,
+          TILE_SIZE / agents.length / TILE_SIZE
+        )
 
         const offsetX = (i % perRow) * size
         const offsetY = Math.floor(i / perRow) * size
 
         agent.draw(game, ctx, offsetX, offsetY, size)
       })
-
-
     }
   }
 
@@ -147,8 +148,8 @@ export class Agent {
     invariant(goob, "goob should already be loaded")
 
     const pos = renderCoords(this.loc.x, this.loc.y, game.world.size)
-    ctx.globalAlpha = this.dead ? 0.5 : 1;
-    ctx.drawImage(goob, pos.x + offsetX, pos.y + offsetY, size, size);
+    ctx.globalAlpha = this.dead ? 0.5 : 1
+    ctx.drawImage(goob, pos.x + offsetX, pos.y + offsetY, size, size)
     ctx.globalAlpha = 1
   }
 
