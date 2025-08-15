@@ -240,7 +240,10 @@ const getAegisPath = async (): Promise<string | undefined> => {
 }
 
 const getWorlds = async (aegisPath: string): Promise<string[]> => {
-  if (!aegisAPI) return []
+  if (!aegisAPI) {
+    return []
+  }
+
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
@@ -257,7 +260,10 @@ const getWorlds = async (aegisPath: string): Promise<string[]> => {
 }
 
 const getAgents = async (aegisPath: string): Promise<string[]> => {
-  if (!aegisAPI) return []
+  if (!aegisAPI) {
+    return []
+  }
+
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 

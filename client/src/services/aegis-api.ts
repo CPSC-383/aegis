@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type AegisAPI = {
   openAegisDirectory: () => Promise<string | undefined>
   getAppPath: () => Promise<string>
@@ -32,10 +33,8 @@ type AegisAPI = {
 
 let aegisAPI: AegisAPI | undefined = undefined
 
-// @ts-ignore
-if (window.eelectronAPI) {
-  // @ts-ignore
-  aegisAPI: AegisAPI = window.electronAPI as ElectronAPI
+if ((window as any).electronAPI) {
+  aegisAPI = (window as any).electronAPI as AegisAPI
 }
 
 export { aegisAPI }
