@@ -20,11 +20,24 @@ export default function Field({ field, onChange }: FieldProps): JSX.Element {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChange = (newValue: any): void => {
-    const processedValue =
-      field.type === EditorBrushTypes.POSITIVE_INTEGER ? Number(newValue) : newValue
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let processedValue: any = newValue
+
+    if (
+      field.type === EditorBrushTypes.POSITIVE_INTEGER ||
+      field.type === EditorBrushTypes.ZERO_OR_MORE
+    ) {
+      processedValue = Number(newValue)
+    } else if (field.type === EditorBrushTypes.SINGLE_SELECT) {
+      // convert string back to number if the option value is a number
+      const numericOption = field.options?.find(
+        (opt) => String(opt.value) === String(newValue)
+      )
+      processedValue = numericOption ? numericOption.value : newValue
+    }
 
     field.value = processedValue
-    setInternal(processedValue)
+    setInternal(String(processedValue))
     onChange?.()
   }
 
@@ -40,6 +53,16 @@ export default function Field({ field, onChange }: FieldProps): JSX.Element {
             name={field.label}
             value={field.value}
             min={1}
+            max={1000}
+            onChange={(_, val) => handleChange(val)}
+          />
+        )}
+
+        {field.type === EditorBrushTypes.ZERO_OR_MORE && (
+          <NumberInput
+            name={field.label}
+            value={field.value}
+            min={0}
             max={1000}
             onChange={(_, val) => handleChange(val)}
           />

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useLocalStorage } from "@/hooks/useLocalStorage"
-import { Scaffold } from "@/services"
+import { Scaffold } from "@/types"
 
 type Props = {
   scaffold: Scaffold

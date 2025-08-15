@@ -1,20 +1,34 @@
 import Field from "@/components/editor/Field"
 import { EditorBrush, EditorBrushTypes } from "@/core/Brushes"
+import { Scaffold } from "@/types"
 import { useForceUpdate } from "@/utils/util"
 
-export default function Brush({ brush }: { brush: EditorBrush }): JSX.Element {
+export default function Brush({
+  brush,
+  scaffold,
+}: {
+  brush: EditorBrush
+  scaffold: Scaffold
+}): JSX.Element {
+  const { getConfigValue } = scaffold
   const forceUpdate = useForceUpdate()
-  const objectTypeField = brush.fields.objectType
-  const objectTypeValue = objectTypeField?.value
-  const options = objectTypeField?.options || []
 
-  const currentOption = options.find((opt) => opt.value === objectTypeValue)
+  let combinedFields = { ...brush.fields }
 
-  const nestedFields = currentOption?.attributes?.fields || {}
+  for (const [, field] of Object.entries(brush.fields)) {
+    if (field.type === EditorBrushTypes.SINGLE_SELECT) {
+      const selectedOption = field.options?.find((opt) => opt.value === field.value)
+      if (selectedOption?.attributes?.fields) {
+        combinedFields = {
+          ...combinedFields,
+          ...selectedOption.attributes.fields,
+        }
+      }
+    }
+  }
 
-  const combinedFields = {
-    ...brush.fields,
-    ...nestedFields,
+  if (getConfigValue("features.ALLOW_AGENT_TYPES")) {
+    delete combinedFields.amount
   }
 
   const selectFields = Object.entries(combinedFields).filter(

@@ -1,15 +1,16 @@
-from .common import Cell
+from .common import Cell, Location
 from .constants import Constants
 
 
 class World:
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         width: int,
         height: int,
         seed: int,
         start_energy: int,
         cells: list[Cell],
+        init_spawns: dict[Location, int],
     ) -> None:
         self.width: int = width
         self.height: int = height
@@ -18,6 +19,7 @@ class World:
         self.start_energy: int = start_energy
         self.cells: list[Cell] = cells
         self.total_survivors: int = sum(cell.number_of_survivors() for cell in cells)
+        self.init_spawns: dict[Location, int] = init_spawns
 
         self._validate_map()
 

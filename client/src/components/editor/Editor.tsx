@@ -12,7 +12,7 @@ import useHover from "@/hooks/useHover"
 import useRound from "@/hooks/useRound"
 import { cn } from "@/lib/utils"
 import { useAppStore } from "@/store/useAppStore"
-import { Vector, WorldParams } from "@/types"
+import { Scaffold, Vector, WorldParams } from "@/types"
 import { MAP_MAX, MAP_MIN } from "@/utils/constants"
 import { Upload } from "lucide-react"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -25,7 +25,13 @@ import { Label } from "../ui/label"
 import Brush from "./Brush"
 import { exportWorld, importWorld } from "./MapGenerator"
 
-export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | null {
+export default function Editor({
+  isOpen,
+  scaffold,
+}: {
+  isOpen: boolean
+  scaffold: Scaffold
+}): JSX.Element | null {
   const round = useRound()
   const hoveredTile = useHover()
   const { rightClick, mouseDown } = useCanvas()
@@ -169,7 +175,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
   const renderBrushes = useMemo(() => {
     return brushes.map((brush) => (
       <TabsContent key={brush.name} value={brush.name} className="mt-4 px-1">
-        <Brush brush={brush} />
+        <Brush brush={brush} scaffold={scaffold} />
         {brush.name === "Layers" && (
           <div className="mt-2 p-3 rounded-lg bg-muted/30 border-dashed border">
             <p className="text-xs text-muted-foreground text-center">
@@ -317,7 +323,7 @@ export default function Editor({ isOpen }: { isOpen: boolean }): JSX.Element | n
 
           <ExportDialog
             onConfirm={async (filename) => {
-              const error = await exportWorld(round!.world, filename)
+              const error = await exportWorld(round!, filename)
               return error
             }}
           />

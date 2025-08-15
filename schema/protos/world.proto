@@ -3,6 +3,7 @@ syntax = "proto3";
 package aegis;
 
 import "cell.proto";
+import "spawn.proto";
 
 message World {
   int32 width = 1;
@@ -11,4 +12,5 @@ message World {
   int32 start_energy = 4;
   repeated Cell cells = 5;
   int32 total_survivors = 6;
+  repeated InitSpawn init_spawns = 7;
 }

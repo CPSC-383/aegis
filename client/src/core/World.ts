@@ -27,7 +27,8 @@ export default class World {
     public readonly height: number,
     public readonly seed: number,
     public readonly cells: schema.Cell[],
-    public readonly startEnergy: number
+    public readonly startEnergy: number,
+    public initSpawns: schema.InitSpawn[]
   ) {}
 
   public applyRound(round: schema.Round | null): void {
@@ -58,7 +59,8 @@ export default class World {
       world.height,
       world.seed,
       world.cells,
-      world.startEnergy
+      world.startEnergy,
+      world.initSpawns
     )
   }
 
@@ -83,7 +85,7 @@ export default class World {
       })
     })
 
-    return new World(width, height, 0, cells, initialEnergy)
+    return new World(width, height, 0, cells, initialEnergy, [])
   }
 
   public copy(): World {
@@ -92,7 +94,8 @@ export default class World {
       this.height,
       this.seed,
       this.cells.map(this.copyCell),
-      this.startEnergy
+      this.startEnergy,
+      this.initSpawns
     )
   }
 

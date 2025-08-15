@@ -4,6 +4,7 @@ import World from "./World"
 
 export enum EditorBrushTypes {
   POSITIVE_INTEGER,
+  ZERO_OR_MORE,
   SINGLE_SELECT,
 }
 
@@ -16,7 +17,7 @@ export type EditorFieldBase = {
 }
 
 export type EditorField = EditorFieldBase & {
-  type: EditorBrushTypes.POSITIVE_INTEGER | EditorBrushTypes.SINGLE_SELECT
+  type: EditorBrushTypes
 }
 
 export type EditorFieldOption = {
@@ -57,7 +58,19 @@ export class ZoneBrush extends EditorBrush {
       value: schema.CellType.SPAWN,
       label: "Zone Type",
       options: [
-        { value: schema.CellType.SPAWN, label: "Spawn" },
+        {
+          value: schema.CellType.SPAWN,
+          label: "Spawn",
+          attributes: {
+            fields: {
+              amount: {
+                type: EditorBrushTypes.ZERO_OR_MORE,
+                label: "Spawn Amount",
+                value: 0,
+              },
+            },
+          },
+        },
         { value: schema.CellType.KILLER, label: "Killer" },
         { value: schema.CellType.CHARGING, label: "Charging" },
       ],
@@ -83,10 +96,35 @@ export class ZoneBrush extends EditorBrush {
 
     if (rightClick) {
       cell.type = schema.CellType.NORMAL
+
+      if (cellType === schema.CellType.SPAWN) {
+        this.world.initSpawns = this.world.initSpawns.filter(
+          (spawn) => spawn.loc!.x !== x || spawn.loc!.y !== y
+        )
+      }
       return
     }
 
     cell.type = Number(cellType)
+
+    if (cellType === schema.CellType.SPAWN) {
+      const loc = schema.Location.create({ x, y })
+      const amount = Number(
+        fields.zoneType.options?.find((opt) => opt.value === cellType)?.attributes
+          ?.fields.amount?.value ?? 0
+      )
+
+      // Remove previous entry for this location
+      this.world.initSpawns = this.world.initSpawns.filter(
+        (spawn) => spawn.loc!.x !== x || spawn.loc!.y !== y
+      )
+
+      // Add new spawn info
+      this.world.initSpawns.push({
+        loc,
+        amount,
+      })
+    }
   }
 }
 
