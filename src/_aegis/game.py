@@ -91,6 +91,7 @@ class Game:
         self.team_info.add_lumens(Team.GOOBS, Constants.LUMENS_PER_ROUND)
         self.team_info.add_lumens(Team.VOIDSEERS, Constants.LUMENS_PER_ROUND)
         self.for_each_agent(self._run_turn)
+        self.rotate_message_buffers()
         self.activate_pending_drone_scans()
         self.game_pb.send_drone_scan_update(self._drone_scans)
         self.serialize_team_info()
@@ -98,6 +99,17 @@ class Game:
         self.serialize_drone_scans()
         self.game_pb.end_round()
         self.check_game_over()
+
+    def rotate_message_buffers(self) -> None:
+        """
+        Advance all agents' message buffers to the next round.
+
+        This commits any pending messages and ensures that all agents' buffers
+        are synchronized for the upcoming round.
+        """
+        for agent_id in self.agents:
+            agent = self.get_agent(agent_id)
+            agent.message_buffer.next_round(self.round + 1)
 
     def check_game_over(self) -> None:
         if self.round == self.world.rounds and self.reason is None:
@@ -413,6 +425,7 @@ class Game:
 
     def methods(self, ac: AgentController) -> MethodDict:
         return {
+            "AgentType": AgentType,
             "Direction": Direction,
             "Location": Location,
             "Rubble": Rubble,

@@ -48,7 +48,6 @@ class Agent:
         self.action_cooldown = max(0, self.action_cooldown - Constants.COOLDOWN_TICK)
 
     def process_end_of_turn(self) -> None:
-        self.message_buffer.next_round(self.game.round + 1)
         self.game.game_pb.end_turn(self)
 
     def turn(self) -> None:
