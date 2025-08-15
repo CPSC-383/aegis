@@ -2,7 +2,6 @@ import { motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -12,12 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useLocalStorage } from "@/hooks/useLocalStorage"
+import { ClientConfig } from "@/services"
+import { Scaffold } from "@/types"
 import { ASSIGNMENT_A1, getCurrentAssignment } from "@/utils/util"
+import GameCycler from "../GameCycler"
 import NumberInput from "../NumberInput"
 import { MultiSelect } from "../ui/multiselect"
-import { Scaffold } from "@/types"
-import GameCycler from "../GameCycler"
-import { ClientConfig } from "@/services"
 
 type Props = {
   scaffold: Scaffold
@@ -37,7 +36,23 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   const [selectedWorlds, setSelectedWorlds] = useState<string[]>([])
   const [rounds, setRounds] = useLocalStorage<number>("aegis_rounds", 0)
   const [agent, setAgent] = useLocalStorage<string>("aegis_agent", "")
-  const [agentAmount, setAgentAmount] = useLocalStorage<number>("aegis_agent_amount", 1)
+  // Initialize with a function to get the config default if no localStorage exists
+  const getInitialAgentAmount = (): number => {
+    const stored = localStorage.getItem("aegis_agent_amount")
+    if (stored !== null) {
+      try {
+        return JSON.parse(stored)
+      } catch {
+        return getDefaultAgentAmount()
+      }
+    }
+    return getDefaultAgentAmount()
+  }
+
+  const [agentAmount, setAgentAmount] = useLocalStorage<number>(
+    "aegis_agent_amount",
+    getInitialAgentAmount()
+  )
   const [debug] = useLocalStorage<boolean>("aegis_debug_mode", false)
   const [configError, setConfigError] = useState<string | null>(null)
 
@@ -79,14 +94,6 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   //     }
   //   }
   // }, [worlds, agents, setWorld, setAgent])
-
-  // Update agent amount when config changes
-  useEffect(() => {
-    const defaultAmount = getDefaultAgentAmount()
-    if (defaultAmount !== agentAmount) {
-      setAgentAmount(defaultAmount)
-    }
-  }, [getDefaultAgentAmount])
 
   const isButtonDisabled = useMemo(
     () => !selectedWorlds.length || !rounds || !agent || configError !== null,
@@ -163,12 +170,11 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       {showMultiAgentOptions && (
         <div>
           <Label>Number of Agents</Label>
-          <Input
-            type="number"
+          <NumberInput
+            name="agentAmount"
             value={agentAmount}
-            onChange={(e) => setAgentAmount(parseInt(e.target.value) || 1)}
-            placeholder="Enter number of agents"
             min={1}
+            onChange={(_, val) => setAgentAmount(val)}
           />
         </div>
       )}
