@@ -61,7 +61,7 @@ export function createScaffold(): Scaffold {
     output.current.clear()
 
     try {
-      const pid = await aegisAPI.aegis_child_process.spawn(
+      const pid = await aegisAPI!.aegis_child_process.spawn(
         rounds,
         amount,
         worlds,
@@ -84,7 +84,7 @@ export function createScaffold(): Scaffold {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const rawConfig = (await aegisAPI.read_config(aegisPath)) as any
+      const rawConfig = (await aegisAPI!.read_config(aegisPath)) as any
       setRawConfigData(rawConfig)
 
       const parsedConfig = parseClientConfig(rawConfig)
@@ -135,12 +135,15 @@ export function createScaffold(): Scaffold {
 
   const killSimulation = (): void => {
     invariant(aegisPid.current, "Can't kill a game if no game has started")
-    aegisAPI.aegis_child_process.kill(aegisPid.current)
+    aegisAPI!.aegis_child_process.kill(aegisPid.current)
     aegisPid.current = undefined
     forceUpdate()
   }
 
   useEffect(() => {
+    if (!aegisAPI) {
+      return
+    }
     if (!didInit) {
       didInit = true
       getAegisPath().then((path) => {
@@ -237,6 +240,10 @@ const getAegisPath = async (): Promise<string | undefined> => {
 }
 
 const getWorlds = async (aegisPath: string): Promise<string[]> => {
+  if (!aegisAPI) {
+    return []
+  }
+
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
@@ -253,6 +260,10 @@ const getWorlds = async (aegisPath: string): Promise<string[]> => {
 }
 
 const getAgents = async (aegisPath: string): Promise<string[]> => {
+  if (!aegisAPI) {
+    return []
+  }
+
   const fs = aegisAPI.fs
   const path = aegisAPI.path
 
