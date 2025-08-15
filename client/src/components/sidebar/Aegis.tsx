@@ -2,7 +2,6 @@ import { motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -12,12 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useLocalStorage } from "@/hooks/useLocalStorage"
+import { ClientConfig } from "@/services"
+import { Scaffold } from "@/types"
 import { ASSIGNMENT_A1, getCurrentAssignment } from "@/utils/util"
+import GameCycler from "../GameCycler"
 import NumberInput from "../NumberInput"
 import { MultiSelect } from "../ui/multiselect"
-import { Scaffold } from "@/types"
-import GameCycler from "../GameCycler"
-import { ClientConfig } from "@/services"
 
 type Props = {
   scaffold: Scaffold
@@ -80,10 +79,11 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   //   }
   // }, [worlds, agents, setWorld, setAgent])
 
-  // Update agent amount when config changes
+  // Only set default agent amount if nothing is in localStorage
   useEffect(() => {
-    const defaultAmount = getDefaultAgentAmount()
-    if (defaultAmount !== agentAmount) {
+    const storedAmount = localStorage.getItem("aegis_agent_amount")
+    if (!storedAmount) {
+      const defaultAmount = getDefaultAgentAmount()
       setAgentAmount(defaultAmount)
     }
   }, [getDefaultAgentAmount])
@@ -163,12 +163,11 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
       {showMultiAgentOptions && (
         <div>
           <Label>Number of Agents</Label>
-          <Input
-            type="number"
+          <NumberInput
+            name="agentAmount"
             value={agentAmount}
-            onChange={(e) => setAgentAmount(parseInt(e.target.value) || 1)}
-            placeholder="Enter number of agents"
             min={1}
+            onChange={(_, val) => setAgentAmount(val)}
           />
         </div>
       )}

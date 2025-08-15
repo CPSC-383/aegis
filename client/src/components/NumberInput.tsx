@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
+import { useEffect, useState } from "react"
 
 interface NumberInputProps {
   name: string
@@ -26,16 +26,11 @@ export default function NumberInput({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const val = e.target.value
     setInternal(val)
-
-    const parsed = Number(val)
-    if (!isNaN(parsed)) {
-      onChange(name, clamp(parsed))
-    }
   }
 
   const handleBlur = (): void => {
     const parsed = Number(internal)
-    if (isNaN(parsed)) {
+    if (isNaN(parsed) || internal === "") {
       setInternal(String(value))
     } else {
       const clamped = clamp(parsed)
