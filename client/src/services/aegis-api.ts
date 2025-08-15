@@ -30,5 +30,12 @@ type AegisAPI = {
   }
 }
 
-// @ts-ignore ignore type cast thing
-export const aegisAPI: AegisAPI = window.electronAPI as ElectronAPI
+let aegisAPI: AegisAPI | undefined = undefined
+
+// @ts-ignore
+if (window.eelectronAPI) {
+  // @ts-ignore
+  aegisAPI: AegisAPI = window.electronAPI as ElectronAPI
+}
+
+export { aegisAPI }
