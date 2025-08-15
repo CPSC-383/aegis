@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.3.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-client-v2.2.0...aegis-client-v2.3.0) (2025-08-15)
+
+
+### Features
+
+* **fixed spawning:** improved spawns ([#300](https://github.com/AEGIS-GAME/aegis/issues/300)) ([c6cc77b](https://github.com/AEGIS-GAME/aegis/commit/c6cc77b5d6b59ad0266786c7b378cd20b6692497))
+
+
+### Bug Fixes
+
+* **client:** add custom scrollbar styles to worlds scrollbar ([#288](https://github.com/AEGIS-GAME/aegis/issues/288)) ([0664600](https://github.com/AEGIS-GAME/aegis/commit/06646002fdb4bcbfe96ab6e11b064271420f9ddd))
+* **client:** Fixed agent num field and also improved NumberInput ([#304](https://github.com/AEGIS-GAME/aegis/issues/304)) ([1a1db7c](https://github.com/AEGIS-GAME/aegis/commit/1a1db7c42999f8988ca101e213f0b79c374ae5f5))
+* **client:** multiple agents in a cell ([#289](https://github.com/AEGIS-GAME/aegis/issues/289)) ([45e9db2](https://github.com/AEGIS-GAME/aegis/commit/45e9db27355230a01e33f81b70a2e05c4bb37358))
+* **electron api:** make the client render on a website ([#301](https://github.com/AEGIS-GAME/aegis/issues/301)) ([e2f6105](https://github.com/AEGIS-GAME/aegis/commit/e2f610515a2b7d7180ab30426371ebba4a295284))
+
 ## [2.2.0](https://github.com/CPSC-383/aegis/compare/aegis-client-v2.1.0...aegis-client-v2.2.0) (2025-08-13)
 
 

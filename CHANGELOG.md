@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.3.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-v2.2.0...aegis-v2.3.0) (2025-08-15)
+
+
+### Features
+
+* **fixed spawning:** improved spawns ([#300](https://github.com/AEGIS-GAME/aegis/issues/300)) ([c6cc77b](https://github.com/AEGIS-GAME/aegis/commit/c6cc77b5d6b59ad0266786c7b378cd20b6692497))
+
+
+### Bug Fixes
+
+* **client:** multiple agents in a cell ([#289](https://github.com/AEGIS-GAME/aegis/issues/289)) ([45e9db2](https://github.com/AEGIS-GAME/aegis/commit/45e9db27355230a01e33f81b70a2e05c4bb37358))
+* get the proper latest release with new updated CI ([#293](https://github.com/AEGIS-GAME/aegis/issues/293)) ([46769b1](https://github.com/AEGIS-GAME/aegis/commit/46769b1bcff65d2890c2abc5dfd017ffbcb2c5c2))
+* **messages:** messages sent on N can be read starting from N + 1 ([#302](https://github.com/AEGIS-GAME/aegis/issues/302)) ([fcefedb](https://github.com/AEGIS-GAME/aegis/commit/fcefedb931a9be189df4a92e76f148e9f9d53cdf))
+
 ## [2.2.0](https://github.com/CPSC-383/aegis/compare/aegis-v2.1.0...aegis-v2.2.0) (2025-08-13)
 
 
