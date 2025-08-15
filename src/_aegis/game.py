@@ -79,20 +79,7 @@ class Game:
                 to_spawn = min(amt, remaining)
                 self._spawn_agents_at(loc, to_spawn)
                 remaining -= to_spawn
-
-            for loc in zero_spawns:
-                if remaining <= 0:
-                    break
-
-                if self.args.agent is not None:
-                    self.spawn_agent(loc, Team.GOOBS, AgentType.COMMANDER)
-
-                if self.args.agent2 is not None:
-                    self.spawn_agent(loc, Team.VOIDSEERS, AgentType.COMMANDER)
-
-                remaining -= 1
             return
-
         self._random_init_spawn()
 
     def _spawn_agents_at(self, loc: Location, count: int) -> None:
