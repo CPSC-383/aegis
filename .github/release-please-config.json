@@ -7,7 +7,7 @@
     },
     ".": {
       "release-type": "python",
-      "package-name": "aegis",
+      "package-name": "aegis-game",
       "exclude-paths": ["client"]
     }
   }
