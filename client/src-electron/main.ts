@@ -226,7 +226,24 @@ class ElectronApp {
       ...(debug ? ["--debug"] : []),
     ]
 
-    const childAegis = child_process.spawn("aegis", procArgs, {
+    const venvPath = this.findVenvPython(aegisPath)
+
+    if (!venvPath) {
+      throw new Error("Virtual environment not found")
+    }
+
+    const pythonExec =
+      process.platform === "win32"
+        ? path.join(venvPath, "python.exe")
+        : path.join(venvPath, "python")
+
+    const command = pythonExec
+    const args = [
+      "-c",
+      `import sys; sys.argv = ['aegis'] + ${JSON.stringify(procArgs)}; from aegis_game import main; main()`,
+    ]
+
+    const childAegis = child_process.spawn(command, args, {
       cwd: aegisPath,
     })
 
@@ -286,6 +303,14 @@ class ElectronApp {
       process.kill()
       this.processes.delete(pid)
     }
+  }
+
+  private findVenvPython(aegisPath: string): string | null {
+    const isWindows = process.platform === "win32"
+    const venvPath = isWindows
+      ? path.join(aegisPath, ".venv", "Scripts")
+      : path.join(aegisPath, ".venv", "bin")
+    return fs.existsSync(venvPath) ? venvPath : null
   }
 }
 
