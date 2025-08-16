@@ -79,25 +79,23 @@ class Game:
             # spawns that need to be filled
             positive_spawns = {loc: amt for loc, amt in spawns.items() if amt > 0}
 
-            # spawns to fill once above are filled
-            zero_spawns = [loc for loc, amt in spawns.items() if amt == 0]
-
             remaining = self.args.amount
 
             for loc, amt in positive_spawns.items():
                 if remaining <= 0:
-                    # really shouldn't be intended by user for this to happen
-                    break
+                    # really shouldn't be intended by user for this to happen, almost tempted to raise an error here saying "run world with minimum self.args.amount agents"
+                    return
 
-                print(f"Spawning {amt} agents at {loc}")
-
-                to_spawn = min(amt, remaining)
+                to_spawn = min(
+                    amt, remaining
+                )  # should also not have to take the min imo for same reason
                 self._spawn_agents_at(loc, to_spawn)
                 remaining -= to_spawn
 
+            # prio spawns filled, choose from any spawn
+            all_spawns = self.get_spawns()
             while remaining > 0:
-                loc = random.choice(zero_spawns)
-                print(f"Spawning 1 agent at {loc}")
+                loc = random.choice(all_spawns)
                 self._spawn_agents_at(loc, 1)
                 remaining -= 1
 
