@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-client-v2.3.0...aegis-client-v2.4.0) (2025-08-16)
+
+
+### Features
+
+* **client:** client can run game when not launched from terminal. ([#309](https://github.com/AEGIS-GAME/aegis/issues/309)) ([3ba8033](https://github.com/AEGIS-GAME/aegis/commit/3ba8033b0a3969c4aad147d552149cf477072942))
+* **client:** refactor client config ([#312](https://github.com/AEGIS-GAME/aegis/issues/312)) ([9519229](https://github.com/AEGIS-GAME/aegis/commit/9519229e17c910cd19fb0364ad32bbe0b4c44a00))
+
 ## [2.3.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-client-v2.2.0...aegis-client-v2.3.0) (2025-08-15)
 
 

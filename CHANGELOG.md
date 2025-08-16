@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-v2.3.0...aegis-v2.4.0) (2025-08-16)
+
+
+### Features
+
+* **client:** refactor client config ([#312](https://github.com/AEGIS-GAME/aegis/issues/312)) ([9519229](https://github.com/AEGIS-GAME/aegis/commit/9519229e17c910cd19fb0364ad32bbe0b4c44a00))
+
 ## [2.3.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-v2.2.0...aegis-v2.3.0) (2025-08-15)
 
 
