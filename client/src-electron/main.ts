@@ -232,18 +232,12 @@ class ElectronApp {
       throw new Error("Virtual environment not found")
     }
 
-    const pythonExec =
+    const aegisExec =
       process.platform === "win32"
-        ? path.join(venvPath, "python.exe")
-        : path.join(venvPath, "python")
+        ? path.join(venvPath, "aegis.exe")
+        : path.join(venvPath, "aegis")
 
-    const command = pythonExec
-    const args = [
-      "-c",
-      `import sys; sys.argv = ['aegis'] + ${JSON.stringify(procArgs)}; from aegis_game import main; main()`,
-    ]
-
-    const childAegis = child_process.spawn(command, args, {
+    const childAegis = child_process.spawn(aegisExec, procArgs, {
       cwd: aegisPath,
     })
 
