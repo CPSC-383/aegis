@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from _aegis.common.direction import Direction
-from _aegis.common.location import Location
+from _aegis_game.common.direction import Direction
+from _aegis_game.common.location import Location
 
 
 class TestLocationInit:
