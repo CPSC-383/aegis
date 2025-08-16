@@ -52,8 +52,12 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   const [debug] = useLocalStorage<boolean>("aegis_debug_mode", false)
 
   useEffect(() => {
-    refreshWorldsAndAgents()
-    readAegisConfig()
+    const loadConfigForTab = async (): Promise<void> => {
+      await refreshWorldsAndAgents()
+      await readAegisConfig()
+    }
+
+    loadConfigForTab()
   }, [])
 
   const isButtonDisabled = useMemo(
@@ -158,7 +162,6 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
         ) : (
           <Button
             onClick={async () => {
-              refreshWorldsAndAgents()
               const configLoaded = await readAegisConfig()
               if (!configLoaded) {
                 return
