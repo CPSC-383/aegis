@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, cast
 import numpy as np
 import tensorflow as tf
 
-from aegis.stub import *
+from aegis_game.stub import *
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray

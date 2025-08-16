@@ -1,4 +1,4 @@
-from aegis.stub import *
+from aegis_game.stub import *
 
 
 def think() -> None:

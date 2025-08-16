@@ -23,16 +23,16 @@ Repository = "https://github.com/AEGIS-GAME/aegis"
 
 [tool.hatch.build.targets.wheel]
 packages = [
-    "src/aegis",
-    "src/_aegis",
+    "src/aegis_game",
+    "src/_aegis_game",
 ]
 include = [
-    "src/_aegis/templates/**/*",
+    "src/_aegis_game/templates/**/*",
 ]
 
 [tool.ruff]
 line-length = 88
-exclude = ["src/_aegis/sandbox.py", "src/_aegis/schemas/**", "agents/**", "src/_aegis/templates/**"]
+exclude = ["src/_aegis_game/sandbox.py", "src/_aegis_game/schemas/**", "agents/**", "src/_aegis_game/templates/**"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -56,7 +56,7 @@ ignore = [
 ]
 
 [project.scripts]
-aegis = "aegis:main"
+aegis = "aegis_game:main"
 
 [dependency-groups]
 dev = [

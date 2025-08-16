@@ -1,5 +1,4 @@
 # noqa: INP001
-# ruff: noqa: T201
 
 """Fix protobuf Python imports in generated files and fix index.ts export."""
 
