@@ -63,24 +63,43 @@ class Game:
         self._init_spawn()
 
     def _init_spawn(self) -> None:
-        if not has_feature("ALLOW_AGENT_TYPES"):
+        if has_feature("ALLOW_AGENT_TYPES"):
+            # if agent types enabled, spawn one commander at a random spawn location for each team (team needs to spawn rest of agents)
+
+            spawns = self.get_spawns()
+            spawn_loc = random.choice(spawns)
+
+            self._spawn_agents_at(spawn_loc, 1)
+
+        else:
+            # if no agent types, spawn commanders up to agent amount specified
+
             spawns = self.world.init_spawns
+
+            # spawns that need to be filled
             positive_spawns = {loc: amt for loc, amt in spawns.items() if amt > 0}
+
+            # spawns to fill once above are filled
             zero_spawns = [loc for loc, amt in spawns.items() if amt == 0]
 
             remaining = self.args.amount
 
-            for loc, amt in list(positive_spawns.items()) + [
-                (loc, 1) for loc in zero_spawns
-            ]:
+            for loc, amt in positive_spawns.items():
                 if remaining <= 0:
+                    # really shouldn't be intended by user for this to happen
                     break
+
+                print(f"Spawning {amt} agents at {loc}")
 
                 to_spawn = min(amt, remaining)
                 self._spawn_agents_at(loc, to_spawn)
                 remaining -= to_spawn
-            return
-        self._random_init_spawn()
+
+            while remaining > 0:
+                loc = random.choice(zero_spawns)
+                print(f"Spawning 1 agent at {loc}")
+                self._spawn_agents_at(loc, 1)
+                remaining -= 1
 
     def _spawn_agents_at(self, loc: Location, count: int) -> None:
         if self.args.agent is not None:
@@ -89,15 +108,6 @@ class Game:
         if self.args.agent2 is not None:
             for _ in range(count):
                 self.spawn_agent(loc, Team.VOIDSEERS, AgentType.COMMANDER)
-
-    def _random_init_spawn(self) -> None:
-        spawns = self.get_spawns()
-        loc = random.choice(spawns)
-        if self.args.agent is not None:
-            self.spawn_agent(loc, Team.GOOBS, AgentType.COMMANDER)
-
-        if self.args.agent2 is not None:
-            self.spawn_agent(loc, Team.VOIDSEERS, AgentType.COMMANDER)
 
     def _run_turn(self, agent: Agent) -> None:
         start = time.perf_counter()
