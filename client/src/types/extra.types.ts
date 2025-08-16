@@ -55,6 +55,6 @@ export interface Scaffold {
   killSim: (() => void) | undefined
   readAegisConfig: () => Promise<boolean>
   refreshWorldsAndAgents: () => Promise<void>
-  config: ClientConfig | null | undefined
+  config: ClientConfig | null
   spawnError: string
 }

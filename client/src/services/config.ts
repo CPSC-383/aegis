@@ -31,12 +31,8 @@ export function parseClientConfig(configData: any): ClientConfig {
     throw new Error("Config 'client' and 'features' must be objects")
   }
 
-  if (Object.keys(configData).length === 0) {
-    throw new Error("Config file is empty")
-  }
-
   const config: ClientConfig = {
-    configType: null,
+    configType: "assignment",
     variableAgentAmount: false,
     defaultAgentAmount: 1,
     allowAgentTypes: false,
@@ -71,7 +67,7 @@ export function parseClientConfig(configData: any): ClientConfig {
 
     return config
   } catch (error) {
-    return null
+    throw new Error(`Failed to parse config.yaml: ${error}`)
   }
 }
 

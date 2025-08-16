@@ -64,33 +64,6 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
       className="w-full"
     >
       <div className="space-y-4">
-        {config === null && (
-          <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-            <div className="flex">
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Config Error</h3>
-                <div className="mt-2 text-sm text-red-700">
-                  <p>
-                    Failed to load config.yaml. Please check your config file and ensure
-                    it&apos;s valid.
-                  </p>
-                </div>
-                <div className="mt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      readAegisConfig()
-                    }}
-                  >
-                    Retry Load Config
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Folder className="w-6 h-6" />
@@ -141,7 +114,33 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
                 </div>
               </div>
             </>
-          ) : null}
+          ) : (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+              <div className="flex">
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">Config Error</h3>
+                  <div className="mt-2 text-sm text-red-700">
+                    <p>
+                      Failed to load config.yaml. Please check your config file and
+                      ensure it&apos;s valid.
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        readAegisConfig()
+                      }}
+                    >
+                      Retry Load Config
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">

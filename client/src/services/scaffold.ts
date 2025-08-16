@@ -79,19 +79,13 @@ export function createScaffold(): Scaffold {
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rawConfig = (await aegisAPI!.read_config(aegisPath)) as any
-
-      // DEBUG: Log what we actually got from the API
-      console.log("Raw config from API:", rawConfig)
-      console.log("Type:", typeof rawConfig)
-      console.log("Keys:", rawConfig ? Object.keys(rawConfig) : "no keys")
-
       const parsedConfig = parseClientConfig(rawConfig)
-      console.log("Parsed config:", parsedConfig)
-
       setConfig(parsedConfig)
       return true
     } catch (error) {
-      console.log("Config loading failed with error:", error)
+      if (process.env.NODE_ENV === "development") {
+        console.debug("Config loading failed:", error)
+      }
       setConfig(null)
       return false
     }

@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select"
 import { useLocalStorage } from "@/hooks/useLocalStorage"
 import { Scaffold } from "@/types"
-import { ASSIGNMENT_A1, getCurrentAssignment } from "@/utils/util"
 import GameCycler from "../GameCycler"
 import NumberInput from "../NumberInput"
 import { MultiSelect } from "../ui/multiselect"
@@ -53,17 +52,8 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   const [debug] = useLocalStorage<boolean>("aegis_debug_mode", false)
 
   useEffect(() => {
-    const loadConfigForTab = async (): Promise<void> => {
-      await refreshWorldsAndAgents()
-      await readAegisConfig()
-
-      // sleep for a second
-      setTimeout(() => {
-        console.log("config", config)
-      }, 1000)
-    }
-
-    loadConfigForTab()
+    refreshWorldsAndAgents()
+    readAegisConfig()
   }, [])
 
   const isButtonDisabled = useMemo(
@@ -167,11 +157,16 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
           </Button>
         ) : (
           <Button
-            onClick={() => {
-              const amount = getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : agentAmount
+            onClick={async () => {
+              refreshWorldsAndAgents()
+              const configLoaded = await readAegisConfig()
+              if (!configLoaded) {
+                return
+              }
+
               startSimulation(
                 rounds.toString(),
-                amount.toString(),
+                agentAmount.toString(),
                 selectedWorlds,
                 agent,
                 debug
