@@ -252,6 +252,7 @@ class ElectronApp {
           })
 
           childAegis.stderr?.on("data", (data) => {
+            // console.log("Stderr data received:", data.toString())
             const { lines, buffer } = this.flushBuffer(stderrBuffer, data.toString())
             stderrBuffer = buffer
             lines.forEach((line) => {
@@ -259,9 +260,28 @@ class ElectronApp {
             })
           })
 
-          childAegis.on("exit", () => {
+          childAegis.on("exit", (code, signal) => {
+            // Flush any remaining buffer content before exit
+            if (stdoutBuffer.trim()) {
+              // console.log("Flushing remaining stdout:", stdoutBuffer.trim())
+              this.mainWindow?.webContents.send(
+                "aegis_child_process.stdout",
+                stdoutBuffer.trim()
+              )
+            }
+            if (stderrBuffer.trim()) {
+              // console.log("Flushing remaining stderr:", stderrBuffer.trim())
+              this.mainWindow?.webContents.send(
+                "aegis_child_process.stderr",
+                stderrBuffer.trim()
+              )
+            }
+
             this.processes.delete(pid)
-            this.mainWindow?.webContents.send("aegis_child_process.exit")
+            this.mainWindow?.webContents.send("aegis_child_process.exit", {
+              code,
+              signal,
+            })
           })
 
           resolve(pid)
