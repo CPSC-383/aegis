@@ -48,14 +48,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Release
-        uses: googleapis/release-please-action@v4
-        id: release
-        with:
-          config-file: ${{ steps.release-config.outputs.config-file }}
-          release-type: ${{ steps.release-config.outputs.release-type }}
-          manifest-file: ${{ steps.release-config.outputs.manifest-file }}
-
       - name: Create Release
         uses: googleapis/release-please-action@v4
         id: release
