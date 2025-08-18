@@ -117,9 +117,9 @@ jobs:
         shell: bash
         run: |
           if [ -d "releases/${{ matrix.platform }}" ] && [ "$(ls -A releases/${{ matrix.platform }})" ]; then
-            echo "has-builds=true" >> $GITHUB_OUTPUT
+            echo "Build successful"
           else
-            echo "has-builds=false" >> $GITHUB_OUTPUT
+            echo "Build failed - no output found"
             exit 1
           fi
 
