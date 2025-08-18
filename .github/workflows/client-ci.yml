@@ -70,7 +70,7 @@ jobs:
           echo "${{ toJSON(steps.release.outputs) }}"
 
   build:
-    if: ${{ !failure() && (github.ref == 'refs/heads/main' || github.base_ref == "main") }}
+    if: ${{ !failure() && (github.ref == 'refs/heads/main' || github.base_ref == 'main') }}
     needs: [lint, release-please]
     strategy:
       matrix:
