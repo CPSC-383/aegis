@@ -127,7 +127,8 @@ jobs:
         working-directory: client 
         shell: bash
         run: |
-          mkdir -p release-assets
+          RELEASE_ASSETS_PATH="$(pwd)/release-assets"
+          mkdir -p "$RELEASE_ASSETS_PATH"
 
           ARTIFACT_PATH=$(find releases -maxdepth 3 -iname "*aegis*${{ matrix.extension }}")
 
@@ -136,10 +137,11 @@ jobs:
             exit 1
           fi
 
-          echo "Zipping $ARTIFACT_PATH into release-assets/${{ matrix.artifact-name }}.zip"
+          ARTIFACT_NAME=$(basename "$ARTIFACT_PATH")
+          echo "Zipping $ARTIFACT_PATH into $RELEASE_ASSETS_PATH/${{ matrix.artifact-name }}.zip"
 
           cd "$(dirname "$ARTIFACT_PATH")"
-          7z a -tzip "../../release-assets/${{ matrix.artifact-name }}.zip" "$(basename "$ARTIFACT_PATH")"
+          7z a -tzip "$RELEASE_ASSETS_PATH/${{ matrix.artifact-name }}.zip" "$ARTIFACT_NAME"
 
       - name: Upload built client as artifact
         if: ${{ needs.release-please.outputs.releases_created == 'true' }}
