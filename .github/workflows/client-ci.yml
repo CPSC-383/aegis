@@ -7,6 +7,9 @@ on:
     paths:
       - 'client/**' # only run if something in client/ changes
 
+env:
+  NODE_VERSION: "20"
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -17,7 +20,7 @@ jobs:
       - name: Setup Node 
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: client/package-lock.json
 
@@ -29,36 +32,9 @@ jobs:
         working-directory: client
         run: npx eslint src src-electron
 
-  test-build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node 
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: |
-            schema/package-lock.json
-            client/package-lock.json
-
-      - name: Install schema dependencies
-        working-directory: ./schema
-        run: npm ci
-
-      - name: Install dependencies
-        working-directory: client
-        run: npm ci
-
-      - name: Test build
-        working-directory: client
-        run: npm run build:pack
-
   release-please:
-    runs-on: ubuntu-latest
     if: ${{ !failure() && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
@@ -70,27 +46,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Configure release-please
-        id: release-config
-        run: |
-          if [ -f .github/release-please-config.json ]; then
-            echo "config-file=.github/release-please-config.json" >> $GITHUB_OUTPUT
-            [ -f .github/release-please-manifest.json ] &&
-              echo "manifest-file=.github/release-please-manifest.json" >> $GITHUB_OUTPUT
-            [ -f .github/.release-please-manifest.json ] &&
-              echo "manifest-file=.github/.release-please-manifest.json" >> $GITHUB_OUTPUT
-          else
-            echo "release-type=node" >> $GITHUB_OUTPUT
-          fi
-          exit 0
-
-      - name: Release
+      - name: Create Release
         uses: googleapis/release-please-action@v4
         id: release
         with:
-          config-file: ${{ steps.release-config.outputs.config-file }}
-          release-type: ${{ steps.release-config.outputs.release-type }}
-          manifest-file: ${{ steps.release-config.outputs.manifest-file }}
+          config-file: ${{ hashFiles('.github/release-please-config.json') != '' && '.github/release-please-config.json' || '' }}
+          manifest-file: ${{ hashFiles('.github/release-please-manifest.json') != '' && '.github/release-please-manifest.json' || hashFiles('.github/.release-please-manifest.json') != '' && '.github/.release-please-manifest.json' || '' }}
+          release-type: node
 
       - name: Debug release
         continue-on-error: true
@@ -98,22 +60,24 @@ jobs:
           echo "${{ toJSON(steps.release.outputs) }}"
 
   build:
+    if: ${{ !failure() && (github.ref == 'refs/heads/main' || github.base_ref == 'main') }}
+    needs: [lint, release-please]
     strategy:
       matrix:
         include:
           - os: macos-latest
-            platform: mac
-          - os: ubuntu-22.04
+            platform: darwin
+            artifact-name: mac-client
+            extension: app
+          - os: ubuntu-latest
             platform: linux
+            artifact-name: linux-client
+            extension: AppImage
           - os: windows-latest
-            platform: win
+            platform: win32
+            artifact-name: windows-client
+            extension: exe
     runs-on: ${{ matrix.os }}
-    needs: [test-build, release-please]
-    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == 'true' }}
-    env:
-      NODE_VERSION: "20"
-      WORKING_DIR: ./client
-      ARTIFACT_PATH: "./packed-client/${{ matrix.path }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -128,35 +92,70 @@ jobs:
             client/package-lock.json
 
       - name: Install schema dependencies
-        working-directory: ./schema
+        working-directory: schema
         run: npm ci
 
       - name: Install client dependencies
-        working-directory: ${{ env.WORKING_DIR }}
+        working-directory: client 
         run: npm ci
 
       - name: Build app
-        working-directory: ${{ env.WORKING_DIR }}
-        shell: bash
+        working-directory: client 
         run: npm run build:pack
 
-      - name: Prepare zips
-        working-directory: ${{ env.WORKING_DIR }}
-        run: 7z a -tzip packed-client/${{ matrix.platform }}-client.zip ${{ env.ARTIFACT_PATH }}
+      - name: List top-level releases folder
+        working-directory: client
+        shell: bash
+        run: |
+          echo "Top-level releases folders:"
+          ls -1 releases
 
+      - name: Check build output
+        id: check-build
+        working-directory: client
+        shell: bash
+        run: |
+          if [ -d "releases/${{ matrix.platform }}" ] && [ "$(ls -A releases/${{ matrix.platform }})" ]; then
+            echo "Build successful"
+          else
+            echo "Build failed - no output found"
+            exit 1
+          fi
+
+      - name: Prepare zips
+        if: ${{ needs.release-please.outputs.releases_created == 'true' }}
+        working-directory: client 
+        shell: bash
+        run: |
+          RELEASE_ASSETS_PATH="$(pwd)/release-assets"
+          mkdir -p "$RELEASE_ASSETS_PATH"
+
+          ARTIFACT_PATH=$(find releases -maxdepth 3 -iname "*aegis*${{ matrix.extension }}")
+
+          if [[ -z "$ARTIFACT_PATH" ]]; then
+            echo "Error: no artifact found for extension ${{ matrix.extension }}"
+            exit 1
+          fi
+
+          ARTIFACT_NAME=$(basename "$ARTIFACT_PATH")
+          echo "Zipping $ARTIFACT_PATH into $RELEASE_ASSETS_PATH/${{ matrix.artifact-name }}.zip"
+
+          cd "$(dirname "$ARTIFACT_PATH")"
+          7z a -tzip "$RELEASE_ASSETS_PATH/${{ matrix.artifact-name }}.zip" "$ARTIFACT_NAME"
 
       - name: Upload built client as artifact
+        if: ${{ needs.release-please.outputs.releases_created == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}-client
+          name: ${{ matrix.artifact-name }}
           path: |
-            ${{ env.WORKING_DIR }}/packed-client/*-client.zip
+            client/release-assets/${{ matrix.artifact-name }}.zip
           if-no-files-found: error
 
-  release:
+  publish:
+    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == 'true' }}
     needs: [build, release-please] 
     runs-on: ubuntu-latest
-    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == 'true' }}
     permissions:
       contents: write
     steps:
@@ -166,16 +165,19 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./artifacts/
+          path: ./release-assets/
+
+      - name: List artifacts
+        run: find ./release-assets -type f -ls
 
       - name: Upload assets to GitHub Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: artifacts/**/*.zip
+          file: release-assets/**/*.zip
           file_glob: true
           tag: ${{ needs.release-please.outputs.tag_name }}
-          release_name: "Client Release ${{ needs.release-please.outputs.tag_name }}"
+          release_name: "Client ${{ needs.release-please.outputs.tag_name }}"
           overwrite: true
           make_latest: true
 
