@@ -137,7 +137,9 @@ jobs:
           fi
 
           echo "Zipping $ARTIFACT_PATH into release-assets/${{ matrix.artifact-name }}.zip"
-          7z a -tzip release-assets/${{ matrix.artifact-name }}.zip "$ARTIFACT_PATH"
+
+          cd "$(dirname "$ARTIFACT_PATH")"
+          7z a -tzip "../../release-assets/${{ matrix.artifact-name }}.zip" "$(basename "$ARTIFACT_PATH")"
 
       - name: Upload built client as artifact
         if: ${{ needs.release-please.outputs.releases_created == 'true' }}
