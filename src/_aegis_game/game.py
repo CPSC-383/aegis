@@ -82,15 +82,26 @@ class Game:
             remaining = self.args.amount
 
             for loc, amt in positive_spawns.items():
-                if remaining <= 0:
-                    # really shouldn't be intended by user for this to happen, almost tempted to raise an error here saying "run world with minimum self.args.amount agents"
-                    return
+                # if remaining <= 0:
+                #     # really shouldn't be intended by user for this to happen, almost tempted to raise an error here saying "run world with minimum self.args.amount agents"
+                #     return
 
-                to_spawn = min(
-                    amt, remaining
-                )  # should also not have to take the min imo for same reason
-                self._spawn_agents_at(loc, to_spawn)
-                remaining -= to_spawn
+                # to_spawn = min(
+                #     amt, remaining
+                # )  # should also not have to take the min imo for same reason
+
+                # if we run out of remaining agents before filling all amt's, raise an error
+                if remaining < amt:
+                    msg = f"Not enough spawns to spawn {self.args.amount} agents!! Please run this world with at least {self.args.amount} agents"
+                    raise ValueError(msg)
+
+                self._spawn_agents_at(loc, amt)
+                remaining -= amt
+
+            if remaining > 0:
+                LOGGER.warning(
+                    f"Ran world with {self.args.amount} agents, but world only specifies {len(positive_spawns)} dedicated spawns. Ensure this was intended."
+                )
 
             # prio spawns filled, choose from any spawn
             all_spawns = self.get_spawns()
