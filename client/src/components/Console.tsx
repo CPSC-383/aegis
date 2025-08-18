@@ -48,7 +48,7 @@ export default function Console({ output }: Props): JSX.Element {
 
   const renderOutput = (): JSX.Element => {
     return (
-      <div className="h-full min-h-[200px] p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
+      <div className="h-full min-h-[200px] max-h-[400px] p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
         {output
           .getItems()
           .filter((line) => line.gameIdx === Runner.games?.games.indexOf(game!))

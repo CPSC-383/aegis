@@ -1,12 +1,18 @@
+import Round from "@/core/Round"
+import { Scaffold, Vector } from "@/types"
+import { schema } from "aegis-schema"
 import { motion } from "framer-motion"
 import { AlertTriangle } from "lucide-react"
-import useRound from "@/hooks/useRound"
-import { schema } from "aegis-schema"
+import CellView from "./CellView"
 
-export default function Game(): JSX.Element {
-  const round = useRound()
+interface Props {
+  tile: Vector | undefined
+  round: Round | undefined
+  scaffold: Scaffold
+}
 
-  if (!round) {
+export default function Game({ tile, round, scaffold }: Props): JSX.Element {
+  if (!round || !scaffold) {
     return (
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -17,7 +23,7 @@ export default function Game(): JSX.Element {
         <div className="text-center p-4">
           <AlertTriangle className="mx-auto mb-4 text-orange-500" size={48} />
           <p className="text-lg font-bold text-center text-black">
-            Run A Simulation To See Game Stats!
+            Run A Simulation To See Game Stuff!
           </p>
         </div>
       </motion.div>
@@ -27,15 +33,15 @@ export default function Game(): JSX.Element {
   const stats = round.game.stats[round.round]
   const goobs = stats.getTeamStats(schema.Team.GOOBS)
   const voidseers = stats.getTeamStats(schema.Team.VOIDSEERS)
+  const cell = tile ? round.world.cellAt(tile.x, tile.y) : undefined
 
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="p-4 space-y-6"
+      className="space-y-6"
     >
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto scrollbar">
         <table className="min-w-full text-sm border border-gray-300 rounded overflow-hidden bg-white shadow">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
@@ -78,6 +84,7 @@ export default function Game(): JSX.Element {
           </tbody>
         </table>
       </div>
+      <CellView cell={cell} round={round} scaffold={scaffold} />
     </motion.div>
   )
 }

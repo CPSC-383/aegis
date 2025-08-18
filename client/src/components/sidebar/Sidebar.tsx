@@ -1,10 +1,14 @@
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TabNames } from "@/types"
+import { TabNames, Vector } from "@/types"
 import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
+import { ListenerKey, subscribe } from "@/core/Listeners"
+import { Renderer } from "@/core/Renderer"
+import useGames from "@/hooks/useGames"
+import useRound from "@/hooks/useRound"
 import { createScaffold } from "@/services"
 import Console from "../Console"
 import Editor from "../editor/Editor"
@@ -15,9 +19,24 @@ import Settings from "./Settings"
 export default function Sidebar(): JSX.Element {
   const scaffold = createScaffold()
   const { aegisPath, setupAegisPath, output, spawnError } = scaffold
+  const games = useGames()
+  const round = useRound()
   const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [selectedTile, setSelectedTile] = useState<Vector | undefined>(undefined)
   const sidebarRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const unsubscribe = subscribe(ListenerKey.LayerViewer, () => {
+      const tile = Renderer.getLayerViewerTile()
+      if (tile && games?.playable && round) {
+        setSelectedTab(TabNames.Game)
+        setSelectedTile(tile)
+      }
+    })
+
+    return unsubscribe
+  }, [games?.playable, round])
 
   return (
     <div className="relative w-[30%]">
@@ -83,8 +102,8 @@ export default function Sidebar(): JSX.Element {
                     </div>
                   </TabsContent>
                   <TabsContent value={TabNames.Game} className="h-full">
-                    <div className="flex flex-col justify-between gap-6 p-1 h-full">
-                      <Game />
+                    <div className="flex flex-col gap-6 p-1 scrollbar overflow-scroll">
+                      <Game tile={selectedTile} round={round} scaffold={scaffold} />
                       <div className="min-h-[200px]">
                         <Console output={output} />
                       </div>

@@ -18,14 +18,12 @@ import LayerList from "./LayerList"
 interface Props {
   tile: Vector | undefined
   round: Round | undefined
-  editable: boolean
   onClose: () => void
 }
 
 export default function LayerEditor({
   tile,
   round,
-  editable,
   onClose,
 }: Props): JSX.Element | null {
   if (!tile || !round) {
@@ -94,9 +92,7 @@ export default function LayerEditor({
         <DialogHeader className="pb-4">
           <div className="flex items-center gap-2">
             <MapPin className="w-5 h-5 text-blue-600" />
-            <DialogTitle className="text-lg">
-              {editable ? "Layers Editor" : "Layer Viewer"}
-            </DialogTitle>
+            <DialogTitle className="text-lg">Layers Editor</DialogTitle>
           </div>
           <DialogDescription className="flex items-center gap-2">
             <span>
@@ -107,29 +103,26 @@ export default function LayerEditor({
         <LayerList
           layers={layers}
           originalLayers={originalLayers}
-          editable={editable}
-          setLayers={editable ? setLayers : undefined}
-          setHasChanges={editable ? setHasChanges : undefined}
-          updateLayer={editable ? updateLayer : undefined}
-          deleteLayer={editable ? deleteLayer : undefined}
+          setLayers={setLayers}
+          setHasChanges={setHasChanges}
+          updateLayer={updateLayer}
+          deleteLayer={deleteLayer}
         />
-        {editable && (
-          <div className="flex justify-between items-center pt-4">
-            <div className="flex items-center gap-2">
-              {hasChanges && (
-                <Badge variant="outline" className="text-yellow-600 border-yellow-300">
-                  Unsaved changes
-                </Badge>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button size="sm" onClick={handleSave} disabled={!hasChanges}>
-                <Save className="w-4 h-4 mr-1" />
-                Save Changes
-              </Button>
-            </div>
+        <div className="flex justify-between items-center pt-4">
+          <div className="flex items-center gap-2">
+            {hasChanges && (
+              <Badge variant="outline" className="text-yellow-600 border-yellow-300">
+                Unsaved changes
+              </Badge>
+            )}
           </div>
-        )}
+          <div className="flex gap-2">
+            <Button size="sm" onClick={handleSave} disabled={!hasChanges}>
+              <Save className="w-4 h-4 mr-1" />
+              Save Changes
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )

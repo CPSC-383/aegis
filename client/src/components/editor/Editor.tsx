@@ -333,7 +333,6 @@ export default function Editor({
       <LayerEditor
         tile={isEditorOpen ? selectedTile : undefined}
         round={round}
-        editable={true}
         onClose={handleClose}
       />
 
