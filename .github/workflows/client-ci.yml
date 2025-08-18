@@ -129,7 +129,7 @@ jobs:
         run: |
           mkdir -p release-assets
 
-          ARTIFACT_PATH=$(find releases -maxdepth 3 -name "*${{ matrix.extension }}" | head -n 1)
+          ARTIFACT_PATH=$(find releases -maxdepth 3 -iname "*aegis*${{ matrix.extension }}")
 
           if [[ -z "$ARTIFACT_PATH" ]]; then
             echo "Error: no artifact found for extension ${{ matrix.extension }}"
