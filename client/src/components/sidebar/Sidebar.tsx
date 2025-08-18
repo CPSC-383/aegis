@@ -15,7 +15,6 @@ import useGames from "@/hooks/useGames"
 import { createScaffold } from "@/services"
 import Console from "../Console"
 import Editor from "../editor/Editor"
-import { ErrorMessage } from "../ui/error-message"
 import Aegis from "./Aegis"
 import Game from "./Game"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
@@ -133,11 +132,6 @@ export default function Sidebar(): JSX.Element {
           </div>
         )}
       </motion.div>
-      <SettingsModal
-        isOpen={settingsModalOpen}
-        scaffold={scaffold}
-        onClose={() => setSettingsModalOpen(false)}
-      />
     </div>
   )
 }

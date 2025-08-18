@@ -11,24 +11,27 @@ import { getLayerColor, getLayerIcon } from "./dnd-utils"
 interface Props extends HTMLAttributes<HTMLDivElement> {
   layer: schema.WorldObject
   index: number
-  onDelete: () => void
+  editable?: boolean
+  onDelete?: () => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onUpdate: (updates: any) => void
+  onUpdate?: (updates: any) => void
 }
 
 const Layer = forwardRef<HTMLDivElement, Props>(
-  ({ layer, index, onDelete, onUpdate, ...rest }, ref) => {
+  ({ layer, index, editable = true, onDelete, onUpdate, ...rest }, ref) => {
     return (
       <Card {...rest}>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div
-                ref={ref}
-                className="cursor-grab hover:cursor-grabbing p-1 rounded hover:bg-muted transition-colors"
-              >
-                <GripVertical className="w-4 h-4 text-muted-foreground" />
-              </div>
+              {editable && (
+                <div
+                  ref={ref}
+                  className="cursor-grab hover:cursor-grabbing p-1 rounded hover:bg-muted transition-colors"
+                >
+                  <GripVertical className="w-4 h-4 text-muted-foreground" />
+                </div>
+              )}
               <div className="flex flex-col items-start my-3 gap-0.5">
                 <span className="text-md text-muted-foreground">Layer {index}</span>
                 <Badge
@@ -48,28 +51,34 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                   >
                     Survivor HP
                   </Label>
-                  <NumberInput
-                    name="health"
-                    value={layer.object.survivor.health}
-                    min={1}
-                    max={100}
-                    onChange={(_, value) => {
-                      const survivor =
-                        layer.object.oneofKind === "survivor"
-                          ? layer.object.survivor
-                          : undefined
-                      if (!survivor || !onUpdate) {
-                        return
-                      }
+                  {editable ? (
+                    <NumberInput
+                      name="health"
+                      value={layer.object.survivor.health}
+                      min={1}
+                      max={100}
+                      onChange={(_, value) => {
+                        const survivor =
+                          layer.object.oneofKind === "survivor"
+                            ? layer.object.survivor
+                            : undefined
+                        if (!survivor || !onUpdate) {
+                          return
+                        }
 
-                      onUpdate({
-                        survivor: {
-                          ...survivor,
-                          health: value,
-                        },
-                      })
-                    }}
-                  />
+                        onUpdate({
+                          survivor: {
+                            ...survivor,
+                            health: value,
+                          },
+                        })
+                      }}
+                    />
+                  ) : (
+                    <span className="font-medium text-sm">
+                      {layer.object.survivor.health}
+                    </span>
+                  )}
                 </div>
               </div>
             )}
@@ -84,28 +93,34 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                     >
                       Energy Required
                     </Label>
-                    <NumberInput
-                      name="energyRequired"
-                      value={layer.object.rubble?.energyRequired ?? 0}
-                      min={1}
-                      max={999}
-                      onChange={(_, value) => {
-                        const rubble =
-                          layer.object.oneofKind === "rubble"
-                            ? layer.object.rubble
-                            : undefined
-                        if (!rubble || !onUpdate) {
-                          return
-                        }
+                    {editable ? (
+                      <NumberInput
+                        name="energyRequired"
+                        value={layer.object.rubble?.energyRequired ?? 0}
+                        min={1}
+                        max={999}
+                        onChange={(_, value) => {
+                          const rubble =
+                            layer.object.oneofKind === "rubble"
+                              ? layer.object.rubble
+                              : undefined
+                          if (!rubble || !onUpdate) {
+                            return
+                          }
 
-                        onUpdate({
-                          rubble: {
-                            ...rubble,
-                            energyRequired: value,
-                          },
-                        })
-                      }}
-                    />
+                          onUpdate({
+                            rubble: {
+                              ...rubble,
+                              energyRequired: value,
+                            },
+                          })
+                        }}
+                      />
+                    ) : (
+                      <span className="font-medium text-sm">
+                        {layer.object.rubble?.energyRequired ?? 0}
+                      </span>
+                    )}
                   </div>
                   <div className="space-y-1">
                     <Label
@@ -114,40 +129,48 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                     >
                       Agents Required
                     </Label>
-                    <NumberInput
-                      name="agentsRequired"
-                      value={layer.object.rubble?.agentsRequired ?? 0}
-                      min={1}
-                      max={10}
-                      onChange={(_, value) => {
-                        const rubble =
-                          layer.object.oneofKind === "rubble"
-                            ? layer.object.rubble
-                            : undefined
-                        if (!rubble || !onUpdate) {
-                          return
-                        }
+                    {editable ? (
+                      <NumberInput
+                        name="agentsRequired"
+                        value={layer.object.rubble?.agentsRequired ?? 0}
+                        min={1}
+                        max={10}
+                        onChange={(_, value) => {
+                          const rubble =
+                            layer.object.oneofKind === "rubble"
+                              ? layer.object.rubble
+                              : undefined
+                          if (!rubble || !onUpdate) {
+                            return
+                          }
 
-                        onUpdate({
-                          rubble: {
-                            ...rubble,
-                            agentsRequired: value,
-                          },
-                        })
-                      }}
-                    />
+                          onUpdate({
+                            rubble: {
+                              ...rubble,
+                              agentsRequired: value,
+                            },
+                          })
+                        }}
+                      />
+                    ) : (
+                      <span className="font-medium text-sm">
+                        {layer.object.rubble?.agentsRequired ?? 0}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
             )}
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
-              onClick={onDelete}
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            {editable && onDelete && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                onClick={onDelete}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

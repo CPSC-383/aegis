@@ -20,9 +20,10 @@ interface ListItemProps {
   layer: schema.WorldObject
   index: number
   id: string
-  onDelete: () => void
+  editable?: boolean
+  onDelete?: () => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onUpdate: (updates: any) => void
+  onUpdate?: (updates: any) => void
 }
 
 type TaskState =
@@ -35,6 +36,7 @@ export default function LayerItem({
   layer,
   index,
   id,
+  editable = true,
   onDelete,
   onUpdate,
 }: ListItemProps): JSX.Element {
@@ -45,7 +47,7 @@ export default function LayerItem({
   useEffect(() => {
     const mainElement = mainRef.current
     const element = itemRef.current
-    if (!element || !mainElement) {
+    if (!element || !mainElement || !editable) {
       return
     }
 
@@ -132,11 +134,11 @@ export default function LayerItem({
         },
       })
     )
-  }, [layer, id])
+  }, [layer, id, editable])
 
   return (
     <>
-      {state.type === "is-over" && state.edge === "top" ? (
+      {editable && state.type === "is-over" && state.edge === "top" ? (
         <DragShadow rect={state.rect} />
       ) : null}
       <div
@@ -146,15 +148,16 @@ export default function LayerItem({
         <Layer
           layer={layer}
           index={index}
+          editable={editable}
           onUpdate={onUpdate}
           onDelete={onDelete}
           ref={itemRef}
         />
       </div>
-      {state.type === "is-over" && state.edge === "bottom" ? (
+      {editable && state.type === "is-over" && state.edge === "bottom" ? (
         <DragShadow rect={state.rect} />
       ) : null}
-      {state.type === "preview"
+      {editable && state.type === "preview"
         ? createPortal(<DragPreview index={index} />, state.container)
         : null}
     </>
