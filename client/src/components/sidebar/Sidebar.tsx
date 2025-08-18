@@ -8,7 +8,6 @@ import { useRef, useState } from "react"
 import { createScaffold } from "@/services"
 import Console from "../Console"
 import Editor from "../editor/Editor"
-import InfoPanel from "../info-panel/Info-panel"
 import Aegis from "./Aegis"
 import Game from "./Game"
 import Settings from "./Settings"
@@ -124,7 +123,6 @@ export default function Sidebar(): JSX.Element {
           </motion.div>
         </button>
       </motion.div>
-      <InfoPanel />
     </div>
   )
 }

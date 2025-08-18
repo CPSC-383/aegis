@@ -5,6 +5,7 @@ export enum ListenerKey {
   Control = "control",
   Canvas = "canvas",
   Hover = "hover",
+  LayerViewer = "layerViewer",
 }
 
 type Listener = () => void
@@ -16,6 +17,7 @@ const listenersMap: Record<ListenerKey, Listener[]> = {
   [ListenerKey.Control]: [],
   [ListenerKey.Canvas]: [],
   [ListenerKey.Hover]: [],
+  [ListenerKey.LayerViewer]: [],
 }
 
 export function subscribe(key: ListenerKey, listener: Listener): () => void {

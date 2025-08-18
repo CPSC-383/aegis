@@ -1,30 +1,32 @@
-import { SetStateAction, useEffect, useRef } from "react"
-import LayerItem from "./LayerItem"
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
-import { flushSync } from "react-dom"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { schema } from "aegis-schema"
-import { getObjectId } from "./dnd-utils"
-import { Card, CardContent } from "../ui/card"
-import { Layers3 } from "lucide-react"
 import { isEqual } from "lodash"
+import { Layers3 } from "lucide-react"
+import { SetStateAction, useEffect, useRef } from "react"
+import { flushSync } from "react-dom"
+import { Card, CardContent } from "../ui/card"
+import { getObjectId } from "./dnd-utils"
+import LayerItem from "./LayerItem"
 
 interface Props {
   layers: schema.WorldObject[]
   originalLayers: schema.WorldObject[]
-  setLayers: (value: SetStateAction<schema.WorldObject[]>) => void
-  setHasChanges: (value: SetStateAction<boolean>) => void
+  editable?: boolean
+  setLayers?: (value: SetStateAction<schema.WorldObject[]>) => void
+  setHasChanges?: (value: SetStateAction<boolean>) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateLayer: (index: number, updates: any) => void
-  deleteLayer: (index: number) => void
+  updateLayer?: (index: number, updates: any) => void
+  deleteLayer?: (index: number) => void
 }
 
 export default function LayerList({
   layers,
   originalLayers,
+  editable = true,
   setLayers,
   setHasChanges,
   updateLayer,
@@ -34,7 +36,7 @@ export default function LayerList({
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container) {
+    if (!container || !editable || !setLayers || !setHasChanges) {
       return
     }
 
@@ -80,7 +82,7 @@ export default function LayerList({
         },
       })
     )
-  }, [layers])
+  }, [layers, editable, setLayers, setHasChanges, originalLayers])
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto" ref={containerRef}>
@@ -102,8 +104,11 @@ export default function LayerList({
               index={i + 1}
               layer={layer}
               id={getObjectId(layer)}
-              onUpdate={(updates) => updateLayer(i, updates)}
-              onDelete={() => deleteLayer(i)}
+              editable={editable}
+              onUpdate={
+                updateLayer ? (updates): void => updateLayer(i, updates) : undefined
+              }
+              onDelete={deleteLayer ? (): void => deleteLayer(i) : undefined}
             />
           ))
         )}

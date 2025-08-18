@@ -4,12 +4,12 @@ import { loadImage, renderCoords } from "@/utils/util"
 import { ListenerKey, notify } from "./Listeners"
 import { Runner } from "./Runner"
 
+import droneScanEye from "@/assets/drone-scan-eye.png"
 import goobA from "@/assets/goob-team-a.png"
 import goobB from "@/assets/goob-team-b.png"
 import rubble from "@/assets/rubble.png"
 import darkSurvivor from "@/assets/survivor-dark.png"
 import lightSurvivor from "@/assets/survivor-light.png"
-import droneScanEye from "@/assets/drone-scan-eye.png"
 
 class RendererClass {
   private canvases: Record<keyof typeof CanvasLayers, HTMLCanvasElement> = {} as Record<
@@ -21,6 +21,7 @@ class RendererClass {
   private mouseDownRight: boolean = false
   private selectedTile: Vector | undefined = undefined
   private hoveredTile: Vector | undefined = undefined
+  private layerViewerTile: Vector | undefined = undefined
 
   constructor() {
     const numericLayers = Object.values(CanvasLayers).filter(
@@ -150,6 +151,7 @@ class RendererClass {
       return
     }
     this.hoveredTile = tile
+    this.updateCursorForHover()
     notify(ListenerKey.Hover)
   }
 
@@ -159,12 +161,18 @@ class RendererClass {
       return
     }
     notify(ListenerKey.Canvas)
+
+    if (Runner.games?.playable) {
+      this.layerViewerTile = this.selectedTile
+      notify(ListenerKey.LayerViewer)
+    }
   }
 
   private mouseLeave(): void {
     this.mouseDownClick = false
     this.mouseDownRight = false
     this.hoveredTile = undefined
+    this.updateCursorForHover()
     notify(ListenerKey.Hover)
   }
 
@@ -182,6 +190,10 @@ class RendererClass {
 
   public getHoveredTile(): Vector | undefined {
     return this.hoveredTile
+  }
+
+  public getLayerViewerTile(): Vector | undefined {
+    return this.layerViewerTile
   }
 
   private eventToPoint(e: MouseEvent): Vector | undefined {
@@ -205,6 +217,20 @@ class RendererClass {
     }
 
     return { x, y }
+  }
+
+  public updateCursorForHover(): void {
+    const canvasArray = Object.values(this.canvases)
+    const topCanvas = canvasArray[canvasArray.length - 1]
+
+    const isSimulationRunning = Runner.games?.playable
+    const isHoveringCell = this.hoveredTile !== undefined
+
+    if (isSimulationRunning && isHoveringCell) {
+      topCanvas.style.cursor = "pointer"
+    } else {
+      topCanvas.style.cursor = "default"
+    }
   }
 }
 
