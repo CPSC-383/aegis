@@ -75,7 +75,7 @@ jobs:
             artifact-name: linux-client
             extension: AppImage
           - os: windows-latest
-            platform: win
+            platform: win32
             artifact-name: windows-client
             extension: exe
     runs-on: ${{ matrix.os }}
