@@ -147,6 +147,14 @@ export default function Editor({
     if (!currentBrush) {
       return
     }
+
+    const numberInputs = document.querySelectorAll('input[type="number"]')
+    numberInputs.forEach((input) => {
+      if (input instanceof HTMLInputElement) {
+        input.blur()
+      }
+    })
+
     currentBrush.apply(loc.x, loc.y, currentBrush.fields, rightClick)
     Renderer.doFullRedraw()
     Renderer.fullRender()
