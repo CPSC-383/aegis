@@ -98,12 +98,13 @@ class Game:
                 self._spawn_agents_at(loc, amt)
                 remaining -= amt
 
-            if remaining > 0:
+            # prio spawns filled, choose from any spawn
+
+            if len(positive_spawns) > 0 and remaining > 0:
                 LOGGER.warning(
-                    f"Ran world with {self.args.amount} agents, but world only specifies {len(positive_spawns)} dedicated spawns. Ensure this was intended."
+                    f"Ran world with {self.args.amount} agents, but world only specifies {len(positive_spawns)} dedicated spawns. Ensure this was intended usage."
                 )
 
-            # prio spawns filled, choose from any spawn
             all_spawns = self.get_spawns()
             while remaining > 0:
                 loc = random.choice(all_spawns)
