@@ -92,7 +92,8 @@ class Game:
 
                 # if we run out of remaining agents before filling all amt's, raise an error
                 if remaining < amt:
-                    msg = f"Not enough spawns to spawn {self.args.amount} agents!! Please run this world with at least {self.args.amount} agents"
+                    required_agents = sum(amt for amt in positive_spawns.values())
+                    msg = f"Not enough agents to fill world spawns! The world requires at least {required_agents} agents, but only {self.args.amount} were provided. Please use {required_agents} agents on this world."
                     raise ValueError(msg)
 
                 self._spawn_agents_at(loc, amt)
@@ -102,7 +103,7 @@ class Game:
 
             if len(positive_spawns) > 0 and remaining > 0:
                 LOGGER.warning(
-                    f"Ran world with {self.args.amount} agents, but world only specifies {len(positive_spawns)} dedicated spawns. Ensure this was intended usage."
+                    f"Ran world with {self.args.amount} agents, but world only specifies spawns for {sum(amt for amt in positive_spawns.values())} agents. Ensure this was intended usage."
                 )
 
             all_spawns = self.get_spawns()
