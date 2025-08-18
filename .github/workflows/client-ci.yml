@@ -6,7 +6,6 @@ on:
   pull_request:
     paths:
       - 'client/**' # only run if something in client/ changes
-  workflow_dispatch:
 
 env:
   NODE_VERSION: "20"
