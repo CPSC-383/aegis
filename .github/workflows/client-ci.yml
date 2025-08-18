@@ -123,7 +123,7 @@ jobs:
           fi
 
       - name: Prepare zips
-        # if: ${{ needs.release-please.outputs.releases_created == 'true' }}
+        if: ${{ needs.release-please.outputs.releases_created == 'true' }}
         working-directory: client 
         shell: bash
         run: |
