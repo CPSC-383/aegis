@@ -187,6 +187,13 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
         ) : (
           <Button
             onClick={() => {
+              const numberInputs = document.querySelectorAll('input[type="number"]')
+              numberInputs.forEach((input) => {
+                if (input instanceof HTMLInputElement) {
+                  input.blur()
+                }
+              })
+
               const amount = getCurrentAssignment() === ASSIGNMENT_A1 ? 1 : agentAmount
               startSimulation(
                 rounds.toString(),
