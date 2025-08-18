@@ -23,18 +23,16 @@ import LayerItem from "./LayerItem"
 interface Props {
   layers: schema.WorldObject[]
   originalLayers: schema.WorldObject[]
-  editable?: boolean
-  setLayers?: (value: SetStateAction<schema.WorldObject[]>) => void
-  setHasChanges?: (value: SetStateAction<boolean>) => void
+  setLayers: (value: SetStateAction<schema.WorldObject[]>) => void
+  setHasChanges: (value: SetStateAction<boolean>) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateLayer?: (index: number, updates: any) => void
-  deleteLayer?: (index: number) => void
+  updateLayer: (index: number, updates: any) => void
+  deleteLayer: (index: number) => void
 }
 
 export default function LayerList({
   layers,
   originalLayers,
-  editable = true,
   setLayers,
   setHasChanges,
   updateLayer,
@@ -44,7 +42,7 @@ export default function LayerList({
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container || !editable || !setLayers || !setHasChanges) {
+    if (!container) {
       return
     }
 
@@ -90,7 +88,7 @@ export default function LayerList({
         },
       })
     )
-  }, [layers, editable, setLayers, setHasChanges, originalLayers])
+  }, [layers, setLayers, setHasChanges, originalLayers])
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto" ref={containerRef}>
@@ -112,11 +110,8 @@ export default function LayerList({
               index={i + 1}
               layer={layer}
               id={getObjectId(layer)}
-              editable={editable}
-              onUpdate={
-                updateLayer ? (updates): void => updateLayer(i, updates) : undefined
-              }
-              onDelete={deleteLayer ? (): void => deleteLayer(i) : undefined}
+              onUpdate={(updates): void => updateLayer(i, updates)}
+              onDelete={(): void => deleteLayer(i)}
             />
           ))
         )}
