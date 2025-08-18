@@ -156,25 +156,8 @@ class ElectronApp {
       return config
     } catch (error) {
       console.error(`Error reading the config file: ${error}`)
-      // Return default config if file can't be read
-      return {
-        features: {
-          ENABLE_PREDICTIONS: false,
-          ALLOW_CUSTOM_AGENT_COUNT: false,
-          DEFAULT_AGENT_AMOUNT: 1,
-        },
-        assignment_specific: {
-          ENABLE_MOVE_COST: false,
-        },
-        competition_specific: {
-          VERSUS_MODE: false,
-        },
-        client: {
-          CONFIG_TYPE: "assignment",
-          SHOW_DEBUG_MODE: true,
-          SHOW_MULTI_AGENT_OPTIONS: false,
-        },
-      }
+      // Return null if the config file is not found
+      return null
     }
   }
 
@@ -226,7 +209,18 @@ class ElectronApp {
       ...(debug ? ["--debug"] : []),
     ]
 
-    const childAegis = child_process.spawn("aegis", procArgs, {
+    const venvPath = this.findVenvPython(aegisPath)
+
+    if (!venvPath) {
+      throw new Error("Virtual environment not found")
+    }
+
+    const aegisExec =
+      process.platform === "win32"
+        ? path.join(venvPath, "aegis.exe")
+        : path.join(venvPath, "aegis")
+
+    const childAegis = child_process.spawn(aegisExec, procArgs, {
       cwd: aegisPath,
     })
 
@@ -306,6 +300,14 @@ class ElectronApp {
       process.kill()
       this.processes.delete(pid)
     }
+  }
+
+  private findVenvPython(aegisPath: string): string | null {
+    const isWindows = process.platform === "win32"
+    const venvPath = isWindows
+      ? path.join(aegisPath, ".venv", "Scripts")
+      : path.join(aegisPath, ".venv", "bin")
+    return fs.existsSync(venvPath) ? venvPath : null
   }
 }
 
