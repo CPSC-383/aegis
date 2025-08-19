@@ -1,7 +1,7 @@
 import goobA from "@/assets/goob-team-a.png"
 import goobB from "@/assets/goob-team-b.png"
 import type Round from "@/core/Round"
-import useRound from "@/hooks/useRound"
+import { useRoundWithVersion } from "@/hooks/useRound"
 import useSelectedTile from "@/hooks/useSelectedTile"
 import { useAppStore } from "@/store/useAppStore"
 import { Scaffold } from "@/types"
@@ -75,7 +75,7 @@ function getAgentsByTeam(
 export default function CellView({ scaffold }: Props): JSX.Element {
   const { collapsedPanels, togglePanel } = useAppStore()
   const isCollapsed = collapsedPanels["cellView"] ?? false
-  const round = useRound()
+  const { round, version } = useRoundWithVersion()
   const selectedTile = useSelectedTile()
 
   const cell =
@@ -99,7 +99,7 @@ export default function CellView({ scaffold }: Props): JSX.Element {
       }
     }
     return ids
-  }, [round, selectedTile])
+  }, [round, selectedTile, version])
 
   const renderAgents = (): JSX.Element => {
     if (!round || !selectedTile || agentIds.length === 0) {
@@ -109,45 +109,48 @@ export default function CellView({ scaffold }: Props): JSX.Element {
     const teamAgents = getAgentsByTeam(agentIds, round)
     const isVersusMode = scaffold.config?.configType === "competition"
 
+    const teamConfigs = [
+      {
+        team: schema.Team.GOOBS,
+        agents: teamAgents[schema.Team.GOOBS],
+        icon: goobA,
+        badgeClass: "bg-green-100 text-green-800 border-green-200",
+        label: "Goob",
+        delay: 0.05,
+      },
+    ]
+
+    if (isVersusMode && teamAgents[schema.Team.VOIDSEERS].length > 0) {
+      teamConfigs.push({
+        team: schema.Team.VOIDSEERS,
+        agents: teamAgents[schema.Team.VOIDSEERS],
+        icon: goobB,
+        badgeClass: "bg-purple-100 text-purple-800 border-purple-200",
+        label: "Voidseer",
+        delay: 0.1,
+      })
+    }
+
     return (
       <div className="space-y-2">
-        {teamAgents[schema.Team.GOOBS].length > 0 && (
-          <div className="space-y-2">
-            {teamAgents[schema.Team.GOOBS].map((agentId) => (
+        {teamConfigs.map((teamConfig) => (
+          <div key={teamConfig.team} className="space-y-2">
+            {teamConfig.agents.map((agentId) => (
               <AnimatedContainer
                 key={agentId}
-                className="flex items-center gap-2 p-2 bg-muted/50 rounded text-sm"
-                delay={0.05}
+                className="flex items-center gap-2 bg-muted/50 rounded text-sm"
+                delay={teamConfig.delay}
               >
-                <img src={goobA} alt="Goob" className="w-4 h-4" />
-                <Badge className="bg-green-100 text-green-800 border-green-200 font-medium">
-                  <User className="w-4 h-4 mr-1" />
-                  Goob
-                </Badge>
-                <span className="text-xs text-muted-foreground">ID: {agentId}</span>
-              </AnimatedContainer>
-            ))}
-          </div>
-        )}
-
-        {isVersusMode && teamAgents[schema.Team.VOIDSEERS].length > 0 && (
-          <div className="space-y-2">
-            {teamAgents[schema.Team.VOIDSEERS].map((agentId) => (
-              <AnimatedContainer
-                key={agentId}
-                className="flex items-center gap-2 p-2 bg-muted/50 rounded text-sm"
-                delay={0.1}
-              >
-                <img src={goobB} alt="Voidseer" className="w-4 h-4" />
-                <Badge className="bg-purple-100 text-purple-800 border-purple-200 font-medium">
+                <img src={teamConfig.icon} alt={teamConfig.label} className="w-6 h-6" />
+                <Badge className={`${teamConfig.badgeClass} font-medium`}>
                   <User className="w-3 h-3 mr-1" />
-                  Voidseer
+                  {teamConfig.label}
                 </Badge>
                 <span className="text-xs text-muted-foreground">ID: {agentId}</span>
               </AnimatedContainer>
             ))}
           </div>
-        )}
+        ))}
       </div>
     )
   }
