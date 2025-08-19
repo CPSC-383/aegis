@@ -89,9 +89,9 @@ export default function Console({ output }: Props): JSX.Element {
   }
 
   return (
-    <>
-      <div className="w-full h-[300px] flex flex-col">
-        <div className="flex justify-between items-center mb-2 flex-shrink-0">
+    <div className="h-full flex-1">
+      <div className="mt-4 w-full h-[300px] flex flex-col">
+        <div className="flex justify-between items-center">
           <h2 className="font-bold">Console</h2>
           <Button variant="ghost" size="icon" onClick={() => setIsPopupOpen(true)}>
             <Maximize2 />

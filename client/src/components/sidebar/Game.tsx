@@ -1,4 +1,4 @@
-import useRound from "@/hooks/useRound"
+import { useRoundWithVersion } from "@/hooks/useRound"
 import { useAppStore } from "@/store/useAppStore"
 import { Scaffold } from "@/types"
 import { schema } from "aegis-schema"
@@ -14,7 +14,7 @@ interface Props {
 export default function Game({ scaffold }: Props): JSX.Element {
   const { collapsedPanels, togglePanel } = useAppStore()
   const isStatsCollapsed = collapsedPanels["matchStats"] ?? false
-  const round = useRound()
+  const { round } = useRoundWithVersion()
 
   if (!round || !scaffold) {
     return (
@@ -35,7 +35,7 @@ export default function Game({ scaffold }: Props): JSX.Element {
   const voidseers = stats.getTeamStats(schema.Team.VOIDSEERS)
 
   return (
-    <AnimatedContainer className="space-y-6">
+    <AnimatedContainer className="mt-2 space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Trophy className="w-4 h-4 text-yellow-600" />
