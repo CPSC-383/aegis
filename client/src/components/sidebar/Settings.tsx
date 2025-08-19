@@ -1,7 +1,8 @@
-import { motion } from "framer-motion"
 import { Bug, Folder, Settings as SettingsIcon } from "lucide-react"
 
+import { AnimatedContainer } from "@/components/ui/animated-container"
 import { Button } from "@/components/ui/button"
+import { ErrorMessage } from "@/components/ui/error-message"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useLocalStorage } from "@/hooks/useLocalStorage"
@@ -57,12 +58,7 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="w-full"
-    >
+    <AnimatedContainer className="w-full">
       <div className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -101,7 +97,7 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-700">
-                      {config.variableAgentAmount ? "Max" : ""} Agent Amount
+                      {config.allowAgentTypes ? "Max" : ""} Agent Amount
                     </span>
                     {renderConfigValue(config.defaultAgentAmount)}
                   </div>
@@ -115,31 +111,12 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
               </div>
             </>
           ) : (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-              <div className="flex">
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">Config Error</h3>
-                  <div className="mt-2 text-sm text-red-700">
-                    <p>
-                      Failed to load config.yaml. Please check your config file and
-                      ensure it&apos;s valid.
-                    </p>
-                  </div>
-                  <div className="mt-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        readAegisConfig()
-                      }}
-                    >
-                      Retry Load Config
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ErrorMessage
+              title="Config Error"
+              message="Failed to load config.yaml. Please check your config file and ensure it's valid."
+              actionText="Retry Load Config"
+              onAction={readAegisConfig}
+            />
           )}
         </div>
 
@@ -157,7 +134,7 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </AnimatedContainer>
   )
 }
 

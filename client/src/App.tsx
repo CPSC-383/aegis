@@ -5,6 +5,7 @@ import useGames from "./hooks/useGames"
 
 export default function App(): JSX.Element {
   const games = useGames()
+
   return (
     <div className="flex bg-background overflow-hidden">
       <div className="flex w-full h-screen justify-center">

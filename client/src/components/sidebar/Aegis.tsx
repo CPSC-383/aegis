@@ -1,7 +1,8 @@
-import { motion } from "framer-motion"
 import { useEffect, useMemo, useState } from "react"
 
+import { AnimatedContainer } from "@/components/ui/animated-container"
 import { Button } from "@/components/ui/button"
+import { ErrorMessage } from "@/components/ui/error-message"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -68,38 +69,14 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
   const showMultiAgentOptions = config?.variableAgentAmount ?? false
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="w-full space-y-4"
-    >
+    <AnimatedContainer className="w-full space-y-4">
       {config === null && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-          <div className="flex">
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Config Error</h3>
-              <div className="mt-2 text-sm text-red-700">
-                <p>
-                  Failed to load config.yaml. Please check your config file and ensure
-                  it&apos;s valid.
-                </p>
-              </div>
-              <div className="mt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    readAegisConfig()
-                  }}
-                >
-                  Retry Load Config
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ErrorMessage
+          title="Config Error"
+          message="Failed to load config.yaml. Please check your config file and ensure it's valid."
+          actionText="Retry Load Config"
+          onAction={readAegisConfig}
+        />
       )}
 
       <div>
@@ -144,7 +121,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
 
       {showMultiAgentOptions && (
         <div>
-          <Label>Number of Agents</Label>
+          <Label className="text-xs text-muted-foreground">Number of Agents</Label>
           <NumberInput
             name="agentAmount"
             value={agentAmount}
@@ -189,7 +166,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
         )}
       </div>
       <GameCycler />
-    </motion.div>
+    </AnimatedContainer>
   )
 }
 

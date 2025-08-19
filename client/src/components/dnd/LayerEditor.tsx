@@ -9,11 +9,11 @@ import { useState } from "react"
 
 import Round from "@/core/Round"
 import { Vector } from "@/types"
-import { MapPin, Save, X } from "lucide-react"
-import LayerList from "./LayerList"
+import { isEqual } from "lodash"
+import { MapPin, Save } from "lucide-react"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
-import { isEqual } from "lodash"
+import LayerList from "./LayerList"
 
 interface Props {
   tile: Vector | undefined
@@ -117,10 +117,6 @@ export default function LayerEditor({
             )}
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={handleCancel}>
-              <X className="w-4 h-4 mr-1" />
-              Cancel
-            </Button>
             <Button size="sm" onClick={handleSave} disabled={!hasChanges}>
               <Save className="w-4 h-4 mr-1" />
               Save Changes

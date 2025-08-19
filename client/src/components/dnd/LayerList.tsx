@@ -1,16 +1,16 @@
-import { SetStateAction, useEffect, useRef } from "react"
-import LayerItem from "./LayerItem"
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
-import { flushSync } from "react-dom"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { schema } from "aegis-schema"
-import { getObjectId } from "./dnd-utils"
-import { Card, CardContent } from "../ui/card"
-import { Layers3 } from "lucide-react"
 import { isEqual } from "lodash"
+import { Layers3 } from "lucide-react"
+import { SetStateAction, useEffect, useRef } from "react"
+import { flushSync } from "react-dom"
+import { Card, CardContent } from "../ui/card"
+import { getObjectId } from "./dnd-utils"
+import LayerItem from "./LayerItem"
 
 interface Props {
   layers: schema.WorldObject[]
@@ -80,7 +80,7 @@ export default function LayerList({
         },
       })
     )
-  }, [layers])
+  }, [layers, setLayers, setHasChanges, originalLayers])
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto" ref={containerRef}>
@@ -102,8 +102,8 @@ export default function LayerList({
               index={i + 1}
               layer={layer}
               id={getObjectId(layer)}
-              onUpdate={(updates) => updateLayer(i, updates)}
-              onDelete={() => deleteLayer(i)}
+              onUpdate={(updates): void => updateLayer(i, updates)}
+              onDelete={(): void => deleteLayer(i)}
             />
           ))
         )}

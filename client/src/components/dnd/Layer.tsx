@@ -58,7 +58,7 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                         layer.object.oneofKind === "survivor"
                           ? layer.object.survivor
                           : undefined
-                      if (!survivor) {
+                      if (!survivor || !onUpdate) {
                         return
                       }
 
@@ -94,7 +94,7 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                           layer.object.oneofKind === "rubble"
                             ? layer.object.rubble
                             : undefined
-                        if (!rubble) {
+                        if (!rubble || !onUpdate) {
                           return
                         }
 
@@ -124,7 +124,7 @@ const Layer = forwardRef<HTMLDivElement, Props>(
                           layer.object.oneofKind === "rubble"
                             ? layer.object.rubble
                             : undefined
-                        if (!rubble) {
+                        if (!rubble || !onUpdate) {
                           return
                         }
 

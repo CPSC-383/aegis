@@ -1,11 +1,11 @@
 # pyright: reportImportCycles = false
 
-import sys
 from typing import TYPE_CHECKING
 
 from .agent_type import AgentType
 from .common import Direction, Location
 from .constants import Constants
+from .logger import AGENT_LOGGER
 from .message_buffer import MessageBuffer
 from .sandbox.core import LumenCore
 from .sandbox.sandbox import Sandbox
@@ -94,9 +94,8 @@ class Agent:
             if self.debug:
                 self.log(error, is_error=True)
             else:
-                print(
-                    f"[Agent#({self.id}:{self.team.name})@{self.game.round}] [ERROR] Error thrown this round. (Turn on debug to see error message)",
-                    file=sys.stderr,
+                AGENT_LOGGER.warning(
+                    f"[Agent#({self.id}:{self.team.name})@{self.game.round}] [ERROR] Error thrown this round. (Turn on debug to see error message)"
                 )
 
     def log(self, *args: object, is_error: bool = False) -> None:
@@ -104,20 +103,16 @@ class Agent:
             return
 
         agent_id = self.id
+        prefix = f"[Agent#({agent_id}:{self.team.name})@{self.game.round}]"
+
         if is_error:
-            print(
-                f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ",
-                end="",
-                file=sys.stderr,
-            )
+            AGENT_LOGGER.error(f"{prefix} {' '.join(map(str, args))}")
         else:
-            print(f"[Agent#({agent_id}:{self.team.name})@{self.game.round}] ", end="")
-        print(*args)
+            AGENT_LOGGER.info(f"{prefix} {' '.join(map(str, args))}")
 
     def penalize_for_errors(self) -> None:
         if self.errors:
             self.add_energy(Constants.ENERGY_PENALTY_FOR_ERRORS)
-            print(
-                f"[Agent#({self.id}:{self.team.name})@{self.game.round}] [ERROR] penalized {Constants.ENERGY_PENALTY_FOR_ERRORS} energy for error.",
-                file=sys.stderr,
+            AGENT_LOGGER.warning(
+                f"[Agent#({self.id}:{self.team.name})@{self.game.round}] [ERROR] penalized {Constants.ENERGY_PENALTY_FOR_ERRORS} energy for error."
             )

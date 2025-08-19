@@ -48,7 +48,7 @@ export default function Console({ output }: Props): JSX.Element {
 
   const renderOutput = (): JSX.Element => {
     return (
-      <div className="h-full min-h-[200px] p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
+      <div className="p-2 h-full border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
         {output
           .getItems()
           .filter((line) => {
@@ -89,15 +89,15 @@ export default function Console({ output }: Props): JSX.Element {
   }
 
   return (
-    <>
-      <div className="w-full h-full min-h-[200px] flex flex-col overflow-auto">
-        <div className="flex justify-between items-center mb-2">
+    <div className="h-full flex-1">
+      <div className="mt-4 w-full h-[300px] flex flex-col">
+        <div className="flex justify-between items-center">
           <h2 className="font-bold">Console</h2>
           <Button variant="ghost" size="icon" onClick={() => setIsPopupOpen(true)}>
             <Maximize2 className="h-4 w-4" />
           </Button>
         </div>
-        {renderOutput()}
+        <div className="flex-1 min-h-0">{renderOutput()}</div>
       </div>
       <Dialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
         <DialogContent
@@ -123,6 +123,6 @@ export default function Console({ output }: Props): JSX.Element {
           {renderOutput()}
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   )
 }

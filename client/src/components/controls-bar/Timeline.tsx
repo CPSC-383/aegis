@@ -6,13 +6,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Runner } from "@/core/Runner"
-import useRound from "@/hooks/useRound"
+import { useRoundWithVersion } from "@/hooks/useRound"
 import { TIMELINE_WIDTH } from "@/utils/constants"
 import { MouseEvent } from "react"
 import invariant from "tiny-invariant"
 
 export default function Timeline(): JSX.Element {
-  const round = useRound()
+  const { round } = useRoundWithVersion()
 
   // Convert internal round number to display round number (completed rounds)
   const getDisplayRound = (internalRound: number): number =>
