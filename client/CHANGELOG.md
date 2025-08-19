@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.4.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-client-v2.3.0...aegis-client-v2.4.0) (2025-08-19)
+
+
+### Features
+
+* **client:** cell view in client ([#323](https://github.com/AEGIS-GAME/aegis/issues/323)) ([4d7e0ae](https://github.com/AEGIS-GAME/aegis/commit/4d7e0ae9598a745fd7e6b434ca31cbf2ecd676f0))
+* **client:** client can run game when not launched from terminal. ([#309](https://github.com/AEGIS-GAME/aegis/issues/309)) ([3ba8033](https://github.com/AEGIS-GAME/aegis/commit/3ba8033b0a3969c4aad147d552149cf477072942))
+* **client:** refactor client config ([#312](https://github.com/AEGIS-GAME/aegis/issues/312)) ([9519229](https://github.com/AEGIS-GAME/aegis/commit/9519229e17c910cd19fb0364ad32bbe0b4c44a00))
+
+
+### Bug Fixes
+
+* **aegis:** make spawns work for dynamic/no dynamic ([#310](https://github.com/AEGIS-GAME/aegis/issues/310)) ([ccea8c1](https://github.com/AEGIS-GAME/aegis/commit/ccea8c177220a98cf21147000f67a5432cf35c36))
+
 ## [2.3.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-client-v2.2.0...aegis-client-v2.3.0) (2025-08-15)
 
 
