@@ -131,7 +131,7 @@ export default function CellView({ cell, round, scaffold }: Props): JSX.Element 
       </div>
 
       {!isCollapsed && (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {!cell || !round || !cellData ? (
             <div className="text-sm text-muted-foreground text-center py-4">
               Click on a cell to view its information
@@ -144,16 +144,19 @@ export default function CellView({ cell, round, scaffold }: Props): JSX.Element 
                 </div>
               )}
 
-              <div className="flex items-center justify-start gap-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">Move Cost:</span>
-                  <Badge variant="outline" className="font-mono">
+              <div className="flex items-center justify-start gap-3">
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-medium">Move Cost:</span>
+                  <Badge variant="outline" className="font-mono px-1.5">
                     {cellData.moveCost}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">Type:</span>
-                  <Badge className={getCellTypeColor(cellData.cellType)}>
+                  <span className="text-xs font-medium">Type:</span>
+                  <Badge
+                    variant="outline"
+                    className={getCellTypeColor(cellData.cellType)}
+                  >
                     {getCellTypeLabel(cellData.cellType)}
                   </Badge>
                 </div>
