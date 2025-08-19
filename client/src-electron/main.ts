@@ -258,7 +258,6 @@ class ElectronApp {
           })
 
           childAegis.on("exit", (code, signal) => {
-            // Flush any remaining buffer content before exit
             if (stdoutBuffer.trim()) {
               // console.log("Flushing remaining stdout:", stdoutBuffer.trim())
               this.mainWindow?.webContents.send(
