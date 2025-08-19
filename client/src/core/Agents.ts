@@ -1,11 +1,11 @@
 import goobA from "@/assets/goob-team-a.png"
 import goobB from "@/assets/goob-team-b.png"
+import { TILE_SIZE } from "@/utils/constants"
 import { getImage, renderCoords } from "@/utils/util"
 import { schema } from "aegis-schema"
+import invariant from "tiny-invariant"
 import Game from "./Game"
 import Games from "./Games"
-import invariant from "tiny-invariant"
-import { TILE_SIZE } from "@/utils/constants"
 
 export default class Agents {
   public agents: Map<number, Agent> = new Map()

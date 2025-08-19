@@ -193,13 +193,16 @@ export default function CellView({ scaffold }: Props): JSX.Element {
               <div className="flex items-center justify-start gap-3">
                 <div className="flex items-center gap-1">
                   <span className="text-xs font-medium">Move Cost:</span>
-                  <Badge variant="outline" className="font-mono px-1.5">
+                  <Badge variant="outline" className="font-mono">
                     {cell.moveCost}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium">Type:</span>
-                  <Badge variant="outline" className={getCellTypeColor(cell.type)}>
+                  <Badge
+                    variant="outline"
+                    className={`${getCellTypeColor(cell.type)} font-mono`}
+                  >
                     {getCellTypeLabel(cell.type)}
                   </Badge>
                 </div>
@@ -224,11 +227,11 @@ export default function CellView({ scaffold }: Props): JSX.Element {
                       {cell.layers.length === 0 ? (
                         <EmptyState message="No layers on this tile" />
                       ) : (
-                        <div className="space-y-2">
+                        <div className="space-y-0">
                           {cell.layers.map((layer, index) => (
                             <AnimatedContainer
                               key={index}
-                              className="flex items-center gap-2 p-2 bg-muted/50 rounded text-sm"
+                              className="flex items-center gap-2 p-1 bg-muted/50 rounded text-sm"
                               delay={0.05 * (index + 1)}
                             >
                               <Badge
