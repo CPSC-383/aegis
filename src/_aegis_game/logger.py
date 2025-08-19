@@ -23,6 +23,9 @@ class LevelBasedFormatter(logging.Formatter):
                 self._style._fmt = "[aegis:%(levelname)s] %(message)s"  # noqa: SLF001
             else:
                 self._style._fmt = "[aegis] %(message)s"  # noqa: SLF001
+        elif record.name == "aegis.agent":
+            # Agent messages should not have additional formatting
+            return record.getMessage()
         return super().format(record)
 
 
@@ -46,6 +49,16 @@ def setup_console_logging() -> None:
         handlers=handlers,
         force=True,
     )
+
+    # Configure agent logger to use stdout for all levels
+    agent_logger = logging.getLogger("aegis.agent")
+    agent_logger.setLevel(logging.DEBUG)
+    agent_logger.propagate = False  # Prevent double logging
+
+    agent_stdout_handler = logging.StreamHandler(stream=sys.stdout)
+    agent_stdout_handler.setLevel(logging.DEBUG)
+    agent_stdout_handler.setFormatter(formatter)
+    agent_logger.addHandler(agent_stdout_handler)
 
 
 def setup_console_and_file_logging() -> None:
@@ -84,5 +97,16 @@ def setup_console_and_file_logging() -> None:
         force=True,
     )
 
+    # Configure agent logger to use stdout for all levels
+    agent_logger = logging.getLogger("aegis.agent")
+    agent_logger.setLevel(logging.DEBUG)
+    agent_logger.propagate = False  # Prevent double logging
+
+    agent_stdout_handler = logging.StreamHandler(stream=sys.stdout)
+    agent_stdout_handler.setLevel(logging.DEBUG)
+    agent_stdout_handler.setFormatter(formatter)
+    agent_logger.addHandler(agent_stdout_handler)
+
 
 LOGGER: logging.Logger = logging.getLogger("aegis")
+AGENT_LOGGER: logging.Logger = logging.getLogger("aegis.agent")

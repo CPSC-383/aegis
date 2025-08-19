@@ -222,6 +222,8 @@ class ElectronApp {
 
     const childAegis = child_process.spawn(aegisExec, procArgs, {
       cwd: aegisPath,
+      env: { ...process.env, PYTHONUNBUFFERED: "1" },
+      stdio: ["pipe", "pipe", "pipe"],
     })
 
     return new Promise((resolve, reject) => {
@@ -255,7 +257,6 @@ class ElectronApp {
           })
 
           childAegis.on("exit", (code, signal) => {
-            // Flush any remaining buffer content before exit
             if (stdoutBuffer.trim()) {
               // console.log("Flushing remaining stdout:", stdoutBuffer.trim())
               this.mainWindow?.webContents.send(
@@ -291,7 +292,10 @@ class ElectronApp {
     const combined = buffer + data
     const lines = combined.split("\n")
     const newBuffer = lines.pop() ?? ""
-    return { lines, buffer: newBuffer }
+
+    const validLines = lines.filter((line) => line.trim().length > 0)
+
+    return { lines: validLines, buffer: newBuffer }
   }
 
   private killProcess(pid: string): void {
