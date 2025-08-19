@@ -114,7 +114,7 @@ export default function CellView({ scaffold }: Props): JSX.Element {
         team: schema.Team.GOOBS,
         agents: teamAgents[schema.Team.GOOBS],
         icon: goobA,
-        badgeClass: "bg-green-100 text-green-800 border-green-200",
+        badgeClass: "bg-blue-100 text-blue-800 border-blue-200",
         label: "Goob",
         delay: 0.05,
       },
@@ -142,7 +142,10 @@ export default function CellView({ scaffold }: Props): JSX.Element {
                 delay={teamConfig.delay}
               >
                 <img src={teamConfig.icon} alt={teamConfig.label} className="w-6 h-6" />
-                <Badge className={`${teamConfig.badgeClass} font-medium`}>
+                <Badge
+                  variant="outline"
+                  className={`${teamConfig.badgeClass} font-medium pointer-events-none`}
+                >
                   <User className="w-3 h-3 mr-1" />
                   {teamConfig.label}
                 </Badge>
@@ -235,6 +238,7 @@ export default function CellView({ scaffold }: Props): JSX.Element {
                               delay={0.05 * (index + 1)}
                             >
                               <Badge
+                                variant="outline"
                                 className={`${getLayerColor(layer.object.oneofKind!)} font-medium`}
                               >
                                 {getLayerIcon(layer.object.oneofKind!)}
@@ -244,15 +248,25 @@ export default function CellView({ scaffold }: Props): JSX.Element {
                               </Badge>
 
                               {layer.object.oneofKind === "survivor" && (
-                                <span className="text-xs text-muted-foreground">
-                                  HP: {layer.object.survivor.health}
-                                </span>
+                                <>
+                                  <span className="text-xs text-muted-foreground">
+                                    ID: {layer.object.survivor.id}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    HP: {layer.object.survivor.health}
+                                  </span>
+                                </>
                               )}
 
                               {layer.object.oneofKind === "rubble" && (
-                                <span className="text-xs text-muted-foreground">
-                                  Energy: {layer.object.rubble?.energyRequired ?? 0}
-                                </span>
+                                <>
+                                  <span className="text-xs text-muted-foreground">
+                                    Energy: {layer.object.rubble?.energyRequired ?? 0}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    Num: {layer.object.rubble?.agentsRequired ?? 0}
+                                  </span>
+                                </>
                               )}
                             </AnimatedContainer>
                           ))}
