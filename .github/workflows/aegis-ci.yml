@@ -51,31 +51,17 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      id-token: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Configure release-please
-        id: release-config
-        run: |
-          if [ -f .github/release-please-config.json ]; then
-            echo "config-file=.github/release-please-config.json" >> $GITHUB_OUTPUT
-            [ -f .github/release-please-manifest.json ] &&
-              echo "manifest-file=.github/release-please-manifest.json" >> $GITHUB_OUTPUT
-            [ -f .github/.release-please-manifest.json ] &&
-              echo "manifest-file=.github/.release-please-manifest.json" >> $GITHUB_OUTPUT
-          else
-            echo "release-type=python" >> $GITHUB_OUTPUT
-          fi
-          exit 0
-
-      - name: Release
+      - name: Create Release
         uses: googleapis/release-please-action@v4
         id: release
         with:
-          config-file: ${{ steps.release-config.outputs.config-file }}
-          release-type: ${{ steps.release-config.outputs.release-type }}
-          manifest-file: ${{ steps.release-config.outputs.manifest-file }}
+          config-file: ${{ hashFiles('.github/release-please-config.json') != '' && '.github/release-please-config.json' || '' }}
+          manifest-file: ${{ hashFiles('.github/release-please-manifest.json') != '' && '.github/release-please-manifest.json' || hashFiles('.github/.release-please-manifest.json') != '' && '.github/.release-please-manifest.json' || '' }}
 
       - name: Debug release
         continue-on-error: true
