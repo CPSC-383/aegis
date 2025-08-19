@@ -138,7 +138,7 @@ export default function CellView({ scaffold }: Props): JSX.Element {
             {teamConfig.agents.map((agentId) => (
               <AnimatedContainer
                 key={agentId}
-                className="flex items-center gap-2 bg-muted/50 rounded text-sm"
+                className="flex items-center gap-2 rounded text-sm"
                 delay={teamConfig.delay}
               >
                 <img src={teamConfig.icon} alt={teamConfig.label} className="w-6 h-6" />
@@ -231,7 +231,7 @@ export default function CellView({ scaffold }: Props): JSX.Element {
                           {cell.layers.map((layer, index) => (
                             <AnimatedContainer
                               key={index}
-                              className="flex items-center gap-2 p-1 bg-muted/50 rounded text-sm"
+                              className="flex items-center gap-2 p-1 rounded text-sm"
                               delay={0.05 * (index + 1)}
                             >
                               <Badge
