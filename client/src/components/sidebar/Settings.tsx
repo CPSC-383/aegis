@@ -101,7 +101,7 @@ const Settings = ({ scaffold }: Props): JSX.Element => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-700">
-                      {config.variableAgentAmount ? "Max" : ""} Agent Amount
+                      {config.allowAgentTypes ? "Max" : ""} Agent Amount
                     </span>
                     {renderConfigValue(config.defaultAgentAmount)}
                   </div>
