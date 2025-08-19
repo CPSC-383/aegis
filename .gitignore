@@ -36,6 +36,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-packed-client
+releases
 .prettierrc
 replay.txt

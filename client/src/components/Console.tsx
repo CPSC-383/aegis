@@ -51,7 +51,13 @@ export default function Console({ output }: Props): JSX.Element {
       <div className="h-full min-h-[200px] max-h-[400px] p-2 border-2 border-accent-light rounded-md text-xs overflow-auto whitespace-nowrap scrollbar">
         {output
           .getItems()
-          .filter((line) => line.gameIdx === Runner.games?.games.indexOf(game!))
+          .filter((line) => {
+            // If there's no current game, show messages with gameIdx 0 (startup errors)
+            if (!game || !Runner.games) {
+              return line.gameIdx === 0
+            }
+            return line.gameIdx === Runner.games.games.indexOf(game)
+          })
           .map((line, i) => {
             const matches =
               searchTerm &&

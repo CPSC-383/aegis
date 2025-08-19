@@ -50,8 +50,10 @@ const electronAPI = {
       ipcRenderer.on("aegis_child_process.stdout", (_, data) => callback(data)),
     onStderr: (callback: (data: string) => void) =>
       ipcRenderer.on("aegis_child_process.stderr", (_, data) => callback(data)),
-    onExit: (callback: () => void) =>
-      ipcRenderer.on("aegis_child_process.exit", () => callback()),
+    onExit: (
+      callback: (exitInfo: { code: number | null; signal: string | null }) => void
+    ) =>
+      ipcRenderer.on("aegis_child_process.exit", (_, exitInfo) => callback(exitInfo)),
   },
 }
 

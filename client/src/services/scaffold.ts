@@ -32,6 +32,13 @@ export function createScaffold(): Scaffold {
     ) {
       currentGameIdx.current++
     }
+
+    // Only force update for error messages or when no game is running
+    // This ensures startup errors are visible immediately without causing
+    // excessive re-renders during normal simulation
+    if (line.has_error || !Runner.games?.currentGame) {
+      forceUpdate()
+    }
   }
 
   const setupAegisPath = async (): Promise<void> => {
@@ -125,11 +132,28 @@ export function createScaffold(): Scaffold {
       })
 
       aegisAPI.aegis_child_process.onStderr((data: string) => {
+        // console.log("Frontend received stderr:", data)
         addOutput({ content: data, has_error: true, gameIdx: 0 })
       })
 
-      aegisAPI.aegis_child_process.onExit(() => {
+      aegisAPI.aegis_child_process.onExit((exitInfo) => {
+        console.log("Frontend received exit event:", exitInfo)
         aegisPid.current = undefined
+
+        // If the process exited with an error code, add an error message to the console
+        if (exitInfo.code !== null && exitInfo.code !== 0) {
+          const errorMessage = exitInfo.signal
+            ? `AEGIS process was terminated by signal ${exitInfo.signal}`
+            : `AEGIS process exited with error code ${exitInfo.code}. This may indicate a configuration error, insufficient agents for the world spawns, or other startup issues. Check the error messages above for details.`
+
+          console.log("Adding error message to console:", errorMessage)
+          addOutput({
+            content: `[ERROR] ${errorMessage}`,
+            has_error: true,
+            gameIdx: currentGameIdx.current,
+          })
+        }
+
         forceUpdate()
       })
 

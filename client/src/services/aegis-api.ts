@@ -27,7 +27,9 @@ type AegisAPI = {
     kill: (aegisPid: string) => void
     onStdout: (callback: (data: string) => void) => void
     onStderr: (callback: (data: string) => void) => void
-    onExit: (callback: () => void) => void
+    onExit: (
+      callback: (exitInfo: { code: number | null; signal: string | null }) => void
+    ) => void
   }
 }
 

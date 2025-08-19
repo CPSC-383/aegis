@@ -93,7 +93,11 @@ def run(args: LaunchArgs) -> None:
 
         world.rounds = args.rounds
 
-        game = Game([sandbox_goobs, sandbox_seers], args, world, game_pb)
+        try:
+            game = Game([sandbox_goobs, sandbox_seers], args, world, game_pb)
+        except ValueError as e:
+            enhanced_msg = f"Error in world '{world_name}': {e}"
+            raise ValueError(enhanced_msg) from e
 
         LOGGER.info("========== AEGIS START ==========")
         LOGGER.info(make_game_start_string(args, world_name))

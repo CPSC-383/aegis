@@ -19,7 +19,7 @@
     "productName": "AEGIS",
     "compression": "store",
     "directories": {
-      "output": "packed-client"
+      "output": "releases/${platform}"
     },
     "files": [
       "dist/**",
