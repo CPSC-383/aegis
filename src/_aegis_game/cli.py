@@ -15,7 +15,8 @@ def main() -> None:
             if args.launch_args is None:
                 sys.exit(1)
             run(args.launch_args)
-        except Exception:  # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
+            print(f"ERROR: {e}", file=sys.stderr)
             traceback.print_exc()
             sys.exit(1)
 
