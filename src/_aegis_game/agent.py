@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from .agent_type import AgentType
 from .common import Direction, Location
 from .constants import Constants
-from .logger import AGENT_LOGGER, LOGGER
+from .logger import AGENT_LOGGER
 from .message_buffer import MessageBuffer
 from .sandbox.core import LumenCore
 from .sandbox.sandbox import Sandbox
