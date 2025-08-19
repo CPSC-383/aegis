@@ -144,7 +144,7 @@ const Aegis = ({ scaffold }: Props): JSX.Element => {
 
       {showMultiAgentOptions && (
         <div>
-          <Label>Number of Agents</Label>
+          <Label className="text-xs text-muted-foreground">Number of Agents</Label>
           <NumberInput
             name="agentAmount"
             value={agentAmount}
