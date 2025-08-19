@@ -145,7 +145,7 @@ export default function Sidebar(): JSX.Element {
 
                 <div className="flex-1 overflow-auto scrollbar p-1">
                   <TabsContent value={TabNames.Aegis}>
-                    <div className="flex flex-col gap-6 p-1">
+                    <div className="flex flex-col justify-between h-full gap-6 p-1">
                       <Aegis scaffold={scaffold} />
                       <div className="min-h-[200px]">
                         <Console output={output} />
@@ -153,7 +153,7 @@ export default function Sidebar(): JSX.Element {
                     </div>
                   </TabsContent>
                   <TabsContent value={TabNames.Game} className="h-full">
-                    <div className="flex flex-col gap-6 p-1 scrollbar overflow-scroll">
+                    <div className="flex flex-col justify-between h-full gap-6 p-1 scrollbar overflow-scroll">
                       <Game tile={selectedTile} round={round} scaffold={scaffold} />
                       <div className="min-h-[200px]">
                         <Console output={output} />
