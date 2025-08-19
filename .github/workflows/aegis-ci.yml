@@ -51,6 +51,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      id-token: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
