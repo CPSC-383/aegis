@@ -142,11 +142,7 @@ export default function Sidebar(): JSX.Element {
                     </div>
 
                     {selectedTab !== TabNames.Settings &&
-                      selectedTab !== TabNames.Editor && (
-                        <div className="mt-4 h-[200px] flex-shrink-0">
-                          <Console output={output} />
-                        </div>
-                      )}
+                      selectedTab !== TabNames.Editor && <Console output={output} />}
                   </div>
                 </div>
               </Tabs>
