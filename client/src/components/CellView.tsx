@@ -1,7 +1,7 @@
 import goobA from "@/assets/goob-team-a.png"
 import goobB from "@/assets/goob-team-b.png"
 import type Round from "@/core/Round"
-import { useRoundWithVersion } from "@/hooks/useRound"
+import useRound from "@/hooks/useRound"
 import useSelectedTile from "@/hooks/useSelectedTile"
 import { useAppStore } from "@/store/useAppStore"
 import { Scaffold } from "@/types"
@@ -75,7 +75,7 @@ function getAgentsByTeam(
 export default function CellView({ scaffold }: Props): JSX.Element {
   const { collapsedPanels, togglePanel } = useAppStore()
   const isCollapsed = collapsedPanels["cellView"] ?? false
-  const { round, version } = useRoundWithVersion()
+  const round = useRound()
   const selectedTile = useSelectedTile()
 
   const cell =
@@ -99,7 +99,7 @@ export default function CellView({ scaffold }: Props): JSX.Element {
       }
     }
     return ids
-  }, [round, selectedTile, version])
+  }, [round, selectedTile])
 
   const renderAgents = (): JSX.Element => {
     if (!round || !selectedTile || agentIds.length === 0) {
@@ -109,51 +109,45 @@ export default function CellView({ scaffold }: Props): JSX.Element {
     const teamAgents = getAgentsByTeam(agentIds, round)
     const isVersusMode = scaffold.config?.configType === "competition"
 
-    const teamConfigs = [
-      {
-        team: schema.Team.GOOBS,
-        agents: teamAgents[schema.Team.GOOBS],
-        icon: goobA,
-        badgeClass: "bg-blue-100 text-blue-800 border-blue-200",
-        label: "Goob",
-        delay: 0.05,
-      },
-    ]
-
-    if (isVersusMode && teamAgents[schema.Team.VOIDSEERS].length > 0) {
-      teamConfigs.push({
-        team: schema.Team.VOIDSEERS,
-        agents: teamAgents[schema.Team.VOIDSEERS],
-        icon: goobB,
-        badgeClass: "bg-purple-100 text-purple-800 border-purple-200",
-        label: "Voidseer",
-        delay: 0.1,
-      })
-    }
-
     return (
       <div className="space-y-2">
-        {teamConfigs.map((teamConfig) => (
-          <div key={teamConfig.team} className="space-y-2">
-            {teamConfig.agents.map((agentId) => (
+        {teamAgents[schema.Team.GOOBS].length > 0 && (
+          <div className="space-y-2">
+            {teamAgents[schema.Team.GOOBS].map((agentId) => (
               <AnimatedContainer
                 key={agentId}
-                className="flex items-center gap-2 rounded text-sm"
-                delay={teamConfig.delay}
+                className="flex items-center gap-2 p-2 bg-muted/50 rounded text-sm"
+                delay={0.05}
               >
-                <img src={teamConfig.icon} alt={teamConfig.label} className="w-6 h-6" />
-                <Badge
-                  variant="outline"
-                  className={`${teamConfig.badgeClass} font-medium pointer-events-none`}
-                >
-                  <User className="w-3 h-3 mr-1" />
-                  {teamConfig.label}
+                <img src={goobA} alt="Goob" className="w-4 h-4" />
+                <Badge className="bg-green-100 text-green-800 border-green-200 font-medium">
+                  <User className="w-4 h-4 mr-1" />
+                  Goob
                 </Badge>
                 <span className="text-xs text-muted-foreground">ID: {agentId}</span>
               </AnimatedContainer>
             ))}
           </div>
-        ))}
+        )}
+
+        {isVersusMode && teamAgents[schema.Team.VOIDSEERS].length > 0 && (
+          <div className="space-y-2">
+            {teamAgents[schema.Team.VOIDSEERS].map((agentId) => (
+              <AnimatedContainer
+                key={agentId}
+                className="flex items-center gap-2 p-2 bg-muted/50 rounded text-sm"
+                delay={0.1}
+              >
+                <img src={goobB} alt="Voidseer" className="w-4 h-4" />
+                <Badge className="bg-purple-100 text-purple-800 border-purple-200 font-medium">
+                  <User className="w-3 h-3 mr-1" />
+                  Voidseer
+                </Badge>
+                <span className="text-xs text-muted-foreground">ID: {agentId}</span>
+              </AnimatedContainer>
+            ))}
+          </div>
+        )}
       </div>
     )
   }
@@ -196,16 +190,13 @@ export default function CellView({ scaffold }: Props): JSX.Element {
               <div className="flex items-center justify-start gap-3">
                 <div className="flex items-center gap-1">
                   <span className="text-xs font-medium">Move Cost:</span>
-                  <Badge variant="outline" className="font-mono">
+                  <Badge variant="outline" className="font-mono px-1.5">
                     {cell.moveCost}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium">Type:</span>
-                  <Badge
-                    variant="outline"
-                    className={`${getCellTypeColor(cell.type)} font-mono`}
-                  >
+                  <Badge variant="outline" className={getCellTypeColor(cell.type)}>
                     {getCellTypeLabel(cell.type)}
                   </Badge>
                 </div>
@@ -230,15 +221,14 @@ export default function CellView({ scaffold }: Props): JSX.Element {
                       {cell.layers.length === 0 ? (
                         <EmptyState message="No layers on this tile" />
                       ) : (
-                        <div className="space-y-0">
+                        <div className="space-y-2">
                           {cell.layers.map((layer, index) => (
                             <AnimatedContainer
                               key={index}
-                              className="flex items-center gap-2 p-1 rounded text-sm"
+                              className="flex items-center gap-2 p-2 bg-muted/50 rounded text-sm"
                               delay={0.05 * (index + 1)}
                             >
                               <Badge
-                                variant="outline"
                                 className={`${getLayerColor(layer.object.oneofKind!)} font-medium`}
                               >
                                 {getLayerIcon(layer.object.oneofKind!)}
@@ -248,25 +238,15 @@ export default function CellView({ scaffold }: Props): JSX.Element {
                               </Badge>
 
                               {layer.object.oneofKind === "survivor" && (
-                                <>
-                                  <span className="text-xs text-muted-foreground">
-                                    ID: {layer.object.survivor.id}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    HP: {layer.object.survivor.health}
-                                  </span>
-                                </>
+                                <span className="text-xs text-muted-foreground">
+                                  HP: {layer.object.survivor.health}
+                                </span>
                               )}
 
                               {layer.object.oneofKind === "rubble" && (
-                                <>
-                                  <span className="text-xs text-muted-foreground">
-                                    Energy: {layer.object.rubble?.energyRequired ?? 0}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    Num: {layer.object.rubble?.agentsRequired ?? 0}
-                                  </span>
-                                </>
+                                <span className="text-xs text-muted-foreground">
+                                  Energy: {layer.object.rubble?.energyRequired ?? 0}
+                                </span>
                               )}
                             </AnimatedContainer>
                           ))}

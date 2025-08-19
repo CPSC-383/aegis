@@ -1,21 +1,20 @@
-import Round from "@/core/Round"
+import useRound from "@/hooks/useRound"
 import { useAppStore } from "@/store/useAppStore"
-import { Scaffold, Vector } from "@/types"
+import { Scaffold } from "@/types"
 import { schema } from "aegis-schema"
-import { motion } from "framer-motion"
 import { AlertTriangle, ChevronDown, ChevronUp, Trophy } from "lucide-react"
+import CellView from "../CellView"
+import { AnimatedContainer } from "../ui/animated-container"
 import { Button } from "../ui/button"
-import CellView from "./CellView"
 
 interface Props {
-  tile: Vector | undefined
-  round: Round | undefined
   scaffold: Scaffold
 }
 
-export default function Game({ tile, round, scaffold }: Props): JSX.Element {
+export default function Game({ scaffold }: Props): JSX.Element {
   const { collapsedPanels, togglePanel } = useAppStore()
   const isStatsCollapsed = collapsedPanels["matchStats"] ?? false
+  const round = useRound()
 
   if (!round || !scaffold) {
     return (
@@ -34,15 +33,9 @@ export default function Game({ tile, round, scaffold }: Props): JSX.Element {
   const stats = round.game.stats[round.round]
   const goobs = stats.getTeamStats(schema.Team.GOOBS)
   const voidseers = stats.getTeamStats(schema.Team.VOIDSEERS)
-  const cell = tile ? round.world.cellAt(tile.x, tile.y) : undefined
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="space-y-6"
-    >
-      {/* Match Statistics Header */}
+    <AnimatedContainer className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Trophy className="w-4 h-4 text-yellow-600" />
@@ -62,7 +55,6 @@ export default function Game({ tile, round, scaffold }: Props): JSX.Element {
         </Button>
       </div>
 
-      {/* Collapsible Statistics Table */}
       {!isStatsCollapsed && (
         <div className="overflow-x-auto scrollbar">
           <table className="min-w-full text-sm border border-gray-300 rounded overflow-hidden bg-white shadow">
@@ -109,7 +101,7 @@ export default function Game({ tile, round, scaffold }: Props): JSX.Element {
         </div>
       )}
 
-      <CellView cell={cell} round={round} scaffold={scaffold} />
-    </motion.div>
+      <CellView scaffold={scaffold} />
+    </AnimatedContainer>
   )
 }
