@@ -39,9 +39,13 @@ export default function SettingsModal({ isOpen, onClose, scaffold }: Props) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Settings" className="min-w-[50vw] max-h-[80vh] overflow-hidden">
-      <div className="flex h-full">
-        <div className="flex flex-col w-48 border-r pr-2 pt-2">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Settings"
+      className="min-w-[50vw] min-h-[40vh] overflow-hidden">
+      <div className="flex h-[40vh]">
+        <div className="flex flex-col w-48 pr-2 pt-2">
           <button
             className={`flex items-center gap-2 p-2 mb-1 rounded ${activeTab === "aegis" ? "bg-muted shadow-sm" : "hover:bg-gray-100"}`}
             onClick={() => setActiveTab("aegis")}
@@ -62,14 +66,14 @@ export default function SettingsModal({ isOpen, onClose, scaffold }: Props) {
           </button>
         </div>
 
-        {/* Right side content */}
-        <div className="flex-1 overflow-auto max-h-[70vh] px-4 py-3">
+        <div className="w-px flex bg-zinc-300" />
+
+        <div className="flex-1 overflow-auto scrollbar px-4 py-3">
           {activeTab === "aegis" && (
             <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Folder className="w-6 h-6" />
-                <h2 className="text-lg font-semibold">Aegis Path</h2>
-              </div>
+              <h2 className="text-lg font-semibold border-b border-zinc-300 -ml-4 pl-4 pb-2 mr-0">
+                Aegis Path
+              </h2>
               <p className="text-sm border-gray-300 border p-3 rounded break-words bg-gray-50">
                 {aegisPath || "No path configured"}
               </p>
@@ -82,25 +86,27 @@ export default function SettingsModal({ isOpen, onClose, scaffold }: Props) {
           {activeTab === "config" && (
             <div className="space-y-4">
               {config ? (
-                <div className="space-y-3 bg-gray-50 rounded-lg border p-4">
-                  <h2 className="text-lg font-semibold flex items-center gap-2">
-                    <SlidersHorizontal size={20} /> Configuration
+                <div>
+                  <h2 className="text-lg font-semibold border-b border-zinc-300 -ml-4 pl-4 pb-2 mr-0">
+                    Configuration
                   </h2>
-                  <div className="flex justify-between">
-                    <span>Config Type</span>
-                    {renderConfigValue(config.configType)}
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Variable Agent Amount</span>
-                    {renderConfigValue(config.variableAgentAmount)}
-                  </div>
-                  <div className="flex justify-between">
-                    <span>{config.allowAgentTypes ? "Max" : ""} Agent Amount</span>
-                    {renderConfigValue(config.defaultAgentAmount)}
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Agent Types</span>
-                    {renderConfigValue(config.allowAgentTypes)}
+                  <div className="mt-2 space-y-3 bg-gray-50 rounded-lg p-4">
+                    <div className="flex justify-between">
+                      <span>Config Type</span>
+                      {renderConfigValue(config.configType)}
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Variable Agent Amount</span>
+                      {renderConfigValue(config.variableAgentAmount)}
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{config.allowAgentTypes ? "Max" : ""} Agent Amount</span>
+                      {renderConfigValue(config.defaultAgentAmount)}
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Agent Types</span>
+                      {renderConfigValue(config.allowAgentTypes)}
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -116,10 +122,9 @@ export default function SettingsModal({ isOpen, onClose, scaffold }: Props) {
 
           {activeTab === "user" && (
             <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Bug className="w-6 h-6" />
-                <h2 className="text-lg font-semibold">User Settings</h2>
-              </div>
+              <h2 className="text-lg font-semibold border-b border-zinc-300 -ml-4 pl-4 pb-2 mr-0">
+                User Settings
+              </h2>
               <div className="flex items-center justify-between mt-2">
                 <div>
                   <Label>Enable Debug Mode</Label>

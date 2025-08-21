@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,10 +12,12 @@ interface ModalProps {
 export function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={className}>
-        <DialogHeader>
-          {title && <DialogTitle>{title}</DialogTitle>}
-        </DialogHeader>
+      <DialogContent className={cn(className, "p-4 flex flex-col")}>
+        {title && (
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+          </DialogHeader>
+        )}
         <div>{children}</div>
       </DialogContent>
     </Dialog>
