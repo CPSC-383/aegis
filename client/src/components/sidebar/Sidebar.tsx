@@ -82,11 +82,10 @@ export default function Sidebar(): JSX.Element {
                   onClick={() => handleSidebarClick(item.id)}
                   className={`
                   p-3 my-2 rounded-xl transition-colors 
-                  ${
-                    selectedView === item.id
+                  ${selectedView === item.id
                       ? "text-foreground bg-accent"
                       : "text-muted-foreground hover:bg-accent"
-                  }
+                    }
                   `}
                 >
                   <item.icon />
@@ -107,7 +106,7 @@ export default function Sidebar(): JSX.Element {
         className="h-full overflow-hidden bg-background border-r"
       >
         {selectedView && (
-          <div className="flex flex-col h-full overflow-auto p-3">
+          <div className="flex flex-col h-full overflow-auto p-3 scrollbar">
             {!aegisPath ? (
               <Button onClick={setupAegisPath} className="w-full">
                 Setup Aegis Path
