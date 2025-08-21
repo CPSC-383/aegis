@@ -16,7 +16,11 @@ interface Props {
   scaffold: Scaffold
 }
 
-export default function SettingsModal({ isOpen, onClose, scaffold }: Props) {
+export default function SettingsModal({
+  isOpen,
+  onClose,
+  scaffold,
+}: Props): JSX.Element {
   const { aegisPath, setupAegisPath, readAegisConfig, config } = scaffold
   const [debugMode, setDebugMode] = useLocalStorage<boolean>("aegis_debug_mode", false)
   const [activeTab, setActiveTab] = useState<Tab>("aegis")
@@ -25,17 +29,35 @@ export default function SettingsModal({ isOpen, onClose, scaffold }: Props) {
     readAegisConfig()
   }, [])
 
-  const renderConfigValue = (value: unknown) => {
+  const renderConfigValue = (value: unknown): JSX.Element => {
     if (typeof value === "boolean") {
       return (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+        <span
+          className={`px-2 py-1 rounded text-xs font-medium ${value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+        >
           {value ? "Enabled" : "Disabled"}
         </span>
       )
     }
-    if (typeof value === "number") return <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">{value}</span>
-    if (typeof value === "string") return <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">{value}</span>
-    return <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">{String(value)}</span>
+    if (typeof value === "number") {
+      return (
+        <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+          {value}
+        </span>
+      )
+    }
+    if (typeof value === "string") {
+      return (
+        <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+          {value}
+        </span>
+      )
+    }
+    return (
+      <span className="px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
+        {String(value)}
+      </span>
+    )
   }
 
   return (
@@ -43,7 +65,8 @@ export default function SettingsModal({ isOpen, onClose, scaffold }: Props) {
       isOpen={isOpen}
       onClose={onClose}
       title="Settings"
-      className="min-w-[50vw] min-h-[40vh] overflow-hidden">
+      className="min-w-[50vw] min-h-[40vh] overflow-hidden"
+    >
       <div className="flex h-[40vh]">
         <div className="flex flex-col w-48 pr-2 pt-2">
           <button

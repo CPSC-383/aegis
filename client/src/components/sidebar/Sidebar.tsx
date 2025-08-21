@@ -48,7 +48,7 @@ export default function Sidebar(): JSX.Element {
     return unsubscribe
   }, [games?.playable])
 
-  const handleSidebarClick = (itemId: SidebarView) => {
+  const handleSidebarClick = (itemId: SidebarView): void => {
     if (itemId === SidebarView.Settings) {
       setSettingsModalOpen(true)
     } else {
@@ -82,10 +82,11 @@ export default function Sidebar(): JSX.Element {
                   onClick={() => handleSidebarClick(item.id)}
                   className={`
                   p-3 my-2 rounded-xl transition-colors 
-                  ${selectedView === item.id
+                  ${
+                    selectedView === item.id
                       ? "text-foreground bg-accent"
                       : "text-muted-foreground hover:bg-accent"
-                    }
+                  }
                   `}
                 >
                   <item.icon />
