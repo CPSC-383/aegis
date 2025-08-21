@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TabNames } from "@/types"
-import { motion } from "framer-motion"
-import { ChevronRight } from "lucide-react"
+import { SidebarView } from "@/types"
+import {
+  ChartBarBig,
+  ChevronLeft,
+  Gamepad2,
+  Pencil,
+  Settings as SettingsIcon,
+} from "lucide-react"
 import { useEffect, useState } from "react"
 
 import { ListenerKey, subscribe } from "@/core/Listeners"
@@ -15,117 +19,109 @@ import { ErrorMessage } from "../ui/error-message"
 import Aegis from "./Aegis"
 import Game from "./Game"
 import Settings from "./Settings"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
+import { motion } from "framer-motion"
 
-// Reusable tab list component
-function TabList({
-  tabNames,
-  className = "",
-}: {
-  tabNames: TabNames[]
-  className?: string
-}): JSX.Element {
-  return (
-    <div className={`w-full flex ${className}`}>
-      <TabsList className="w-full">
-        {tabNames.map((tabName) => (
-          <TabsTrigger key={tabName} value={tabName} className="text-sm w-full">
-            {tabName}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-    </div>
-  )
-}
+const sidebarItems = [
+  { id: SidebarView.Aegis, icon: Gamepad2, label: "Start Game" },
+  { id: SidebarView.Game, icon: ChartBarBig, label: "Game Stats" },
+  { id: SidebarView.Editor, icon: Pencil, label: "Game Editor" },
+  { id: SidebarView.Settings, icon: SettingsIcon, label: "Settings" },
+]
 
 export default function Sidebar(): JSX.Element {
   const scaffold = createScaffold()
   const { aegisPath, setupAegisPath, output, spawnError } = scaffold
   const games = useGames()
-  const [selectedTab, setSelectedTab] = useState<TabNames>(TabNames.Aegis)
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [selectedView, setSelectedView] = useState<SidebarView | null>(
+    SidebarView.Aegis
+  )
 
   useEffect(() => {
     const unsubscribe = subscribe(ListenerKey.LayerViewer, () => {
       const tile = Renderer.getLayerViewerTile()
       if (tile && games?.playable) {
-        setSelectedTab(TabNames.Game)
+        setSelectedView(SidebarView.Game)
       }
     })
-
     return unsubscribe
   }, [games?.playable])
 
   return (
-    <div className="relative w-[30%]">
-      <motion.div
-        animate={{ x: isCollapsed ? "100%" : "0%" }}
-        transition={{ duration: 0.5 }}
-        className="h-screen w-full bg-background shadow-lg absolute right-0 top-0 z-50 border-l"
+    <div className="relative flex h-screen">
+      <div
+        className={`absolute top-4 -right-8 z-50 bg-accent rounded-full p-1 flex items-center justify-between
+          ${!selectedView ? "hidden" : ""}`}
       >
-        <div className="flex flex-col h-full p-3">
-          {!aegisPath ? (
-            <div className="p-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setSelectedView(null)}
+          className="h-4 w-4"
+        >
+          <ChevronLeft />
+        </Button>
+      </div>
+
+      <div className="flex flex-col items-center py-4 w-16 h-full border-l">
+        <TooltipProvider>
+          {sidebarItems.map((item) => (
+            <Tooltip key={item.id}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={() =>
+                    setSelectedView(selectedView === item.id ? null : item.id)
+                  }
+                  className={`p-3 my-2 rounded-xl transition-colors ${selectedView === item.id
+                    ? "text-foreground bg-accent"
+                    : "text-muted-foreground hover:bg-accent"
+                    }`}
+                >
+                  <item.icon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{item.label}</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </TooltipProvider>
+      </div>
+
+      <motion.div
+        initial={false}
+        animate={{ width: selectedView ? "20rem" : "0rem" }}
+        transition={{ duration: 0.3 }}
+        className="h-full overflow-hidden bg-background border-r"
+      >
+        {selectedView && (
+          <div className="flex flex-col h-full overflow-auto p-3">
+            {!aegisPath ? (
               <Button onClick={setupAegisPath} className="w-full">
                 Setup Aegis Path
               </Button>
-            </div>
-          ) : (
-            <>
-              <Tabs
-                value={selectedTab}
-                onValueChange={(value) => setSelectedTab(value as TabNames)}
-                className="flex flex-col h-full"
-              >
-                <TabList tabNames={Object.values(TabNames).slice(0, 2)} />
-                <TabList tabNames={Object.values(TabNames).slice(2)} className="mt-2" />
-
-                <div className="flex-1 flex flex-col min-h-0">
-                  <div className="flex-1 flex flex-col overflow-auto scrollbar p-1">
-                    <div className="flex-1">
-                      <TabsContent value={TabNames.Aegis}>
-                        <Aegis scaffold={scaffold} />
-                      </TabsContent>
-                      <TabsContent value={TabNames.Game}>
-                        <Game scaffold={scaffold} />
-                      </TabsContent>
-                      <TabsContent value={TabNames.Editor}>
-                        <Editor
-                          isOpen={selectedTab === TabNames.Editor}
-                          scaffold={scaffold}
-                        />
-                      </TabsContent>
-                      <TabsContent value={TabNames.Settings}>
-                        <Settings scaffold={scaffold} />
-                      </TabsContent>
-                    </div>
-
-                    {selectedTab !== TabNames.Settings &&
-                      selectedTab !== TabNames.Editor && <Console output={output} />}
+            ) : (
+              <>
+                {selectedView === SidebarView.Aegis && <Aegis scaffold={scaffold} />}
+                {selectedView === SidebarView.Game && <Game scaffold={scaffold} />}
+                {/* Editor always has to be visible or else it wont remove the game if we switch tabs */}
+                <Editor isOpen={selectedView === SidebarView.Editor} scaffold={scaffold} />
+                {selectedView === SidebarView.Settings && (
+                  <Settings scaffold={scaffold} />
+                )}
+                {selectedView !== SidebarView.Settings &&
+                  selectedView !== SidebarView.Editor && <Console output={output} />}
+                {spawnError && (
+                  <div className="mt-4">
+                    <ErrorMessage title="Error" message={spawnError} />
                   </div>
-                </div>
-              </Tabs>
-
-              {spawnError && (
-                <div className="mt-4">
-                  <ErrorMessage title="Error" message={spawnError} />
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute top-1/2 -left-6 transform -translate-y-1/2 flex items-center justify-center w-10 h-10 bg-background border shadow rounded-full"
-        >
-          <motion.div
-            animate={{ rotate: isCollapsed ? 0 : 180 }}
-            transition={{ duration: 0.5 }}
-          >
-            <ChevronRight size={20} />
-          </motion.div>
-        </button>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </motion.div>
-    </div>
+    </div >
   )
 }

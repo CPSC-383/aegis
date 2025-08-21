@@ -8,6 +8,13 @@ export enum TabNames {
   Settings = "Settings",
 }
 
+export enum SidebarView {
+  Aegis = "Aegis",
+  Game = "Game",
+  Editor = "Editor",
+  Settings = "Settings",
+}
+
 export enum BrushType {
   Zone = "Zone",
   Layers = "Layers",
