@@ -73,10 +73,14 @@ export default function Sidebar(): JSX.Element {
                   onClick={() =>
                     setSelectedView(selectedView === item.id ? null : item.id)
                   }
-                  className={`p-3 my-2 rounded-xl transition-colors ${selectedView === item.id
-                    ? "text-foreground bg-accent"
-                    : "text-muted-foreground hover:bg-accent"
-                    }`}
+                  className={`
+                  p-3 my-2 rounded-xl transition-colors 
+                  ${
+                    selectedView === item.id
+                      ? "text-foreground bg-accent"
+                      : "text-muted-foreground hover:bg-accent"
+                  }
+                  `}
                 >
                   <item.icon />
                 </Button>
@@ -106,7 +110,10 @@ export default function Sidebar(): JSX.Element {
                 {selectedView === SidebarView.Aegis && <Aegis scaffold={scaffold} />}
                 {selectedView === SidebarView.Game && <Game scaffold={scaffold} />}
                 {/* Editor always has to be visible or else it wont remove the game if we switch tabs */}
-                <Editor isOpen={selectedView === SidebarView.Editor} scaffold={scaffold} />
+                <Editor
+                  isOpen={selectedView === SidebarView.Editor}
+                  scaffold={scaffold}
+                />
                 {selectedView === SidebarView.Settings && (
                   <Settings scaffold={scaffold} />
                 )}
@@ -122,6 +129,6 @@ export default function Sidebar(): JSX.Element {
           </div>
         )}
       </motion.div>
-    </div >
+    </div>
   )
 }
