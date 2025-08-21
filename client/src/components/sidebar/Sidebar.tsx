@@ -18,9 +18,9 @@ import Editor from "../editor/Editor"
 import { ErrorMessage } from "../ui/error-message"
 import Aegis from "./Aegis"
 import Game from "./Game"
-import Settings from "./Settings"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
 import { motion } from "framer-motion"
+import SettingsModal from "./SettingsModal"
 
 const sidebarItems = [
   { id: SidebarView.Aegis, icon: Gamepad2, label: "Start Game" },
@@ -36,6 +36,7 @@ export default function Sidebar(): JSX.Element {
   const [selectedView, setSelectedView] = useState<SidebarView | null>(
     SidebarView.Aegis
   )
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false)
 
   useEffect(() => {
     const unsubscribe = subscribe(ListenerKey.LayerViewer, () => {
@@ -46,6 +47,14 @@ export default function Sidebar(): JSX.Element {
     })
     return unsubscribe
   }, [games?.playable])
+
+  const handleSidebarClick = (itemId: SidebarView) => {
+    if (itemId === SidebarView.Settings) {
+      setSettingsModalOpen(true)
+    } else {
+      setSelectedView(selectedView === itemId ? null : itemId)
+    }
+  }
 
   return (
     <div className="relative flex h-screen">
@@ -70,16 +79,13 @@ export default function Sidebar(): JSX.Element {
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
-                  onClick={() =>
-                    setSelectedView(selectedView === item.id ? null : item.id)
-                  }
+                  onClick={() => handleSidebarClick(item.id)}
                   className={`
                   p-3 my-2 rounded-xl transition-colors 
-                  ${
-                    selectedView === item.id
+                  ${selectedView === item.id
                       ? "text-foreground bg-accent"
                       : "text-muted-foreground hover:bg-accent"
-                  }
+                    }
                   `}
                 >
                   <item.icon />
@@ -114,9 +120,6 @@ export default function Sidebar(): JSX.Element {
                   isOpen={selectedView === SidebarView.Editor}
                   scaffold={scaffold}
                 />
-                {selectedView === SidebarView.Settings && (
-                  <Settings scaffold={scaffold} />
-                )}
                 {selectedView !== SidebarView.Settings &&
                   selectedView !== SidebarView.Editor && <Console output={output} />}
                 {spawnError && (
@@ -129,6 +132,11 @@ export default function Sidebar(): JSX.Element {
           </div>
         )}
       </motion.div>
+      <SettingsModal
+        isOpen={settingsModalOpen}
+        scaffold={scaffold}
+        onClose={() => setSettingsModalOpen(false)}
+      />
     </div>
   )
 }
