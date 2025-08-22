@@ -8,11 +8,11 @@ export default function App(): JSX.Element {
 
   return (
     <div className="flex bg-background overflow-hidden">
+      <Sidebar />
       <div className="flex w-full h-screen justify-center">
         <GameArea />
         {games?.playable && <ControlsBar />}
       </div>
-      <Sidebar />
     </div>
   )
 }
