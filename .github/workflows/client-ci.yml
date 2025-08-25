@@ -10,9 +10,6 @@ on:
 env:
   NODE_VERSION: "20"
 
-env:
-  NODE_VERSION: "20"
-
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -23,7 +20,6 @@ jobs:
       - name: Setup Node 
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: client/package-lock.json
@@ -39,7 +35,6 @@ jobs:
   release-please:
     if: ${{ !failure() && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
@@ -52,13 +47,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create Release
-      - name: Create Release
         uses: googleapis/release-please-action@v4
         id: release
         with:
           config-file: ${{ hashFiles('.github/release-please-config.json') != '' && '.github/release-please-config.json' || '' }}
           manifest-file: ${{ hashFiles('.github/release-please-manifest.json') != '' && '.github/release-please-manifest.json' || hashFiles('.github/.release-please-manifest.json') != '' && '.github/.release-please-manifest.json' || '' }}
-          release-type: node
 
       - name: Debug release
         continue-on-error: true
@@ -66,8 +59,6 @@ jobs:
           echo "${{ toJSON(steps.release.outputs) }}"
 
   build:
-    if: ${{ !failure() && (github.ref == 'refs/heads/main' || github.base_ref == 'main') }}
-    needs: [lint, release-please]
     if: ${{ !failure() && (github.ref == 'refs/heads/main' || github.base_ref == 'main') }}
     needs: [lint, release-please]
     strategy:
@@ -78,19 +69,10 @@ jobs:
             artifact-name: mac-client
             extension: app
           - os: ubuntu-latest
-            platform: darwin
-            artifact-name: mac-client
-            extension: app
-          - os: ubuntu-latest
             platform: linux
             artifact-name: linux-client
             extension: AppImage
-            artifact-name: linux-client
-            extension: AppImage
           - os: windows-latest
-            platform: win32
-            artifact-name: windows-client
-            extension: exe
             platform: win32
             artifact-name: windows-client
             extension: exe
@@ -110,37 +92,15 @@ jobs:
 
       - name: Install schema dependencies
         working-directory: schema
-        working-directory: schema
         run: npm ci
 
       - name: Install client dependencies
-        working-directory: client 
         working-directory: client 
         run: npm ci
 
       - name: Build app
         working-directory: client 
-        working-directory: client 
         run: npm run build:pack
-
-      - name: List top-level releases folder
-        working-directory: client
-        shell: bash
-        run: |
-          echo "Top-level releases folders:"
-          ls -1 releases
-
-      - name: Check build output
-        id: check-build
-        working-directory: client
-        shell: bash
-        run: |
-          if [ -d "releases/${{ matrix.platform }}" ] && [ "$(ls -A releases/${{ matrix.platform }})" ]; then
-            echo "Build successful"
-          else
-            echo "Build failed - no output found"
-            exit 1
-          fi
 
       - name: List top-level releases folder
         working-directory: client
@@ -181,40 +141,16 @@ jobs:
 
           cd "$(dirname "$ARTIFACT_PATH")"
           7z a -tzip "$RELEASE_ASSETS_PATH/${{ matrix.artifact-name }}.zip" "$ARTIFACT_NAME"
-        if: ${{ needs.release-please.outputs.releases_created == 'true' }}
-        working-directory: client 
-        shell: bash
-        run: |
-          RELEASE_ASSETS_PATH="$(pwd)/release-assets"
-          mkdir -p "$RELEASE_ASSETS_PATH"
-
-          ARTIFACT_PATH=$(find releases -maxdepth 3 -iname "*aegis*${{ matrix.extension }}")
-
-          if [[ -z "$ARTIFACT_PATH" ]]; then
-            echo "Error: no artifact found for extension ${{ matrix.extension }}"
-            exit 1
-          fi
-
-          ARTIFACT_NAME=$(basename "$ARTIFACT_PATH")
-          echo "Zipping $ARTIFACT_PATH into $RELEASE_ASSETS_PATH/${{ matrix.artifact-name }}.zip"
-
-          cd "$(dirname "$ARTIFACT_PATH")"
-          7z a -tzip "$RELEASE_ASSETS_PATH/${{ matrix.artifact-name }}.zip" "$ARTIFACT_NAME"
 
       - name: Upload built client as artifact
-        if: ${{ needs.release-please.outputs.releases_created == 'true' }}
         if: ${{ needs.release-please.outputs.releases_created == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact-name }}
-          name: ${{ matrix.artifact-name }}
           path: |
-            client/release-assets/${{ matrix.artifact-name }}.zip
             client/release-assets/${{ matrix.artifact-name }}.zip
           if-no-files-found: error
 
-  publish:
-    if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == 'true' }}
   publish:
     if: ${{ !failure() && github.ref == 'refs/heads/main' && needs.release-please.outputs.releases_created == 'true' }}
     needs: [build, release-please] 
@@ -232,20 +168,14 @@ jobs:
 
       - name: List artifacts
         run: find ./release-assets -type f -ls
-          path: ./release-assets/
-
-      - name: List artifacts
-        run: find ./release-assets -type f -ls
 
       - name: Upload assets to GitHub Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: release-assets/**/*.zip
-          file: release-assets/**/*.zip
           file_glob: true
           tag: ${{ needs.release-please.outputs.tag_name }}
-          release_name: "Client ${{ needs.release-please.outputs.tag_name }}"
           release_name: "Client ${{ needs.release-please.outputs.tag_name }}"
           overwrite: true
           make_latest: true
