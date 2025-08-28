@@ -26,7 +26,7 @@ export default class Game {
     public readonly world: World,
     public initialAgents: Agents
   ) {
-    this.currentRound = new Round(this, this.world, 0, initialAgents)
+    this.currentRound = new Round(this, this.world.copy(), 0, initialAgents)
   }
 
   public static fromSchema(games: Games, header: schema.GameHeader): Game {
@@ -74,12 +74,19 @@ export default class Game {
         ? this.currentRound
         : snapshot.copy()
 
-    // console.log("updatingRound", updatingRound.round, "clampedRound", clampedRound)
-    console.log("updatingRound", updatingRound, "clampedRound", clampedRound)
-
     if (updatingRound.round === 1 && clampedRound === 1) {
+      // reset this game back to the original state from the GameHeader
+      this.currentRound = new Round(this, this.world, 0, this.initialAgents)
     }
 
+    console.log(
+      "updatingRound",
+      updatingRound,
+      "clampedRound",
+      clampedRound,
+      "currentRound",
+      this.currentRound
+    )
     while (updatingRound.round < clampedRound) {
       updatingRound.jumpToTurn(updatingRound.turnsLength)
       const nextDelta =
@@ -94,6 +101,7 @@ export default class Game {
     }
 
     this.currentRound = updatingRound
+    notify(ListenerKey.Round)
   }
 
   public stepGame(): [boolean, boolean] {
