@@ -74,6 +74,12 @@ export default class Game {
         ? this.currentRound
         : snapshot.copy()
 
+    // console.log("updatingRound", updatingRound.round, "clampedRound", clampedRound)
+    console.log("updatingRound", updatingRound, "clampedRound", clampedRound)
+
+    if (updatingRound.round === 1 && clampedRound === 1) {
+    }
+
     while (updatingRound.round < clampedRound) {
       updatingRound.jumpToTurn(updatingRound.turnsLength)
       const nextDelta =

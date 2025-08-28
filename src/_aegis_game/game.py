@@ -402,6 +402,7 @@ class Game:
             )
             return
 
+        agent.add_energy(-Constants.SAVE_ENERGY_COST)
         self.queue_layer_to_remove(agent.location, agent.team)
 
         LOGGER.info(
