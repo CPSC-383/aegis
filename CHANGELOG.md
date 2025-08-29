@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/AEGIS-GAME/aegis/compare/aegis-v2.4.0...aegis-v2.4.1) (2025-08-29)
+
+
+### Bug Fixes
+
+* **worlds:** turn them into protobuf format ([#326](https://github.com/AEGIS-GAME/aegis/issues/326)) ([3d3be90](https://github.com/AEGIS-GAME/aegis/commit/3d3be90f84c605a19543a4353b4b1894920540cd))
+
 ## [2.4.0](https://github.com/AEGIS-GAME/aegis/compare/aegis-v2.3.0...aegis-v2.4.0) (2025-08-19)
 
 
